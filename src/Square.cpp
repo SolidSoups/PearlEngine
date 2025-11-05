@@ -38,14 +38,15 @@ Square::Square() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  std::cout << "Triangle::Triangle() -> Created a triangle" << std::endl;
+  std::cout << "Square::Square() -> Created a triangle" << std::endl;
 }
 
 Square::~Square(){
   if(VBO) glDeleteBuffers(1, &VBO);
+  if(EBO) glDeleteBuffers(1, &EBO);
   if(VAO) glDeleteVertexArrays(1, &VAO);
 
-  std::cout << "Triangle::~Triangle() -> Deleted VBO and VAO" << std::endl;
+  std::cout << "Square::~Square() -> Deleted VBO, VAO and EBO" << std::endl;
 }
 
 void Square::Render(Shader& shader){
