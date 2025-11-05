@@ -27,9 +27,6 @@ CMAKE_AR:FILEPATH=/usr/bin/ar
 // MinSizeRel ...
 CMAKE_BUILD_TYPE:STRING=
 
-//Enable/Disable color output during build.
-CMAKE_COLOR_MAKEFILE:BOOL=ON
-
 //CXX compiler
 CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++
 
@@ -100,6 +97,9 @@ CMAKE_EXE_LINKER_FLAGS_RELEASE:STRING=
 //Flags used by the linker during RELWITHDEBINFO builds.
 CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
+//Enable/Disable output of build database during the build.
+CMAKE_EXPORT_BUILD_DATABASE:BOOL=
+
 //Enable/Disable output of compile commands during generation.
 CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=
 
@@ -160,8 +160,8 @@ CMAKE_INSTALL_SYSCONFDIR:PATH=etc
 //Path to a program.
 CMAKE_LINKER:FILEPATH=/usr/bin/ld
 
-//Path to a program.
-CMAKE_MAKE_PROGRAM:FILEPATH=/usr/bin/gmake
+//Program used to build from build.ninja files.
+CMAKE_MAKE_PROGRAM:FILEPATH=/usr/bin/ninja-build
 
 //Flags used by the linker during the creation of modules during
 // all build types.
@@ -773,8 +773,6 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=31
 //Patch version of cmake used to create the current loaded cache
 CMAKE_CACHE_PATCH_VERSION:INTERNAL=6
-//ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
-CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=/usr/bin/cmake
 //Path to cpack program executable.
@@ -829,12 +827,14 @@ CMAKE_EXE_LINKER_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
 CMAKE_EXE_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
 CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_EXPORT_BUILD_DATABASE
+CMAKE_EXPORT_BUILD_DATABASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_EXPORT_COMPILE_COMMANDS
 CMAKE_EXPORT_COMPILE_COMMANDS-ADVANCED:INTERNAL=1
 //Name of external makefile project generator.
 CMAKE_EXTRA_GENERATOR:INTERNAL=
 //Name of generator.
-CMAKE_GENERATOR:INTERNAL=Unix Makefiles
+CMAKE_GENERATOR:INTERNAL=Ninja
 //Generator instance identifier.
 CMAKE_GENERATOR_INSTANCE:INTERNAL=
 //Name of generator platform.
@@ -1025,12 +1025,8 @@ Wayland_xkbcommon_VERSION:INTERNAL=1.8.1
 X11_ICE_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_ICE_LIB
 X11_ICE_LIB-ADVANCED:INTERNAL=1
-//Have library dnet
-X11_LIB_DNET_HAS_DNET_NTOA:INTERNAL=
-//Have library dnet_stub
-X11_LIB_DNET_STUB_HAS_DNET_NTOA:INTERNAL=
 //Have library /usr/lib64/libX11.so;/usr/lib64/libXext.so
-X11_LIB_X11_SOLO:INTERNAL=
+X11_LIB_X11_SOLO:INTERNAL=1
 //ADVANCED property for variable: X11_SM_INCLUDE_PATH
 X11_SM_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_SM_LIB
