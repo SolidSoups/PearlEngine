@@ -24,6 +24,7 @@ PearlEngine::~PearlEngine(){
   std::cout << "PearlEngine::~PearlEngine() -> Engine deconstructing" << std::endl;
 }
 
+// b@UPDATE
 void PearlEngine::RunUpdateLoop(){
   GLFWwindow* window = pwin.GetWindow();
 
@@ -33,7 +34,7 @@ void PearlEngine::RunUpdateLoop(){
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    myTriangle.Render(myShader);
+    mySquare.Render(myShader);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
