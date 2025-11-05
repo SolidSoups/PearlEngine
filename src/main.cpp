@@ -13,14 +13,13 @@
 
 
 int main(){
-  PearlEngine* engine = new PearlEngine();
-  if(!engine->IsInitialized()){
+  PearlEngine engine;
+  if(!engine.IsInitialized()){
     return -1;
   }
 
-  engine->RunUpdateLoop();
+  engine.RunUpdateLoop();
 
-  delete engine;
   return 0;
 }
 
