@@ -30,12 +30,12 @@ PearlWindow::PearlWindow(int width, int height, const char* title){
   if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
     std::cout << "PearlWindow::PearlWindow(..) -> Failed to initialize GLAD" << std::endl;
     isInitialized = false;
-    // TODO: shouldn't we also call glfwTerminate()???
+    glfwTerminate();
     return;
   }
 
   // tell OpenGL the size of the rendering window, and register callback for it
-  glViewport(0, 0, 800, 600);
+  glViewport(0, 0, width, height);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
   isInitialized = true;
