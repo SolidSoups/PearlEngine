@@ -38,7 +38,7 @@ Square::Square() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
-  std::cout << "Square::Square() -> Created a triangle" << std::endl;
+  std::cout << "Square::Square() -> Created a square" << std::endl;
 }
 
 Square::~Square(){
