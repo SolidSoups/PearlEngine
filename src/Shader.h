@@ -4,6 +4,7 @@
 class Shader{
 public:
   Shader(const char* aVertexPath, const char* aFragmentPath); 
+  ~Shader();
 private:
   std::string LoadShader(const char* aPath);
   unsigned int LoadVertexShader(const char* aPath);

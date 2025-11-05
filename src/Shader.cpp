@@ -35,6 +35,11 @@ Shader::Shader(const char* aVertexPath, const char* aFragmentPath){
   glDeleteShader(fragmentShader);
 }
 
+Shader::~Shader(){
+  glDeleteProgram(shaderProgram);
+  std::cout << "Shader::~Shader() -> Deleted shader program" << std::endl;
+}
+
 std::string Shader::LoadShader(const char* aPath){
   std::ifstream shaderFile(aPath);
   if(!shaderFile.is_open()){
@@ -69,6 +74,8 @@ unsigned int Shader::LoadVertexShader(const char* aPath){
 
   return shaderObject;
 }
+
+
 
 
 unsigned int Shader::LoadFragmentShader(const char* aPath){
