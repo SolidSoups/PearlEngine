@@ -2,13 +2,26 @@
 #include <glad/glad.h>
 #include "GLFW/glfw3.h"
 #include <iostream>
+#include "PearlEngine.h"
 
 // this callback must be static and not a part of a class
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height){
   glViewport(0, 0, width, height);
+
+  PearlEngine* engine = static_cast<PearlEngine*>(glfwGetWindowUserPointer(window));
+  if(engine){
+    float newAspect = (float)width / (float)height;
+    engine->mainCamera.SetAspectRatio(newAspect);
+
+    // update window dimensions
+    engine->pwin.window_width = width;
+    engine->pwin.window_height = height;
+  }
 }
 
-PearlWindow::PearlWindow(int width, int height, const char* title){
+PearlWindow::PearlWindow(int width, int height, const char* title)
+  : window_width(width), window_height(height)
+{
   // initialize and give hints
   glfwInit();  
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

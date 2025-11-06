@@ -17,6 +17,7 @@ public:
   inline bool IsInitialized() { return isInitialized; }
   inline GLFWwindow* GetWindow() { return window; }
 public:
+  unsigned int window_width, window_height;
     
 private:
   bool isInitialized = false;

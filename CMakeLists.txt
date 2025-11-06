@@ -12,10 +12,12 @@ add_subdirectory(external/glfw)
 add_library(glad external/glad/src/glad.c)
 target_include_directories(glad PUBLIC external/glad/include)
 
+
 add_executable(game_engine)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 target_sources(game_engine PRIVATE ${SOURCES})
 target_link_libraries(game_engine PRIVATE glfw glad)
 target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src
+  external/glm
 )

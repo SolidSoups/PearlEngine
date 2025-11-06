@@ -2,8 +2,8 @@
 
 #include "PearlWindow.h"
 #include "Shader.h"
-#include "Triangle.h"
-#include "Square.h"
+#include "Cube.h"
+#include "Camera.h"
 
 struct GLFWwindow;
 
@@ -18,12 +18,13 @@ public:
 private:
   void ProcessInput(GLFWwindow* window);
 
-private:
-  PearlWindow pwin{800, 600, "LearnOpenGL"};
+public:
+  PearlWindow pwin{800, 800, "LearnOpenGL"};
 
   Shader myShader{"shaders/vert.glsl", "shaders/frag.glsl"};
-  Triangle myTriangle{};
-  Square mySquare{};
+  Cube myCube{};
+
+  Camera mainCamera{};
 
 private:
   bool isInitialized = false;
