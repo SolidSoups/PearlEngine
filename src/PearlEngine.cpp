@@ -1,12 +1,13 @@
-// src
-#include "PearlEngine.h"
-
 // lib
 #include <glad/glad.h>
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 #include <glm/common.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/mat4x4.hpp>
+
+// src
+#include "PearlEngine.h"
+#include "Time.h"
 
 // std
 #include <cmath>
@@ -23,6 +24,9 @@ PearlEngine::PearlEngine() {
 
   // store the engine as a user pointer in glfw
   glfwSetWindowUserPointer(pwin.GetWindow(), this);
+
+  // initialize the time
+  Time::Initialize();
 
   isInitialized = true;
   std::cout
@@ -54,13 +58,17 @@ void PearlEngine::RunUpdateLoop() {
   glm::mat4 view = glm::lookAt(cam_pos, glm::vec3(0.0f, 0.0f, 0.0f),
                                glm::vec3(0.0f, 1.0f, 0.0f));
 
+  myCube.transform.Translate(glm::vec3(0.0f, 0.0f, -2.0f));
+
   // some openGL hints
   glFrontFace(GL_CW);
   glDisable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
 
+
   // glfw loop
   while (!glfwWindowShouldClose(window)) {
+    Time::Update();
     ProcessInput(window);
 
     glClearColor(0.5f, 0.0f, 0.5f, 1.0f);
@@ -69,11 +77,11 @@ void PearlEngine::RunUpdateLoop() {
     myShader.Use();
 
     // do transformation
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::translate(trans, cube_pos);
-    trans = glm::rotate(trans, (float)glfwGetTime()*0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
-    trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 1.0, 0.0f));
-    myShader.SetMatrix4(trans, "transform");
+    float time = glfwGetTime();
+    myCube.transform.Rotate(Time::deltaTime * 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
+    myCube.transform.Rotate(Time::deltaTime * 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+    myShader.SetMatrix4(myCube.transform.GetModelMatrix(), "transform");
+
 
     // do projection
     auto projection = glm::perspective(fov, aspect, znear, zfar);
