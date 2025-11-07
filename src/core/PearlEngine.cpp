@@ -71,14 +71,14 @@ void PearlEngine::RunUpdateLoop() {
     Time::Update();
     ProcessInput(window);
 
-    glClearColor(0.5f, 0.0f, 0.5f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     myShader.Use();
 
     // do transformation
     float time = glfwGetTime();
-    myCube.transform.Rotate(Time::deltaTime * 0.5f, glm::vec3(1.0f, 0.0f, 0.0f));
+    myCube.transform.Rotate(Time::deltaTime * 0.1f, glm::vec3(1.0f, 0.0f, 0.0f));
     myCube.transform.Rotate(Time::deltaTime * 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
     myShader.SetMatrix4(myCube.transform.GetModelMatrix(), "transform");
 
