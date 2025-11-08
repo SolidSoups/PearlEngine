@@ -1,9 +1,13 @@
 #pragma once
 
+#include "ImGuiWrapperContext.h"
 #include "PearlWindow.h"
 #include "Shader.h"
 #include "Cube.h"
 #include "Camera.h"
+#include "FrameBuffer.h"
+
+#include <memory>
 
 struct GLFWwindow;
 
@@ -19,7 +23,14 @@ private:
   void ProcessInput(GLFWwindow* window);
 
 public:
-  PearlWindow pwin{800, 800, "LearnOpenGL"};
+  // RaII rules 👑
+  PearlWindow pwin{1800, 1000, "LearnOpenGL"};
+  ImGuiWrapperContext imGuiContext{pwin.GetWindow()};
+
+  // framebuffer
+  std::unique_ptr<Framebuffer> m_ViewportFramebuffer;
+  glm::vec2 m_ViewportSize{1280, 70};
+
 
   Shader myShader{"shaders/vert.glsl", "shaders/frag.glsl"};
   Cube myCube{};

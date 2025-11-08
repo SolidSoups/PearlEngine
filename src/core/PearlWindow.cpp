@@ -57,6 +57,9 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
 
 PearlWindow::~PearlWindow(){
   std::cout << "PearlWindow::~PearlWindow() -> Terminating Window" << std::endl;
-  glfwTerminate();
+  if(window != nullptr){
+    glfwDestroyWindow(window);
+  }
+  std::cout << "PearlWindow terminated!" << "\n";
 }
 

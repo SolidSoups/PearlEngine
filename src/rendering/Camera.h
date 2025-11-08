@@ -19,7 +19,7 @@ public:
   // setters 
   void SetPosition(glm::vec3& position);
   void SetTarget(glm::vec3& target);
-  void SetAspectRatio(float& aspectRatio);
+  void SetAspectRatio(float aspectRatio);
 
   // getters
   glm::vec3 GetPosition() const { return m_Position; }

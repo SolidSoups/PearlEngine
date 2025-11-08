@@ -21,5 +21,5 @@ public:
     
 private:
   bool isInitialized = false;
-  GLFWwindow* window;
+  GLFWwindow* window = nullptr;
 };

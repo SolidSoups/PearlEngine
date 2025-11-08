@@ -35,7 +35,7 @@ void Camera::SetTarget(glm::vec3& target){
   UpdateCameraVectors();
 }
 
-void Camera::SetAspectRatio(float& aspectRatio){
+void Camera::SetAspectRatio(float aspectRatio){
   m_AspectRatio = aspectRatio;
   UpdateCameraVectors();
 }
