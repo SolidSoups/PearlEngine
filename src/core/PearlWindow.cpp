@@ -11,7 +11,7 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
   PearlEngine* engine = static_cast<PearlEngine*>(glfwGetWindowUserPointer(window));
   if(engine){
     float newAspect = (float)width / (float)height;
-    engine->mainCamera.SetAspectRatio(newAspect);
+    engine->m_Camera.SetAspectRatio(newAspect);
 
     // update window dimensions
     engine->pwin.window_width = width;

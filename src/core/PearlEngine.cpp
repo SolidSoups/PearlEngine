@@ -7,10 +7,10 @@
 #include <imgui.h>
 
 // src
-#include "PearlEngine.h"
-#include "Time.h"
 #include "Material.h"
+#include "PearlEngine.h"
 #include "Renderer.h"
+#include "Time.h"
 #include "ViewportEditorPanel.h"
 
 // std
@@ -30,7 +30,6 @@ PearlEngine::PearlEngine() {
   // store the engine as a user pointer in glfw
   glfwSetWindowUserPointer(pwin.GetWindow(), this);
 
-
   isInitialized = true;
   std::cout
       << "PearlEngine::PearlEngine() -> Engine constructed and initialized"
@@ -43,37 +42,49 @@ PearlEngine::~PearlEngine() {
   glfwTerminate();
 }
 
-void PearlEngine::Initialize(){
+void PearlEngine::Initialize() {
   // initialize the time
   Time::Initialize();
 
   // Create shader
   m_Shader = std::make_unique<Shader>("shaders/vert.glsl", "shaders/frag.glsl");
 
-  // Create cube
-  m_Cube = std::make_unique<Cube>();
-  m_Cube->transform.Translate(glm::vec3(0.0f, 0.0f, -2.0f));
-
   // Create material
   m_Material = std::make_unique<Material>(m_Shader.get());
-  m_Cube->SetMaterial(m_Material.get());
 
+  // Create some objects
+  auto cube1 = std::make_unique<Cube>();
+  cube1->transform.Translate(glm::vec3(0.0f, 0.0f, -2.0f));
+  cube1->SetMaterial(m_Material.get());
+  m_Scene.AddObject(std::move(cube1));
+
+  auto cube2 = std::make_unique<Cube>();
+  cube2->transform.Translate(glm::vec3(2.0f, 0.0f, -2.0f));
+  cube2->SetMaterial(m_Material.get());
+  m_Scene.AddObject(std::move(cube2));
+
+  auto cube3 = std::make_unique<Cube>();
+  cube3->transform.Translate(glm::vec3(-2.0f, 0.0f, -2.0f));
+  cube3->SetMaterial(m_Material.get());
+  m_Scene.AddObject(std::move(cube3));
 
   // Create viewport framebuffer
-  m_ViewportFramebuffer = std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
+  m_ViewportFramebuffer =
+      std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
 
   // Create the viewport editor panel
   auto viewportPanel =
-    std::make_unique<ViewportEditorPanel>(m_ViewportFramebuffer.get());
+      std::make_unique<ViewportEditorPanel>(m_ViewportFramebuffer.get());
   m_ViewportPanel = viewportPanel.get();
   m_Panels.push_back(std::move(viewportPanel)); // Transfer ownership to vector
 
   // Setup camera aspect ratio
   int framebufferWidth, frameBufferHeight;
-  glfwGetFramebufferSize(pwin.GetWindow(), &framebufferWidth, &frameBufferHeight);
+  glfwGetFramebufferSize(pwin.GetWindow(), &framebufferWidth,
+                         &frameBufferHeight);
   float aspectRatio = (float)framebufferWidth / (float)frameBufferHeight;
-  mainCamera.SetAspectRatio(aspectRatio);
-  mainCamera.OutputParameters();
+  m_Camera.SetAspectRatio(aspectRatio);
+  m_Camera.OutputParameters();
 
   // OpenGL state configuration
   glFrontFace(GL_CW);
@@ -101,49 +112,47 @@ void PearlEngine::RunUpdateLoop() {
   }
 }
 
-void PearlEngine::Update(){
-    // handle viewport resize
-    if(m_ViewportPanel->IsResized()){
-      glm::vec2 newSize = m_ViewportPanel->GetSize();
-      m_ViewportFramebuffer->Resize(newSize.x, newSize.y);
-      mainCamera.SetAspectRatio(newSize.x / newSize.y);
-    }
+void PearlEngine::Update() {
+  // handle viewport resize
+  if (m_ViewportPanel->IsResized()) {
+    glm::vec2 newSize = m_ViewportPanel->GetSize();
+    m_ViewportFramebuffer->Resize(newSize.x, newSize.y);
+    m_Camera.SetAspectRatio(newSize.x / newSize.y);
+  }
 
-    // update objects
-    m_Cube->transform.Rotate(Time::deltaTime * 0.1f, glm::vec3(1.0f, 0.0f, 0.0f));
-    m_Cube->transform.Rotate(Time::deltaTime * 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+  // update objects (currently does nothing, but ready for future!  )
+  m_Scene.Update();
 }
 
-void PearlEngine::Render(){
+void PearlEngine::Render() {
   // Render scene to framebuffer
   m_ViewportFramebuffer->Bind();
 
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  Renderer::BeginScene(mainCamera);
-  Renderer::Submit(*m_Cube.get());
-  Renderer::EndScene();
+  // Scene handles all the rendering now!
+  m_Scene.Render(m_Camera);
 
   m_ViewportFramebuffer->Unbind();
 }
 
-void PearlEngine::RenderEditor(){
-    imGuiContext.BeginFrame();
+void PearlEngine::RenderEditor() {
+  imGuiContext.BeginFrame();
 
-    // Render all editor panels 
-    for(auto& panel : m_Panels){
-      panel->OnImGuiRender();
-    }
+  // Render all editor panels
+  for (auto &panel : m_Panels) {
+    panel->OnImGuiRender();
+  }
 
-    // render imgui to the screen
-    int displayW, displayH;
-    glfwGetFramebufferSize(pwin.GetWindow(), &displayW, &displayH);
-    glViewport(0, 0, displayW, displayH);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+  // render imgui to the screen
+  int displayW, displayH;
+  glfwGetFramebufferSize(pwin.GetWindow(), &displayW, &displayH);
+  glViewport(0, 0, displayW, displayH);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
 
-    imGuiContext.Render();
+  imGuiContext.Render();
 }
 
 void PearlEngine::ProcessInput(GLFWwindow *window) {
@@ -151,5 +160,3 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, true);
   }
 }
-
-
