@@ -120,6 +120,16 @@ void PearlEngine::Update() {
     m_Camera.SetAspectRatio(newSize.x / newSize.y);
   }
 
+  // Handle camera controls
+  if(m_ViewportPanel->IsHovered()){
+    m_CameraController.OnUpdate(
+      m_ViewportPanel->GetMouseDelta(),
+      m_ViewportPanel->GetScrollDelta(),
+      m_ViewportPanel->IsRightMouseDown(),
+      m_ViewportPanel->IsMiddleMouseDown()
+    );
+  }
+
   // update objects (currently does nothing, but ready for future!  )
   m_Scene.Update();
 }
@@ -158,5 +168,8 @@ void PearlEngine::RenderEditor() {
 void PearlEngine::ProcessInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
+  }
+  else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+    m_CameraController.Reset();
   }
 }

@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Cube.h"
 #include "Camera.h"
+#include "CameraController.h"
 #include "FrameBuffer.h"
 #include "EditorPanel.h"
 #include "ViewportEditorPanel.h"
@@ -41,6 +42,7 @@ public:
 
   Scene m_Scene;
   Camera m_Camera{};
+  CameraController m_CameraController{&m_Camera};
 
   std::unique_ptr<Shader> m_Shader;
   std::unique_ptr<Material> m_Material;

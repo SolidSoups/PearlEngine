@@ -33,5 +33,22 @@ void ViewportEditorPanel::OnImGuiRender() {
     ImVec2(0, 1), ImVec2(1, 0)
   );
 
+  // Capture input state
+  m_IsHovered = ImGui::IsItemHovered();
+  m_IsFocused = ImGui::IsWindowFocused();
+
+  // Get mouse delta when hovering and clicking
+  if(m_IsHovered){
+    ImGuiIO& io = ImGui::GetIO();
+    m_ScrollDelta = io.MouseWheel;
+    m_MouseDelta = glm::vec2(io.MouseDelta.x, io.MouseDelta.y);
+    m_RightMouseDown = ImGui::IsMouseDown(ImGuiMouseButton_Right);
+    m_MiddleMouseDown = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
+  } else{
+    m_MouseDelta = glm::vec2(0.0f);
+    m_RightMouseDown = false;
+    m_MiddleMouseDown = false;
+  }
+
   ImGui::End();
 }
