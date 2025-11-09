@@ -21,6 +21,9 @@ public:
 
   void Initialize();
   void RunUpdateLoop();
+  void Update();
+  void Render();
+  void RenderEditor();
 
   inline bool IsInitialized() { return isInitialized; }
 private:

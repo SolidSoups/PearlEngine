@@ -89,11 +89,19 @@ void PearlEngine::RunUpdateLoop() {
 
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
-    Time::Update();
     ProcessInput(window);
 
-    imGuiContext.BeginFrame();
+    Time::Update();
+    Update();
 
+    Render();
+    RenderEditor();
+
+    glfwSwapBuffers(window);
+  }
+}
+
+void PearlEngine::Update(){
     // handle viewport resize
     if(m_ViewportPanel->IsResized()){
       glm::vec2 newSize = m_ViewportPanel->GetSize();
@@ -104,31 +112,38 @@ void PearlEngine::RunUpdateLoop() {
     // update objects
     m_Cube->transform.Rotate(Time::deltaTime * 0.1f, glm::vec3(1.0f, 0.0f, 0.0f));
     m_Cube->transform.Rotate(Time::deltaTime * 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+}
 
-    // render to framebuffer
-    m_ViewportFramebuffer->Bind();
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    Renderer::BeginScene(mainCamera);
-    Renderer::Submit(*m_Cube.get());
-    Renderer::EndScene();
-    m_ViewportFramebuffer->Unbind();
+void PearlEngine::Render(){
+  // Render scene to framebuffer
+  m_ViewportFramebuffer->Bind();
 
-    // Render all editor panels (includes viewport)
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  Renderer::BeginScene(mainCamera);
+  Renderer::Submit(*m_Cube.get());
+  Renderer::EndScene();
+
+  m_ViewportFramebuffer->Unbind();
+}
+
+void PearlEngine::RenderEditor(){
+    imGuiContext.BeginFrame();
+
+    // Render all editor panels 
     for(auto& panel : m_Panels){
       panel->OnImGuiRender();
     }
 
     // render imgui to the screen
     int displayW, displayH;
-    glfwGetFramebufferSize(window, &displayW, &displayH);
+    glfwGetFramebufferSize(pwin.GetWindow(), &displayW, &displayH);
     glViewport(0, 0, displayW, displayH);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     imGuiContext.Render();
-    glfwSwapBuffers(window);
-  }
 }
 
 void PearlEngine::ProcessInput(GLFWwindow *window) {
