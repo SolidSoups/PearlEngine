@@ -46,6 +46,7 @@ void ViewportEditorPanel::OnImGuiRender() {
     m_MiddleMouseDown = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
   } else{
     m_MouseDelta = glm::vec2(0.0f);
+    m_ScrollDelta = 0.0f;
     m_RightMouseDown = false;
     m_MiddleMouseDown = false;
   }
