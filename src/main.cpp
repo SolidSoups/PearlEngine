@@ -5,7 +5,6 @@
 // src
 #include "PearlWindow.h"
 #include "Shader.h"
-#include "Triangle.h"
 #include "PearlEngine.h"
 
 // std

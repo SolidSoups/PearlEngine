@@ -33,7 +33,11 @@ Mesh::Mesh(const float* vertices, size_t vertexCount, const unsigned int* indice
   glBindVertexArray(0);
 }
 
-void Mesh::Render(Shader& shader){
+void Mesh::Render(){
+  if(m_Material){
+    m_Material->Bind();
+  }
+
   glBindVertexArray(VAO);  
 
   if(EBO){
@@ -44,4 +48,8 @@ void Mesh::Render(Shader& shader){
   }
 
   glBindVertexArray(0);
+}
+
+void Mesh::SetMaterial(Material* material){
+  m_Material = material;
 }

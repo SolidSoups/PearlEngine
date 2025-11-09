@@ -1,7 +1,11 @@
 #pragma once
-#include "Shader.h"
+#include "Transform.h"
+
+class Material;
 
 class Renderable{ 
 public:
-  virtual void Render(Shader& aShader) = 0;
+  virtual void Render() = 0;
+  virtual Material* GetMaterial() const = 0;
+  Transform transform;
 };

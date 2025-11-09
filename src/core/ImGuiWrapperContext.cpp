@@ -39,7 +39,7 @@ void ImGuiWrapperContext::BeginFrame(){
   ImGui::NewFrame();
   ImGui::ShowDemoWindow();
 }
-void ImGuiWrapperContext::EndFrame(){
+void ImGuiWrapperContext::Render(){
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

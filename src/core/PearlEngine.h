@@ -6,8 +6,11 @@
 #include "Cube.h"
 #include "Camera.h"
 #include "FrameBuffer.h"
+#include "EditorPanel.h"
+#include "ViewportEditorPanel.h"
 
 #include <memory>
+#include <vector>
 
 struct GLFWwindow;
 
@@ -16,6 +19,7 @@ public:
   PearlEngine();
   ~PearlEngine();
 
+  void Initialize();
   void RunUpdateLoop();
 
   inline bool IsInitialized() { return isInitialized; }
@@ -31,11 +35,14 @@ public:
   std::unique_ptr<Framebuffer> m_ViewportFramebuffer;
   glm::vec2 m_ViewportSize{1280, 70};
 
-
-  Shader myShader{"shaders/vert.glsl", "shaders/frag.glsl"};
-  Cube myCube{};
+  std::unique_ptr<Shader> m_Shader;
+  std::unique_ptr<Material> m_Material;
+  std::unique_ptr<Cube> m_Cube;
 
   Camera mainCamera{};
+
+  std::vector<std::unique_ptr<EditorPanel>> m_Panels;
+  ViewportEditorPanel* m_ViewportPanel = nullptr;
 
 private:
   bool isInitialized = false;

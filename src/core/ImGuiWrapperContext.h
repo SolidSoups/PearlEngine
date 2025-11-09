@@ -15,6 +15,6 @@ public:
 
 public:
   void BeginFrame();
-  void EndFrame();
+  void Render();
   void Shutdown();
 };

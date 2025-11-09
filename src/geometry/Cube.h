@@ -7,8 +7,6 @@
 class Cube : public Mesh{
 public:
   Cube(); 
-
-  Transform transform;
 private:
   static const float s_Vertices[];
   static const unsigned int s_Indices[];

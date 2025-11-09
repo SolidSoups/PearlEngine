@@ -9,6 +9,9 @@
 // src
 #include "PearlEngine.h"
 #include "Time.h"
+#include "Material.h"
+#include "Renderer.h"
+#include "ViewportEditorPanel.h"
 
 // std
 #include <cmath>
@@ -27,8 +30,6 @@ PearlEngine::PearlEngine() {
   // store the engine as a user pointer in glfw
   glfwSetWindowUserPointer(pwin.GetWindow(), this);
 
-  // initialize the time
-  Time::Initialize();
 
   isInitialized = true;
   std::cout
@@ -42,89 +43,90 @@ PearlEngine::~PearlEngine() {
   glfwTerminate();
 }
 
+void PearlEngine::Initialize(){
+  // initialize the time
+  Time::Initialize();
 
-// b@UPDATE
-void PearlEngine::RunUpdateLoop() {
-  GLFWwindow *window = pwin.GetWindow();
+  // Create shader
+  m_Shader = std::make_unique<Shader>("shaders/vert.glsl", "shaders/frag.glsl");
+
+  // Create cube
+  m_Cube = std::make_unique<Cube>();
+  m_Cube->transform.Translate(glm::vec3(0.0f, 0.0f, -2.0f));
+
+  // Create material
+  m_Material = std::make_unique<Material>(m_Shader.get());
+  m_Cube->SetMaterial(m_Material.get());
+
 
   // Create viewport framebuffer
   m_ViewportFramebuffer = std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
 
-  myCube.transform.Translate(glm::vec3(0.0f, 0.0f, -2.0f));
+  // Create the viewport editor panel
+  auto viewportPanel =
+    std::make_unique<ViewportEditorPanel>(m_ViewportFramebuffer.get());
+  m_ViewportPanel = viewportPanel.get();
+  m_Panels.push_back(std::move(viewportPanel)); // Transfer ownership to vector
 
-  // get the framebuffer size and set the aspect ratio
+  // Setup camera aspect ratio
   int framebufferWidth, frameBufferHeight;
   glfwGetFramebufferSize(pwin.GetWindow(), &framebufferWidth, &frameBufferHeight);
   float aspectRatio = (float)framebufferWidth / (float)frameBufferHeight;
   mainCamera.SetAspectRatio(aspectRatio);
   mainCamera.OutputParameters();
 
-  // some openGL hints
+  // OpenGL state configuration
   glFrontFace(GL_CW);
   glDisable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
+}
 
+// b@UPDATE
+void PearlEngine::RunUpdateLoop() {
+  GLFWwindow *window = pwin.GetWindow();
 
-  // glfw loop
+  Initialize();
+
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
     Time::Update();
     ProcessInput(window);
 
-
     imGuiContext.BeginFrame();
 
-    // === VIEWPORT ===
-    ImGui::Begin("Viewport");
-
-    // get available content region
-    ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-
-    // Resize framebuffer if needed
-    if(viewportPanelSize.x > 0 && viewportPanelSize.y > 0){
-      if(viewportPanelSize.x != m_ViewportSize.x || viewportPanelSize.y != m_ViewportSize.y){
-        m_ViewportSize = {viewportPanelSize.x, viewportPanelSize.y};
-        m_ViewportFramebuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
-        mainCamera.SetAspectRatio(m_ViewportSize.x / m_ViewportSize.y);
-      }
+    // handle viewport resize
+    if(m_ViewportPanel->IsResized()){
+      glm::vec2 newSize = m_ViewportPanel->GetSize();
+      m_ViewportFramebuffer->Resize(newSize.x, newSize.y);
+      mainCamera.SetAspectRatio(newSize.x / newSize.y);
     }
 
-    // RENDER TO FRAMEBUFFER
-    m_ViewportFramebuffer->Bind();
+    // update objects
+    m_Cube->transform.Rotate(Time::deltaTime * 0.1f, glm::vec3(1.0f, 0.0f, 0.0f));
+    m_Cube->transform.Rotate(Time::deltaTime * 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
+    // render to framebuffer
+    m_ViewportFramebuffer->Bind();
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Render scene
-    myShader.Use();
-    float time = glfwGetTime();
-    myCube.transform.Rotate(Time::deltaTime * 0.1f, glm::vec3(1.0f, 0.0f, 0.0f));
-    myCube.transform.Rotate(Time::deltaTime * 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    myShader.SetMatrix4(myCube.transform.GetModelMatrix(), "transform");
-    myShader.SetMatrix4(mainCamera.GetProjectionMatrix(), "projection");
-    myShader.SetMatrix4(mainCamera.GetViewMatrix(), "view");
-    myCube.Render(myShader);
-
+    Renderer::BeginScene(mainCamera);
+    Renderer::Submit(*m_Cube.get());
+    Renderer::EndScene();
     m_ViewportFramebuffer->Unbind();
 
-    // Display framebuffer texture in ImGui
-    ImGui::Image(
-      (void*)(intptr_t)m_ViewportFramebuffer->GetTextureID(),
-      viewportPanelSize,
-      ImVec2(0,1), ImVec2(1, 0) // Flip vertically (OpenGL coords)
-    );
+    // Render all editor panels (includes viewport)
+    for(auto& panel : m_Panels){
+      panel->OnImGuiRender();
+    }
 
-    ImGui::End();
-
-    // === RENDER IMGUI TO DEFAULT RENDERER ===
+    // render imgui to the screen
     int displayW, displayH;
     glfwGetFramebufferSize(window, &displayW, &displayH);
     glViewport(0, 0, displayW, displayH);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    imGuiContext.EndFrame();
-
+    imGuiContext.Render();
     glfwSwapBuffers(window);
   }
 }

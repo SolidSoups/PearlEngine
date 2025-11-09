@@ -10,18 +10,13 @@ public:
     glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f),
     glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f));
 
-  // Get the view matrix calculated using lookAt
   glm::mat4 GetViewMatrix() const;
-
-  // Get the projection matrix
   glm::mat4 GetProjectionMatrix() const;
 
-  // setters 
   void SetPosition(glm::vec3& position);
   void SetTarget(glm::vec3& target);
   void SetAspectRatio(float aspectRatio);
 
-  // getters
   glm::vec3 GetPosition() const { return m_Position; }
   glm::vec3 GetTarget() const { return m_Target; }
   glm::vec3 GetForward() const { return m_Forward; }
@@ -29,7 +24,6 @@ public:
   glm::vec3 GetUp() const { return m_Up; }
   float GetAspectRatio() const { return m_AspectRatio; }
 
-  // Movement
   void Translate(glm::vec3& offset);
   void Move(float forward, float right, float up);
 
