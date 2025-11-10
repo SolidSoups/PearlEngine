@@ -44,7 +44,8 @@ public:
   std::unique_ptr<CameraController> m_CameraController;
 
   ShaderHandle m_ShaderHandle;
-  std::unique_ptr<Material> m_Material;
+  std::unique_ptr<Material> m_SunshineMaterial;
+  std::unique_ptr<Material> m_PearlMaterial;
 
   std::vector<std::unique_ptr<EditorPanel>> m_Panels;
   ViewportEditorPanel* m_ViewportPanel = nullptr;

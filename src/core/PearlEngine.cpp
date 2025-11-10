@@ -55,34 +55,36 @@ void PearlEngine::Initialize() {
   // initialize the time
   Time::Initialize();
 
-  // Load texture (using ResourceSystem)
-  TextureHandle kittyTextureHandle = 
+  // Load textures (using ResourceSystem)
+  TextureHandle sunshineTextureHandle = 
     ResourceSystem::Get().Textures().Create(LoadTexture("assets/sunshine.png"));
+  TextureHandle pearlTextureHandle = 
+    ResourceSystem::Get().Textures().Create(LoadTexture("assets/pearl.png"));
 
-  // Create shader
+  // Create shader (using ResourceSystem)
   m_ShaderHandle = 
     ResourceSystem::Get().Shaders().Create(CreateShader("shaders/vert.glsl", "shaders/frag.glsl"));
 
-
-
   // Create material
-  m_Material = std::make_unique<Material>(m_ShaderHandle);
-  m_Material->SetTexture("mainTexture", kittyTextureHandle);
+  m_SunshineMaterial = std::make_unique<Material>(m_ShaderHandle);
+  m_SunshineMaterial->SetTexture("mainTexture", sunshineTextureHandle);
+  m_PearlMaterial = std::make_unique<Material>(m_ShaderHandle);
+  m_PearlMaterial->SetTexture("mainTexture", pearlTextureHandle);
 
   // Create some objects
   auto cube1 = std::make_unique<Cube>();
   cube1->transform.Translate(glm::vec3(0.0f, 0.0f, -2.0f));
-  cube1->SetMaterial(m_Material.get());
+  cube1->SetMaterial(m_PearlMaterial.get());
   m_Scene.AddObject(std::move(cube1));
 
   auto cube2 = std::make_unique<Cube>();
   cube2->transform.Translate(glm::vec3(2.0f, 0.0f, -2.0f));
-  cube2->SetMaterial(m_Material.get());
+  cube2->SetMaterial(m_SunshineMaterial.get());
   m_Scene.AddObject(std::move(cube2));
 
   auto cube3 = std::make_unique<Cube>();
   cube3->transform.Translate(glm::vec3(-2.0f, 0.0f, -2.0f));
-  cube3->SetMaterial(m_Material.get());
+  cube3->SetMaterial(m_SunshineMaterial.get());
   m_Scene.AddObject(std::move(cube3));
 
   // Create viewport framebuffer
