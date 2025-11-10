@@ -54,20 +54,19 @@ void PearlEngine::Initialize() {
 
   // initialize the time
   Time::Initialize();
-  std::cout << "Time init" << "\n";
 
   // Load texture (using ResourceSystem)
-  TextureHandle kittyTextureHandle = ResourceSystem::Get().Textures().Create(LoadTexture("assets/sunshine.png"));
-
-  // load da texture up
-  m_KittyTexture = std::make_unique<Texture>("/home/elias/Projects/PearlEngine/assets/sunshine.png", false);
-  std::cout << "Created kitty texture" << "\n";
+  TextureHandle kittyTextureHandle = 
+    ResourceSystem::Get().Textures().Create(LoadTexture("assets/sunshine.png"));
 
   // Create shader
-  m_Shader = std::make_unique<Shader>("shaders/vert.glsl", "shaders/frag.glsl");
+  m_ShaderHandle = 
+    ResourceSystem::Get().Shaders().Create(CreateShader("shaders/vert.glsl", "shaders/frag.glsl"));
+
+
 
   // Create material
-  m_Material = std::make_unique<Material>(m_Shader.get());
+  m_Material = std::make_unique<Material>(m_ShaderHandle);
   m_Material->SetTexture("mainTexture", kittyTextureHandle);
 
   // Create some objects

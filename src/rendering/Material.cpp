@@ -1,9 +1,10 @@
 #include "Material.h"
-#include "Shader.h"
 #include "ResourceSystem.h"
 
-Material::Material(Shader* shader)
-  : m_Shader(shader)
+#include <iostream>
+
+Material::Material(ShaderHandle shaderHandle)
+  : m_ShaderHandle(shaderHandle)
 {}
 
 // uniform setters
@@ -14,26 +15,32 @@ void Material::SetInt(const std::string& name, int value)               { m_Ints
 void Material::SetTexture(const std::string& name, const TextureHandle& value)        { m_Textures[name] = value; }
 
 void Material::Bind(){
-  m_Shader->Use();
+  ShaderData* shaderData = ResourceSystem::Get().Shaders().Get(m_ShaderHandle);
+  if(!shaderData){
+    std::cerr << "Material::Bind() -> Shader data is invalid" << "\n";
+    return;
+  }
+
+  UseShader(*shaderData);
 
   // Upload all ints
   for(const auto& [name, value] : m_Ints){
-    m_Shader->SetInt(name, value);
+    ShaderSetInt(*shaderData, name.c_str(), value);
   }
 
   // Upload all floats
   for(const auto& [name, value] : m_Floats){
-    m_Shader->SetFloat(name, value);
+    ShaderSetFloat(*shaderData, name.c_str(), value);
   }
 
   // Upload all vec3s
   for(const auto& [name, value] : m_Vec3s){
-    m_Shader->SetVec3(name, value);
+    ShaderSetVec3(*shaderData, name.c_str(), value);
   }
 
   // Upload all vec4s
   for(const auto& [name, value] : m_Vec4s){
-    m_Shader->SetVec4(name, value);
+    ShaderSetVec4(*shaderData, name.c_str(), value);
   }
 
   // Upload all textures
@@ -44,7 +51,7 @@ void Material::Bind(){
       continue;
 
     BindTexture(*data, textureSlot);
-    m_Shader->SetInt(name, textureSlot);
+    ShaderSetInt(*shaderData, name.c_str(), textureSlot);
     textureSlot++;
   }
 }

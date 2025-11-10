@@ -19,14 +19,14 @@ TextureData LoadTexture(const std::string& filepath, bool generateMipMaps){
 
   // check if data couldn't be loaded
   if(!data){
-    std::cerr << "TextureData.h: LoadTexture: stbi_load return NULL:\n"
+    std::cerr << "TextureData.cpp: LoadTexture: stbi_load return NULL:\n"
               << "Reason: " << stbi_failure_reason() << "\n";
     return {};
   }
 
   // add check on size
   if(width > 512 || height > 512){
-    std::cout << "TextureData.h: LoadTexture: Image size "
+    std::cout << "TextureData.cpp: LoadTexture: Image size "
               << width << "x" << height 
               << " is exceeding. OpenGL may not be able to handle such large textures" << "\n";
   }
@@ -47,7 +47,7 @@ TextureData LoadTexture(const std::string& filepath, bool generateMipMaps){
       dataFormat = GL_RGBA;
       break;
     default:
-      std::cerr << "TextureData.h: LoadTexture: Unsupported channel count: "
+      std::cerr << "TextureData.cpp: LoadTexture: Unsupported channel count: "
                 << channels << "\n";
       stbi_image_free(data);
       return {};
@@ -89,7 +89,7 @@ TextureData LoadTexture(const std::string& filepath, bool generateMipMaps){
   // free CPU memory (GPU has a copy of data now)
   stbi_image_free(data);
 
-  std::cout << "TextureData.h: LoadTexture: Loaded texture: " << filepath << " (" << width << "x"
+  std::cout << "TextureData.cpp: LoadTexture: Loaded texture: " << filepath << " (" << width << "x"
             << height << ", " << channels << " channels)" << std::endl;
 
   return textureData;

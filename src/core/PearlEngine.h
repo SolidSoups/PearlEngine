@@ -2,7 +2,6 @@
 
 #include "GUIContext.h"
 #include "PearlWindow.h"
-#include "Shader.h"
 #include "Cube.h"
 #include "Camera.h"
 #include "CameraController.h"
@@ -10,7 +9,6 @@
 #include "EditorPanel.h"
 #include "ViewportEditorPanel.h"
 #include "Scene.h"
-#include "Texture.h"
 
 #include <memory>
 #include <vector>
@@ -45,9 +43,8 @@ public:
   Camera m_Camera{};
   std::unique_ptr<CameraController> m_CameraController;
 
-  std::unique_ptr<Shader> m_Shader;
+  ShaderHandle m_ShaderHandle;
   std::unique_ptr<Material> m_Material;
-  std::unique_ptr<Texture> m_KittyTexture;
 
   std::vector<std::unique_ptr<EditorPanel>> m_Panels;
   ViewportEditorPanel* m_ViewportPanel = nullptr;

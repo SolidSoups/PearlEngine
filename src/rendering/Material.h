@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 
 // lib
-#include "Shader.h"
+#include "ShaderData.h"
 #include "TextureData.h"
 
 // std
@@ -13,9 +13,9 @@
 
 class Material{
 public:
-  Material(Shader* shader);
+  Material(ShaderHandle shaderHandle);
 
-  Shader* GetShader() const { return m_Shader; }
+  ShaderHandle GetShaderHandle() const { return m_ShaderHandle; }
 public:
   void SetFloat(const std::string& name, float value);
   void SetVec3(const std::string& name, const glm::vec3& value);
@@ -28,7 +28,7 @@ public:
   void Unbind();
 
 private:
-  Shader* m_Shader;
+  ShaderHandle m_ShaderHandle;
 
   // uniforms
   std::unordered_map<std::string, float> m_Floats;
