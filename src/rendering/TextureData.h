@@ -10,7 +10,7 @@ struct TextureData{
   uint32_t width;
   uint32_t height;
   uint32_t channels;
-  GLuint textureID = 0;
+  GLuint id = 0;
 };
 struct TextureTag {};
 using TextureHandle = Handle<TextureTag>;
@@ -18,4 +18,5 @@ using TextureHandle = Handle<TextureTag>;
 TextureData LoadTexture(const std::string& filepath, bool generateMipMaps = true);
 void BindTexture(TextureData texData, unsigned int slot);
 void UnbindTexture();
+void DestroyTexture(TextureData texData);
 

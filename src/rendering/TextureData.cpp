@@ -57,8 +57,8 @@ TextureData LoadTexture(const std::string& filepath, bool generateMipMaps){
   TextureData textureData{(uint32_t)width, (uint32_t)height, (uint32_t)channels};
 
   // create OpenGL texture object
-  glGenTextures(1, &textureData.textureID);
-  glBindTexture(GL_TEXTURE_2D, textureData.textureID);
+  glGenTextures(1, &textureData.id);
+  glBindTexture(GL_TEXTURE_2D, textureData.id);
 
   // set texture parameters
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -98,10 +98,13 @@ TextureData LoadTexture(const std::string& filepath, bool generateMipMaps){
 
 void BindTexture(TextureData texData, unsigned int slot){
   glActiveTexture(GL_TEXTURE0 + slot);
-  glBindTexture(GL_TEXTURE_2D, texData.textureID);
+  glBindTexture(GL_TEXTURE_2D, texData.id);
 }
 
 void UnbindTexture(){
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void DestroyTexture(TextureData texData){
+  glDeleteTextures(1, &texData.id); 
+}

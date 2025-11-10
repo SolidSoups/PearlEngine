@@ -16,5 +16,17 @@ public:
 
   auto& Textures() { return m_Textures; }
   auto& Shaders() { return m_Shaders; }
+
+  ~ResourceSystem(){
+    // clean up all textures
+    for(auto& [handle, textureData] : m_Textures.GetAll()){
+      DestroyTexture(textureData);
+    }
+
+    // clean up all shaders
+    for(auto& [handle, shaderData] : m_Shaders.GetAll()){
+      DestroyShader(shaderData);
+    }
+  }
 };
 

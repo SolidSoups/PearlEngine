@@ -106,7 +106,7 @@ void ResetShader(){
   glUseProgram(0);
 }
 
-void DeleteShader(ShaderData shaderData){
+void DestroyShader(ShaderData shaderData){
   glDeleteProgram(shaderData.id);
 }
 

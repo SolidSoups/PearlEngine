@@ -26,4 +26,7 @@ public:
     m_Resources.erase(handle); // TODO: slooooow
     m_Allocator.Free(handle);
   }
+
+  auto& GetAll() { return m_Resources; }
+  const auto& GetAll() const { return m_Resources; }
 };

@@ -14,7 +14,7 @@ using ShaderHandle = Handle<ShaderTag>;
 ShaderData CreateShader(const char *vertexPath, const char *fragmentPath);
 void UseShader(ShaderData shaderData);
 void ResetShader();
-void DeleteShader(ShaderData shaderData);
+void DestroyShader(ShaderData shaderData);
 
 void ShaderSetVec3(ShaderData shaderData, const char *name,
                    const glm::vec3 &value);
