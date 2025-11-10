@@ -1,4 +1,4 @@
-#include "ImGuiWrapperContext.h"
+#include "GUIContext.h"
 
 // idk if i need these
 #include "glad/glad.h"
@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-ImGuiWrapperContext::ImGuiWrapperContext(GLFWwindow* window){
+GUIContext::GUIContext(GLFWwindow* window){
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
@@ -28,18 +28,18 @@ ImGuiWrapperContext::ImGuiWrapperContext(GLFWwindow* window){
   std::cout << "ImGuiContext::ImGuiContext() -> ImGui Context initialized!" << std::endl;
 }
 
-ImGuiWrapperContext::~ImGuiWrapperContext(){
+GUIContext::~GUIContext(){
   Shutdown();
 }
 
-void ImGuiWrapperContext::BeginFrame(){
+void GUIContext::BeginFrame(){
 
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
   ImGui::ShowDemoWindow();
 }
-void ImGuiWrapperContext::Render(){
+void GUIContext::Render(){
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -54,7 +54,7 @@ void ImGuiWrapperContext::Render(){
     // TODO for OpenGl: restore current GL context
   }
 }
-void ImGuiWrapperContext::Shutdown(){
+void GUIContext::Shutdown(){
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();

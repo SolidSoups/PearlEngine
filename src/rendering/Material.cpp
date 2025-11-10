@@ -1,5 +1,6 @@
 #include "Material.h"
 #include "Shader.h"
+#include "ResourceSystem.h"
 
 Material::Material(Shader* shader)
   : m_Shader(shader)
@@ -10,7 +11,7 @@ void Material::SetFloat(const std::string& name, float value)           { m_Floa
 void Material::SetVec3(const std::string& name, const glm::vec3& value) { m_Vec3s[name] = value; }
 void Material::SetVec4(const std::string& name, const glm::vec4& value) { m_Vec4s[name] = value; }
 void Material::SetInt(const std::string& name, int value)               { m_Ints[name] = value; }
-void Material::SetTexture(const std::string& name, GLuint value)        { m_Textures[name] = value; }
+void Material::SetTexture(const std::string& name, const TextureHandle& value)        { m_Textures[name] = value; }
 
 void Material::Bind(){
   m_Shader->Use();
@@ -37,15 +38,23 @@ void Material::Bind(){
 
   // Upload all textures
   int textureSlot = 0;
-  for(const auto& [name, textureID] : m_Textures){
-    glActiveTexture(GL_TEXTURE0 + textureSlot);
-    glBindTexture(GL_TEXTURE_2D, textureID);
+  for(const auto& [name, textureHandle] : m_Textures){
+    TextureData* data = ResourceSystem::Get().Textures().Get(textureHandle);
+    if(!data)
+      continue;
+
+    BindTexture(*data, textureSlot);
     m_Shader->SetInt(name, textureSlot);
     textureSlot++;
   }
 }
 
 void Material::Unbind(){
-  glUseProgram(0);
+  // unbind all textures
+  for(int i = 0; i < m_Textures.size(); i++){
+    glActiveTexture(GL_TEXTURE0 + i);
+    glBindTexture(GL_TEXTURE_2D, 0);
+  }
 
-glUseProgram(0);}
+  glUseProgram(0);
+}

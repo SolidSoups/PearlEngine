@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ImGuiWrapperContext.h"
+#include "GUIContext.h"
 #include "PearlWindow.h"
 #include "Shader.h"
 #include "Cube.h"
@@ -10,6 +10,7 @@
 #include "EditorPanel.h"
 #include "ViewportEditorPanel.h"
 #include "Scene.h"
+#include "Texture.h"
 
 #include <memory>
 #include <vector>
@@ -34,7 +35,7 @@ private:
 public:
   // RaII rules 👑
   PearlWindow pwin{1800, 1000, "LearnOpenGL"};
-  ImGuiWrapperContext imGuiContext{pwin.GetWindow()};
+  GUIContext imGuiContext{pwin.GetWindow()};
 
   // framebuffer
   std::unique_ptr<Framebuffer> m_ViewportFramebuffer;
@@ -42,10 +43,11 @@ public:
 
   Scene m_Scene;
   Camera m_Camera{};
-  CameraController m_CameraController{&m_Camera};
+  std::unique_ptr<CameraController> m_CameraController;
 
   std::unique_ptr<Shader> m_Shader;
   std::unique_ptr<Material> m_Material;
+  std::unique_ptr<Texture> m_KittyTexture;
 
   std::vector<std::unique_ptr<EditorPanel>> m_Panels;
   ViewportEditorPanel* m_ViewportPanel = nullptr;

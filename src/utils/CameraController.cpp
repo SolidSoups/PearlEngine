@@ -15,6 +15,8 @@ void CameraController::Reset(){
   m_Pitch = 0.0f;
   m_OrbitDistance = 5.0f;
   UpdateCameraPosition();
+  m_OrbitTarget = {0.0f, 0.0f, -2.0f};
+  m_Camera->SetTarget(m_OrbitTarget);
 }
 
 void CameraController::OnUpdate(glm::vec2 mouseDelta, float scrollDelta, bool rightMouseDown, bool middleMouseDown){

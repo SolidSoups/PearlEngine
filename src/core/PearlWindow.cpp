@@ -51,6 +51,7 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
   glViewport(0, 0, width, height);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+  glfwMakeContextCurrent(window);
   isInitialized = true;
   std::cout << "PearlWindow::PearlWindow(..) -> Succesfully initialized window" << std::endl;
 }

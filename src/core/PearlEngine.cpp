@@ -10,8 +10,11 @@
 #include "Material.h"
 #include "PearlEngine.h"
 #include "Renderer.h"
+#include "ResourceSystem.h"
 #include "Time.h"
 #include "ViewportEditorPanel.h"
+#include "ResourceManager.h"
+#include "TextureData.h"
 
 // std
 #include <cmath>
@@ -43,14 +46,29 @@ PearlEngine::~PearlEngine() {
 }
 
 void PearlEngine::Initialize() {
+  std::cout << "PearlEngine::Initialize() -> Beginning initialization" << std::endl;
+  GLFWwindow* window = pwin.GetWindow();
+  glfwMakeContextCurrent(window);
+  
+  m_CameraController = std::make_unique<CameraController>(&m_Camera);
+
   // initialize the time
   Time::Initialize();
+  std::cout << "Time init" << "\n";
+
+  // Load texture (using ResourceSystem)
+  TextureHandle kittyTextureHandle = ResourceSystem::Get().Textures().Create(LoadTexture("assets/sunshine.png"));
+
+  // load da texture up
+  m_KittyTexture = std::make_unique<Texture>("/home/elias/Projects/PearlEngine/assets/sunshine.png", false);
+  std::cout << "Created kitty texture" << "\n";
 
   // Create shader
   m_Shader = std::make_unique<Shader>("shaders/vert.glsl", "shaders/frag.glsl");
 
   // Create material
   m_Material = std::make_unique<Material>(m_Shader.get());
+  m_Material->SetTexture("mainTexture", kittyTextureHandle);
 
   // Create some objects
   auto cube1 = std::make_unique<Cube>();
@@ -90,6 +108,8 @@ void PearlEngine::Initialize() {
   glFrontFace(GL_CW);
   glDisable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
+
+  std::cout << "PearlEngine::Initialize() -> initialization finished" << std::endl;
 }
 
 // b@UPDATE
@@ -122,7 +142,7 @@ void PearlEngine::Update() {
 
   // Handle camera controls
   if(m_ViewportPanel->IsHovered()){
-    m_CameraController.OnUpdate(
+    m_CameraController->OnUpdate(
       m_ViewportPanel->GetMouseDelta(),
       m_ViewportPanel->GetScrollDelta(),
       m_ViewportPanel->IsRightMouseDown(),
@@ -170,6 +190,6 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, true);
   }
   else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-    m_CameraController.Reset();
+    m_CameraController->Reset();
   }
 }

@@ -8,10 +8,10 @@ struct GLFWwindow;
 //     io.WantCaptureMouse/io.WantCaptureKeyboard are set.
 //
 
-class ImGuiWrapperContext {
+class GUIContext {
 public:
-  ImGuiWrapperContext(GLFWwindow* window);
-  ~ImGuiWrapperContext();
+  GUIContext(GLFWwindow* window);
+  ~GUIContext();
 
 public:
   void BeginFrame();

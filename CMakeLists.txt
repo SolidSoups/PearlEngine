@@ -41,7 +41,10 @@ target_link_libraries(imgui
 # target
 add_executable(game_engine)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
-target_sources(game_engine PRIVATE ${SOURCES})
+target_sources(game_engine PRIVATE 
+  external/stb/stb_image.cpp
+  ${SOURCES}
+)
 target_link_libraries(game_engine 
   PRIVATE 
     glfw 
@@ -56,5 +59,7 @@ target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/components
   ${CMAKE_CURRENT_SOURCE_DIR}/src/utils
   ${CMAKE_CURRENT_SOURCE_DIR}/src/editor
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/resources
+  external/stb
   external/glm
 )

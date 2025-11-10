@@ -4,6 +4,7 @@
 
 // lib
 #include "Shader.h"
+#include "TextureData.h"
 
 // std
 #include <string>
@@ -20,7 +21,7 @@ public:
   void SetVec3(const std::string& name, const glm::vec3& value);
   void SetVec4(const std::string& name, const glm::vec4& value);
   void SetInt(const std::string& name, int value);
-  void SetTexture(const std::string& name, GLuint textureID);
+  void SetTexture(const std::string& name, const TextureHandle& value);
 
 public:
   void Bind();
@@ -34,5 +35,5 @@ private:
   std::unordered_map<std::string, glm::vec3> m_Vec3s;
   std::unordered_map<std::string, glm::vec4> m_Vec4s;
   std::unordered_map<std::string, int> m_Ints;
-  std::unordered_map<std::string, GLuint> m_Textures;
+  std::unordered_map<std::string, TextureHandle> m_Textures;
 };

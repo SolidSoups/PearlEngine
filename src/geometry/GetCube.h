@@ -1,6 +1,7 @@
-#include "Cube.h"
+#pragma once
 
-const float Cube::s_Vertices[] = {
+#include <cstddef>
+const float cubeVertices[]{
   // Positions          // Color
   //
   // -front face
@@ -40,9 +41,9 @@ const float Cube::s_Vertices[] = {
   0.5f, -0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   0.0f, 0.0f
 };
 
-const size_t Cube::s_VertexCount = 24;
+const size_t cubeVertexCount = 24;
 
-const unsigned int Cube::s_Indices[] =  {
+const unsigned int cubeIndices[] =  {
   // Front face
   0, 2, 1, 2, 0, 3,
   // Back face
@@ -58,7 +59,4 @@ const unsigned int Cube::s_Indices[] =  {
 };
 
 
-const size_t Cube::s_IndexCount = 36;
-
-Cube::Cube()
-  : Mesh(s_Vertices, s_VertexCount, s_Indices, s_IndexCount){}
+const size_t cubeIndexCount = 36;
