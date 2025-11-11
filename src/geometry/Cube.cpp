@@ -57,8 +57,4 @@ const unsigned int Cube::s_Indices[] =  {
   20, 22, 21, 22, 20, 23
 };
 
-
 const size_t Cube::s_IndexCount = 36;
-
-Cube::Cube()
-  : Mesh(s_Vertices, s_VertexCount, s_Indices, s_IndexCount){}

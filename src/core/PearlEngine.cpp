@@ -12,6 +12,8 @@
 #include "Time.h"
 #include "ViewportEditorPanel.h"
 #include "Cube.h"
+#include "GameObject.h"
+#include "TransformComponent.h"
 
 #include "ResourceSystem.h"
 #include "ResourceManager.h"
@@ -47,13 +49,6 @@ PearlEngine::~PearlEngine() {
   glfwTerminate();
 }
 
-std::unique_ptr<Cube> inCreateCube(const glm::vec3& pos, MaterialHandle matHandle){
-  auto cube = std::make_unique<Cube>();
-  cube->transform.Translate(pos);
-  cube->SetMaterial(matHandle);
-  return cube;
-};
-
 void PearlEngine::Initialize() {
   std::cout << "PearlEngine::Initialize() -> Beginning initialization" << std::endl;
   GLFWwindow* window = pwin.GetWindow();
@@ -77,24 +72,26 @@ void PearlEngine::Initialize() {
   MaterialHandle pearlMatHandle = CreateMaterial(m_ShaderHandle);
   MaterialSetTexture(pearlMatHandle, "mainTexture", pearlTextureHandle);
 
-  // Create some objects
-  auto cube1 = inCreateCube(
-    glm::vec3(0.0f, 0.0f, -2.0f),
-    pearlMatHandle
-  );
-  m_Scene.AddObject(std::move(cube1));
+  // Create the cube mesh
+  MeshHandle cubeMeshHandle = CreateMesh(
+    Cube::s_Vertices, 
+    Cube::s_VertexCount, 
+    Cube::s_Indices, 
+    Cube::s_IndexCount);
 
-  auto cube2 = inCreateCube(
-    glm::vec3(2.0f, 0.0f, -2.0f),
-    sunMatHandle
-  );
-  m_Scene.AddObject(std::move(cube2));
+  std::cout << "Creating game objects" << std::endl;
+  // Create some gameobjects
+  GameObject* go1 = m_Scene.CreateGameObject();
+  go1->AddComponent<TransformComponent>();
+  go1->AddComponent<RenderComponent>(cubeMeshHandle, pearlMatHandle);
 
-  auto cube3 = inCreateCube(
-    glm::vec3(-2.0f, 0.0f, -2.0f),
-    sunMatHandle
-  );
-  m_Scene.AddObject(std::move(cube3));
+  GameObject* go2 = m_Scene.CreateGameObject();
+  go2->AddComponent<TransformComponent>(glm::vec3(-2.0f, 0.0f, 0.0f));
+  go2->AddComponent<RenderComponent>(cubeMeshHandle, sunMatHandle);
+
+  GameObject* go3 = m_Scene.CreateGameObject();
+  go3->AddComponent<TransformComponent>(glm::vec3(2.0f, 0.0f, 0.0f));
+  go3->AddComponent<RenderComponent>(cubeMeshHandle, sunMatHandle);
 
   // Create viewport framebuffer
   m_ViewportFramebuffer =

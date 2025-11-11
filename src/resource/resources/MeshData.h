@@ -13,7 +13,6 @@ struct MeshData{
   GLuint EBO = 0;
   size_t vertexCount;
   size_t indexCount;
-  MaterialHandle materialHandle;
 };
 struct MeshTag{};
 using MeshHandle = Handle<MeshTag>;
@@ -25,5 +24,3 @@ MeshHandle CreateMesh(
   size_t indexCount);
 void DestroyMesh(MeshHandle handle);
 void RenderMesh(MeshHandle handle);
-void MeshSetMaterial(MeshHandle meshHandle, MaterialHandle matHandle);
-MaterialHandle MeshGetMaterial(MeshHandle meshhandle);

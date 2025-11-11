@@ -14,7 +14,3 @@ Mesh::~Mesh(){
 void Mesh::Render(){
   RenderMesh(m_MeshHandle);
 }
-
-void Mesh::SetMaterial(MaterialHandle handle){
-  MeshSetMaterial(m_MeshHandle, handle);
-}

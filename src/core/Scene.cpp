@@ -1,25 +1,20 @@
 #include "Scene.h"
-#include "Renderable.h"
-#include "Renderer.h"
+
+#include <iostream>
 #include <algorithm>
 
-void Scene::AddObject(std::unique_ptr<Renderable> object) {
-  m_Objects.push_back(std::move(object));
-}
+#include "RenderComponent.h"
+#include "Renderable.h"
+#include "Renderer.h"
 
-void Scene::RemoveObject(Renderable *object) {
-  auto it = std::find_if(m_Objects.begin(), m_Objects.end(),
-                         [object](const std::unique_ptr<Renderable> &ptr) {
-                           return ptr.get() == object;
-                         });
-  if(it != m_Objects.end()){
-    std::swap(*it, m_Objects.back());
-    m_Objects.pop_back();
-  }
-}
+#include "GameObject.h"
+#include "TransformComponent.h"
 
-void Scene::Clear(){
-  m_Objects.clear();
+GameObject* Scene::CreateGameObject(){
+  auto newGO = std::make_unique<GameObject>(m_NextObjectID++);
+  GameObject* ptr = newGO.get();
+  m_GameObjects.push_back(std::move(newGO));
+  return ptr;
 }
 
 void Scene::Update(){
@@ -28,8 +23,12 @@ void Scene::Update(){
 
 void Scene::Render(Camera& camera){
   Renderer::BeginScene(camera);
-  for(auto& object : m_Objects){
-    Renderer::Submit(*object.get());
+  for(auto& object : m_GameObjects){
+    auto transform = object->GetComponent<TransformComponent>();
+    auto renderComp = object->GetComponent<RenderComponent>();
+
+    if(transform && renderComp)
+      Renderer::Submit(*renderComp, *transform);
   }
   Renderer::EndScene();
 }

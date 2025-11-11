@@ -3,7 +3,6 @@
 #include "Camera.h"
 #include "MaterialData.h"
 #include "Renderable.h"
-#include "Transform.h"
 #include "ShaderData.h"
 
 #include <iostream>
@@ -18,18 +17,15 @@ void Renderer::EndScene(){
   s_ActiveCamera = nullptr;
 }
 
-void Renderer::Submit(Renderable &renderable){
-  // Get the mesh's material
-  MaterialHandle materialHandle = renderable.GetMaterialHandle();
-
-  BindMaterial(materialHandle);
+void Renderer::Submit(const RenderComponent& renderComp, const TransformComponent& transformComp){
+  BindMaterial(renderComp.materialHandle);
 
   // Set matrices
-  ShaderHandle shaderHandle = MaterialGetShaderHandle(materialHandle);
-  ShaderSetMatrix4(shaderHandle, "transform", renderable.transform.GetModelMatrix());
+  ShaderHandle shaderHandle = MaterialGetShaderHandle(renderComp.materialHandle);
+  ShaderSetMatrix4(shaderHandle, "transform", transformComp.GetModelMatrix());
   ShaderSetMatrix4(shaderHandle, "view", s_ActiveCamera->GetViewMatrix());
   ShaderSetMatrix4(shaderHandle, "projection", s_ActiveCamera->GetProjectionMatrix());
 
   // Render the mesh
-  renderable.Render();
+  RenderMesh(renderComp.meshHandle);
 }

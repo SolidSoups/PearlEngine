@@ -76,12 +76,6 @@ void RenderMesh(MeshHandle handle){
   MeshData* meshData = GET_MESH_OR_NULL(handle);
   if(!meshData) return;
 
-  // cannot render without material 
-  if(meshData->materialHandle == MaterialHandle::Invalid())
-    return;
-
-  BindMaterial(meshData->materialHandle);  
-
   glBindVertexArray(meshData->VAO);
   if(meshData->EBO){
     glDrawElements(GL_TRIANGLES, meshData->indexCount, GL_UNSIGNED_INT, 0);
@@ -91,18 +85,4 @@ void RenderMesh(MeshHandle handle){
   }
 
   glBindVertexArray(0);
-}
-
-void MeshSetMaterial(MeshHandle meshHandle, MaterialHandle matHandle){
-  MeshData* meshData = GET_MESH_OR_NULL(meshHandle);
-  if(!meshData) return;
-
-  meshData->materialHandle = matHandle;
-}
-
-MaterialHandle MeshGetMaterial(MeshHandle meshHandle){
-  MeshData* meshData = GET_MESH_OR_NULL(meshHandle);
-  if(!meshData) return MaterialHandle::Invalid();
-
-  return meshData->materialHandle; 
 }

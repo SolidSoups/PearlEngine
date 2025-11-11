@@ -1,13 +1,9 @@
 #pragma once
 
-#include "Mesh.h"
-#include "Transform.h"
+#include <cstddef>
 
-
-class Cube : public Mesh{
+class Cube {
 public:
-  Cube(); 
-private:
   static const float s_Vertices[];
   static const unsigned int s_Indices[];
   static const size_t s_VertexCount;

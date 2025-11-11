@@ -11,10 +11,6 @@ public:
 
   void Render();
 
-public:
-  void SetMaterial(MaterialHandle handle);
-  MaterialHandle GetMaterialHandle() const { return MeshGetMaterial(m_MeshHandle); }
-
 private:
   MeshHandle m_MeshHandle;
 

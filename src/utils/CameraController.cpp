@@ -4,10 +4,7 @@
 CameraController::CameraController(Camera* camera)
   : m_Camera(camera)
 {
-  // Calculate initial yaw/pitch from camera position
-  glm::vec3 direction = glm::normalize(m_OrbitTarget - m_Camera->GetPosition());
-  m_Pitch = glm::degrees(asin(direction.y));
-  m_Yaw = glm::degrees(atan2(direction.z, direction.x));
+  Reset();
 }
 
 void CameraController::Reset(){
@@ -15,7 +12,7 @@ void CameraController::Reset(){
   m_Pitch = 0.0f;
   m_OrbitDistance = 5.0f;
   UpdateCameraPosition();
-  m_OrbitTarget = {0.0f, 0.0f, -2.0f};
+  m_OrbitTarget = {0.0f, 0.0f, 0.0f};
   m_Camera->SetTarget(m_OrbitTarget);
 }
 
