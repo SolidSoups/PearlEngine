@@ -19,6 +19,13 @@ MaterialData CreateMaterial(ShaderHandle shaderHandle){
   return {shaderHandle};
 }
 
+ShaderHandle MaterialGetShaderHandle(MaterialHandle handle){
+  MaterialData* materialData = GetMaterialData(handle, "MaterialGetShaderHandle");
+  if(!materialData) return {};
+  
+  return materialData->shaderHandle;
+}
+
 void BindMaterial(MaterialHandle handle){
   MaterialData* materialData = GetMaterialData(handle, "BindMaterial");
   if(!materialData) return;

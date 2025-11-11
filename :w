@@ -1,10 +1,11 @@
 #include "Renderer.h"
 
 #include "Camera.h"
-#include "MaterialData.h"
 #include "Renderable.h"
 #include "Transform.h"
+#include "Material.h"
 #include "ShaderData.h"
+#include "ResourceSystem.h"
 
 #include <iostream>
 
@@ -25,10 +26,9 @@ void Renderer::Submit(Renderable &renderable){
   BindMaterial(materialHandle);
 
   // Set matrices
-  ShaderHandle shaderHandle = MaterialGetShaderHandle(materialHandle);
-  ShaderSetMatrix4(shaderHandle, "transform", renderable.transform.GetModelMatrix());
-  ShaderSetMatrix4(shaderHandle, "view", s_ActiveCamera->GetViewMatrix());
-  ShaderSetMatrix4(shaderHandle, "projection", s_ActiveCamera->GetProjectionMatrix());
+  ShaderSetMatrix4(materialHandle->GetShaderHandle(), "transform", renderable.transform.GetModelMatrix());
+  ShaderSetMatrix4(materialHandle->GetShaderHandle(), "view", s_ActiveCamera->GetViewMatrix());
+  ShaderSetMatrix4(materialHandle->GetShaderHandle(), "projection", s_ActiveCamera->GetProjectionMatrix());
 
   // Render the mesh
   renderable.Render();

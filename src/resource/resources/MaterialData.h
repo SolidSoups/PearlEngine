@@ -24,6 +24,8 @@ using MaterialHandle = Handle<MaterialTag>;
 
 MaterialData CreateMaterial(ShaderHandle shaderHandle);
 
+ShaderHandle MaterialGetShaderHandle(MaterialHandle handle);
+
 void BindMaterial(MaterialHandle handle);
 void UnbindMaterial();
 void DestroyMaterial(MaterialHandle handle);
@@ -32,5 +34,5 @@ void MaterialSetFloat(MaterialHandle handle, const std::string& name, float valu
 void MaterialSetInt(MaterialHandle handle, const std::string& name, int value);
 void MaterialSetVec3(MaterialHandle handle, const std::string& name, const glm::vec3& value);
 void MaterialSetVec4(MaterialHandle handle, const std::string& name, const glm::vec4& value);
-void MaterialSetTexture(MaterialHandle handle, const std::string& name, TextureHandle value);
+void MaterialSetTexture(MaterialHandle handle, const std::string& name, const TextureHandle& value);
 void MaterialSetMat4(MaterialHandle handle, const std::string& name, const glm::mat4& value);

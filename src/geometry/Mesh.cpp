@@ -38,9 +38,7 @@ Mesh::Mesh(const float* vertices, size_t vertexCount, const unsigned int* indice
 }
 
 void Mesh::Render(){
-  if(m_Material){
-    m_Material->Bind();
-  }
+  BindMaterial(m_MaterialHandle);
 
   glBindVertexArray(VAO);  
 
@@ -54,6 +52,6 @@ void Mesh::Render(){
   glBindVertexArray(0);
 }
 
-void Mesh::SetMaterial(Material* material){
-  m_Material = material;
+void Mesh::SetMaterial(MaterialHandle handle){
+  m_MaterialHandle = handle;
 }

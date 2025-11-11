@@ -2,13 +2,13 @@
 
 #include "GUIContext.h"
 #include "PearlWindow.h"
-#include "Cube.h"
 #include "Camera.h"
 #include "CameraController.h"
 #include "FrameBuffer.h"
 #include "EditorPanel.h"
 #include "ViewportEditorPanel.h"
 #include "Scene.h"
+#include "ShaderData.h"
 
 #include <memory>
 #include <vector>
@@ -44,8 +44,6 @@ public:
   std::unique_ptr<CameraController> m_CameraController;
 
   ShaderHandle m_ShaderHandle;
-  std::unique_ptr<Material> m_SunshineMaterial;
-  std::unique_ptr<Material> m_PearlMaterial;
 
   std::vector<std::unique_ptr<EditorPanel>> m_Panels;
   ViewportEditorPanel* m_ViewportPanel = nullptr;

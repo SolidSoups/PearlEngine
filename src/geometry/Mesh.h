@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Renderable.h"
-#include "Material.h"
-
 
 class Mesh : public Renderable{
 public:
@@ -10,10 +8,10 @@ public:
 
   void Render();
   
-  void SetMaterial(Material* material);
-  Material* GetMaterial() const { return m_Material; }
+  void SetMaterial(MaterialHandle handle);
+  MaterialHandle GetMaterialHandle() const { return m_MaterialHandle; }
 private:
-  Material* m_Material = nullptr;
+  MaterialHandle m_MaterialHandle;
 
 private:
   unsigned int VAO, VBO, EBO;

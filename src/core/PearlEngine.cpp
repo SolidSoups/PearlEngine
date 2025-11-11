@@ -11,8 +11,8 @@
 #include "Renderer.h"
 #include "Time.h"
 #include "ViewportEditorPanel.h"
+#include "Cube.h"
 
-#include "Material.h"
 #include "ResourceSystem.h"
 #include "ResourceManager.h"
 #include "TextureData.h"
@@ -67,32 +67,28 @@ void PearlEngine::Initialize() {
   m_ShaderHandle = 
     ResourceSystem::Get().Shaders().Create(CreateShader("shaders/vert.glsl", "shaders/frag.glsl"));
 
-  // Create material
-  m_SunshineMaterial = std::make_unique<Material>(m_ShaderHandle);
-  m_SunshineMaterial->SetTexture("mainTexture", sunshineTextureHandle);
-  m_PearlMaterial = std::make_unique<Material>(m_ShaderHandle);
-  m_PearlMaterial->SetTexture("mainTexture", pearlTextureHandle);
-
   // Create new materials
   MaterialHandle sunMatHandle = 
     ResourceSystem::Get().Materials().Create(CreateMaterial(m_ShaderHandle));
-  MaterialData* sunMatData = 
-    ResourceSystem::Get().Materials().Get(sunMatHandle);
+  MaterialSetTexture(sunMatHandle, "mainTexture", sunshineTextureHandle);
+  MaterialHandle pearlMatHandle = 
+    ResourceSystem::Get().Materials().Create(CreateMaterial(m_ShaderHandle));
+  MaterialSetTexture(pearlMatHandle, "mainTexture", pearlTextureHandle);
 
   // Create some objects
   auto cube1 = std::make_unique<Cube>();
   cube1->transform.Translate(glm::vec3(0.0f, 0.0f, -2.0f));
-  cube1->SetMaterial(m_PearlMaterial.get());
+  cube1->SetMaterial(pearlMatHandle);
   m_Scene.AddObject(std::move(cube1));
 
   auto cube2 = std::make_unique<Cube>();
   cube2->transform.Translate(glm::vec3(2.0f, 0.0f, -2.0f));
-  cube2->SetMaterial(m_SunshineMaterial.get());
+  cube2->SetMaterial(sunMatHandle);
   m_Scene.AddObject(std::move(cube2));
 
   auto cube3 = std::make_unique<Cube>();
   cube3->transform.Translate(glm::vec3(-2.0f, 0.0f, -2.0f));
-  cube3->SetMaterial(m_SunshineMaterial.get());
+  cube3->SetMaterial(sunMatHandle);
   m_Scene.AddObject(std::move(cube3));
 
   // Create viewport framebuffer
