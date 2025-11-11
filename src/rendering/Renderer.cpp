@@ -27,18 +27,12 @@ void Renderer::Submit(Renderable &renderable){
     return;
   }
 
-  ShaderData* shaderData = ResourceSystem::Get().Shaders().Get(material->GetShaderHandle());
-  if(!shaderData){
-    std::cout << "Renderer::Submit(..) -> shaderData is invalid!" << "\n";
-    return;
-  }
-
   material->Bind();
 
   // Set matrices
-  ShaderSetMatrix4(*shaderData, "transform", renderable.transform.GetModelMatrix());
-  ShaderSetMatrix4(*shaderData, "view", s_ActiveCamera->GetViewMatrix());
-  ShaderSetMatrix4(*shaderData, "projection", s_ActiveCamera->GetProjectionMatrix());
+  ShaderSetMatrix4(material->GetShaderHandle(), "transform", renderable.transform.GetModelMatrix());
+  ShaderSetMatrix4(material->GetShaderHandle(), "view", s_ActiveCamera->GetViewMatrix());
+  ShaderSetMatrix4(material->GetShaderHandle(), "projection", s_ActiveCamera->GetProjectionMatrix());
 
   // Render the mesh
   renderable.Render();

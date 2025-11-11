@@ -59,7 +59,8 @@ target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/components
   ${CMAKE_CURRENT_SOURCE_DIR}/src/utils
   ${CMAKE_CURRENT_SOURCE_DIR}/src/editor
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/resources
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/resource
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/resource/resources
   external/stb
   external/glm
 )

@@ -23,7 +23,7 @@ public:
   }
 
   void Destroy(Handle<Tag> handle){
-    m_Resources.erase(handle); // TODO: slooooow
+    m_Resources.erase(handle);
     m_Allocator.Free(handle);
   }
 

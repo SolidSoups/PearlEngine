@@ -7,6 +7,17 @@
 // std
 #include <iostream>
 
+// src
+#include "ResourceSystem.h"
+
+namespace{
+TextureData* GetTextureData(TextureHandle handle, const char* functionName){
+  TextureData* data = ResourceSystem::Get().Textures().Get(handle);
+  if(!data) std::cerr << "TextureData.cpp: " << functionName << ": TextureData is null" << "\n";
+  return data;
+}
+};
+
 TextureData LoadTexture(const std::string& filepath, bool generateMipMaps){
   // set flip flag (global, uses OpenGL coordinates)
   stbi_set_flip_vertically_on_load(true); 
@@ -96,15 +107,22 @@ TextureData LoadTexture(const std::string& filepath, bool generateMipMaps){
 }
 
 
-void BindTexture(TextureData texData, unsigned int slot){
+void BindTexture(TextureHandle handle, unsigned int slot){
+  TextureData* textureData = GetTextureData(handle, "BindTexture");
+  if(!textureData) return;
+
   glActiveTexture(GL_TEXTURE0 + slot);
-  glBindTexture(GL_TEXTURE_2D, texData.id);
+  glBindTexture(GL_TEXTURE_2D, textureData->id);
 }
 
 void UnbindTexture(){
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void DestroyTexture(TextureData texData){
-  glDeleteTextures(1, &texData.id); 
+void DestroyTexture(TextureHandle handle){
+  TextureData* textureData = GetTextureData(handle, "DestroyTexture");
+  if(!textureData) return;
+
+  glDeleteTextures(1, &textureData->id); 
+  ResourceSystem::Get().Textures().Destroy(handle);
 }

@@ -15,43 +15,33 @@ void Material::SetInt(const std::string& name, int value)               { m_Ints
 void Material::SetTexture(const std::string& name, const TextureHandle& value)        { m_Textures[name] = value; }
 
 void Material::Bind(){
-  ShaderData* shaderData = ResourceSystem::Get().Shaders().Get(m_ShaderHandle);
-  if(!shaderData){
-    std::cerr << "Material::Bind() -> Shader data is invalid" << "\n";
-    return;
-  }
-
-  UseShader(*shaderData);
+  UseShader(m_ShaderHandle);
 
   // Upload all ints
   for(const auto& [name, value] : m_Ints){
-    ShaderSetInt(*shaderData, name.c_str(), value);
+    ShaderSetInt(m_ShaderHandle, name.c_str(), value);
   }
 
   // Upload all floats
   for(const auto& [name, value] : m_Floats){
-    ShaderSetFloat(*shaderData, name.c_str(), value);
+    ShaderSetFloat(m_ShaderHandle, name.c_str(), value);
   }
 
   // Upload all vec3s
   for(const auto& [name, value] : m_Vec3s){
-    ShaderSetVec3(*shaderData, name.c_str(), value);
+    ShaderSetVec3(m_ShaderHandle, name.c_str(), value);
   }
 
   // Upload all vec4s
   for(const auto& [name, value] : m_Vec4s){
-    ShaderSetVec4(*shaderData, name.c_str(), value);
+    ShaderSetVec4(m_ShaderHandle, name.c_str(), value);
   }
 
   // Upload all textures
   int textureSlot = 0;
   for(const auto& [name, textureHandle] : m_Textures){
-    TextureData* data = ResourceSystem::Get().Textures().Get(textureHandle);
-    if(!data)
-      continue;
-
-    BindTexture(*data, textureSlot);
-    ShaderSetInt(*shaderData, name.c_str(), textureSlot);
+    BindTexture(textureHandle, textureSlot);
+    ShaderSetInt(m_ShaderHandle, name.c_str(), textureSlot);
     textureSlot++;
   }
 }

@@ -7,14 +7,16 @@
 #include <imgui.h>
 
 // src
-#include "Material.h"
 #include "PearlEngine.h"
 #include "Renderer.h"
-#include "ResourceSystem.h"
 #include "Time.h"
 #include "ViewportEditorPanel.h"
+
+#include "Material.h"
+#include "ResourceSystem.h"
 #include "ResourceManager.h"
 #include "TextureData.h"
+#include "MaterialData.h"
 
 // std
 #include <cmath>
@@ -70,6 +72,12 @@ void PearlEngine::Initialize() {
   m_SunshineMaterial->SetTexture("mainTexture", sunshineTextureHandle);
   m_PearlMaterial = std::make_unique<Material>(m_ShaderHandle);
   m_PearlMaterial->SetTexture("mainTexture", pearlTextureHandle);
+
+  // Create new materials
+  MaterialHandle sunMatHandle = 
+    ResourceSystem::Get().Materials().Create(CreateMaterial(m_ShaderHandle));
+  MaterialData* sunMatData = 
+    ResourceSystem::Get().Materials().Get(sunMatHandle);
 
   // Create some objects
   auto cube1 = std::make_unique<Cube>();
@@ -131,6 +139,7 @@ void PearlEngine::RunUpdateLoop() {
 
     glfwSwapBuffers(window);
   }
+  ResourceSystem::Get().Destroy();
 }
 
 void PearlEngine::Update() {
