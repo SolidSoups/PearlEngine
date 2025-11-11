@@ -1,7 +1,7 @@
 #include "Cube.h"
 
 const float Cube::s_Vertices[] = {
-  // Positions          // Color
+  // Positions          // Color            // uv
   //
   // -front face
  -0.5f, -0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   0.0f, 0.0f,

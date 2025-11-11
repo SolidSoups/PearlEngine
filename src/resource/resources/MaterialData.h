@@ -22,7 +22,7 @@ struct MaterialData{
 struct MaterialTag{};
 using MaterialHandle = Handle<MaterialTag>;
 
-MaterialData CreateMaterial(ShaderHandle shaderHandle);
+MaterialHandle CreateMaterial(ShaderHandle shaderHandle);
 
 ShaderHandle MaterialGetShaderHandle(MaterialHandle handle);
 

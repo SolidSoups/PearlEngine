@@ -11,7 +11,7 @@ struct ShaderData {
 struct ShaderTag {};
 using ShaderHandle = Handle<ShaderTag>;
 
-ShaderData CreateShader(const char *vertexPath, const char *fragmentPath);
+ShaderHandle CreateShader(const char *vertexPath, const char *fragmentPath);
 
 void UseShader(ShaderHandle handle);
 void ResetShader();

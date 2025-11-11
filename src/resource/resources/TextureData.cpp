@@ -11,6 +11,7 @@
 #include "ResourceSystem.h"
 
 namespace{
+#define GET_TEXTURE_OR_NULL(handle) GetTextureData(handle, __func__)
 TextureData* GetTextureData(TextureHandle handle, const char* functionName){
   TextureData* data = ResourceSystem::Get().Textures().Get(handle);
   if(!data) std::cerr << "TextureData.cpp: " << functionName << ": TextureData is null" << "\n";
@@ -18,7 +19,7 @@ TextureData* GetTextureData(TextureHandle handle, const char* functionName){
 }
 };
 
-TextureData LoadTexture(const std::string& filepath, bool generateMipMaps){
+TextureHandle LoadTexture(const std::string& filepath, bool generateMipMaps){
   // set flip flag (global, uses OpenGL coordinates)
   stbi_set_flip_vertically_on_load(true); 
 
@@ -100,15 +101,17 @@ TextureData LoadTexture(const std::string& filepath, bool generateMipMaps){
   // free CPU memory (GPU has a copy of data now)
   stbi_image_free(data);
 
+  TextureHandle textureHandle = 
+    ResourceSystem::Get().Textures().Create(textureData);
+    
   std::cout << "TextureData.cpp: LoadTexture: Loaded texture: " << filepath << " (" << width << "x"
-            << height << ", " << channels << " channels)" << std::endl;
-
-  return textureData;
+    << height << ", " << channels << " channels)" << std::endl;
+  return textureHandle;
 }
 
 
 void BindTexture(TextureHandle handle, unsigned int slot){
-  TextureData* textureData = GetTextureData(handle, "BindTexture");
+  TextureData* textureData = GET_TEXTURE_OR_NULL(handle);
   if(!textureData) return;
 
   glActiveTexture(GL_TEXTURE0 + slot);
@@ -120,7 +123,7 @@ void UnbindTexture(){
 }
 
 void DestroyTexture(TextureHandle handle){
-  TextureData* textureData = GetTextureData(handle, "DestroyTexture");
+  TextureData* textureData = GET_TEXTURE_OR_NULL(handle);
   if(!textureData) return;
 
   glDeleteTextures(1, &textureData->id); 

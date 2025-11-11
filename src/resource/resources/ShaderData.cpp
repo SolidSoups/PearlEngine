@@ -68,7 +68,7 @@ ShaderData* GetShaderData(ShaderHandle handle, const char* functionName){
 }
 };
 
-ShaderData CreateShader(const char* vertexPath, const char* fragmentPath){
+ShaderHandle CreateShader(const char* vertexPath, const char* fragmentPath){
   std::string vertexCode = ReadShaderFile(vertexPath);
   std::string fragmentCode = ReadShaderFile(fragmentPath);
 
@@ -104,7 +104,11 @@ ShaderData CreateShader(const char* vertexPath, const char* fragmentPath){
   glDeleteShader(vert);
   glDeleteShader(frag);
 
-  return {shaderObjectID};
+  // create da handle
+  ShaderHandle shaderHandle =
+    ResourceSystem::Get().Shaders().Create({shaderObjectID});
+
+  return shaderHandle;
 }
 
 void UseShader(ShaderHandle handle){

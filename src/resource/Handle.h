@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "ResourceCommon.h"
 
 template<typename T>

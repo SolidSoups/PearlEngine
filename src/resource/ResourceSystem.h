@@ -7,11 +7,13 @@
 #include "TextureData.h"
 #include "ShaderData.h"
 #include "MaterialData.h"
+#include "MeshData.h"
 
 class ResourceSystem{
   ResourceManager<TextureTag, TextureData> m_Textures;
   ResourceManager<ShaderTag, ShaderData> m_Shaders;
   ResourceManager<MaterialTag, MaterialData> m_Materials;
+  ResourceManager<MeshTag, MeshData> m_Meshes;
 
 public:
   static ResourceSystem& Get(){
@@ -22,9 +24,20 @@ public:
   auto& Textures() { return m_Textures; }
   auto& Shaders() { return m_Shaders; }
   auto& Materials() { return m_Materials; }
+  auto& Meshes() { return m_Meshes; }
 
   void Destroy(){
-    // materials don't need to be destroyed... yet
+    // clean up meshes
+    std::cout << "ResourceSystem::Destroy() -> Destroying meshes" << "\n";
+    std::vector<MeshHandle> meshHandles;
+    for(auto& [handle, _] : m_Meshes.GetAll()){
+      meshHandles.push_back(handle); 
+    }
+    for(auto& handle : meshHandles){
+      DestroyMesh(handle);
+    }
+
+    // clean up materials
     std::cout << "ResourceSystem::Destroy() -> Destroying materials" << "\n";
     std::vector<MaterialHandle> materialHandles;
     for(auto& [handle, _] : m_Materials.GetAll()){

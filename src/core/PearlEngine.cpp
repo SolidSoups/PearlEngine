@@ -47,6 +47,13 @@ PearlEngine::~PearlEngine() {
   glfwTerminate();
 }
 
+std::unique_ptr<Cube> inCreateCube(const glm::vec3& pos, MaterialHandle matHandle){
+  auto cube = std::make_unique<Cube>();
+  cube->transform.Translate(pos);
+  cube->SetMaterial(matHandle);
+  return cube;
+};
+
 void PearlEngine::Initialize() {
   std::cout << "PearlEngine::Initialize() -> Beginning initialization" << std::endl;
   GLFWwindow* window = pwin.GetWindow();
@@ -58,37 +65,35 @@ void PearlEngine::Initialize() {
   Time::Initialize();
 
   // Load textures (using ResourceSystem)
-  TextureHandle sunshineTextureHandle = 
-    ResourceSystem::Get().Textures().Create(LoadTexture("assets/sunshine.png"));
-  TextureHandle pearlTextureHandle = 
-    ResourceSystem::Get().Textures().Create(LoadTexture("assets/pearl.png"));
+  TextureHandle sunshineTextureHandle = LoadTexture("assets/sunshine.png");
+  TextureHandle pearlTextureHandle = LoadTexture("assets/pearl.png");
 
   // Create shader (using ResourceSystem)
-  m_ShaderHandle = 
-    ResourceSystem::Get().Shaders().Create(CreateShader("shaders/vert.glsl", "shaders/frag.glsl"));
+  m_ShaderHandle = CreateShader("shaders/vert.glsl", "shaders/frag.glsl");
 
-  // Create new materials
-  MaterialHandle sunMatHandle = 
-    ResourceSystem::Get().Materials().Create(CreateMaterial(m_ShaderHandle));
+  // Create new materials for pearl and sunshine
+  MaterialHandle sunMatHandle = CreateMaterial(m_ShaderHandle);
   MaterialSetTexture(sunMatHandle, "mainTexture", sunshineTextureHandle);
-  MaterialHandle pearlMatHandle = 
-    ResourceSystem::Get().Materials().Create(CreateMaterial(m_ShaderHandle));
+  MaterialHandle pearlMatHandle = CreateMaterial(m_ShaderHandle);
   MaterialSetTexture(pearlMatHandle, "mainTexture", pearlTextureHandle);
 
   // Create some objects
-  auto cube1 = std::make_unique<Cube>();
-  cube1->transform.Translate(glm::vec3(0.0f, 0.0f, -2.0f));
-  cube1->SetMaterial(pearlMatHandle);
+  auto cube1 = inCreateCube(
+    glm::vec3(0.0f, 0.0f, -2.0f),
+    pearlMatHandle
+  );
   m_Scene.AddObject(std::move(cube1));
 
-  auto cube2 = std::make_unique<Cube>();
-  cube2->transform.Translate(glm::vec3(2.0f, 0.0f, -2.0f));
-  cube2->SetMaterial(sunMatHandle);
+  auto cube2 = inCreateCube(
+    glm::vec3(2.0f, 0.0f, -2.0f),
+    sunMatHandle
+  );
   m_Scene.AddObject(std::move(cube2));
 
-  auto cube3 = std::make_unique<Cube>();
-  cube3->transform.Translate(glm::vec3(-2.0f, 0.0f, -2.0f));
-  cube3->SetMaterial(sunMatHandle);
+  auto cube3 = inCreateCube(
+    glm::vec3(-2.0f, 0.0f, -2.0f),
+    sunMatHandle
+  );
   m_Scene.AddObject(std::move(cube3));
 
   // Create viewport framebuffer

@@ -1,19 +1,21 @@
 #pragma once
 
 #include "Renderable.h"
+#include "MeshData.h"
+#include "MaterialData.h"
 
 class Mesh : public Renderable{
 public:
   Mesh(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount);
+  ~Mesh();
 
   void Render();
-  
+
+public:
   void SetMaterial(MaterialHandle handle);
-  MaterialHandle GetMaterialHandle() const { return m_MaterialHandle; }
-private:
-  MaterialHandle m_MaterialHandle;
+  MaterialHandle GetMaterialHandle() const { return MeshGetMaterial(m_MeshHandle); }
 
 private:
-  unsigned int VAO, VBO, EBO;
-  size_t m_VertexCount, m_IndexCount;
+  MeshHandle m_MeshHandle;
+
 };

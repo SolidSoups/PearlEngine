@@ -15,8 +15,10 @@ MaterialData* GetMaterialData(MaterialHandle handle, const char* functionName){
 };
 
 // TODO: add a null check for the shader handle
-MaterialData CreateMaterial(ShaderHandle shaderHandle){
-  return {shaderHandle};
+MaterialHandle CreateMaterial(ShaderHandle shaderHandle){
+  MaterialHandle matHandle =
+    ResourceSystem::Get().Materials().Create({shaderHandle});
+  return matHandle;
 }
 
 ShaderHandle MaterialGetShaderHandle(MaterialHandle handle){
@@ -69,7 +71,7 @@ void BindMaterial(MaterialHandle handle){
 }
 
 void DestroyMaterial(MaterialHandle handle){
-  // nothing for now...
+  if(!ResourceSystem::Get().Materials().Get(handle)) return;
   ResourceSystem::Get().Materials().Destroy(handle);
 }
 
