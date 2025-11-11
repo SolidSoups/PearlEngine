@@ -4,14 +4,13 @@
 #include <algorithm>
 
 #include "RenderComponent.h"
-#include "Renderable.h"
 #include "Renderer.h"
 
 #include "GameObject.h"
 #include "TransformComponent.h"
 
-GameObject* Scene::CreateGameObject(){
-  auto newGO = std::make_unique<GameObject>(m_NextObjectID++);
+GameObject* Scene::CreateGameObject(std::string name){
+  auto newGO = std::make_unique<GameObject>(m_NextObjectID++, name);
   GameObject* ptr = newGO.get();
   m_GameObjects.push_back(std::move(newGO));
   return ptr;
@@ -32,3 +31,5 @@ void Scene::Render(Camera& camera){
   }
   Renderer::EndScene();
 }
+
+const std::vector<std::unique_ptr<GameObject>>& GetGameObjects();

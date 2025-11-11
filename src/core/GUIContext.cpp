@@ -37,7 +37,6 @@ void GUIContext::BeginFrame(){
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
-  ImGui::ShowDemoWindow();
 }
 void GUIContext::Render(){
   ImGui::Render();

@@ -3,6 +3,7 @@
 #include <typeindex>
 #include <unordered_map>
 #include <memory>
+#include <string>
 
 #include "ecs_common.h"
 #include "Component.h"
@@ -10,9 +11,11 @@
 class GameObject{
   EntityID m_ID;
   std::unordered_map<std::type_index, std::unique_ptr<Component>> m_Components;
+  std::string m_Name;
 
 public:
-  GameObject(EntityID id) : m_ID(id) {}
+  GameObject(EntityID id) : m_ID(id), m_Name("gameObject") {}
+  GameObject(EntityID id, std::string name) : m_ID(id), m_Name(name) {}
 
   template<typename T, typename ... Args>
   T* AddComponent(Args&&... args){
@@ -47,4 +50,5 @@ public:
   }
 
   EntityID GetID() const { return m_ID; }
+  std::string GetName() const { return m_Name; }
 };

@@ -6,6 +6,7 @@
 #include "CameraController.h"
 #include "FrameBuffer.h"
 #include "EditorPanel.h"
+#include "SceneHierarchyEditorPanel.h"
 #include "ViewportEditorPanel.h"
 #include "Scene.h"
 #include "ShaderData.h"
@@ -47,6 +48,7 @@ public:
 
   std::vector<std::unique_ptr<EditorPanel>> m_Panels;
   ViewportEditorPanel* m_ViewportPanel = nullptr;
+  SceneHierarchyEditorPanel* m_ScenePanel = nullptr;
 
 
 private:

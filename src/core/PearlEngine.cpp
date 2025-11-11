@@ -80,18 +80,13 @@ void PearlEngine::Initialize() {
     Cube::s_IndexCount);
 
   std::cout << "Creating game objects" << std::endl;
-  // Create some gameobjects
-  GameObject* go1 = m_Scene.CreateGameObject();
-  go1->AddComponent<TransformComponent>();
-  go1->AddComponent<RenderComponent>(cubeMeshHandle, pearlMatHandle);
-
-  GameObject* go2 = m_Scene.CreateGameObject();
-  go2->AddComponent<TransformComponent>(glm::vec3(-2.0f, 0.0f, 0.0f));
-  go2->AddComponent<RenderComponent>(cubeMeshHandle, sunMatHandle);
-
-  GameObject* go3 = m_Scene.CreateGameObject();
-  go3->AddComponent<TransformComponent>(glm::vec3(2.0f, 0.0f, 0.0f));
-  go3->AddComponent<RenderComponent>(cubeMeshHandle, sunMatHandle);
+  for(float x = -2.0f; x <= 2.0f; x += 2.0f){
+    for(float y = -2.0f; y <= 2.0f; y += 2.0f){
+      GameObject* go = m_Scene.CreateGameObject();
+      go->AddComponent<TransformComponent>(glm::vec3(x, y, 0.0f));
+      go->AddComponent<RenderComponent>(cubeMeshHandle, sunMatHandle);
+    }
+  }
 
   // Create viewport framebuffer
   m_ViewportFramebuffer =
@@ -102,6 +97,12 @@ void PearlEngine::Initialize() {
       std::make_unique<ViewportEditorPanel>(m_ViewportFramebuffer.get());
   m_ViewportPanel = viewportPanel.get();
   m_Panels.push_back(std::move(viewportPanel)); // Transfer ownership to vector
+  
+  // Create the scene hierarchy editor panel
+  auto scenePanel = 
+    std::make_unique<SceneHierarchyEditorPanel>(m_Scene, pearlMatHandle, sunMatHandle);
+  m_ScenePanel = scenePanel.get();
+  m_Panels.push_back(std::move(scenePanel)); // Transfer ownership to vector
 
   // Setup camera aspect ratio
   int framebufferWidth, frameBufferHeight;

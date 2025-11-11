@@ -2,7 +2,6 @@
 
 #include "Camera.h"
 #include "MaterialData.h"
-#include "Renderable.h"
 #include "ShaderData.h"
 
 #include <iostream>
