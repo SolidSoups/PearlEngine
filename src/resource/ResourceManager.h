@@ -29,4 +29,7 @@ public:
 
   auto& GetAll() { return m_Resources; }
   const auto& GetAll() const { return m_Resources; }
+
+  const HandleAllocator<Tag>& GetAllocator() const { return m_Allocator; }
+  const size_t GetResourceSize() const { return m_Resources.size(); }
 };

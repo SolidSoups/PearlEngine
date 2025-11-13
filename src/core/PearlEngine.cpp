@@ -1,4 +1,4 @@
-// lib
+// libResourceSystem.h
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/common.hpp>
@@ -8,6 +8,8 @@
 
 // src
 #include "PearlEngine.h"
+#include "InspectorEditorPanel.h"
+#include "MenuRegistry.h"
 #include "Renderer.h"
 #include "Time.h"
 #include "ViewportEditorPanel.h"
@@ -79,7 +81,7 @@ void PearlEngine::Initialize() {
     Cube::s_Indices, 
     Cube::s_IndexCount);
 
-  std::cout << "Creating game objects" << std::endl;
+  std::cout << "PearlEngine::Initialize() -> Creating game objects" << std::endl;
   for(float x = -2.0f; x <= 2.0f; x += 2.0f){
     for(float y = -2.0f; y <= 2.0f; y += 2.0f){
       GameObject* go = m_Scene.CreateGameObject();
@@ -103,7 +105,19 @@ void PearlEngine::Initialize() {
     std::make_unique<SceneHierarchyEditorPanel>(m_Scene, pearlMatHandle, sunMatHandle);
   m_ScenePanel = scenePanel.get();
   m_Panels.push_back(std::move(scenePanel)); // Transfer ownership to vector
+  
+  // Create the resource panel
+  auto resourcePanel = 
+    std::make_unique<ResourceEditorPanel>(ResourceSystem::Get());
+  m_ResourcePanel = resourcePanel.get();
+  m_Panels.push_back(std::move(resourcePanel)); // Transfer ownership to vector
 
+  // Create the resource panel
+  auto inspectPanel = 
+    std::make_unique<InspectorEditorPanel>(m_Scene);
+  m_Panels.push_back(std::move(inspectPanel)); // Transfer ownership to vector
+  
+  
   // Setup camera aspect ratio
   int framebufferWidth, frameBufferHeight;
   glfwGetFramebufferSize(pwin.GetWindow(), &framebufferWidth,
@@ -116,6 +130,8 @@ void PearlEngine::Initialize() {
   glFrontFace(GL_CW);
   glDisable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
+  
+  AddMenuBarItems();
 
   std::cout << "PearlEngine::Initialize() -> initialization finished" << std::endl;
 }
@@ -201,4 +217,10 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
   else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
     m_CameraController->Reset();
   }
+}
+
+void PearlEngine::AddMenuBarItems(){
+  MenuRegistry::Get().Register("File/Exit", [this](){
+    glfwSetWindowShouldClose(pwin.GetWindow(), true);
+  });
 }

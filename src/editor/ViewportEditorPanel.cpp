@@ -3,11 +3,14 @@
 #include <imgui.h>
 
 #include "FrameBuffer.h"
+#include "MenuRegistry.h"
 #include "Renderer.h"
 
 ViewportEditorPanel::ViewportEditorPanel(Framebuffer *framebuffer)
     : EditorPanel("Viewport"), m_Framebuffer(framebuffer), m_Size(0.0f, 0.0f),
-      m_WasResized(false) {}
+      m_WasResized(false) {
+  MenuRegistry::Get().Register("Windows/Viewport", &m_IsOpen);
+}
 
 void ViewportEditorPanel::OnImGuiRender() {
   if (!m_IsOpen) return;

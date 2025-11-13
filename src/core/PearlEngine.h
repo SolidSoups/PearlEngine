@@ -5,9 +5,7 @@
 #include "Camera.h"
 #include "CameraController.h"
 #include "FrameBuffer.h"
-#include "EditorPanel.h"
-#include "SceneHierarchyEditorPanel.h"
-#include "ViewportEditorPanel.h"
+#include "PanelCommon.h"
 #include "Scene.h"
 #include "ShaderData.h"
 
@@ -31,6 +29,9 @@ public:
 private:
   void ProcessInput(GLFWwindow* window);
 
+private:
+  void AddMenuBarItems();
+  
 public:
   // RaII rules 👑
   PearlWindow pwin{1800, 1000, "LearnOpenGL"};
@@ -49,6 +50,7 @@ public:
   std::vector<std::unique_ptr<EditorPanel>> m_Panels;
   ViewportEditorPanel* m_ViewportPanel = nullptr;
   SceneHierarchyEditorPanel* m_ScenePanel = nullptr;
+  ResourceEditorPanel* m_ResourcePanel = nullptr;
 
 
 private:

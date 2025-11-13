@@ -1,8 +1,18 @@
 #include "SceneHierarchyEditorPanel.h"
 
+#include "MenuRegistry.h"
 #include "RenderComponent.h"
 #include "imgui.h"
 #include "MeshData.h"
+
+SceneHierarchyEditorPanel::SceneHierarchyEditorPanel(Scene& scene, MaterialHandle pearlHandle, MaterialHandle sunnyHandle) 
+  : EditorPanel("Scene Hierarchy")
+    , m_Scene(scene)
+    , m_PearlHandle(pearlHandle) 
+    , m_SunnyHandle(sunnyHandle)
+  {
+  MenuRegistry::Get().Register("Windows/Scene Hierarchy", &m_IsOpen);
+}
 
 void SceneHierarchyEditorPanel::OnImGuiRender(){
   if(!m_IsOpen) return;
@@ -10,7 +20,8 @@ void SceneHierarchyEditorPanel::OnImGuiRender(){
   ImGui::Begin(m_Name.c_str(), &m_IsOpen);
 
   const auto& sceneObjects = m_Scene.GetGameObjects();
-  for(const auto& gameObject : sceneObjects){
+  for(size_t i = 0; i < sceneObjects.size(); i++){
+    const auto& gameObject = sceneObjects[i];
     auto renderComp = gameObject->GetComponent<RenderComponent>();
     // Display each gameObject as a selectable
     std::string label = "GameObject " + std::to_string(gameObject->GetID());
@@ -21,12 +32,21 @@ void SceneHierarchyEditorPanel::OnImGuiRender(){
       label += " (Pearl)";
     }
 
-    if(ImGui::Selectable(label.c_str())){
+    bool isSelected (m_Scene.GetSelectedGameObject() == gameObject.get());
+
+    if(ImGui::Selectable(label.c_str(), isSelected)){
       if(renderComp->materialHandle == m_SunnyHandle)
         renderComp->materialHandle = m_PearlHandle;
       else
         renderComp->materialHandle = m_SunnyHandle;
+
+      m_Scene.SetSelectedIndex(i);
     }
+  }
+
+  // deselect if clicking on empty scene
+  if(ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered()){
+    m_Scene.SetSelectedIndex(-1);
   }
 
   ImGui::End();

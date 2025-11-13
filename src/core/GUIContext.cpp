@@ -19,7 +19,18 @@ GUIContext::GUIContext(GLFWwindow* window){
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // enable docking
   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-  
+
+  // Setup Dear ImGui style
+  ImGui::StyleColorsDark();
+
+  // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+  ImGuiStyle& style = ImGui::GetStyle();
+  if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+  {
+    style.WindowRounding = 0.0f;
+    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+  }
+
   // Setup Platform/Renderer backends
   ImGui_ImplGlfw_InitForOpenGL(window, true); // second arg installs GLFW callbacks and chain to existing ones
   const char* glsl_version = "#version 330";
@@ -33,10 +44,11 @@ GUIContext::~GUIContext(){
 }
 
 void GUIContext::BeginFrame(){
-
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
+
+  DrawToolbar();
 }
 void GUIContext::Render(){
   ImGui::Render();
@@ -59,4 +71,32 @@ void GUIContext::Shutdown(){
   ImGui::DestroyContext();
 
   std::cout << "ImGuiContext::Shutdown() -> ImGui context shutdown" << std::endl;
+}
+
+void GUIContext::DrawToolbar(){
+  // create the main fullscreen window with dockspace
+  ImGuiViewport* viewport = ImGui::GetWindowViewport();
+  ImGui::SetNextWindowPos(viewport->WorkPos);
+  ImGui::SetNextWindowSize(viewport->WorkSize);
+  ImGui::SetNextWindowViewport(viewport->ID);
+
+  ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking; 
+  window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
+  window_flags |= ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+  ImGui::Begin("Dockspace", nullptr, window_flags);
+  ImGui::PopStyleVar(3);
+
+  // Create dock space (this is where the windows will be able to dock)
+  ImGuiID dockspace_id = ImGui::GetID("MainDockspace");
+  ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
+  m_MenuBar.RenderMenuBar();
+
+  ImGui::End();
 }

@@ -16,7 +16,7 @@ public:
   void SetOpen(bool open) { m_IsOpen = open; }
   const std::string& GetName() const { return m_Name; }
 
-protected:
+public:
   std::string m_Name;
   bool m_IsOpen;
 };

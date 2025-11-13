@@ -7,12 +7,7 @@
 class SceneHierarchyEditorPanel : public EditorPanel{
 public:
   SceneHierarchyEditorPanel(Scene& scene, MaterialHandle pearlHandle, 
-                            MaterialHandle sunnyHandle) 
-  : EditorPanel("Scene Hierarchy")
-    , m_Scene(scene)
-    , m_PearlHandle(pearlHandle) 
-    , m_SunnyHandle(sunnyHandle)
-  {}
+                            MaterialHandle sunnyHandle) ;
 
 public:
   void OnImGuiRender() override;

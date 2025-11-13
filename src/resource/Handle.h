@@ -1,8 +1,12 @@
 #pragma once
 
 #include <functional>
+#include <cstdint>
 
-#include "ResourceCommon.h"
+// Resource Handle ID
+using HandleID = uint32_t;
+// Resource Generation ID
+using HandleGenID = uint32_t;
 
 template<typename T>
 struct Handle{ 

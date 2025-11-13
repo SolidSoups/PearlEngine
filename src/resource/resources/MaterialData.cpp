@@ -14,7 +14,6 @@ MaterialData* GetMaterialData(MaterialHandle handle, const char* functionName){
 }
 };
 
-// TODO: add a null check for the shader handle
 MaterialHandle CreateMaterial(ShaderHandle shaderHandle){
   MaterialHandle matHandle =
     ResourceSystem::Get().Materials().Create({shaderHandle});

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MenuBar.h"
 struct GLFWwindow;
 
 // Event handling:
@@ -17,4 +18,8 @@ public:
   void BeginFrame();
   void Render();
   void Shutdown();
+
+private:
+  MenuBar m_MenuBar;
+  void DrawToolbar();
 };

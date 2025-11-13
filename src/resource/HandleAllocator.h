@@ -2,16 +2,22 @@
 
 #include <vector>
 #include "Handle.h"
-#include "ResourceCommon.h"
 
 template<typename T>
 class HandleAllocator{
   std::vector<HandleID> m_FreeIDs;
   std::vector<HandleGenID> m_Generations;
   HandleID m_NextHandle = 1;
+  size_t m_TotalAllocations = 0;
+
+public:
+  const size_t GetFreeIDCount() const { return m_FreeIDs.size(); }
+  const size_t GetTotalAllocations() const { return m_TotalAllocations; }
 
 public:
   Handle<T> Allocate(){
+    m_TotalAllocations++;
+
     HandleID id;
     if(!m_FreeIDs.empty()){
       id = m_FreeIDs.back();
