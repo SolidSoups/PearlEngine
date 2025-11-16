@@ -1,4 +1,5 @@
 #include "ShaderData.h"
+#include "Logger.h"
 #include "ResourceSystem.h"
 
 #include <string>
@@ -108,6 +109,7 @@ ShaderHandle CreateShader(const char* vertexPath, const char* fragmentPath){
   ShaderHandle shaderHandle =
     ResourceSystem::Get().Shaders().Create({shaderObjectID});
 
+  LOG_INFO << "Created shader with paths:\n\tvert: " << vertexPath << "\n\tfrag: " << fragmentPath;
   return shaderHandle;
 }
 

@@ -16,7 +16,6 @@ Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 worldUp)
   , m_FarPlane(100.0f)
 {
   UpdateCameraVectors();
-  OutputParameters();
 }
 
 glm::mat4 Camera::GetViewMatrix() const{

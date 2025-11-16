@@ -3,6 +3,8 @@
 #include <iostream>
 #include "ResourceSystem.h"
 
+#include "Logger.h"
+
 namespace{
 MaterialData* GetMaterialData(MaterialHandle handle, const char* functionName){
   MaterialData* data = 
@@ -17,6 +19,7 @@ MaterialData* GetMaterialData(MaterialHandle handle, const char* functionName){
 MaterialHandle CreateMaterial(ShaderHandle shaderHandle){
   MaterialHandle matHandle =
     ResourceSystem::Get().Materials().Create({shaderHandle});
+  LOG_INFO << "Created material with shader handle id:" << shaderHandle.id;
   return matHandle;
 }
 

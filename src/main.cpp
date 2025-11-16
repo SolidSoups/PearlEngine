@@ -1,10 +1,12 @@
+
 // lib
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 
 // src
+#define LOG_TO_CONSOLE 0
 #include "PearlEngine.h"
+
 
 int main(){
   PearlEngine engine;

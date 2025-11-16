@@ -55,29 +55,34 @@ void PearlEngine::Initialize() {
   m_CameraController = std::make_unique<CameraController>(&m_Camera);
 
   // initialize the time
+  LOG_INFO << "Initializing time";
   Time::Initialize();
 
   // Load textures (using ResourceSystem)
+  LOG_INFO << "Creating textures";
   TextureHandle sunshineTextureHandle = LoadTexture("assets/sunshine.png");
   TextureHandle pearlTextureHandle = LoadTexture("assets/pearl.png");
 
   // Create shader (using ResourceSystem)
+  LOG_INFO << "Creating shader";
   m_ShaderHandle = CreateShader("shaders/vert.glsl", "shaders/frag.glsl");
 
   // Create new materials for pearl and sunshine
+  LOG_INFO << "Creating materials";
   MaterialHandle sunMatHandle = CreateMaterial(m_ShaderHandle);
   MaterialSetTexture(sunMatHandle, "mainTexture", sunshineTextureHandle);
   MaterialHandle pearlMatHandle = CreateMaterial(m_ShaderHandle);
   MaterialSetTexture(pearlMatHandle, "mainTexture", pearlTextureHandle);
 
   // Create the cube mesh
+  LOG_INFO << "Creating cube mesh";
   MeshHandle cubeMeshHandle = CreateMesh(
     Cube::s_Vertices, 
     Cube::s_VertexCount, 
     Cube::s_Indices, 
     Cube::s_IndexCount);
 
-  LOG_INFO << "PearlEngine::Initialize() -> Creating game objects";
+  LOG_INFO << "Creating game objects";
   for(float x = -2.0f; x <= 2.0f; x += 2.0f){
     for(float y = -2.0f; y <= 2.0f; y += 2.0f){
       GameObject* go = m_Scene.CreateGameObject();
@@ -87,32 +92,35 @@ void PearlEngine::Initialize() {
   }
 
   // Create viewport framebuffer
+  LOG_INFO << "Creating viewport frame buffer";
   m_ViewportFramebuffer =
       std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
 
   // Create the viewport editor panel
+  LOG_INFO << "Creating editor panels";
   m_ViewportPanel = AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
   m_ScenePanel = AddPanel<SceneHierarchyEditorPanel>(m_Scene, pearlMatHandle, sunMatHandle);
   m_ResourcePanel = AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
   m_InspectorPanel = AddPanel<InspectorEditorPanel>(m_Scene);
   AddPanel<LoggerEditorPanel>();
+  AddMenuBarItems();
    
   // Setup camera aspect ratio
+  LOG_INFO << "Setting camera with correct aspect ratio";
   int framebufferWidth, frameBufferHeight;
   glfwGetFramebufferSize(pwin.GetWindow(), &framebufferWidth,
                          &frameBufferHeight);
   float aspectRatio = (float)framebufferWidth / (float)frameBufferHeight;
   m_Camera.SetAspectRatio(aspectRatio);
-  m_Camera.OutputParameters();
 
   // OpenGL state configuration
+  LOG_INFO << "Setting OpenGL state configurations";
   glFrontFace(GL_CW);
   glDisable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   
-  AddMenuBarItems();
 
-  LOG_INFO << "PearlEngine::Initialize() -> initialization finished";
+  LOG_INFO << "Initialization finished";
 }
 
 // b@UPDATE
@@ -121,6 +129,7 @@ void PearlEngine::RunUpdateLoop() {
 
   Initialize();
 
+  LOG_INFO << "Starting engine loop";
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
     ProcessInput(window);

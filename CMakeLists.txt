@@ -65,3 +65,7 @@ target_include_directories(game_engine PRIVATE
   external/stb
   external/glm
 )
+target_compile_definitions(game_engine PRIVATE
+  DEBUG_ENABLED=1 
+  LOG_TO_CONSOLE=0
+)

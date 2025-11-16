@@ -1,7 +1,10 @@
 #pragma once
 
-#ifndef LOG_TO_CONSOLE
+#ifndef DEBUG_ENABLED
 #define DEBUG_ENABLED 1
+#endif
+
+#ifndef LOG_TO_CONSOLE
 #define LOG_TO_CONSOLE 1
 #endif
 
@@ -14,21 +17,31 @@ enum LogSeverity { INFO, WARNING, ERROR };
 struct LogEntry {
   std::string message;
   LogSeverity severity;
+  std::string file;
+  int line;
+  std::string function;
 };
 
 // 
 class Logger {
 public:
-  void LogMessage(const std::string& msg, LogSeverity severity) {
-    m_Logs.push_back({msg, severity});
+  void LogMessage(const std::string& msg, LogSeverity severity, 
+                  const char* file, int line, const char* func) {
+    m_Logs.push_back({msg, severity, file, line, func});
 #if LOG_TO_CONSOLE == 1
-    std::cout << "[DEBUG]" << "-[" << GetSevText(severity) << "]: " << msg << "\n";
+    if(severity == LogSeverity::ERROR)
+      std::cerr << GetLogFormattedText(m_Logs[m_Logs.size()-1]) << "\n";
+    else
+      std::cout << GetLogFormattedText(m_Logs[m_Logs.size()-1]) << "\n";
 #endif
   }
 
   const std::string GetLogFormattedText(const LogEntry& entry){
     std::stringstream ss;
-    ss << "[" << GetSevText(entry.severity) << "] " << entry.message;
+    ss << "[" << GetSevText(entry.severity) << "] " 
+       << entry.file << ":" << entry.line << " "
+       << entry.function << " --- "
+       << entry.message;
     return ss.str();
   }
 
@@ -37,22 +50,26 @@ public:
     return instance;
   }
 
+  void ClearLog(){
+    m_Logs.clear();
+  }
+
   const std::vector<LogEntry>& GetLogs() const { return m_Logs; }
 
-private:
-  std::vector<LogEntry> m_Logs;
-  const char *GetSevText(LogSeverity sev) {
+  static const char *GetSevText(LogSeverity sev) {
     switch (sev) {
-    case INFO:
-      return "INFO";
-    case WARNING:
-      return "WARNING";
-    case ERROR:
-      return "ERROR";
+      case INFO:
+        return "INFO";
+      case WARNING:
+        return "WARNING";
+      case ERROR:
+        return "ERROR";
     }
 
     return "undefined";
   }
+private:
+  std::vector<LogEntry> m_Logs;
 };
 
 
@@ -61,24 +78,32 @@ private:
 // a stringstream that when destroyed, logs to the console
 class LogStream {
 public:
-  LogStream(LogSeverity sev) : severity(sev){}
+  LogStream(LogSeverity sev, const char* file, int line, const char* func) 
+  : m_Severity(sev)
+  , m_File(file)
+  , m_Line(line)
+  , m_Function(func)
+  {}
 
   template<typename T>
   LogStream& operator<<(const T& value){
-    ss << value;
+    m_ss << value;
     return *this;
   }
 
-  ~LogStream(){ Logger::Get().LogMessage(ss.str(), severity); }
+  ~LogStream(){ Logger::Get().LogMessage(m_ss.str(), m_Severity, m_File, m_Line, m_Function); }
 
 private:
-  std::stringstream ss;
-  LogSeverity severity;
+  std::stringstream m_ss;
+  const char* m_File;
+  int m_Line;
+  const char* m_Function;
+  LogSeverity m_Severity;
 };
 
 // Macros are defined here
 #ifdef DEBUG_ENABLED
-#define LOG_INFO LogStream(LogSeverity::INFO)
-#define LOG_WARNING LogStream(LogSeverity::WARNING)
-#define LOG_ERROR LogStream(LogSeverity::ERROR)
+#define LOG_INFO LogStream(LogSeverity::INFO, __FILE__, __LINE__, __func__)
+#define LOG_WARNING LogStream(LogSeverity::WARNING, __FILE__, __LINE__, __func__)
+#define LOG_ERROR LogStream(LogSeverity::ERROR, __FILE__, __LINE__, __func__)
 #endif
