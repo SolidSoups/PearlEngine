@@ -9,7 +9,7 @@
 #include "MenuRegistry.h"
 
 void MenuBar::RenderMenuBar(){
-  if(ImGui::BeginMenuBar()){
+  if(ImGui::BeginMainMenuBar()){
     // Build menu structure from registered classes
     std::map<std::string, std::vector<MenuItem>> menuStructure;
 
@@ -41,6 +41,6 @@ void MenuBar::RenderMenuBar(){
       }
     }
 
-    ImGui::EndMenuBar();
+    ImGui::EndMainMenuBar();
   }
 }
