@@ -17,11 +17,10 @@ void InspectorEditorPanel::OnImGuiRender(){
   if(!m_IsOpen) return;
 
 
-  ImGui::Begin("Inspector");
+  ImGui::Begin(m_Name.c_str());
 
   GameObject* selectedGO = m_Scene.GetSelectedGameObject();
   if(selectedGO){
-    std::cout << "Drawing selected gameobject" << std::endl;
     DrawTransform(selectedGO);
   }
 

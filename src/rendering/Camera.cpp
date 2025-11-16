@@ -4,6 +4,8 @@
 #include <iostream>
 #include "debug_extensions.h"
 
+#include "Logger.h"
+
 Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 worldUp)
   : m_Position(position)
   , m_Target(target)
@@ -63,22 +65,17 @@ void Camera::UpdateCameraVectors(){
 }
 
 void Camera::OutputParameters() const{
-  std::cout << "Camera::OutputParameters() -> params = {\n"
-    << "\t// Camera position and orientation\n"
+  LOG_INFO << "Camera::OutputParameters() -> params = {\n"
       << "\t\tPosition: " << m_Position << ",\n"
       << "\t\tTarget: " << m_Target << ",\n"
       << "\t\tWorldUp: " << m_WorldUp << ",\n"
-    << "\t// Camera basis vectors\n"
       << "\t\tForward: " << m_Forward << ",\n"
       << "\t\tRight: " << m_Right << ",\n"
       << "\t\tUp: " << m_Up << ",\n"
-    << "\t// Perspective settings\n"
       << "\t\tFOV: " << m_FOV << ",\n"
       << "\t\tAspectRatio: " << m_AspectRatio << ",\n"
-    << "\t// Frustrum parameters\n"
       << "\t\tNear Plane: " << m_NearPlane << ",\n"
       << "\t\tFar Plane: " << m_FarPlane << ",\n"
-    << "}"         
-    << std::endl;
+    << "}";
 }
 

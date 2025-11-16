@@ -9,6 +9,8 @@
 #include "MaterialData.h"
 #include "MeshData.h"
 
+#include "Logger.h"
+
 class ResourceSystem{
   ResourceManager<TextureTag, TextureData> m_Textures;
   ResourceManager<ShaderTag, ShaderData> m_Shaders;
@@ -28,7 +30,7 @@ public:
 
   void Destroy(){
     // clean up meshes
-    std::cout << "ResourceSystem::Destroy() -> Destroying meshes" << "\n";
+    LOG_INFO << "ResourceSystem::Destroy() -> Destroying meshes";
     std::vector<MeshHandle> meshHandles;
     for(auto& [handle, _] : m_Meshes.GetAll()){
       meshHandles.push_back(handle); 
@@ -38,7 +40,7 @@ public:
     }
 
     // clean up materials
-    std::cout << "ResourceSystem::Destroy() -> Destroying materials" << "\n";
+    LOG_INFO << "ResourceSystem::Destroy() -> Destroying materials";
     std::vector<MaterialHandle> materialHandles;
     for(auto& [handle, _] : m_Materials.GetAll()){
       materialHandles.push_back(handle);
@@ -48,7 +50,7 @@ public:
     }
 
     // clean up all textures
-    std::cout << "ResourceSystem::Destroy() -> Destroying textures" << "\n";
+    LOG_INFO << "ResourceSystem::Destroy() -> Destroying textures";
     std::vector<TextureHandle> textureHandles;
     for(auto& [handle, _] : m_Textures.GetAll()){
       textureHandles.push_back(handle);
@@ -58,7 +60,7 @@ public:
     }
 
     // clean up all shaders
-    std::cout << "ResourceSystem::Destroy() -> Destroying shaders" << "\n";
+    LOG_INFO << "ResourceSystem::Destroy() -> Destroying shaders";
     std::vector<ShaderHandle> shaderHandles;
     for(auto& [handle, _] : m_Shaders.GetAll()){
       shaderHandles.push_back(handle);

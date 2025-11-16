@@ -9,12 +9,14 @@
 
 // src
 #include "ResourceSystem.h"
+#include "Logger.h"
 
 namespace{
 #define GET_TEXTURE_OR_NULL(handle) GetTextureData(handle, __func__)
 TextureData* GetTextureData(TextureHandle handle, const char* functionName){
   TextureData* data = ResourceSystem::Get().Textures().Get(handle);
-  if(!data) std::cerr << "TextureData.cpp: " << functionName << ": TextureData is null" << "\n";
+  if(!data) 
+    LOG_INFO << "TextureData.cpp: " << functionName << ": TextureData is null";
   return data;
 }
 };

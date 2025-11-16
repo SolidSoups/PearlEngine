@@ -11,6 +11,8 @@
 
 #include <iostream>
 
+#include "Logger.h"
+
 GUIContext::GUIContext(GLFWwindow* window){
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -36,7 +38,7 @@ GUIContext::GUIContext(GLFWwindow* window){
   const char* glsl_version = "#version 330";
   ImGui_ImplOpenGL3_Init(glsl_version);
 
-  std::cout << "ImGuiContext::ImGuiContext() -> ImGui Context initialized!" << std::endl;
+  LOG_INFO << "GUIContext::GUIContext() -> GUI Context initialized!";
 }
 
 GUIContext::~GUIContext(){
@@ -70,7 +72,7 @@ void GUIContext::Shutdown(){
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
 
-  std::cout << "ImGuiContext::Shutdown() -> ImGui context shutdown" << std::endl;
+  LOG_INFO << "GUIContext::Shutdown() -> GUI context shutdown";
 }
 
 void GUIContext::DrawToolbar(){

@@ -4,6 +4,8 @@
 #include <iostream>
 #include "PearlEngine.h"
 
+#include "Logger.h"
+
 // this callback must be static and not a part of a class
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height){
   glViewport(0, 0, width, height);
@@ -32,7 +34,7 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
   // create the actual window
   window = glfwCreateWindow(width, height, title, NULL, NULL);
   if(window == NULL){
-    std::cout << "PearlWindow::PearlWindow(..) -> Failed to create GLFW window" << std::endl;
+    LOG_INFO << "PearlWindow::PearlWindow(..) -> Failed to create GLFW window";
     glfwTerminate();
     isInitialized = false;
     return;
@@ -42,7 +44,7 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
 
   // initialize glad
   if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-    std::cout << "PearlWindow::PearlWindow(..) -> Failed to initialize GLAD" << std::endl;
+    LOG_INFO << "PearlWindow::PearlWindow(..) -> Failed to initialize GLAD";
     isInitialized = false;
     glfwTerminate();
     return;
@@ -54,14 +56,14 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
 
   glfwMakeContextCurrent(window);
   isInitialized = true;
-  std::cout << "PearlWindow::PearlWindow(..) -> Succesfully initialized window" << std::endl;
+  LOG_INFO << "PearlWindow::PearlWindow(..) -> Succesfully initialized window";
 }
 
 PearlWindow::~PearlWindow(){
-  std::cout << "PearlWindow::~PearlWindow() -> Terminating Window" << std::endl;
+  LOG_INFO << "PearlWindow::~PearlWindow() -> Terminating Window";
   if(window != nullptr){
     glfwDestroyWindow(window);
   }
-  std::cout << "PearlWindow terminated!" << "\n";
+  LOG_INFO << "PearlWindow terminated!";
 }
 

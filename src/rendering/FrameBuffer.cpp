@@ -1,4 +1,5 @@
 #include "FrameBuffer.h"
+#include "Logger.h"
 #include <algorithm>
 #include <iostream>
 
@@ -45,7 +46,7 @@ void Framebuffer::Create(){
 
   // Check framebuffer completeness
   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-    std::cerr << "FrameBuffer::Create() -> Framebuffer is not complete" << std::endl;
+    LOG_INFO << "FrameBuffer::Create() -> Framebuffer is not complete";
   }
 
   glBindTexture(GL_TEXTURE_2D, 0);

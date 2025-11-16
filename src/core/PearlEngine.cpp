@@ -9,6 +9,7 @@
 // src
 #include "PearlEngine.h"
 #include "InspectorEditorPanel.h"
+#include "LoggerEditorPanel.h"
 #include "MenuRegistry.h"
 #include "Renderer.h"
 #include "Time.h"
@@ -18,9 +19,9 @@
 #include "TransformComponent.h"
 
 #include "ResourceSystem.h"
-#include "ResourceManager.h"
 #include "TextureData.h"
 #include "MaterialData.h"
+#include "Logger.h"
 
 // std
 #include <cmath>
@@ -30,9 +31,7 @@
 PearlEngine::PearlEngine() {
   if (!pwin.IsInitialized()) {
     isInitialized = false;
-    std::cout << "PearlEngine::PearlEngine() -> Engine failed to construct and "
-                 "initialize"
-              << std::endl;
+    LOG_INFO << "PearlEngine::PearlEngine() -> Engine failed to construct and initialize";
     return;
   }
 
@@ -40,19 +39,16 @@ PearlEngine::PearlEngine() {
   glfwSetWindowUserPointer(pwin.GetWindow(), this);
 
   isInitialized = true;
-  std::cout
-      << "PearlEngine::PearlEngine() -> Engine constructed and initialized"
-      << std::endl;
+  LOG_INFO << "PearlEngine::PearlEngine() -> Engine constructed and initialized";
 }
 
 PearlEngine::~PearlEngine() {
-  std::cout << "PearlEngine::~PearlEngine() -> Engine deconstructing"
-            << std::endl;
+  LOG_INFO << "PearlEngine::~PearlEngine() -> Engine deconstructing";
   glfwTerminate();
 }
 
 void PearlEngine::Initialize() {
-  std::cout << "PearlEngine::Initialize() -> Beginning initialization" << std::endl;
+  LOG_INFO << "PearlEngine::Initialize() -> Beginning initialization";
   GLFWwindow* window = pwin.GetWindow();
   glfwMakeContextCurrent(window);
   
@@ -81,7 +77,7 @@ void PearlEngine::Initialize() {
     Cube::s_Indices, 
     Cube::s_IndexCount);
 
-  std::cout << "PearlEngine::Initialize() -> Creating game objects" << std::endl;
+  LOG_INFO << "PearlEngine::Initialize() -> Creating game objects";
   for(float x = -2.0f; x <= 2.0f; x += 2.0f){
     for(float y = -2.0f; y <= 2.0f; y += 2.0f){
       GameObject* go = m_Scene.CreateGameObject();
@@ -95,29 +91,12 @@ void PearlEngine::Initialize() {
       std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
 
   // Create the viewport editor panel
-  auto viewportPanel =
-      std::make_unique<ViewportEditorPanel>(m_ViewportFramebuffer.get());
-  m_ViewportPanel = viewportPanel.get();
-  m_Panels.push_back(std::move(viewportPanel)); // Transfer ownership to vector
-  
-  // Create the scene hierarchy editor panel
-  auto scenePanel = 
-    std::make_unique<SceneHierarchyEditorPanel>(m_Scene, pearlMatHandle, sunMatHandle);
-  m_ScenePanel = scenePanel.get();
-  m_Panels.push_back(std::move(scenePanel)); // Transfer ownership to vector
-  
-  // Create the resource panel
-  auto resourcePanel = 
-    std::make_unique<ResourceEditorPanel>(ResourceSystem::Get());
-  m_ResourcePanel = resourcePanel.get();
-  m_Panels.push_back(std::move(resourcePanel)); // Transfer ownership to vector
-
-  // Create the resource panel
-  auto inspectPanel = 
-    std::make_unique<InspectorEditorPanel>(m_Scene);
-  m_Panels.push_back(std::move(inspectPanel)); // Transfer ownership to vector
-  
-  
+  m_ViewportPanel = AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
+  m_ScenePanel = AddPanel<SceneHierarchyEditorPanel>(m_Scene, pearlMatHandle, sunMatHandle);
+  m_ResourcePanel = AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
+  m_InspectorPanel = AddPanel<InspectorEditorPanel>(m_Scene);
+  AddPanel<LoggerEditorPanel>();
+   
   // Setup camera aspect ratio
   int framebufferWidth, frameBufferHeight;
   glfwGetFramebufferSize(pwin.GetWindow(), &framebufferWidth,
@@ -133,7 +112,7 @@ void PearlEngine::Initialize() {
   
   AddMenuBarItems();
 
-  std::cout << "PearlEngine::Initialize() -> initialization finished" << std::endl;
+  LOG_INFO << "PearlEngine::Initialize() -> initialization finished";
 }
 
 // b@UPDATE
