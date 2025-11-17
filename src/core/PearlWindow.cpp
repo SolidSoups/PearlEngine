@@ -34,7 +34,7 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
   // create the actual window
   window = glfwCreateWindow(width, height, title, NULL, NULL);
   if(window == NULL){
-    LOG_INFO << "PearlWindow::PearlWindow(..) -> Failed to create GLFW window";
+    LOG_INFO << "Failed to create GLFW window";
     glfwTerminate();
     isInitialized = false;
     return;
@@ -44,7 +44,7 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
 
   // initialize glad
   if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-    LOG_INFO << "PearlWindow::PearlWindow(..) -> Failed to initialize GLAD";
+    LOG_INFO << "Failed to initialize GLAD";
     isInitialized = false;
     glfwTerminate();
     return;
@@ -56,11 +56,11 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
 
   glfwMakeContextCurrent(window);
   isInitialized = true;
-  LOG_INFO << "PearlWindow::PearlWindow(..) -> Succesfully initialized window";
+  LOG_INFO << "Succesfully initialized window";
 }
 
 PearlWindow::~PearlWindow(){
-  LOG_INFO << "PearlWindow::~PearlWindow() -> Terminating Window";
+  LOG_INFO << "Terminating Window";
   if(window != nullptr){
     glfwDestroyWindow(window);
   }

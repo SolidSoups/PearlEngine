@@ -31,7 +31,7 @@
 PearlEngine::PearlEngine() {
   if (!pwin.IsInitialized()) {
     isInitialized = false;
-    LOG_INFO << "PearlEngine::PearlEngine() -> Engine failed to construct and initialize";
+    LOG_INFO << "Engine failed to construct and initialize";
     return;
   }
 
@@ -39,16 +39,16 @@ PearlEngine::PearlEngine() {
   glfwSetWindowUserPointer(pwin.GetWindow(), this);
 
   isInitialized = true;
-  LOG_INFO << "PearlEngine::PearlEngine() -> Engine constructed and initialized";
+  LOG_INFO << "Engine constructed and initialized";
 }
 
 PearlEngine::~PearlEngine() {
-  LOG_INFO << "PearlEngine::~PearlEngine() -> Engine deconstructing";
+  LOG_INFO << "Engine deconstructing";
   glfwTerminate();
 }
 
 void PearlEngine::Initialize() {
-  LOG_INFO << "PearlEngine::Initialize() -> Beginning initialization";
+  LOG_INFO << "Beginning initialization";
   GLFWwindow* window = pwin.GetWindow();
   glfwMakeContextCurrent(window);
   

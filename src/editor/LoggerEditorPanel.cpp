@@ -26,8 +26,8 @@ void LoggerEditorPanel::DrawMenuBar(){
 
 void LoggerEditorPanel::DrawLogArea(){
   // scroll log area
-  ImGui::BeginChild("LogScrollArea", ImVec2(0,0), true, ImGuiWindowFlags_AlwaysVerticalScrollbar);
   ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+  ImGui::BeginChild("LogScrollArea", ImVec2(0,0), true, ImGuiWindowFlags_AlwaysVerticalScrollbar);
 
   for(const auto& log : m_Logger.GetLogs()){
     ImVec4 sevColor;
@@ -58,6 +58,6 @@ void LoggerEditorPanel::DrawLogArea(){
     ImGui::Text("%s", log.message.c_str());
   }
 
-  ImGui::PopStyleColor();
   ImGui::EndChild();
+  ImGui::PopStyleColor();
 }

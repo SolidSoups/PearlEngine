@@ -27,13 +27,35 @@ void InspectorEditorPanel::OnImGuiRender(){
   ImGui::End();
 }
 
+void DrawDraggableFloat3(const std::string& name, float* value, float scale, float* minscale = nullptr){
+  const float labelWidth = 80.f;
+  ImGui::AlignTextToFramePadding();
+  ImGui::Text(name.c_str());
+  ImGui::SameLine(labelWidth);
+  if(minscale){
+    ImGui::DragFloat3(("##" + name).c_str(), value, scale, *minscale);
+  }
+  else{
+    ImGui::DragFloat3(("##" + name).c_str(), value, scale);
+  }
+}
+
 void InspectorEditorPanel::DrawTransform(GameObject* go){
   TransformComponent* transform = go->GetComponent<TransformComponent>();
   if(!transform) return;
   
-  if(ImGui::CollapsingHeader("Transform")){
-    ImGui::DragFloat3("Position", &transform->position.x, 0.1f);
-    ImGui::DragFloat3("Rotation", &transform->rotation.x, 0.5f);
-    ImGui::DragFloat3("Scale", &transform->scale.x, 0.1f, 0.001f);
+  if(ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)){
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 4));
+
+    float labelWidth = 80.f;
+
+    DrawDraggableFloat3("Position", &transform->position.x, 0.1f);
+    DrawDraggableFloat3("Rotation", &transform->rotation.x, 0.5f);
+
+    float minscale = 0.001f;
+    DrawDraggableFloat3("Scale", &transform->scale.x, 0.1f, &minscale);
+
+    ImGui::PopStyleVar();
   }
 }
+
