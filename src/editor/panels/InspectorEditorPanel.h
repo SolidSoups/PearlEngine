@@ -15,5 +15,6 @@ public:
 private:
   Scene& m_Scene;
 
-  void DrawTransform(GameObject* go);
+  void DrawComponents(GameObject* go);
+  void DrawHeader(GameObject* go);
 };

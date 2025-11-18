@@ -86,8 +86,8 @@ void PearlEngine::Initialize() {
   for(float x = -2.0f; x <= 2.0f; x += 2.0f){
     for(float y = -2.0f; y <= 2.0f; y += 2.0f){
       GameObject* go = m_Scene.CreateGameObject();
-      go->AddComponent<TransformComponent>(glm::vec3(x, y, 0.0f));
       go->AddComponent<RenderComponent>(cubeMeshHandle, sunMatHandle);
+      go->AddComponent<TransformComponent>(glm::vec3(x, y, 0.0f));
     }
   }
 

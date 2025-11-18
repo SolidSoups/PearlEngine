@@ -4,6 +4,7 @@
 #include "RenderComponent.h"
 #include "imgui.h"
 #include "MeshData.h"
+#include <string>
 
 SceneHierarchyEditorPanel::SceneHierarchyEditorPanel(Scene& scene, MaterialHandle pearlHandle, MaterialHandle sunnyHandle) 
   : EditorPanel("Scene Hierarchy")
@@ -24,17 +25,12 @@ void SceneHierarchyEditorPanel::OnImGuiRender(){
     const auto& gameObject = sceneObjects[i];
     auto renderComp = gameObject->GetComponent<RenderComponent>();
     // Display each gameObject as a selectable
-    std::string label = "GameObject " + std::to_string(gameObject->GetID());
-    if(renderComp->materialHandle == m_SunnyHandle){
-      label += " (Sunshine)";
-    }
-    else{
-      label += " (Pearl)";
-    }
-
     bool isSelected (m_Scene.GetSelectedGameObject() == gameObject.get());
 
-    if(ImGui::Selectable(label.c_str(), isSelected)){
+    std::string nameid = gameObject->m_Name + "##" + std::to_string(i);
+
+    if(ImGui::Selectable(nameid.c_str(), isSelected)){
+      // TODO: change this shit
       if(renderComp->materialHandle == m_SunnyHandle)
         renderComp->materialHandle = m_PearlHandle;
       else
