@@ -15,7 +15,6 @@ struct TextureData{
 struct TextureTag {};
 using TextureHandle = Handle<TextureTag>;
 
-TextureHandle LoadTexture(const std::string& filepath, bool generateMipMaps = true);
 void BindTexture(TextureHandle handle, unsigned int slot);
 void UnbindTexture();
 void DestroyTexture(TextureHandle handle);

@@ -17,10 +17,5 @@ struct MeshData{
 struct MeshTag{};
 using MeshHandle = Handle<MeshTag>;
 
-MeshHandle CreateMesh(
-  const float* vertices, 
-  size_t vertexCount, 
-  const unsigned int* indices, 
-  size_t indexCount);
 void DestroyMesh(MeshHandle handle);
 void RenderMesh(MeshHandle handle);

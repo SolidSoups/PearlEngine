@@ -21,6 +21,10 @@
 #include "ResourceSystem.h"
 #include "TextureData.h"
 #include "MaterialData.h"
+#include "meshLoaders.h"
+#include "materialLoaders.h"
+#include "shaderLoaders.h"
+#include "textureLoaders.h"
 #include "Logger.h"
 
 // std
@@ -74,13 +78,24 @@ void PearlEngine::Initialize() {
   MaterialHandle pearlMatHandle = CreateMaterial(m_ShaderHandle);
   MaterialSetTexture(pearlMatHandle, "mainTexture", pearlTextureHandle);
 
+  // lets just create the vertexes
+  std::vector<Vertex> vertices;
+  for(int i=0; i<Cube::s_VertexCount*8; i+=8){
+    vertices.push_back({
+      { Cube::s_Vertices[i], Cube::s_Vertices[i+1], Cube::s_Vertices[i+2], },
+      { Cube::s_Vertices[i+3], Cube::s_Vertices[i+4], Cube::s_Vertices[i+5], },
+      { Cube::s_Vertices[i+6], Cube::s_Vertices[i+7] }
+    });
+  }
+  std::vector<unsigned int> indices;
+  for(int i=0; i<Cube::s_IndexCount; i++){
+    indices.push_back(Cube::s_Indices[i]);
+  }
+
   // Create the cube mesh
   LOG_INFO << "Creating cube mesh";
   MeshHandle cubeMeshHandle = CreateMesh(
-    Cube::s_Vertices, 
-    Cube::s_VertexCount, 
-    Cube::s_Indices, 
-    Cube::s_IndexCount);
+    vertices, indices);
 
   LOG_INFO << "Creating game objects";
   for(float x = -2.0f; x <= 2.0f; x += 2.0f){

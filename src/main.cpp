@@ -4,7 +4,6 @@
 #include <GLFW/glfw3.h>
 
 // src
-#define LOG_TO_CONSOLE 0
 #include "PearlEngine.h"
 
 

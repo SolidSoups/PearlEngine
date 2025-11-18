@@ -16,13 +16,6 @@ MaterialData* GetMaterialData(MaterialHandle handle, const char* functionName){
 }
 };
 
-MaterialHandle CreateMaterial(ShaderHandle shaderHandle){
-  MaterialHandle matHandle =
-    ResourceSystem::Get().Materials().Create({shaderHandle});
-  LOG_INFO << "Created material with shader handle id:" << shaderHandle.id;
-  return matHandle;
-}
-
 ShaderHandle MaterialGetShaderHandle(MaterialHandle handle){
   MaterialData* materialData = GetMaterialData(handle, "MaterialGetShaderHandle");
   if(!materialData) return {};

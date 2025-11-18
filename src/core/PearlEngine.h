@@ -36,7 +36,7 @@ private:
   
 public:
   // RaII rules 👑
-  PearlWindow pwin{1800, 1000, "LearnOpenGL"};
+  PearlWindow pwin{1800, 1000, "PearlEngine"};
   GUIContext imGuiContext{pwin.GetWindow()};
 
   // framebuffer

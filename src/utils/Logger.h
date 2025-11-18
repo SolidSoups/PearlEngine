@@ -28,11 +28,11 @@ public:
   void LogMessage(const std::string& msg, LogSeverity severity, 
                   const char* file, int line, const char* func) {
     m_Logs.push_back({msg, severity, file, line, func});
-#if LOG_TO_CONSOLE == 1
+#if LOG_TO_CONSOLE
     if(severity == LogSeverity::ERROR)
-      std::cerr << GetLogFormattedText(m_Logs[m_Logs.size()-1]) << "\n";
+      std::cerr << GetLogFormattedText(m_Logs[m_Logs.size()-1]) << std::endl;
     else
-      std::cout << GetLogFormattedText(m_Logs[m_Logs.size()-1]) << "\n";
+      std::cout << GetLogFormattedText(m_Logs[m_Logs.size()-1]) << std::endl;
 #endif
   }
 
@@ -102,8 +102,12 @@ private:
 };
 
 // Macros are defined here
-#ifdef DEBUG_ENABLED
+#if DEBUG_ENABLED
 #define LOG_INFO LogStream(LogSeverity::INFO, __FILE__, __LINE__, __func__)
 #define LOG_WARNING LogStream(LogSeverity::WARNING, __FILE__, __LINE__, __func__)
 #define LOG_ERROR LogStream(LogSeverity::ERROR, __FILE__, __LINE__, __func__)
+#else
+#define LOG_INFO if(0) LogStream(LogSeverity::INFO, "", 0, "")
+#define LOG_WARNING if(0) LogStream(LogSeverity::WARNING, "", 0, "")
+#define LOG_ERROR if(0) LogStream(LogSeverity::ERROR, "", 0, "")
 #endif

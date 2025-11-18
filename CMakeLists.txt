@@ -53,6 +53,7 @@ target_link_libraries(game_engine
 )
 target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/struct
   ${CMAKE_CURRENT_SOURCE_DIR}/src/core
   ${CMAKE_CURRENT_SOURCE_DIR}/src/rendering
   ${CMAKE_CURRENT_SOURCE_DIR}/src/geometry
@@ -61,6 +62,7 @@ target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/editor/panels
   ${CMAKE_CURRENT_SOURCE_DIR}/src/editor/componenteditors
   ${CMAKE_CURRENT_SOURCE_DIR}/src/resource
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/resource/loaders
   ${CMAKE_CURRENT_SOURCE_DIR}/src/resource/resources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs/components
@@ -69,5 +71,5 @@ target_include_directories(game_engine PRIVATE
 )
 target_compile_definitions(game_engine PRIVATE
   DEBUG_ENABLED=1 
-  LOG_TO_CONSOLE=0
+  LOG_TO_CONSOLE=1
 )
