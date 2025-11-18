@@ -8,6 +8,8 @@
 
 #include "ResourceSystem.h"
 
+#include "Logger.h"
+
 namespace { // empty namespace will only be visible to this translation unit
 // Read a shader file
 std::string ReadShaderFile(const char* filepath){
@@ -27,7 +29,7 @@ std::string ReadShaderFile(const char* filepath){
     code = ss.str(); 
   }
   catch(std::ifstream::failure e){
-    std::cerr << "ShaderData.cpp: ReadShaderFile: File failed to read\n" << e.what() << std::endl; 
+    LOG_ERROR << "ShaderData.cpp: ReadShaderFile: File failed to read\n" << e.what(); 
     return "";
   }
 

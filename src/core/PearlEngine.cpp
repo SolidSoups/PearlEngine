@@ -97,6 +97,9 @@ void PearlEngine::Initialize() {
   MeshHandle cubeMeshHandle = CreateMesh(
     vertices, indices);
 
+  // test loading a dummy mesh
+  CreateMeshFromObjFile("assets/meshTest.obj");
+
   LOG_INFO << "Creating game objects";
   for(float x = -2.0f; x <= 2.0f; x += 2.0f){
     for(float y = -2.0f; y <= 2.0f; y += 2.0f){
