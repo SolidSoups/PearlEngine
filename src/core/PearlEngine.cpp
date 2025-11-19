@@ -71,12 +71,21 @@ void PearlEngine::Initialize() {
   LOG_INFO << "Creating shader";
   m_ShaderHandle = CreateShader("shaders/vert.glsl", "shaders/frag.glsl");
 
+  // Create new shader
+  LOG_INFO << "Creating new shader";
+  ShaderHandle shadHandle = CreateShader("shaders/vertNew.glsl", "shaders/fragNew.glsl");
+
   // Create new materials for pearl and sunshine
   LOG_INFO << "Creating materials";
   MaterialHandle sunMatHandle = CreateMaterial(m_ShaderHandle);
   MaterialSetTexture(sunMatHandle, "mainTexture", sunshineTextureHandle);
   MaterialHandle pearlMatHandle = CreateMaterial(m_ShaderHandle);
   MaterialSetTexture(pearlMatHandle, "mainTexture", pearlTextureHandle);
+
+  // Create new material
+  LOG_INFO << "Creating new materials";
+  MaterialHandle newMat = CreateMaterial(shadHandle);
+  MaterialSetTexture(newMat, "mainTexture", sunshineTextureHandle);
 
   // lets just create the vertexes
   std::vector<Vertex> vertices;
@@ -97,8 +106,9 @@ void PearlEngine::Initialize() {
   MeshHandle cubeMeshHandle = CreateMesh(
     vertices, indices);
 
-  // test loading a dummy mesh
-  CreateMeshFromObjFile("assets/meshTest.obj");
+  // Create the weird mesh
+  LOG_INFO << "Creating new mesh";
+  MeshHandle newMesh = CreateMeshFromObjFile("assets/meshTest.obj");
 
   LOG_INFO << "Creating game objects";
   for(float x = -2.0f; x <= 2.0f; x += 2.0f){
@@ -108,6 +118,11 @@ void PearlEngine::Initialize() {
       go->AddComponent<TransformComponent>(glm::vec3(x, y, 0.0f));
     }
   }
+
+  LOG_INFO << "Creating weird new game object";
+  GameObject* weirdGo = m_Scene.CreateGameObject();
+  weirdGo->AddComponent<RenderComponent>(newMesh, newMat);
+  weirdGo->AddComponent<TransformComponent>(glm::vec3(10.f, 0.f, 10.f));
 
   // Create viewport framebuffer
   LOG_INFO << "Creating viewport frame buffer";
