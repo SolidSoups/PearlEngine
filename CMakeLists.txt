@@ -4,11 +4,20 @@ project(PearlEngine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Set default build type
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 # glfw
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/glfw)
+
+# gtk4 (for file-explorer)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTK4 REQUIRED gtk4)
 
 # glad library
 add_library(glad external/glad/src/glad.c)
@@ -50,6 +59,7 @@ target_link_libraries(game_engine
     glfw 
     glad 
     imgui
+    ${GTK4_LIBRARIES}
 )
 target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -68,6 +78,7 @@ target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs/components
   external/stb
   external/glm
+  ${GTK4_INCLUDE_DIRS}
 )
 target_compile_definitions(game_engine PRIVATE
   DEBUG_ENABLED=1 

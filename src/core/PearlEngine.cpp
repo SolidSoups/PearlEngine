@@ -5,9 +5,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/mat4x4.hpp>
 #include <imgui.h>
+#include <gtk-4.0/gtk/gtk.h>
 
 // src
 #include "PearlEngine.h"
+#include "AssetEditorPanel.h"
 #include "InspectorEditorPanel.h"
 #include "LoggerEditorPanel.h"
 #include "MenuRegistry.h"
@@ -31,6 +33,7 @@
 #include <cmath>
 #include <iostream>
 #include <memory>
+#include <optional>
 
 PearlEngine::PearlEngine() {
   if (!pwin.IsInitialized()) {
@@ -120,9 +123,9 @@ void PearlEngine::Initialize() {
   // }
 
   LOG_INFO << "Creating weird new game object";
-  GameObject* weirdGo = m_Scene.CreateGameObject("loaded obj mesh");
-  weirdGo->AddComponent<RenderComponent>(newMesh, newMat);
-  weirdGo->AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 0.f));
+  // GameObject* weirdGo = m_Scene.CreateGameObject("loaded obj mesh");
+  // weirdGo->AddComponent<RenderComponent>(newMesh, newMat);
+  // weirdGo->AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 0.f));
 
   // Create viewport framebuffer
   LOG_INFO << "Creating viewport frame buffer";
@@ -136,6 +139,7 @@ void PearlEngine::Initialize() {
   m_ResourcePanel = AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
   m_InspectorPanel = AddPanel<InspectorEditorPanel>(m_Scene);
   AddPanel<LoggerEditorPanel>();
+  AddPanel<AssetEditorPanel>(m_Scene, newMat);
   AddMenuBarItems();
    
   // Setup camera aspect ratio

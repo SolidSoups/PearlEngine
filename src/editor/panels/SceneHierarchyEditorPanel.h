@@ -13,7 +13,11 @@ public:
   void OnImGuiRender() override;
 
 private:
+  void DrawSceneHierarchy();  
+  void DrawContextMenu();
+private:
   Scene& m_Scene;
   MaterialHandle m_PearlHandle;
   MaterialHandle m_SunnyHandle;
+
 };
