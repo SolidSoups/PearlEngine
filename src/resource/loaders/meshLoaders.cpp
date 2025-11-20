@@ -278,6 +278,13 @@ MeshHandle CreateMeshFromObjFile(const char *path){
   std::vector<unsigned int> indices;
   if(LoadObjFile(path, vertices, indices)){
     LOG_INFO << "Succeded in loading mesh, \n\tvertices: " << vertices.size() << "\n\tindices: " << indices.size();
+
+    std::cout << "\n[";
+    for(auto& vertex : vertices){
+      std::cout << vertex << ", ";
+    }
+    std::cout << std::endl;
+
     // TODO: implement a new shader for this new format
     MeshHandle newHandle = CreateMeshNew(vertices, indices);
     return newHandle;

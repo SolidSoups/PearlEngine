@@ -111,18 +111,18 @@ void PearlEngine::Initialize() {
   MeshHandle newMesh = CreateMeshFromObjFile("assets/meshTest.obj");
 
   LOG_INFO << "Creating game objects";
-  for(float x = -2.0f; x <= 2.0f; x += 2.0f){
-    for(float y = -2.0f; y <= 2.0f; y += 2.0f){
-      GameObject* go = m_Scene.CreateGameObject();
-      go->AddComponent<RenderComponent>(cubeMeshHandle, sunMatHandle);
-      go->AddComponent<TransformComponent>(glm::vec3(x, y, 0.0f));
-    }
-  }
+  // for(float x = -2.0f; x <= 2.0f; x += 2.0f){
+  //   for(float y = -2.0f; y <= 2.0f; y += 2.0f){
+  //     GameObject* go = m_Scene.CreateGameObject();
+  //     go->AddComponent<RenderComponent>(cubeMeshHandle, sunMatHandle);
+  //     go->AddComponent<TransformComponent>(glm::vec3(x, y, 0.0f));
+  //   }
+  // }
 
   LOG_INFO << "Creating weird new game object";
-  GameObject* weirdGo = m_Scene.CreateGameObject();
+  GameObject* weirdGo = m_Scene.CreateGameObject("loaded obj mesh");
   weirdGo->AddComponent<RenderComponent>(newMesh, newMat);
-  weirdGo->AddComponent<TransformComponent>(glm::vec3(10.f, 0.f, 10.f));
+  weirdGo->AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 0.f));
 
   // Create viewport framebuffer
   LOG_INFO << "Creating viewport frame buffer";
@@ -232,6 +232,10 @@ void PearlEngine::RenderEditor() {
 }
 
 void PearlEngine::ProcessInput(GLFWwindow *window) {
+  ImGuiIO io = ImGui::GetIO();
+  if(io.WantCaptureMouse || io.WantCaptureKeyboard)
+    return;
+
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
   }
