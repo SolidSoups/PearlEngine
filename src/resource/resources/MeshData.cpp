@@ -7,7 +7,7 @@
 namespace {
 #define GET_MESH_OR_NULL(handle) GetMeshDataOrNull(handle, __func__)
 MeshData* GetMeshDataOrNull(MeshHandle handle, const char* functionName){
-  MeshData* meshData = ResourceSystem::Get().Meshes().Get(handle);
+  MeshData* meshData = ResourceSystem::Get().Get(handle);
   if(!meshData)
     std::cerr << "MeshData.cpp: " << functionName << ": MeshData is null" << std::endl;
   return meshData;
@@ -24,7 +24,7 @@ void DestroyMesh(MeshHandle handle){
   if(meshData->EBO) glDeleteBuffers(1, &meshData->EBO);
 
   // delete handle
-  ResourceSystem::Get().Meshes().Destroy(handle);
+  ResourceSystem::Get().Destroy(handle);
 }
 
 void RenderMesh(MeshHandle handle){

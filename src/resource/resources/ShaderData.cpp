@@ -11,7 +11,7 @@
 namespace {
 ShaderData* GetShaderData(ShaderHandle handle, const char* functionName){
   ShaderData* data = 
-    ResourceSystem::Get().Shaders().Get(handle);
+    ResourceSystem::Get().Get(handle);
   if(!data){
     std::cerr << "ShaderData.cpp: " << functionName << ": ShaderData is null" << "\n";
   }
@@ -34,7 +34,7 @@ void DestroyShader(ShaderHandle handle){
   if(!data) return;
 
   glDeleteProgram(data->id);
-  ResourceSystem::Get().Shaders().Destroy(handle);
+  ResourceSystem::Get().Destroy(handle);
 }
 
 // uniforms

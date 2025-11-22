@@ -4,33 +4,38 @@
 #include "Time.h"
 #include "imgui.h"
 
-ResourceEditorPanel::ResourceEditorPanel(ResourceSystem resourceSystem)
+#include "MeshData.h"
+#include "MaterialData.h"
+#include "ShaderData.h"
+#include "TextureData.h"
+
+ResourceEditorPanel::ResourceEditorPanel(ResourceSystem& resourceSystem)
     : EditorPanel("Resource Overview"), m_LastUpdateTime(0.0f),
       m_ResourceSystem(resourceSystem) {
   // Register all resource data getters
   RegisterResource([this]() {
-    auto &mgr = m_ResourceSystem.Textures();
+    auto &mgr = m_ResourceSystem.GetManagerByData<TextureData>();
     auto &alloc = mgr.GetAllocator();
     return ResourceData{"Textures", mgr.GetResourceSize(),
                         alloc.GetTotalAllocations(), alloc.GetFreeIDCount()};
   });
 
   RegisterResource([this]() {
-    auto &mgr = m_ResourceSystem.Materials();
+    auto &mgr = m_ResourceSystem.GetManagerByData<MaterialData>();
     auto &alloc = mgr.GetAllocator();
     return ResourceData{"Materials", mgr.GetResourceSize(),
                         alloc.GetTotalAllocations(), alloc.GetFreeIDCount()};
   });
 
   RegisterResource([this]() {
-    auto &mgr = m_ResourceSystem.Meshes();
+    auto &mgr = m_ResourceSystem.GetManagerByData<MeshData>();
     auto &alloc = mgr.GetAllocator();
     return ResourceData{"Meshes", mgr.GetResourceSize(),
                         alloc.GetTotalAllocations(), alloc.GetFreeIDCount()};
   });
 
   RegisterResource([this]() {
-    auto &mgr = m_ResourceSystem.Shaders();
+    auto &mgr = m_ResourceSystem.GetManagerByData<ShaderData>();
     auto &alloc = mgr.GetAllocator();
     return ResourceData{"Shaders", mgr.GetResourceSize(),
                         alloc.GetTotalAllocations(), alloc.GetFreeIDCount()};

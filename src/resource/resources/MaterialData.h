@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "ResourceMacros.h"
 #include "glm/glm.hpp"
 #include "glm/mat4x4.hpp"
 
@@ -19,8 +20,7 @@ struct MaterialData{
   std::unordered_map<std::string, TextureHandle> textureHandles;
   std::unordered_map<std::string, glm::mat4> mat4s;
 };
-struct MaterialTag{};
-using MaterialHandle = Handle<MaterialTag>;
+PEARL_DEFINE_RESOURCE(Material, MaterialData)
 
 ShaderHandle MaterialGetShaderHandle(MaterialHandle handle);
 

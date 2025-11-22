@@ -14,7 +14,7 @@
 namespace{
 #define GET_TEXTURE_OR_NULL(handle) GetTextureData(handle, __func__)
 TextureData* GetTextureData(TextureHandle handle, const char* functionName){
-  TextureData* data = ResourceSystem::Get().Textures().Get(handle);
+  TextureData* data = ResourceSystem::Get().Get(handle);
   if(!data) 
     LOG_INFO << "TextureData.cpp: " << functionName << ": TextureData is null";
   return data;
@@ -38,5 +38,5 @@ void DestroyTexture(TextureHandle handle){
   if(!textureData) return;
 
   glDeleteTextures(1, &textureData->id); 
-  ResourceSystem::Get().Textures().Destroy(handle);
+  ResourceSystem::Get().Destroy(handle);
 }

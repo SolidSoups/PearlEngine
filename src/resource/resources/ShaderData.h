@@ -4,12 +4,12 @@
 #include <glm/glm.hpp>
 
 #include "Handle.h"
+#include "ResourceMacros.h"
 
 struct ShaderData {
   GLuint id = 0;
 };
-struct ShaderTag {};
-using ShaderHandle = Handle<ShaderTag>;
+PEARL_DEFINE_RESOURCE(Shader, ShaderData)
 
 void UseShader(ShaderHandle handle);
 void ResetShader();

@@ -1,72 +1,75 @@
 #pragma once
 
-#include <iostream>
+#include <algorithm>
+#include <memory>
+#include <typeindex>
 #include <vector>
 
-#include "ResourceManager.h"
-#include "TextureData.h"
-#include "ShaderData.h"
+#include "ResourceTraits.h"
 #include "MaterialData.h"
 #include "MeshData.h"
+#include "ResourceManager.h"
+#include "ShaderData.h"
+#include "TextureData.h"
 
 #include "Logger.h"
 
-class ResourceSystem{
-  ResourceManager<TextureTag, TextureData> m_Textures;
-  ResourceManager<ShaderTag, ShaderData> m_Shaders;
-  ResourceManager<MaterialTag, MaterialData> m_Materials;
-  ResourceManager<MeshTag, MeshData> m_Meshes;
+class ResourceSystem {
+    std::unordered_map<std::type_index, std::unique_ptr<ResourceManagerBase>>
+        m_Managers;
 
 public:
-  static ResourceSystem& Get(){
-    static ResourceSystem instance;
-    return instance;
-  }
+    // ResourceSystem(const ResourceSystem&) = delete; //idkw this doesn't work
+    ResourceSystem &operator=(const ResourceSystem&) = delete;
 
-  auto& Textures() { return m_Textures; }
-  auto& Shaders() { return m_Shaders; }
-  auto& Materials() { return m_Materials; }
-  auto& Meshes() { return m_Meshes; }
-
-  void Destroy(){
-    // clean up meshes
-    LOG_INFO << "ResourceSystem::Destroy() -> Destroying meshes";
-    std::vector<MeshHandle> meshHandles;
-    for(auto& [handle, _] : m_Meshes.GetAll()){
-      meshHandles.push_back(handle); 
-    }
-    for(auto& handle : meshHandles){
-      DestroyMesh(handle);
+  public:
+    static ResourceSystem &Get() {
+        static ResourceSystem instance;
+        return instance;
     }
 
-    // clean up materials
-    LOG_INFO << "ResourceSystem::Destroy() -> Destroying materials";
-    std::vector<MaterialHandle> materialHandles;
-    for(auto& [handle, _] : m_Materials.GetAll()){
-      materialHandles.push_back(handle);
-    }
-    for(auto& handle : materialHandles){
-      DestroyMaterial(handle);
+    // Create only a specific data type
+    template<typename Data>
+    Handle<typename ResourceTraits<Data>::Tag> Create(Data data){
+        // basically a "trust me bro (compiler), it exists and is a type" for ::Tag
+        using Tag = typename ResourceTraits<Data>::Tag; 
+        return GetManager<Tag, Data>().Create(std::move(data));
+    };
+
+    // Get, extract a data type from Tag in handle
+    template<typename Tag>
+    typename TagToData<Tag>::Data* Get(Handle<Tag> handle){
+        using Data = typename TagToData<Tag>::Data;
+        return GetManager<Tag, Data>().Get(handle);
     }
 
-    // clean up all textures
-    LOG_INFO << "ResourceSystem::Destroy() -> Destroying textures";
-    std::vector<TextureHandle> textureHandles;
-    for(auto& [handle, _] : m_Textures.GetAll()){
-      textureHandles.push_back(handle);
-    }
-    for(auto& handle : textureHandles){
-      DestroyTexture(handle);
+    // Destroy
+    template<typename Tag>
+    void Destroy(Handle<Tag> handle){
+        using Data = typename TagToData<Tag>::Data;
+        return GetManager<Tag, Data>().Destroy(handle);
     }
 
-    // clean up all shaders
-    LOG_INFO << "ResourceSystem::Destroy() -> Destroying shaders";
-    std::vector<ShaderHandle> shaderHandles;
-    for(auto& [handle, _] : m_Shaders.GetAll()){
-      shaderHandles.push_back(handle);
+    template<typename Tag, typename Data>
+    ResourceManager<Tag, Data>& GetManager(){
+        auto typeIdx = std::type_index(typeid(Tag));
+
+        if(m_Managers.find(typeIdx) == m_Managers.end()){
+            m_Managers[typeIdx] = std::make_unique<ResourceManager<Tag, Data>>();
+        }
+
+        return *static_cast<ResourceManager<Tag, Data>*>(m_Managers[typeIdx].get());
     }
-    for(auto& handle : shaderHandles){
-      DestroyShader(handle);
+
+    template<typename Data>
+    auto& GetManagerByData(){
+        using Tag = typename ResourceTraits<Data>::Tag;
+        return GetManager<Tag, Data>();
     }
-  }
+
+
+
+    void Destroy() {
+
+    }
 };

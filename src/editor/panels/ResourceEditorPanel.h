@@ -16,12 +16,12 @@ struct ResourceData{
 
 class ResourceEditorPanel : public EditorPanel {
 public:
-  ResourceEditorPanel(ResourceSystem resourceSystem);
+  ResourceEditorPanel(ResourceSystem& resourceSystem);
 
   void OnImGuiRender() override;
 
 private:
-  ResourceSystem m_ResourceSystem;
+  ResourceSystem& m_ResourceSystem;
   std::vector<std::function<ResourceData()>> m_ResourceGetters;
   std::vector<ResourceData> m_CachedResourceData;
   void RegisterResource(std::function<ResourceData()> getter){

@@ -5,7 +5,7 @@
 
 MaterialHandle CreateMaterial(ShaderHandle shaderHandle){
   MaterialHandle matHandle = 
-    ResourceSystem::Get().Materials().Create({shaderHandle});
+    ResourceSystem::Get().Create(MaterialData{shaderHandle});
   LOG_INFO << "Created material (id=" << matHandle.id << ") with shader handle " << shaderHandle.id;
   return matHandle;
 }

@@ -8,7 +8,7 @@
 namespace{
 MaterialData* GetMaterialData(MaterialHandle handle, const char* functionName){
   MaterialData* data = 
-    ResourceSystem::Get().Materials().Get(handle);
+    ResourceSystem::Get().Get(handle);
   if(!data){
     std::cerr << "MaterialData.cpp: " << functionName << ": MaterialData is null" << "\n";
   }
@@ -66,8 +66,8 @@ void BindMaterial(MaterialHandle handle){
 }
 
 void DestroyMaterial(MaterialHandle handle){
-  if(!ResourceSystem::Get().Materials().Get(handle)) return;
-  ResourceSystem::Get().Materials().Destroy(handle);
+  if(!ResourceSystem::Get().Get(handle)) return;
+  ResourceSystem::Get().Destroy(handle);
 }
 
 void MaterialSetFloat(MaterialHandle handle, const std::string& name, float value)
