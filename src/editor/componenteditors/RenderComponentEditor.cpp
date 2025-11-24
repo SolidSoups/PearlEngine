@@ -19,5 +19,5 @@ void RenderComponentEditor::OnDrawComponent(Component* target) {
   ImGui::SameLine(labelWidth);
   int meshId = renderComp->meshHandle.id;
   ImGui::SetNextItemWidth(-10);
-  ImGui::InputInt("##MeshHandle", &meshId, 0, 0, ImGuiInputTextFlags_ReadOnly);
+  ImGui::InputInt("##MeshOldHandle", &meshId, 0, 0, ImGuiInputTextFlags_ReadOnly);
 }

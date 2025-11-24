@@ -10,6 +10,7 @@
 #include <string>
 
 #include "Logger.h"
+#include "Mesh.h"
 #include "glad/glad.h"
 
 #include "ResourceSystem.h"
@@ -111,11 +112,11 @@ bool ParseObjFile(const char *path, std::vector<unsigned int> &outObjIndices,
  * consist of [Vertex, UV, Normal] and a list of indices control faces using
  * vertex indices.
  */
-bool ReformatObjToOpenGl(const std::vector<unsigned int> &objIndices,
+void ReformatObjToOpenGl(const std::vector<unsigned int> &objIndices,
                          const std::vector<glm::vec3> &objVertices,
                          const std::vector<glm::vec2> &objUvs,
                          const std::vector<glm::vec3> &objNormals,
-                         std::vector<VertexNew> &outVertices,
+                         std::vector<float> &outVertices,
                          std::vector<unsigned int> &outIndices) {
     // clear the output refernces
     outVertices.clear();
@@ -135,19 +136,26 @@ bool ReformatObjToOpenGl(const std::vector<unsigned int> &objIndices,
         if (faceToIndex.find(key) == faceToIndex.end()) {
             faceToIndex[key] = nextIndex++;
 
+            const glm::vec3 &vertex = objVertices[objIndices[i] - 1];
+            const glm::vec2 &uv = objUvs[objIndices[i + 1] - 1];
+            const glm::vec3 &normal = objNormals[objIndices[i + 2] - 1];
+
             // also create a vertex since this is a new index
             // (also, remind yourself that OBJ uses 1-based indexing!!!!)
-            outVertices.push_back({objVertices[objIndices[i] - 1],
-                                   objUvs[objIndices[i + 1] - 1],
-                                   objNormals[objIndices[i + 2] - 1]});
+            outVertices.push_back(vertex.x);
+            outVertices.push_back(vertex.y);
+            outVertices.push_back(vertex.z);
+            outVertices.push_back(uv.x);
+            outVertices.push_back(uv.y);
+            outVertices.push_back(normal.x);
+            outVertices.push_back(normal.y);
+            outVertices.push_back(normal.z);
         }
         outIndices.push_back(faceToIndex[key]);
     }
-
-    return true;
 }
 
-bool LoadObjFile(const char *path, std::vector<VertexNew> &outVertices,
+bool LoadObjFile(const char *path, std::vector<float> &outVertices,
                  std::vector<unsigned int> &outIndices) {
     // load vertices and indices
     std::vector<unsigned int>
@@ -157,42 +165,18 @@ bool LoadObjFile(const char *path, std::vector<VertexNew> &outVertices,
     std::vector<glm::vec2> temp_uvs;
     std::vector<glm::vec3> temp_normals;
     if (!ParseObjFile(path, temp_indices, temp_vertices, temp_uvs,
-                      temp_normals))
+                      temp_normals)) {
         return false;
-
-    // generate correct vertices and indices
-    // vertices (for every vertex) = [vertex.x, vertex.y, vertex.z, uv.x, uv.y,
-    // normal.x, normal.y, normal.z] indices (for every face) = [vertexIndex1,
-    // vertexIndex2, vertexIndex3]
-
-    // loop over every face...
-    outVertices.clear();
-    outIndices.clear();
-    std::map<std::array<unsigned int, 3>, unsigned int> elementToId;
-    unsigned int nextIndex = 0;
-    for (size_t i = 0; i < temp_indices.size(); i += 3) {
-        // generate the index for the vertex
-        std::array<unsigned int, 3> key = {temp_indices[i], temp_indices[i + 1],
-                                           temp_indices[i + 2]};
-
-        // generate a new index if new, otherwise reuse existing
-        if (elementToId.find(key) == elementToId.end()) {
-            elementToId[key] = nextIndex++;
-
-            // also create a vertex since this is a new index
-            // (also, remind yourself that OBJ uses 1-based indexing!!!!)
-            outVertices.push_back({temp_vertices[temp_indices[i] - 1],
-                                   temp_uvs[temp_indices[i + 1] - 1],
-                                   temp_normals[temp_indices[i + 2] - 1]});
-        }
-        outIndices.push_back(elementToId[key]);
     }
+
+    ReformatObjToOpenGl(temp_indices, temp_vertices, temp_uvs, temp_normals,
+                        outVertices, outIndices);
 
     return true;
 };
 } // namespace
 
-MeshHandle CreateMesh(const std::vector<Vertex> &vertices,
+MeshOldHandle CreateMesh(const std::vector<Vertex> &vertices,
                       const std::vector<unsigned int> &indices) {
     GLuint VAO = 0;
     GLuint VBO = 0;
@@ -239,15 +223,15 @@ MeshHandle CreateMesh(const std::vector<Vertex> &vertices,
     glBindVertexArray(0);
 
     // create mesh data and get handle
-    MeshHandle meshHandle = ResourceSystem::Get().Create(MeshData
-        {VAO, VBO, EBO, vertices.size(), indices.size()});
+    MeshOldHandle meshHandle = ResourceSystem::Get().Create(
+        MeshData{VAO, VBO, EBO, vertices.size(), indices.size()});
 
     LOG_INFO << "Created mesh (id=" << meshHandle.id << ")";
 
     return meshHandle;
 };
 
-MeshHandle CreateMeshNew(const std::vector<VertexNew> &vertices,
+MeshOldHandle CreateMeshNew(const std::vector<float> &vertices,
                          const std::vector<unsigned int> &indices) {
     GLuint VAO = 0;
     GLuint VBO = 0;
@@ -294,31 +278,28 @@ MeshHandle CreateMeshNew(const std::vector<VertexNew> &vertices,
     glBindVertexArray(0);
 
     // create mesh data and get handle
-    MeshHandle meshHandle = ResourceSystem::Get().Create(
+    MeshOldHandle meshHandle = ResourceSystem::Get().Create(
         MeshData{VAO, VBO, EBO, vertices.size(), indices.size()});
+    Mesh newMesh(vertices, indices);
+
 
     LOG_INFO << "Created mesh (id=" << meshHandle.id << ")";
 
     return meshHandle;
 };
 
-MeshHandle CreateMeshFromObjFile(const char *path) {
-    std::vector<VertexNew> vertices;
+MeshOldHandle CreateMeshFromObjFile(const char *path) {
+    std::vector<float> vertices;
     std::vector<unsigned int> indices;
     if (LoadObjFile(path, vertices, indices)) {
         LOG_INFO << "Succeded in loading mesh, \n\tvertices: "
                  << vertices.size() << "\n\tindices: " << indices.size();
 
-        std::cout << "\n[";
-        for (auto &vertex : vertices) {
-            std::cout << vertex << ", ";
-        }
-        std::cout << std::endl;
-
         // TODO: implement a new shader for this new format
-        MeshHandle newHandle = CreateMeshNew(vertices, indices);
+        MeshOldHandle newHandle = CreateMeshNew(vertices, indices);
+        MeshHandle newMeshHandle = ResourceSystem::Get().Create(Mesh{vertices, indices});
         return newHandle;
     }
 
-    return MeshHandle::Invalid();
+    return MeshOldHandle::Invalid();
 }

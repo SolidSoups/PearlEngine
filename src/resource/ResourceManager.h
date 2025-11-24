@@ -13,7 +13,7 @@ class ResourceManager : public ResourceManagerBase {
   public:
     Handle<Tag> Create(Data data) {
         auto handle = m_Allocator.Allocate();
-        m_Resources[handle] = std::move(data);
+        m_Resources.emplace(handle, std::move(data));
         return handle;
     }
 

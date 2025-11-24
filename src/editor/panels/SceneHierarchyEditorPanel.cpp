@@ -44,12 +44,12 @@ void SceneHierarchyEditorPanel::DrawSceneHierarchy(){
 
     if(ImGui::Selectable(nameid.c_str(), isSelected)){
       // TODO: change this shit
-      if(renderComp){
-        if(renderComp->materialHandle == m_SunnyHandle)
-          renderComp->materialHandle = m_PearlHandle;
-        else
-          renderComp->materialHandle = m_SunnyHandle;
-      }
+      // if(renderComp){
+      //   if(renderComp->materialHandle == m_SunnyHandle)
+      //     renderComp->materialHandle = m_PearlHandle;
+      //   else
+      //     renderComp->materialHandle = m_SunnyHandle;
+      // }
       m_Scene.SetSelectedIndex(i);
     }
   }

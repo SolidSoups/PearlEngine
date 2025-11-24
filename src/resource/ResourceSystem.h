@@ -69,7 +69,12 @@ public:
 
 
 
-    void Destroy() {
-
+    void DestroyAllResources() {
+        for(auto& [typeIdx, manager] : m_Managers){
+            if(manager){
+                manager->DestroyAll();
+            }
+        }
+        m_Managers.clear();
     }
 };

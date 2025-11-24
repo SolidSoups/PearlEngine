@@ -6,11 +6,11 @@
 #include "MeshData.h"
 #include "vertex.h"
 
-MeshHandle CreateMesh(
+MeshOldHandle CreateMesh(
   const std::vector<Vertex>& vertices, 
   const std::vector<unsigned int>& indices);
-MeshHandle CreateMeshNew(
-  const std::vector<Vertex>& vertices, 
+MeshOldHandle CreateMeshNew(
+  const std::vector<float>& vertices, 
   const std::vector<unsigned int>& indices);
 
-MeshHandle CreateMeshFromObjFile(const char* objPath); 
+MeshOldHandle CreateMeshFromObjFile(const char* objPath); 

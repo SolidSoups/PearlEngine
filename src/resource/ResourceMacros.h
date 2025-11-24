@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ResourceTraits.h"
+#include "Handle.h"
 
 #define PEARL_DEFINE_RESOURCE(Name, Datastruct) \
     struct Name##Tag {}; \

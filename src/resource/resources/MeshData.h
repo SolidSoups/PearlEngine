@@ -19,7 +19,7 @@ struct MeshData {
     size_t vertexCount;
     size_t indexCount;
 };
-PEARL_DEFINE_RESOURCE(Mesh, MeshData)
+PEARL_DEFINE_RESOURCE(MeshOld, MeshData)
 
-void DestroyMesh(MeshHandle handle);
-void RenderMesh(MeshHandle handle);
+void DestroyMesh(MeshOldHandle handle);
+void RenderMesh(MeshOldHandle handle);
