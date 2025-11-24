@@ -113,13 +113,17 @@ void PearlEngine::Initialize() {
         indices.push_back(Cube::s_Indices[i]);
     }
 
-    // Create the cube mesh
-    LOG_INFO << "Creating cube mesh";
-    MeshOldHandle cubeMeshOldHandle = CreateMesh(vertices, indices);
-
     // Create the weird mesh
     LOG_INFO << "Creating new mesh";
-    MeshHandle newMesh = CreateMeshFromObjFile("assets/meshTest.obj");
+    MeshHandle houseMesh = CreateMeshFromObjFile("assets/31-village-house/medieval house.obj");
+    TextureHandle houseTex = LoadTexture("assets/31-village-house/house2.png");
+    MaterialHandle houseMat = CreateMaterial(shadHandle);
+    MaterialSetTexture(houseMat, "mainTexture", houseTex);
+    auto* houseGameObject = m_Scene.CreateGameObject();
+    houseGameObject->AddComponent<RenderComponent>(houseMesh, houseMat);
+    houseGameObject->AddComponent<TransformComponent>();
+
+
 
     LOG_INFO << "Creating game objects";
     // for(float x = -2.0f; x <= 2.0f; x += 2.0f){

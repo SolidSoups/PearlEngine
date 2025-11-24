@@ -25,7 +25,7 @@ TextureHandle LoadTexture(const std::string &filepath, bool generateMipMaps) {
     }
 
     // add check on size
-    if (width > 512 || height > 512) {
+    if (width > 1024 || height > 1024) {
         LOG_ERROR << "Image size " << width << "x" << height
                   << " is exceeding. OpenGL may not be able to handle such "
                      "large textures";
