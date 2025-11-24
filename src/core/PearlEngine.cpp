@@ -119,7 +119,7 @@ void PearlEngine::Initialize() {
 
     // Create the weird mesh
     LOG_INFO << "Creating new mesh";
-    MeshOldHandle newMesh = CreateMeshFromObjFile("assets/meshTest.obj");
+    MeshHandle newMesh = CreateMeshFromObjFile("assets/meshTest.obj");
 
     LOG_INFO << "Creating game objects";
     // for(float x = -2.0f; x <= 2.0f; x += 2.0f){

@@ -36,8 +36,7 @@ class ElementBuffer {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferId);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int),
                      data, GL_STATIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     void Bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferId); }
-    GLuint GetCount() const { return m_Count; }
+    GLuint GetElementCount() const { return m_Count; }
 };

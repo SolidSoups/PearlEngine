@@ -53,7 +53,7 @@ void AssetEditorPanel::RefreshAssetPaths(){
 
 void AssetEditorPanel::CreateSceneObjectFromFile(const std::string filepath){
   // create mesh
-  MeshOldHandle meshHandle = CreateMeshFromObjFile(filepath.c_str());
+  MeshHandle meshHandle = CreateMeshFromObjFile(filepath.c_str());
 
   auto* go = m_Scene.CreateGameObject();
   go->AddComponent<RenderComponent>(meshHandle, m_MatHandle);

@@ -9,7 +9,7 @@ Mesh::Mesh(const std::vector<float> &vertices,
     m_VBO.GenerateVertexBuffers(vertices.data(),
                                 vertices.size(), 8);
     m_EBO.GenerateElementBuffers(indices.data(),
-                                 indices.size() * sizeof(unsigned int));
+                                 indices.size());
 
     // define attribute
     m_VAO.DefineAttribute(m_VBO, 0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
@@ -25,5 +25,5 @@ Mesh::~Mesh(){
 
 void Mesh::Draw(){
     m_VAO.Bind();
-    glDrawElements(GL_TRIANGLES, m_VBO.GetVertexCount(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, m_EBO.GetElementCount(), GL_UNSIGNED_INT, 0);
 }

@@ -288,7 +288,7 @@ MeshOldHandle CreateMeshNew(const std::vector<float> &vertices,
     return meshHandle;
 };
 
-MeshOldHandle CreateMeshFromObjFile(const char *path) {
+MeshHandle CreateMeshFromObjFile(const char *path) {
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
     if (LoadObjFile(path, vertices, indices)) {
@@ -296,10 +296,9 @@ MeshOldHandle CreateMeshFromObjFile(const char *path) {
                  << vertices.size() << "\n\tindices: " << indices.size();
 
         // TODO: implement a new shader for this new format
-        MeshOldHandle newHandle = CreateMeshNew(vertices, indices);
         MeshHandle newMeshHandle = ResourceSystem::Get().Create(Mesh{vertices, indices});
-        return newHandle;
+        return newMeshHandle;
     }
 
-    return MeshOldHandle::Invalid();
+    return MeshHandle::Invalid();
 }
