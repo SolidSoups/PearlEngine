@@ -73,7 +73,9 @@ target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/editor/panels
   ${CMAKE_CURRENT_SOURCE_DIR}/src/editor/componenteditors
   ${CMAKE_CURRENT_SOURCE_DIR}/src/resource
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/resource/new
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/project
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/asset
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/asset/loaders
   ${CMAKE_CURRENT_SOURCE_DIR}/src/resource/loaders
   ${CMAKE_CURRENT_SOURCE_DIR}/src/resource/resources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs

@@ -8,7 +8,7 @@
 #include <imgui.h>
 
 // src
-#include "AssetEditorPanel.h"
+#include "ProjectEditorPanel.h"
 #include "Cube.h"
 #include "GameObject.h"
 #include "InspectorEditorPanel.h"
@@ -19,6 +19,7 @@
 #include "Time.h"
 #include "TransformComponent.h"
 #include "ViewportEditorPanel.h"
+#include "Project.h"
 
 #include "Logger.h"
 #include "MaterialData.h"
@@ -63,32 +64,26 @@ void PearlEngine::Initialize() {
     m_CameraController = std::make_unique<CameraController>(&m_Camera);
 
     // initialize the time
-    LOG_INFO << "Initializing time";
     Time::Initialize();
 
     // Load textures (using ResourceSystem)
-    LOG_INFO << "Creating textures";
     TextureHandle sunshineTextureHandle = LoadTexture("assets/sunshine.png");
     TextureHandle pearlTextureHandle = LoadTexture("assets/pearl.png");
 
     // Create shader (using ResourceSystem)
-    LOG_INFO << "Creating shader";
     m_ShaderHandle = CreateShader("shaders/vert.glsl", "shaders/frag.glsl");
 
     // Create new shader
-    LOG_INFO << "Creating new shader";
     ShaderHandle shadHandle =
         CreateShader("shaders/vertNew.glsl", "shaders/fragNew.glsl");
 
     // Create new materials for pearl and sunshine
-    LOG_INFO << "Creating materials";
     MaterialHandle sunMatHandle = CreateMaterial(m_ShaderHandle);
     MaterialSetTexture(sunMatHandle, "mainTexture", sunshineTextureHandle);
     MaterialHandle pearlMatHandle = CreateMaterial(m_ShaderHandle);
     MaterialSetTexture(pearlMatHandle, "mainTexture", pearlTextureHandle);
 
     // Create new material
-    LOG_INFO << "Creating new materials";
     MaterialHandle newMat = CreateMaterial(shadHandle);
     MaterialSetTexture(newMat, "mainTexture", sunshineTextureHandle);
 
@@ -114,8 +109,8 @@ void PearlEngine::Initialize() {
     }
 
     // Create the weird mesh
-    LOG_INFO << "Creating new mesh";
-    MeshHandle houseMesh = CreateMeshFromObjFile("assets/31-village-house/medieval house.obj");
+    const pe::File* houseFile = pe::Project::Get().FindFile("medieval house", ".obj");
+    MeshHandle houseMesh = CreateMeshFromObjFile(houseFile->localPath.c_str());
     TextureHandle houseTex = LoadTexture("assets/31-village-house/house2.png");
     MaterialHandle houseMat = CreateMaterial(shadHandle);
     MaterialSetTexture(houseMat, "mainTexture", houseTex);
@@ -124,8 +119,6 @@ void PearlEngine::Initialize() {
     houseGameObject->AddComponent<TransformComponent>();
 
 
-
-    LOG_INFO << "Creating game objects";
     // for(float x = -2.0f; x <= 2.0f; x += 2.0f){
     //   for(float y = -2.0f; y <= 2.0f; y += 2.0f){
     //     GameObject* go = m_Scene.CreateGameObject();
@@ -134,18 +127,15 @@ void PearlEngine::Initialize() {
     //   }
     // }
 
-    LOG_INFO << "Creating weird new game object";
     // GameObject* weirdGo = m_Scene.CreateGameObject("loaded obj mesh");
     // weirdGo->AddComponent<RenderComponent>(newMesh, newMat);
     // weirdGo->AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 0.f));
 
     // Create viewport framebuffer
-    LOG_INFO << "Creating viewport frame buffer";
     m_ViewportFramebuffer =
         std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
 
     // Create the viewport editor panel
-    LOG_INFO << "Creating editor panels";
     m_ViewportPanel =
         AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
     m_ScenePanel = AddPanel<SceneHierarchyEditorPanel>(m_Scene, pearlMatHandle,
@@ -153,11 +143,10 @@ void PearlEngine::Initialize() {
     m_ResourcePanel = AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
     m_InspectorPanel = AddPanel<InspectorEditorPanel>(m_Scene);
     AddPanel<LoggerEditorPanel>();
-    AddPanel<AssetEditorPanel>(m_Scene, newMat);
+    AddPanel<ProjectEditorPanel>(m_Scene, newMat);
     AddMenuBarItems();
 
     // Setup camera aspect ratio
-    LOG_INFO << "Setting camera with correct aspect ratio";
     int framebufferWidth, frameBufferHeight;
     glfwGetFramebufferSize(pwin.GetWindow(), &framebufferWidth,
                            &frameBufferHeight);
@@ -165,7 +154,6 @@ void PearlEngine::Initialize() {
     m_Camera.SetAspectRatio(aspectRatio);
 
     // OpenGL state configuration
-    LOG_INFO << "Setting OpenGL state configurations";
     glFrontFace(GL_CW);
     glDisable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);

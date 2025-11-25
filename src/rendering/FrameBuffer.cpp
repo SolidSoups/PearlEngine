@@ -20,28 +20,28 @@ void Framebuffer::Create(){
   glGenFramebuffers(1, &m_FBO);
   glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-  // Create color texture attachment
+  // # CREATE COLOR TEXTURE ATTACHMENT
   glGenTextures(1, &m_ColorTexture);
   glBindTexture(GL_TEXTURE_2D, m_ColorTexture);
-  //    generate storage for the texture
+  // ## generate storage for the texture
   glTexImage2D(
     GL_TEXTURE_2D, 0, GL_RGB, 
     m_Width, m_Height, 
     0, GL_RGB, GL_UNSIGNED_BYTE,
     nullptr
   );
-  //    set texture filtering to linear interpolation for both minification and magnification (smooth scaling)
+  // ## set texture filtering to linear interpolation for both minification and magnification (smooth scaling)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  //    attach the texture to the frame buffers first color attachment (0), this is where shader frag output will be written
+  // ## attach the texture to the frame buffers first color attachment (0), this is where shader frag output will be written
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorTexture, 0);
 
-  // Create the depth and stencil render buffer
+  // # CREATE THE DEPTH AND STENCIL RENDER BUFFER
   glGenRenderbuffers(1, &m_DepthStencilRBO);
   glBindRenderbuffer(GL_RENDERBUFFER, m_DepthStencilRBO);
-  //    allocates storage with a combined depth of 32B (24 for depth, 8 for stencil)
+  // ## allocates storage with a combined depth of 32B (24 for depth, 8 for stencil)
   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
-  //    attach the renderbuffer to the frame buffer's depth-stencil attachment point for depth testing and stencil operations.
+  // ## attach the renderbuffer to the frame buffer's depth-stencil attachment point for depth testing and stencil operations.
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthStencilRBO);
 
   // Check framebuffer completeness

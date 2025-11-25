@@ -1,21 +1,15 @@
 
-// lib
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 // src
 #include "PearlEngine.h"
 
+#include "Project.h"
 
-int main(){
-  PearlEngine engine;
-  if(!engine.IsInitialized()){
-    return -1;
-  }
+int main() {
+    PearlEngine engine;
+    if (!engine.IsInitialized()) {
+        return -1;
+    }
 
-  engine.RunUpdateLoop();
-
-  return 0;
+    engine.RunUpdateLoop();
+    return 0;
 }
-
-
