@@ -7,12 +7,12 @@
 
 class IAssetLoader {
   public:
-    ~IAssetLoader() = default;
+    virtual ~IAssetLoader() = default;
 };
 
 template <typename AssetType>
 class AssetLoader : public IAssetLoader{
   public:
     virtual ~AssetLoader() = default;
-    virtual std::optional<AssetType> LoadAsset(pe::File *file) = 0;
+    virtual std::optional<AssetType> LoadAsset(const pe::File *file) = 0;
 };

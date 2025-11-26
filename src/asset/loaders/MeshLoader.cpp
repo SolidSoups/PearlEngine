@@ -140,7 +140,7 @@ void OBJLoader::ReformatObjToOpenGl(const std::vector<unsigned int> &objIndices,
     }
 }
 
-std::optional<Mesh> OBJLoader::LoadAsset(pe::File* file) {
+std::optional<Mesh> OBJLoader::LoadAsset(const pe::File* file) {
     // load vertices and indices
     std::vector<unsigned int>
         temp_indices; // indices loaded here are constructed as such for one

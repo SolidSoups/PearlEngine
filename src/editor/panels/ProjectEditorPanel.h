@@ -3,9 +3,12 @@
 #include "EditorPanel.h"
 #include "MaterialData.h"
 #include "MenuRegistry.h"
+#include "Mesh.h"
 #include "Scene.h"
 #include "ShaderData.h"
 #include <string>
+#include <filesystem>
+#include "File.h"
 
 class ProjectEditorPanel : public EditorPanel {
   public:
@@ -17,7 +20,8 @@ class ProjectEditorPanel : public EditorPanel {
     void OnImGuiRender() override;
 
   private:
-    void CreateSceneObjectFromFile(const std::string filepath);
+    void CreateSceneObjectWithMesh(MeshHandle meshHandle, const std::string& name);
+    void LoadAsset(const pe::File& file);
 
   private:
     Scene &m_Scene;

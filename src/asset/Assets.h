@@ -58,7 +58,7 @@ public:
 
     // Load asset directly
     template<typename AssetType>
-    std::optional<AssetType> Load(pe::File* file){
+    std::optional<AssetType> Load(const pe::File* file){
         auto* loader = GetLoader<AssetType>(file->extension);
         if(!loader){
             return std::nullopt;

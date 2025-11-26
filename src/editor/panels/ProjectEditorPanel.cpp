@@ -9,7 +9,9 @@
 #include "imgui.h"
 
 #include "Project.h"
+#include "ResourceSystem.h"
 #include "meshLoaders.h"
+#include "Assets.h"
 
 void ProjectEditorPanel::OnImGuiRender() {
     if (!m_IsOpen)
@@ -17,7 +19,7 @@ void ProjectEditorPanel::OnImGuiRender() {
 
     ImGui::Begin(m_Name.c_str(), &m_IsOpen);
 
-    for (const auto &file : pe::Project::Get().GetFiles()) {
+    for (const auto& file : pe::Project::Get().GetFiles()) {
         std::string uniqueName = file.GetFullName() + "##" + file.localPath.string();
 
         if (ImGui::Selectable(uniqueName.c_str())) {
@@ -26,7 +28,7 @@ void ProjectEditorPanel::OnImGuiRender() {
 
         if (ImGui::BeginPopupContextItem()) {
             if (ImGui::MenuItem("Load Object")) {
-                CreateSceneObjectFromFile(file.localPath);
+                LoadAsset(file);
             }
             if(ImGui::MenuItem("Load into assets")){
 
@@ -39,11 +41,20 @@ void ProjectEditorPanel::OnImGuiRender() {
     ImGui::End();
 }
 
-void ProjectEditorPanel::CreateSceneObjectFromFile(const std::string filepath) {
-    // create mesh
-    MeshHandle meshHandle = CreateMeshFromObjFile(filepath.c_str());
+void ProjectEditorPanel::LoadAsset(const pe::File& file){
+    if(file.extension == ".obj"){
+        auto mesh = pe::Assets::Get().Load<Mesh>(&file);
+        if(mesh){
+            auto handle = ResourceSystem::Get().Create(std::move(*mesh));
+            CreateSceneObjectWithMesh(handle, file.stem);
+        }
+    }
+}
 
-    auto *go = m_Scene.CreateGameObject();
-    go->AddComponent<RenderComponent>(meshHandle, m_MatHandle);
+// IT SHOULD LOAD INTO THE ASSET REGISTRY, NOT THE GAME
+void ProjectEditorPanel::CreateSceneObjectWithMesh(MeshHandle handle, const std::string& name) {
+    // create mesh
+    auto *go = m_Scene.CreateGameObject(name);
+    go->AddComponent<RenderComponent>(handle, m_MatHandle);
     go->AddComponent<TransformComponent>();
 }
