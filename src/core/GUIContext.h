@@ -5,6 +5,7 @@ struct GLFWwindow;
 
 class GUIContext {
 public:
+  // Resource aquisition is initialization
   GUIContext(GLFWwindow* window);
   ~GUIContext();
 

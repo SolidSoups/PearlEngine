@@ -11,7 +11,7 @@
 #include "Project.h"
 #include "ResourceSystem.h"
 #include "meshLoaders.h"
-#include "Assets.h"
+#include "AssetSystem.h"
 
 void ProjectEditorPanel::OnImGuiRender() {
     if (!m_IsOpen)
@@ -41,9 +41,9 @@ void ProjectEditorPanel::OnImGuiRender() {
     ImGui::End();
 }
 
-void ProjectEditorPanel::LoadAsset(const pe::File& file){
+void ProjectEditorPanel::LoadAsset(const pe::FileDescriptor& file){
     if(file.extension == ".obj"){
-        auto mesh = pe::Assets::Get().Load<Mesh>(&file);
+        auto mesh = pe::AssetSystem::Get().Load<Mesh>(&file);
         if(mesh){
             auto handle = ResourceSystem::Get().Create(std::move(*mesh));
             CreateSceneObjectWithMesh(handle, file.stem);

@@ -109,7 +109,7 @@ void PearlEngine::Initialize() {
     }
 
     // Create the weird mesh
-    const pe::File* houseFile = pe::Project::Get().FindFile("medieval house", ".obj");
+    const pe::FileDescriptor* houseFile = pe::Project::Get().FindFile("medieval house", ".obj");
     MeshHandle houseMesh = CreateMeshFromObjFile(houseFile->localPath.c_str());
     TextureHandle houseTex = LoadTexture("assets/31-village-house/house2.png");
     MaterialHandle houseMat = CreateMaterial(shadHandle);

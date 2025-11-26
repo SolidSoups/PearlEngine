@@ -21,7 +21,7 @@ class ProjectEditorPanel : public EditorPanel {
 
   private:
     void CreateSceneObjectWithMesh(MeshHandle meshHandle, const std::string& name);
-    void LoadAsset(const pe::File& file);
+    void LoadAsset(const pe::FileDescriptor& file);
 
   private:
     Scene &m_Scene;

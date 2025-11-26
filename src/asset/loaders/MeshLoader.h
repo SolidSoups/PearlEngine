@@ -21,7 +21,7 @@ class OBJLoader : public AssetLoader<Mesh> {
                              std::vector<unsigned int> &outIndices);
 
   public:
-    std::optional<Mesh> LoadAsset(const pe::File *file) override;
+    std::optional<Mesh> LoadAsset(const pe::FileDescriptor *file) override;
 };
 
 STATIC_REGISTER_ASSET_LOADER(".obj", OBJLoader, Mesh);

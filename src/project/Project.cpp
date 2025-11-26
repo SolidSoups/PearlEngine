@@ -30,8 +30,8 @@ void pe::Project::ScanFilesystem(){
     }
 }
 
-const std::vector<const pe::File*> pe::Project::FindFileByStem(const std::string& stem) const{
-    std::vector<const pe::File*> results;
+const std::vector<const pe::FileDescriptor*> pe::Project::FindFileByStem(const std::string& stem) const{
+    std::vector<const pe::FileDescriptor*> results;
     for(const auto& file : m_Files){
         if(file.stem == stem){
             results.push_back(&file);
@@ -39,8 +39,8 @@ const std::vector<const pe::File*> pe::Project::FindFileByStem(const std::string
     }
     return results;
 }
-const std::vector<const pe::File*> pe::Project::FindFileByExtension(const std::string& extension) const{
-    std::vector<const pe::File*> results;
+const std::vector<const pe::FileDescriptor*> pe::Project::FindFileByExtension(const std::string& extension) const{
+    std::vector<const pe::FileDescriptor*> results;
     for(const auto& file : m_Files){
         if(file.extension == extension){
             results.push_back(&file);
@@ -48,7 +48,7 @@ const std::vector<const pe::File*> pe::Project::FindFileByExtension(const std::s
     }
     return results;
 }
-const pe::File* pe::Project::FindFile(const std::string& stem, const std::string& extension) const{
+const pe::FileDescriptor* pe::Project::FindFile(const std::string& stem, const std::string& extension) const{
     for(const auto& file : m_Files){
         if(file.stem == stem && file.extension == extension){
             return &file;
@@ -56,7 +56,7 @@ const pe::File* pe::Project::FindFile(const std::string& stem, const std::string
     }
     return nullptr;
 }
-const pe::File* pe::Project::FindFileByPath(const std::filesystem::path& relativePath) const{
+const pe::FileDescriptor* pe::Project::FindFileByPath(const std::filesystem::path& relativePath) const{
     for(const auto& file : m_Files){
         if(file.localPath == m_Root / relativePath){
             return &file;
