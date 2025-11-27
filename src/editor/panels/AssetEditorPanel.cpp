@@ -1,13 +1,19 @@
-#include "ProjectEditorPanel.h"
+#include "AssetEditorPanel.h"
 
 #include <filesystem>
 
+#include "MeshData.h"
+#include "RenderComponentEditor.h"
+#include "TransformComponentEditor.h"
+#include "glm/ext/vector_float3.hpp"
 #include "imgui.h"
 
 #include "Project.h"
+#include "ResourceSystem.h"
+#include "meshLoaders.h"
 #include "AssetSystem.h"
 
-void ProjectEditorPanel::OnImGuiRender() {
+void AssetEditorPanel::OnImGuiRender() {
     if (!m_IsOpen)
         return;
 
@@ -21,8 +27,11 @@ void ProjectEditorPanel::OnImGuiRender() {
         }
 
         if (ImGui::BeginPopupContextItem()) {
-            if (ImGui::MenuItem("Import file to assets")) {
+            if (ImGui::MenuItem("Load Object")) {
                 LoadAsset(file);
+            }
+            if(ImGui::MenuItem("Load into assets")){
+
             }
 
             ImGui::EndPopup();
@@ -32,7 +41,7 @@ void ProjectEditorPanel::OnImGuiRender() {
     ImGui::End();
 }
 
-void ProjectEditorPanel::LoadAsset(const pe::FileDescriptor& file){
+void AssetEditorPanel::LoadAsset(const pe::FileDescriptor& file){
     if(file.extension == ".obj"){
         pe::AssetSystem::Get().ImportAsset(&file);
     }

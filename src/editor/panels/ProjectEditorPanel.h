@@ -12,8 +12,8 @@
 
 class ProjectEditorPanel : public EditorPanel {
   public:
-    ProjectEditorPanel(Scene &scene, MaterialHandle matHandle)
-        : EditorPanel("Project Explorer"), m_Scene(scene), m_MatHandle(matHandle) {
+    ProjectEditorPanel(Scene &scene)
+        : EditorPanel("Project Explorer"), m_Scene(scene) {
         MenuRegistry::Get().Register("Windows/Project Explorer", &m_IsOpen);
     }
 
@@ -25,7 +25,6 @@ class ProjectEditorPanel : public EditorPanel {
 
   private:
     Scene &m_Scene;
-    MaterialHandle m_MatHandle;
     const std::string c_AssetDirectory = "assets/";
     std::vector<std::string> m_Files;
 };

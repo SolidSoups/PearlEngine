@@ -8,6 +8,7 @@ public:
     const std::vector<uint8_t> Serialize(IAsset* asset)override {
         std::unique_ptr<JSON_SerializationWriter> writer = std::make_unique<JSON_SerializationWriter>();
         writer->WriteString("header", "SerializedObject");
+        writer->WriteString("uuid", asset->uuid.str());
         asset->AcceptSerializer(writer.get());
         std::string json = writer->GetJSONString();
 

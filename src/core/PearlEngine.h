@@ -50,21 +50,8 @@ public:
 
   ShaderHandle m_ShaderHandle;
 
-  std::vector<std::unique_ptr<EditorPanel>> m_Panels;
-  ViewportEditorPanel* m_ViewportPanel = nullptr;
-  SceneHierarchyEditorPanel* m_ScenePanel = nullptr;
-  ResourceEditorPanel* m_ResourcePanel = nullptr;
-  InspectorEditorPanel* m_InspectorPanel = nullptr;
-
+  ViewportEditorPanel* m_ViewportPanel = nullptr; // needed here
 
 private:
   bool isInitialized = false;
-
-  template<typename PanelType, typename... Args>
-  PanelType* AddPanel(Args&&... args){
-    auto panel = std::make_unique<PanelType>(std::forward<Args>(args)...);
-    PanelType* ptr = panel.get();
-    m_Panels.push_back(std::move(panel));
-    return ptr;
-  }
 };
