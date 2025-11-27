@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "IAssetConverter.h"
+#include "AssetSystem.h"
 
 class OBJ_AssetConverter : public IAssetConverter{
     bool LoadAndParseObjFile(const char *path,
@@ -18,7 +19,7 @@ class OBJ_AssetConverter : public IAssetConverter{
                              std::vector<float> &outVertices,
                              std::vector<unsigned int> &outIndices);
 public:
-    std::unique_ptr<IAsset> ConvertToAsset(const pe::FileDescriptor* file){
-
-    }
+    std::unique_ptr<IAsset> ConvertToAsset(const pe::FileDescriptor* file);
 };
+
+STATIC_INITIALIZE_REGISTER_ASSET_CONVERTER(".obj", OBJ_AssetConverter)

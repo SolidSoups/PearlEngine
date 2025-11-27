@@ -43,11 +43,7 @@ void ProjectEditorPanel::OnImGuiRender() {
 
 void ProjectEditorPanel::LoadAsset(const pe::FileDescriptor& file){
     if(file.extension == ".obj"){
-        auto mesh = pe::AssetSystem::Get().Load<Mesh>(&file);
-        if(mesh){
-            auto handle = ResourceSystem::Get().Create(std::move(*mesh));
-            CreateSceneObjectWithMesh(handle, file.stem);
-        }
+        pe::AssetSystem::Get().ImportAsset(&file);
     }
 }
 

@@ -1,18 +1,21 @@
-#include "MeshLoader.h"
+#include "OBJ_AssetConverter.h"
 
 #include <cstring>
 #include <fstream>
-#include <sstream>
 #include <map>
+#include <optional>
+#include <sstream>
+
+#include "OBJ_Asset.h"
 
 #include "Logger.h"
 
+using std::nullopt;
 
-bool OBJLoader::LoadAndParseObjFile(const char *path,
-                         std::vector<unsigned int> &outObjIndices,
-                         std::vector<glm::vec3> &outObjVertices,
-                         std::vector<glm::vec2> &outObjUvs,
-                         std::vector<glm::vec3> &outObjNormals){
+bool OBJ_AssetConverter::LoadAndParseObjFile(
+    const char *path, std::vector<unsigned int> &outObjIndices,
+    std::vector<glm::vec3> &outObjVertices, std::vector<glm::vec2> &outObjUvs,
+    std::vector<glm::vec3> &outObjNormals) {
     // clear output references
     outObjIndices.clear();
     outObjVertices.clear();
@@ -97,12 +100,12 @@ bool OBJLoader::LoadAndParseObjFile(const char *path,
     }
     return true;
 }
-void OBJLoader::ReformatObjToOpenGl(const std::vector<unsigned int> &objIndices,
-                         const std::vector<glm::vec3> &objVertices,
-                         const std::vector<glm::vec2> &objUvs,
-                         const std::vector<glm::vec3> &objNormals,
-                         std::vector<float> &outVertices,
-                         std::vector<unsigned int> &outIndices){
+void OBJ_AssetConverter::ReformatObjToOpenGl(
+    const std::vector<unsigned int> &objIndices,
+    const std::vector<glm::vec3> &objVertices,
+    const std::vector<glm::vec2> &objUvs,
+    const std::vector<glm::vec3> &objNormals, std::vector<float> &outVertices,
+    std::vector<unsigned int> &outIndices) {
     // clear the output refernces
     outVertices.clear();
     outIndices.clear();
@@ -139,8 +142,8 @@ void OBJLoader::ReformatObjToOpenGl(const std::vector<unsigned int> &objIndices,
         outIndices.push_back(faceToIndex[key]);
     }
 }
-
-std::optional<Mesh> OBJLoader::LoadAsset(const pe::FileDescriptor* file) {
+std::unique_ptr<IAsset>
+OBJ_AssetConverter::ConvertToAsset(const pe::FileDescriptor *file) {
     // load vertices and indices
     std::vector<unsigned int>
         temp_indices; // indices loaded here are constructed as such for one
@@ -150,9 +153,10 @@ std::optional<Mesh> OBJLoader::LoadAsset(const pe::FileDescriptor* file) {
     std::vector<glm::vec3> temp_normals;
     if (!LoadAndParseObjFile(file->localPath.c_str(), temp_indices, temp_vertices, temp_uvs,
                       temp_normals)) {
-        return std::nullopt;
+        return nullptr;
     }
 
+    // reformat the vertices, uvs, normals, indices to our standard
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
     ReformatObjToOpenGl(temp_indices, temp_vertices, temp_uvs, temp_normals,
@@ -161,6 +165,7 @@ std::optional<Mesh> OBJLoader::LoadAsset(const pe::FileDescriptor* file) {
     LOG_INFO << "Succeded in loading mesh, \n\tvertices: "
         << vertices.size() << "\n\tindices: " << indices.size();
 
-    // TODO: implement a new shader for this new format
-    return Mesh{vertices, indices};
+    // create a new asset
+    auto asset = std::make_unique<OBJ_Asset>(vertices, indices);
+    return asset;
 }
