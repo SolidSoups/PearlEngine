@@ -5,15 +5,21 @@
 #include <string>
 
 #include "Handle.h"
+#include "IResource.h"
 #include "ResourceMacros.h"
+#include "Texture_Asset.h"
 
-struct TextureData{
+struct TextureData : public IResource{
+    RESOURCE_CLASS(TextureData)
+public:
+    TextureData(uint32_t _width, uint32_t _height, uint32_t _channels)
+        : width(_width), height(_height), channels(_channels) {}
   uint32_t width;
   uint32_t height;
   uint32_t channels;
   GLuint id = 0;
 };
-PEARL_DEFINE_RESOURCE(Texture, TextureData)
+PEARL_DEFINE_RESOURCE(Texture, TextureData, Texture_Asset)
 
 void BindTexture(TextureHandle handle, unsigned int slot);
 void UnbindTexture();

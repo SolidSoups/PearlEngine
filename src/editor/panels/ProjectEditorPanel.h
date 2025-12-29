@@ -8,7 +8,7 @@
 #include "ShaderData.h"
 #include <string>
 #include <filesystem>
-#include "File.h"
+#include "FileDescriptor.h"
 
 class ProjectEditorPanel : public EditorPanel {
   public:

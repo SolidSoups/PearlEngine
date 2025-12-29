@@ -3,7 +3,6 @@
 #include "MenuRegistry.h"
 #include "RenderComponent.h"
 #include "imgui.h"
-#include "MeshData.h"
 #include <string>
 
 SceneHierarchyEditorPanel::SceneHierarchyEditorPanel(Scene& scene, MaterialHandle pearlHandle, MaterialHandle sunnyHandle) 

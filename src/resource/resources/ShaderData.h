@@ -4,12 +4,17 @@
 #include <glm/glm.hpp>
 
 #include "Handle.h"
+#include "IResource.h"
 #include "ResourceMacros.h"
+#include "Shader_Asset.h"
 
-struct ShaderData {
-  GLuint id = 0;
+struct ShaderData : public IResource {
+    RESOURCE_CLASS(ShaderData)
+  public:
+    ShaderData(GLuint _id) : id(_id) {}
+    GLuint id = 0;
 };
-PEARL_DEFINE_RESOURCE(Shader, ShaderData)
+PEARL_DEFINE_RESOURCE(Shader, ShaderData, Shader_Asset)
 
 void UseShader(ShaderHandle handle);
 void ResetShader();
@@ -21,12 +26,9 @@ void ShaderSetVec4(ShaderHandle handle, const char *name,
                    const glm::vec4 &value);
 void ShaderSetBool(ShaderHandle handle, const char *name, bool value);
 void ShaderSetInt(ShaderHandle handle, const char *name, int value);
-void ShaderSetFloat(ShaderHandle handle, const char *name,
-                    float value);
+void ShaderSetFloat(ShaderHandle handle, const char *name, float value);
 void ShaderSetMatrix4(ShaderHandle handle, const char *name,
                       const glm::mat4 &value);
-
-
 
 // TODO: Performance Optimization - Uniform Location Caching
 // Currently calling glGetUniformLocation() on every uniform set, which is a

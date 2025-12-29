@@ -3,24 +3,33 @@
 #include <string>
 #include <unordered_map>
 
+#include "IResource.h"
 #include "ResourceMacros.h"
 #include "glm/glm.hpp"
 #include "glm/mat4x4.hpp"
 
 #include "ShaderData.h"
 #include "TextureData.h"
+#include "Material_Asset.h"
 #include "Handle.h"
 
-struct MaterialData{
-  ShaderHandle shaderHandle; 
-  std::unordered_map<std::string, float> floats;
-  std::unordered_map<std::string, glm::vec3> vec3s;
-  std::unordered_map<std::string, glm::vec4> vec4s;
-  std::unordered_map<std::string, int> ints;
-  std::unordered_map<std::string, TextureHandle> textureHandles;
-  std::unordered_map<std::string, glm::mat4> mat4s;
+struct MaterialData : public IResource{
+    RESOURCE_CLASS(MaterialData)
+private:
+public:
+    MaterialData(ShaderHandle _shaderHandle) 
+    : shaderHandle(_shaderHandle) {}
+
+public:
+    ShaderHandle shaderHandle; 
+    std::unordered_map<std::string, float> floats;
+    std::unordered_map<std::string, glm::vec3> vec3s;
+    std::unordered_map<std::string, glm::vec4> vec4s;
+    std::unordered_map<std::string, int> ints;
+    std::unordered_map<std::string, TextureHandle> textureHandles;
+    std::unordered_map<std::string, glm::mat4> mat4s;
 };
-PEARL_DEFINE_RESOURCE(Material, MaterialData)
+PEARL_DEFINE_RESOURCE(Material, MaterialData, Material_Asset)
 
 ShaderHandle MaterialGetShaderHandle(MaterialHandle handle);
 

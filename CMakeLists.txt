@@ -82,6 +82,10 @@ target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/editor/componenteditors
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/resource
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/resource/loaders
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/resource/resources
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/resource/converters
+
   ${CMAKE_CURRENT_SOURCE_DIR}/src/project
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/asset
@@ -89,8 +93,6 @@ target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/asset/assets
   ${CMAKE_CURRENT_SOURCE_DIR}/src/asset/serializers
 
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/resource/loaders
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/resource/resources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs/components
   external/stb

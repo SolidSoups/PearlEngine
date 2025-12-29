@@ -8,25 +8,25 @@
 #include <imgui.h>
 
 // src
-#include "ProjectEditorPanel.h"
+#include "AssetEditorPanel.h"
 #include "Cube.h"
 #include "GameObject.h"
 #include "InspectorEditorPanel.h"
 #include "LoggerEditorPanel.h"
 #include "MenuRegistry.h"
 #include "PearlEngine.h"
+#include "Project.h"
+#include "ProjectEditorPanel.h"
 #include "Renderer.h"
 #include "Time.h"
 #include "TransformComponent.h"
 #include "ViewportEditorPanel.h"
-#include "Project.h"
 
 #include "Logger.h"
 #include "MaterialData.h"
 #include "ResourceSystem.h"
 #include "TextureData.h"
 #include "materialLoaders.h"
-#include "meshLoaders.h"
 #include "shaderLoaders.h"
 #include "textureLoaders.h"
 
@@ -87,49 +87,29 @@ void PearlEngine::Initialize() {
     MaterialHandle newMat = CreateMaterial(shadHandle);
     MaterialSetTexture(newMat, "mainTexture", sunshineTextureHandle);
 
-    // lets just create the vertexes
-    std::vector<Vertex> vertices;
-    for (int i = 0; i < Cube::s_VertexCount * 8; i += 8) {
-        vertices.push_back(
-            {{
-                 Cube::s_Vertices[i],
-                 Cube::s_Vertices[i + 1],
-                 Cube::s_Vertices[i + 2],
-             },
-             {
-                 Cube::s_Vertices[i + 3],
-                 Cube::s_Vertices[i + 4],
-                 Cube::s_Vertices[i + 5],
-             },
-             {Cube::s_Vertices[i + 6], Cube::s_Vertices[i + 7]}});
-    }
-    std::vector<unsigned int> indices;
-    for (int i = 0; i < Cube::s_IndexCount; i++) {
-        indices.push_back(Cube::s_Indices[i]);
-    }
-
     // Create the weird mesh
-    const pe::FileDescriptor* houseFile = pe::Project::Get().FindFile("medieval house", ".obj");
-    MeshHandle houseMesh = CreateMeshFromObjFile(houseFile->localPath.c_str());
-    TextureHandle houseTex = LoadTexture("assets/31-village-house/house2.png");
-    MaterialHandle houseMat = CreateMaterial(shadHandle);
-    MaterialSetTexture(houseMat, "mainTexture", houseTex);
-    auto* houseGameObject = m_Scene.CreateGameObject();
+    const pe::FileDescriptor* houseFile =
+    pe::Project::Get().FindFile("medieval house", ".obj"); MeshHandle
+    houseMesh = CreateMeshFromObjFile(houseFile->localPath.c_str());
+    TextureHandle houseTex =
+    LoadTexture("assets/31-village-house/house2.png"); MaterialHandle
+    houseMat = CreateMaterial(shadHandle); MaterialSetTexture(houseMat,
+    "mainTexture", houseTex); auto* houseGameObject =
+    m_Scene.CreateGameObject();
     houseGameObject->AddComponent<RenderComponent>(houseMesh, houseMat);
     houseGameObject->AddComponent<TransformComponent>();
 
+    for(float x = -2.0f; x <= 2.0f; x += 2.0f){
+      for(float y = -2.0f; y <= 2.0f; y += 2.0f){
+        GameObject* go = m_Scene.CreateGameObject();
+        go->AddComponent<RenderComponent>(cubeMeshOldHandle, sunMatHandle);
+        go->AddComponent<TransformComponent>(glm::vec3(x, y, 0.0f));
+      }
+    }
 
-    // for(float x = -2.0f; x <= 2.0f; x += 2.0f){
-    //   for(float y = -2.0f; y <= 2.0f; y += 2.0f){
-    //     GameObject* go = m_Scene.CreateGameObject();
-    //     go->AddComponent<RenderComponent>(cubeMeshOldHandle, sunMatHandle);
-    //     go->AddComponent<TransformComponent>(glm::vec3(x, y, 0.0f));
-    //   }
-    // }
-
-    // GameObject* weirdGo = m_Scene.CreateGameObject("loaded obj mesh");
-    // weirdGo->AddComponent<RenderComponent>(newMesh, newMat);
-    // weirdGo->AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 0.f));
+    GameObject* weirdGo = m_Scene.CreateGameObject("loaded obj mesh");
+    weirdGo->AddComponent<RenderComponent>(newMesh, newMat);
+    weirdGo->AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 0.f));
 
     // Create viewport framebuffer
     m_ViewportFramebuffer =
@@ -137,13 +117,14 @@ void PearlEngine::Initialize() {
 
     // Create the viewport editor panel
     m_ViewportPanel =
-        imGuiContext.AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
-    imGuiContext.AddPanel<SceneHierarchyEditorPanel>(m_Scene, pearlMatHandle,
-                                                       sunMatHandle);
-    imGuiContext.AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
-    imGuiContext.AddPanel<InspectorEditorPanel>(m_Scene);
-    imGuiContext.AddPanel<LoggerEditorPanel>();
-    imGuiContext.AddPanel<ProjectEditorPanel>(m_Scene);
+        m_GUIContext.AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
+    m_GUIContext.AddPanel<SceneHierarchyEditorPanel>(m_Scene, pearlMatHandle,
+                                                     sunMatHandle);
+    m_GUIContext.AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
+    m_GUIContext.AddPanel<InspectorEditorPanel>(m_Scene);
+    m_GUIContext.AddPanel<LoggerEditorPanel>();
+    m_GUIContext.AddPanel<ProjectEditorPanel>(m_Scene);
+    m_GUIContext.AddPanel<AssetEditorPanel>(m_Scene, sunMatHandle);
     AddMenuBarItems();
 
     // Setup camera aspect ratio
@@ -216,8 +197,8 @@ void PearlEngine::Render() {
 }
 
 void PearlEngine::RenderEditor() {
-    imGuiContext.BeginFrame();
-    imGuiContext.RenderEditorPanels();
+    m_GUIContext.BeginFrame();
+    m_GUIContext.RenderEditorPanels();
 
     // render imgui to the screen
     int displayW, displayH;
@@ -226,21 +207,19 @@ void PearlEngine::RenderEditor() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    imGuiContext.Render();
+    m_GUIContext.Render();
 }
 
 void PearlEngine::ProcessInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
-    }
-    else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+    } else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
         m_CameraController->Reset();
     }
 
     ImGuiIO io = ImGui::GetIO();
     if (io.WantCaptureMouse || io.WantCaptureKeyboard)
         return;
-
 }
 
 void PearlEngine::AddMenuBarItems() {

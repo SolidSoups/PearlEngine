@@ -6,7 +6,7 @@
 #include <optional>
 #include <sstream>
 
-#include "OBJ_Asset.h"
+#include "Mesh_Asset.h"
 
 #include "Logger.h"
 
@@ -166,6 +166,11 @@ OBJ_AssetConverter::ConvertToAsset(const pe::FileDescriptor *file) {
         << vertices.size() << "\n\tindices: " << indices.size();
 
     // create a new asset
-    auto asset = std::make_unique<OBJ_Asset>(vertices, indices);
+    auto asset = std::make_unique<Mesh_Asset>(vertices, indices);
+    return asset;
+}
+
+std::unique_ptr<IAsset> OBJ_AssetConverter::CreateEmptyAsset(){
+    auto asset = std::make_unique<Mesh_Asset>();
     return asset;
 }

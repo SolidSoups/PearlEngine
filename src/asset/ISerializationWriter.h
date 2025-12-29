@@ -23,4 +23,7 @@ public:
     // several values
     virtual void WriteFloats(const std::string& name, const std::vector<float>& values) = 0;
     virtual void WriteInt32s(const std::string& name, const std::vector<uint32_t>& values) = 0;
+
+public:
+    virtual std::vector<uint8_t> GetBytes() const = 0;
 };

@@ -12,35 +12,35 @@
 
 class JSON_SerializationWriter : public ISerializationWriter {
   private:
-    rapidjson::Document document_;
+    rapidjson::Document m_Document;
     rapidjson::Value *currentObject_;
 
   public:
     JSON_SerializationWriter() {
-        document_.SetObject();
-        currentObject_ = &document_;
+        m_Document.SetObject();
+        currentObject_ = &m_Document;
     }
 
   private:
     template <typename T> void GenericWrite(const std::string &name, T value) {
-        rapidjson::Value key(name.c_str(), document_.GetAllocator());
-        currentObject_->AddMember(key, value, document_.GetAllocator());
+        rapidjson::Value key(name.c_str(), m_Document.GetAllocator());
+        currentObject_->AddMember(key, value, m_Document.GetAllocator());
     }
     template <typename T> void GenericWriteArray(const std::string &name, const std::vector<T>& values){
         rapidjson::Value array(rapidjson::kArrayType);
         for(const T& val : values){
-            array.PushBack(val, document_.GetAllocator());
+            array.PushBack(val, m_Document.GetAllocator());
         }
-        rapidjson::Value key(name.c_str(), document_.GetAllocator());
-        currentObject_->AddMember(key, array, document_.GetAllocator());
+        rapidjson::Value key(name.c_str(), m_Document.GetAllocator());
+        currentObject_->AddMember(key, array, m_Document.GetAllocator());
     }
 
   public:
     void WriteString(const std::string &name,
                      const std::string &value) override {
-        rapidjson::Value key(name.c_str(), document_.GetAllocator());
-        rapidjson::Value val(value.c_str(), document_.GetAllocator());
-        currentObject_->AddMember(key, val, document_.GetAllocator());
+        rapidjson::Value key(name.c_str(), m_Document.GetAllocator());
+        rapidjson::Value val(value.c_str(), m_Document.GetAllocator());
+        currentObject_->AddMember(key, val, m_Document.GetAllocator());
     }
     void WriteInt32(const std::string &name, uint32_t value) override {
         GenericWrite(name, value);
@@ -69,9 +69,9 @@ class JSON_SerializationWriter : public ISerializationWriter {
         for (size_t i = 0; i < size; i++) {
             ss << std::hex << std::setw(2) << std::setfill('0') << (int)data[i];
         }
-        rapidjson::Value key(name.c_str(), document_.GetAllocator());
-        rapidjson::Value value(ss.str().c_str(), document_.GetAllocator());
-        currentObject_->AddMember(key, value, document_.GetAllocator());
+        rapidjson::Value key(name.c_str(), m_Document.GetAllocator());
+        rapidjson::Value value(ss.str().c_str(), m_Document.GetAllocator());
+        currentObject_->AddMember(key, value, m_Document.GetAllocator());
     }
 
 
@@ -83,10 +83,12 @@ class JSON_SerializationWriter : public ISerializationWriter {
     }
 
   public:
-    std::string GetJSONString() {
+    std::vector<uint8_t> GetBytes() const override {
         rapidjson::StringBuffer buffer;
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-        document_.Accept(writer);
-        return buffer.GetString();
+        m_Document.Accept(writer);
+
+        std::string json = buffer.GetString();
+        return std::vector<uint8_t>(json.begin(), json.end());
     }
 };

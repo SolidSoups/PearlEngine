@@ -1,101 +1,69 @@
 #pragma once
 
+#include <filesystem>
 #include <fstream>
+#include <ostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <ostream>
 
-#include "File.h"
+#include "AssetDescriptor.h"
+#include "FileDescriptor.h"
+#include "FileIO.h"
 #include "IAssetConverter.h"
-#include "JSON_AssetSerializer.h"
+#include "JSON_SerializationReader.h"
+#include "JSON_SerializationWriter.h"
 #include "Logger.h"
+#include "StaticRegistry.h"
 
 namespace pe {
-
-using AssetConverter = IAssetConverter;
-using Extension = std::string;
+using AssetsRegister = std::vector<AssetDescriptor>;
+using ConverterRegistry = StaticRegistry<std::string, IAssetConverter>;
 
 class AssetSystem {
-private:
-    const std::string c_AssetsRoot = "project_assets/";
   public:
-    // will import the file and save it to the assets directory
-    void ImportAsset(const FileDescriptor *file) {
-        // do we have a converter for this file extension?
-        AssetConverter *converter;
-        if (auto search = m_AssetConverters.find(file->extension);
-            search != m_AssetConverters.end()) {
-            converter = search->second.get();
-        } else {
-            // throw an error
-            LOG_WARNING << "No asset converter for file extension '" << file->extension << "' was found.";
-            return;
-        }
-        // convert asset
-        auto asset = converter->ConvertToAsset(file);
+    // the registry of asset converters to use
+    // every file extension needs a converter
+    // to preprocess the file into an applicable format
+    ConverterRegistry AssetConverters;
 
-        // serialize asset (JSON for now)
-        JSON_AssetSerializer serializer;
-        std::vector<uint8_t> bytes = serializer.Serialize(asset.get());
-
-        std::string dest = c_AssetsRoot + file->GetFullName() + ".json";
-        try{
-            std::ofstream outFile(dest.c_str(), std::ios::binary); 
-            outFile.exceptions(std::ios::failbit | std::ios::badbit);
-            outFile.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
-            outFile.close();
-        }
-        catch (const std::ios_base::failure& e){
-            LOG_ERROR << "Failed to write asset file: " << e.what();
-            return;
-        }
-        catch (const std::exception& e){
-            LOG_ERROR << "Unexpected error writing asset: " << e.what();
-            return;
-        }
-
-        LOG_INFO << "Succesfully wrote asset file: " << dest;
-    }
+  private:
+    // Tracks all assets in the assets directory
+    AssetsRegister m_ScannedAssets;
+    // The root of the assets directory
+    const std::filesystem::path c_AssetsRoot{"project_assets"};
 
   public:
+    // scan assets on initialization
+    AssetSystem() { ScanAssets(); }
+
+    // Meyer's singleton getter
     static AssetSystem &Get() {
         static AssetSystem instance;
         return instance;
     }
-
-    // Register any loader of type IAssetLoader
-    void RegisterConverter(const std::string &extension,
-                           std::unique_ptr<AssetConverter> assetConverter) {
-        m_AssetConverters.insert_or_assign(extension,
-                                           std::move(assetConverter));
-        LOG_INFO << "Registered asset converter for file extension '"
-                 << extension << "'";
+    // Get the scanned assets
+    const AssetsRegister &GetAssetsDescriptors() const {
+        return m_ScannedAssets;
     }
 
-    // Get the loader and cast to a specific type
-    AssetConverter *GetConverter(const std::string &extension) {
-        auto it = m_AssetConverters.find(extension);
-        if (it == m_AssetConverters.end()) {
-            LOG_ERROR << "No asset converter exists for file extension "
-                      << extension;
-            return nullptr;
-        }
-        return it->second.get();
-    }
-
-  private:
-    std::unordered_map<Extension, std::unique_ptr<AssetConverter>>
-        m_AssetConverters;
+    // Finds all assets in the assets root folder and
+    void ScanAssets();
+    // returns an IAsset from the serialized assets directory
+    std::unique_ptr<IAsset> LoadAsset(const AssetDescriptor *assetDesc);
+    // import an asset from the filesystem, will do all preprocessing necessary
+    void ImportAsset(const FileDescriptor *file);
 };
 } // namespace pe
 
+// helps staticly initialize registration of asset converters
+// create a header file, put this in the bottom and boom, its working
 #define STATIC_INITIALIZE_REGISTER_ASSET_CONVERTER(ExtensionStr,               \
                                                    AssetConverterType)         \
     namespace {                                                                \
     struct AssetConverterType##Registrar {                                     \
         AssetConverterType##Registrar() {                                      \
-            pe::AssetSystem::Get().RegisterConverter(                          \
+            pe::AssetSystem::Get().AssetConverters.Register(                   \
                 ExtensionStr, std::make_unique<AssetConverterType>());         \
         }                                                                      \
     };                                                                         \

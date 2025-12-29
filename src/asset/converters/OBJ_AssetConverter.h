@@ -19,7 +19,8 @@ class OBJ_AssetConverter : public IAssetConverter{
                              std::vector<float> &outVertices,
                              std::vector<unsigned int> &outIndices);
 public:
-    std::unique_ptr<IAsset> ConvertToAsset(const pe::FileDescriptor* file);
+    std::unique_ptr<IAsset> ConvertToAsset(const pe::FileDescriptor* file) override;
+    std::unique_ptr<IAsset> CreateEmptyAsset() override;
 };
 
 STATIC_INITIALIZE_REGISTER_ASSET_CONVERTER(".obj", OBJ_AssetConverter)

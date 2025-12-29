@@ -2,29 +2,45 @@
 
 #include "Handle.h"
 #include "HandleAllocator.h"
+#include "IResource.h"
 #include "ResourceManagerBase.h"
+#include <iterator>
 #include <unordered_map>
+#include "ResourceTraits.h"
 
-template <typename Tag, typename Data>
+template <typename Tag>
 class ResourceManager : public ResourceManagerBase {
+public:
+    using Data = typename TagToData<Tag>::Data;
+private:
     HandleAllocator<Tag> m_Allocator;
-    std::unordered_map<Handle<Tag>, Data> m_Resources;
+    std::unordered_map<Handle<Tag>, IResource*> m_Resources;
 
   public:
-    Handle<Tag> Create(Data data) {
+    Handle<Tag> Create(IResource* resource) {
         auto handle = m_Allocator.Allocate();
-        m_Resources.emplace(handle, std::move(data));
+        m_Resources.emplace(handle, resource);
         return handle;
     }
 
     Data *Get(Handle<Tag> handle) {
         if (!m_Allocator.IsValid(handle))
             return nullptr;
+
+        // find resource
         auto it = m_Resources.find(handle);
-        return it != m_Resources.end() ? &it->second : nullptr;
+        if(it == m_Resources.end())
+            return nullptr;
+
+        // downcast datatype
+        IResource* resourceData = it->second;
+        Data* data = dynamic_cast<Data*>(resourceData);
+        return data;
     }
 
     void Destroy(Handle<Tag> handle) {
+        if(m_Resources[handle]) delete m_Resources[handle];
+
         m_Resources.erase(handle);
         m_Allocator.Free(handle);
     }

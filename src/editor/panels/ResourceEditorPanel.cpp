@@ -4,7 +4,7 @@
 #include "Time.h"
 #include "imgui.h"
 
-#include "MeshData.h"
+#include "Mesh.h"
 #include "MaterialData.h"
 #include "ShaderData.h"
 #include "TextureData.h"
@@ -28,7 +28,7 @@ ResourceEditorPanel::ResourceEditorPanel(ResourceSystem& resourceSystem)
   });
 
   RegisterResource([this]() {
-    auto &mgr = m_ResourceSystem.GetManagerByData<MeshData>();
+    auto &mgr = m_ResourceSystem.GetManagerByData<Mesh>();
     auto &alloc = mgr.GetAllocator();
     return ResourceData{"Meshes", mgr.GetResourceSize(),
                         alloc.GetTotalAllocations(), alloc.GetFreeIDCount()};

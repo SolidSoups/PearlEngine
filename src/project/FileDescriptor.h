@@ -4,6 +4,7 @@
 #include <filesystem>
 
 #include "UUID.h"
+#include <iostream>
 
 namespace pe{
 using FileHandle = UUID;
@@ -19,3 +20,8 @@ struct FileDescriptor{
     std::string GetFullName() const { return stem + extension; }
 };
 }
+
+#define DEBUG_FileDescriptor(desc) \
+std::cout << "stem: " << desc->stem << "\n" \
+            << "extension: " << desc->extension << "\n" \
+            << "localPath: " << desc->localPath.string() << "\n";

@@ -1,28 +1,35 @@
 #pragma once
 
+#include "AssetDescriptor.h"
 #include "EditorPanel.h"
+#include "FileDescriptor.h"
 #include "MaterialData.h"
 #include "MenuRegistry.h"
 #include "Mesh.h"
 #include "Scene.h"
 #include "ShaderData.h"
-#include <string>
+#include "imgui.h"
 #include <filesystem>
-#include "File.h"
+#include <string>
+#include <unordered_map>
 
 class AssetEditorPanel : public EditorPanel {
   public:
-    AssetEditorPanel(Scene &scene)
-        : EditorPanel("Asset Explorer"), m_Scene(scene){
+    AssetEditorPanel(Scene &scene, const MaterialHandle &handle)
+        : EditorPanel("Asset Explorer"), m_Scene(scene), m_matHandle(handle) {
         MenuRegistry::Get().Register("Windows/Asset Explorer", &m_IsOpen);
+        LoadColors();
     }
 
     void OnImGuiRender() override;
 
   private:
-    void LoadAsset(const pe::FileDescriptor& file);
+    void LoadAsset(const pe::AssetDescriptor &file);
 
   private:
     Scene &m_Scene;
-    const std::string c_AssetDirectory = "project_assets/";
+    MaterialHandle m_matHandle;
+    std::unordered_map<std::string, ImVec4> ExtensionToColor;
+    const std::filesystem::path c_EditorSettingsPath{"editor_settings"};
+    void LoadColors();
 };

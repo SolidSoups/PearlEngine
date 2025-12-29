@@ -37,7 +37,7 @@ private:
 public:
   // RaII rules 👑
   PearlWindow pwin{1800, 1000, "PearlEngine"};
-  GUIContext imGuiContext{pwin.GetWindow()};
+  GUIContext m_GUIContext{pwin.GetWindow()};
 
   // framebuffer
   std::unique_ptr<Framebuffer> m_ViewportFramebuffer;
