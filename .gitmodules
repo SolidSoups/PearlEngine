@@ -2,3 +2,17 @@
 	path = external/imgui
 	url = git@github.com:ocornut/imgui.git
 	branch = docking
+
+[submodule "external/glfw"]
+	path = external/glfw
+	url = git@github.com:glfw/glfw.git
+	branch = master
+
+[submodule "external/glm"]
+	path = external/glm
+	url = git@github.com:g-truc/glm.git
+	branch = master
+
+[submodule "external/rapidjson"]
+	path = external/rapidjson
+	url = git@github.com:Tencent/rapidjson.git
