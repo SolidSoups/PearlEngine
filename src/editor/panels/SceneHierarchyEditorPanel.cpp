@@ -23,19 +23,19 @@ void SceneHierarchyEditorPanel::OnImGuiRender(){
 
   // deselect if clicking on empty scene
   if(ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered()){
-    EngineContext::Instance->GetScene().SetSelectedIndex(-1);
+    EngineContext::GetScene().SetSelectedIndex(-1);
   }
 
   ImGui::End();
 }
 
 void SceneHierarchyEditorPanel::DrawSceneHierarchy(){
-  const auto& sceneObjects = EngineContext::Instance->GetScene().GetGameObjects();
+  const auto& sceneObjects = EngineContext::GetScene().GetGameObjects();
   for(size_t i = 0; i < sceneObjects.size(); i++){
     const auto& gameObject = sceneObjects[i];
     auto renderComp = gameObject->GetComponent<RenderComponent>();
     // Display each gameObject as a selectable
-    bool isSelected (EngineContext::Instance->GetScene().GetSelectedGameObject() == gameObject.get());
+    bool isSelected (EngineContext::GetScene().GetSelectedGameObject() == gameObject.get());
 
     std::string nameid = gameObject->m_Name + "##" + std::to_string(i);
 
@@ -47,7 +47,7 @@ void SceneHierarchyEditorPanel::DrawSceneHierarchy(){
       //   else
       //     renderComp->materialHandle = m_SunnyHandle;
       // }
-      EngineContext::Instance->GetScene().SetSelectedIndex(i);
+      EngineContext::GetScene().SetSelectedIndex(i);
     }
   }
 }
@@ -56,7 +56,7 @@ void SceneHierarchyEditorPanel::DrawContextMenu(){
   ImGuiPopupFlags flags = ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems;
   if(ImGui::BeginPopupContextWindow("HierarchyContextMenu", flags)){
     if(ImGui::MenuItem("Create empty GameObject")){
-      EngineContext::Instance->GetScene().CreateGameObject();
+      EngineContext::GetScene().CreateGameObject();
     }
     ImGui::EndPopup();
   }

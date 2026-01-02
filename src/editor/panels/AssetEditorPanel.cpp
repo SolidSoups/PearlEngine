@@ -49,7 +49,7 @@ void AssetEditorPanel::LoadAsset(const pe::AssetDescriptor &assetDesc) {
         }
         MeshHandle meshHandle = ResourceSystem::Get().Create(mesh);
 
-        GameObject *go = EngineContext::Instance->GetScene().CreateGameObject();
+        GameObject *go = EngineContext::GetScene().CreateGameObject();
         go->AddComponent<RenderComponent>(meshHandle, m_matHandle);
         go->AddComponent<TransformComponent>();
     }

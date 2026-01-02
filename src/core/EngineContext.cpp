@@ -1,3 +1,3 @@
 #include "EngineContext.h"
 
-EngineContext* EngineContext::Instance = nullptr;
+EngineContext* EngineContext::m_Instance = nullptr;

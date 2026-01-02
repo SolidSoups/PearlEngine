@@ -7,18 +7,18 @@
 
 class EngineContext{
 public:
-  Scene& GetScene() const { return m_Scene; }
+  static Scene& GetScene() { return m_Instance->m_Scene; }
 
 public:
-  static EngineContext* Instance;
   EngineContext(Scene& scene)
    : m_Scene(scene){
-    if(!Instance)
-      Instance = this;
+    if(!m_Instance)
+      m_Instance = this;
     else
       throw new std::runtime_error("EngineContext is already constructed!");
   }
 
 private:
+  static EngineContext* m_Instance;
   Scene& m_Scene;
 };

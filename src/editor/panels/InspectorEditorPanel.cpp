@@ -19,7 +19,7 @@ void InspectorEditorPanel::OnImGuiRender() {
 
   ImGui::Begin(m_Name.c_str());
 
-  GameObject *selectedGO = EngineContext::Instance->GetScene().GetSelectedGameObject();
+  GameObject *selectedGO = EngineContext::GetScene().GetSelectedGameObject();
   if (selectedGO) {
     DrawHeader(selectedGO);
     DrawComponents(selectedGO);
