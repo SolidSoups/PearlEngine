@@ -1,15 +1,13 @@
 #include "SceneHierarchyEditorPanel.h"
 
+#include "EngineContext.h"
 #include "MenuRegistry.h"
 #include "RenderComponent.h"
 #include "imgui.h"
 #include <string>
 
-SceneHierarchyEditorPanel::SceneHierarchyEditorPanel(Scene& scene, MaterialHandle pearlHandle, MaterialHandle sunnyHandle) 
+SceneHierarchyEditorPanel::SceneHierarchyEditorPanel() 
   : EditorPanel("Scene Hierarchy")
-    , m_Scene(scene)
-    , m_PearlHandle(pearlHandle) 
-    , m_SunnyHandle(sunnyHandle)
   {
   MenuRegistry::Get().Register("Windows/Scene Hierarchy", &m_IsOpen);
 }
@@ -25,19 +23,19 @@ void SceneHierarchyEditorPanel::OnImGuiRender(){
 
   // deselect if clicking on empty scene
   if(ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered()){
-    m_Scene.SetSelectedIndex(-1);
+    EngineContext::Instance->GetScene().SetSelectedIndex(-1);
   }
 
   ImGui::End();
 }
 
 void SceneHierarchyEditorPanel::DrawSceneHierarchy(){
-  const auto& sceneObjects = m_Scene.GetGameObjects();
+  const auto& sceneObjects = EngineContext::Instance->GetScene().GetGameObjects();
   for(size_t i = 0; i < sceneObjects.size(); i++){
     const auto& gameObject = sceneObjects[i];
     auto renderComp = gameObject->GetComponent<RenderComponent>();
     // Display each gameObject as a selectable
-    bool isSelected (m_Scene.GetSelectedGameObject() == gameObject.get());
+    bool isSelected (EngineContext::Instance->GetScene().GetSelectedGameObject() == gameObject.get());
 
     std::string nameid = gameObject->m_Name + "##" + std::to_string(i);
 
@@ -49,7 +47,7 @@ void SceneHierarchyEditorPanel::DrawSceneHierarchy(){
       //   else
       //     renderComp->materialHandle = m_SunnyHandle;
       // }
-      m_Scene.SetSelectedIndex(i);
+      EngineContext::Instance->GetScene().SetSelectedIndex(i);
     }
   }
 }
@@ -58,7 +56,7 @@ void SceneHierarchyEditorPanel::DrawContextMenu(){
   ImGuiPopupFlags flags = ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems;
   if(ImGui::BeginPopupContextWindow("HierarchyContextMenu", flags)){
     if(ImGui::MenuItem("Create empty GameObject")){
-      m_Scene.CreateGameObject();
+      EngineContext::Instance->GetScene().CreateGameObject();
     }
     ImGui::EndPopup();
   }

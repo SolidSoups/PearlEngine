@@ -7,14 +7,12 @@
 
 class InspectorEditorPanel : public EditorPanel{
 public:
-  InspectorEditorPanel(Scene& scene);
+  InspectorEditorPanel();
 
 public:
   void OnImGuiRender() override;
 
 private:
-  Scene& m_Scene;
-
   void DrawComponents(GameObject* go);
   void DrawHeader(GameObject* go);
 };

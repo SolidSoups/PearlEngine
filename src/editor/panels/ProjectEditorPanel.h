@@ -12,8 +12,8 @@
 
 class ProjectEditorPanel : public EditorPanel {
   public:
-    ProjectEditorPanel(Scene &scene)
-        : EditorPanel("Project Explorer"), m_Scene(scene) {
+    ProjectEditorPanel()
+        : EditorPanel("Project Explorer"){
         MenuRegistry::Get().Register("Windows/Project Explorer", &m_IsOpen);
     }
 
@@ -24,7 +24,6 @@ class ProjectEditorPanel : public EditorPanel {
     void LoadAsset(const pe::FileDescriptor& file);
 
   private:
-    Scene &m_Scene;
     const std::string c_AssetDirectory = "assets/";
     std::vector<std::string> m_Files;
 };

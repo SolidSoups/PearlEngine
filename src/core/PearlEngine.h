@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EngineContext.h"
 #include "GUIContext.h"
 #include "InspectorEditorPanel.h"
 #include "PearlWindow.h"
@@ -55,6 +56,7 @@ public:
 
   ViewportEditorPanel* m_ViewportPanel = nullptr; // needed here
 
+  EngineContext m_EngineContext{m_Scene};
 private:
   bool isInitialized = false;
 };

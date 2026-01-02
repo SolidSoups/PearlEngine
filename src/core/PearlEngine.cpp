@@ -119,13 +119,12 @@ void PearlEngine::Initialize() {
   // Create the viewport editor panel
   m_ViewportPanel =
       m_GUIContext.AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
-  m_GUIContext.AddPanel<SceneHierarchyEditorPanel>(m_Scene, pearlMatHandle,
-                                                   sunMatHandle);
+  m_GUIContext.AddPanel<SceneHierarchyEditorPanel>();
   m_GUIContext.AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
-  m_GUIContext.AddPanel<InspectorEditorPanel>(m_Scene);
+  m_GUIContext.AddPanel<InspectorEditorPanel>();
   m_GUIContext.AddPanel<LoggerEditorPanel>();
-  m_GUIContext.AddPanel<ProjectEditorPanel>(m_Scene);
-  m_GUIContext.AddPanel<AssetEditorPanel>(m_Scene, sunMatHandle);
+  m_GUIContext.AddPanel<ProjectEditorPanel>();
+  m_GUIContext.AddPanel<AssetEditorPanel>(sunMatHandle);
   AddMenuBarItems();
 
   // Setup camera aspect ratio

@@ -4,11 +4,12 @@
 #include "ComponentEditorRegistry.h"
 #include "TransformComponent.h"
 #include "imgui.h"
+#include "EngineContext.h"
 
 #include <iostream>
 
-InspectorEditorPanel::InspectorEditorPanel(Scene &scene)
-    : EditorPanel("Inspector"), m_Scene(scene) {
+InspectorEditorPanel::InspectorEditorPanel()
+    : EditorPanel("Inspector"){
   MenuRegistry::Get().Register("Windows/Inspector", &m_IsOpen);
 }
 
@@ -18,7 +19,7 @@ void InspectorEditorPanel::OnImGuiRender() {
 
   ImGui::Begin(m_Name.c_str());
 
-  GameObject *selectedGO = m_Scene.GetSelectedGameObject();
+  GameObject *selectedGO = EngineContext::Instance->GetScene().GetSelectedGameObject();
   if (selectedGO) {
     DrawHeader(selectedGO);
     DrawComponents(selectedGO);
