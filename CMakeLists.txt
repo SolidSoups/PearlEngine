@@ -4,6 +4,11 @@ project(PearlEngine)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Enable colored compiler diagnostics
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  add_compile_options(-fdiagnostics-color=always)
+endif()
+
 # Set default build type
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
@@ -92,6 +97,8 @@ target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/asset/loaders
   ${CMAKE_CURRENT_SOURCE_DIR}/src/asset/assets
   ${CMAKE_CURRENT_SOURCE_DIR}/src/asset/serializers
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/message
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs/components

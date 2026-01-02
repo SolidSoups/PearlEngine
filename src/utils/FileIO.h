@@ -37,7 +37,7 @@ public:
         inFile.exceptions(std::ios::failbit | std::ios::badbit);
 
         // Get the file size and read all bytes
-        inFile.seekg(0, std::ios::beg);
+        inFile.seekg(0, std::ios::end);
         size_t fileSize = inFile.tellg();
         inFile.seekg(0, std::ios::beg);
 

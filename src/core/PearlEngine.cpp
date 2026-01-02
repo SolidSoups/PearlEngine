@@ -21,6 +21,7 @@
 #include "Time.h"
 #include "TransformComponent.h"
 #include "ViewportEditorPanel.h"
+#include "MessageData.h"
 
 #include "Logger.h"
 #include "MaterialData.h"
@@ -37,193 +38,202 @@
 #include <optional>
 
 PearlEngine::PearlEngine() {
-    if (!pwin.IsInitialized()) {
-        isInitialized = false;
-        LOG_INFO << "Engine failed to construct and initialize";
-        return;
-    }
+  if (!pwin.IsInitialized()) {
+    isInitialized = false;
+    LOG_INFO << "Engine failed to construct and initialize";
+    return;
+  }
 
-    // store the engine as a user pointer in glfw
-    glfwSetWindowUserPointer(pwin.GetWindow(), this);
+  // store the engine as a user pointer in glfw
+  glfwSetWindowUserPointer(pwin.GetWindow(), this);
 
-    isInitialized = true;
-    LOG_INFO << "Engine constructed and initialized";
+  isInitialized = true;
+  LOG_INFO << "Engine constructed and initialized";
 }
 
 PearlEngine::~PearlEngine() {
-    LOG_INFO << "Engine deconstructing";
-    ResourceSystem::Get().DestroyAllResources();
-    glfwTerminate();
+  LOG_INFO << "Engine deconstructing";
+  ResourceSystem::Get().DestroyAllResources();
+  glfwTerminate();
 }
 
 void PearlEngine::Initialize() {
-    LOG_INFO << "Beginning initialization";
-    GLFWwindow *window = pwin.GetWindow();
-    glfwMakeContextCurrent(window);
+  LOG_INFO << "Beginning initialization";
+  GLFWwindow *window = pwin.GetWindow();
+  glfwMakeContextCurrent(window);
 
-    m_CameraController = std::make_unique<CameraController>(&m_Camera);
+  m_CameraController = std::make_unique<CameraController>(&m_Camera);
 
-    // initialize the time
-    Time::Initialize();
+  // initialize the time
+  Time::Initialize();
 
-    // Load textures (using ResourceSystem)
-    TextureHandle sunshineTextureHandle = LoadTexture("assets/sunshine.png");
-    TextureHandle pearlTextureHandle = LoadTexture("assets/pearl.png");
+  // Load textures (using ResourceSystem)
+  TextureHandle sunshineTextureHandle = LoadTexture("assets/sunshine.png");
+  TextureHandle pearlTextureHandle = LoadTexture("assets/pearl.png");
 
-    // Create shader (using ResourceSystem)
-    m_ShaderHandle = CreateShader("shaders/vert.glsl", "shaders/frag.glsl");
+  // Create shader (using ResourceSystem)
+  m_ShaderHandle = CreateShader("shaders/vert.glsl", "shaders/frag.glsl");
 
-    // Create new shader
-    ShaderHandle shadHandle =
-        CreateShader("shaders/vertNew.glsl", "shaders/fragNew.glsl");
+  // Create new shader
+  ShaderHandle shadHandle =
+      CreateShader("shaders/vertNew.glsl", "shaders/fragNew.glsl");
 
-    // Create new materials for pearl and sunshine
-    MaterialHandle sunMatHandle = CreateMaterial(m_ShaderHandle);
-    MaterialSetTexture(sunMatHandle, "mainTexture", sunshineTextureHandle);
-    MaterialHandle pearlMatHandle = CreateMaterial(m_ShaderHandle);
-    MaterialSetTexture(pearlMatHandle, "mainTexture", pearlTextureHandle);
+  // Create new materials for pearl and sunshine
+  MaterialHandle sunMatHandle = CreateMaterial(m_ShaderHandle);
+  MaterialSetTexture(sunMatHandle, "mainTexture", sunshineTextureHandle);
+  MaterialHandle pearlMatHandle = CreateMaterial(m_ShaderHandle);
+  MaterialSetTexture(pearlMatHandle, "mainTexture", pearlTextureHandle);
 
-    // Create new material
-    MaterialHandle newMat = CreateMaterial(shadHandle);
-    MaterialSetTexture(newMat, "mainTexture", sunshineTextureHandle);
+  // Create new material
+  MaterialHandle newMat = CreateMaterial(shadHandle);
+  MaterialSetTexture(newMat, "mainTexture", sunshineTextureHandle);
 
-    // Create the weird mesh
-    const pe::FileDescriptor* houseFile =
-    pe::Project::Get().FindFile("medieval house", ".obj"); MeshHandle
-    houseMesh = CreateMeshFromObjFile(houseFile->localPath.c_str());
-    TextureHandle houseTex =
-    LoadTexture("assets/31-village-house/house2.png"); MaterialHandle
-    houseMat = CreateMaterial(shadHandle); MaterialSetTexture(houseMat,
-    "mainTexture", houseTex); auto* houseGameObject =
-    m_Scene.CreateGameObject();
-    houseGameObject->AddComponent<RenderComponent>(houseMesh, houseMat);
-    houseGameObject->AddComponent<TransformComponent>();
+  // Create the weird mesh
+  // const pe::FileDescriptor* houseFile =
+  // pe::Project::Get().FindFile("medieval house", ".obj"); MeshHandle
+  // houseMesh = CreateMeshFromObjFile(houseFile->localPath.c_str());
+  // TextureHandle houseTex =
+  // LoadTexture("assets/31-village-house/house2.png"); MaterialHandle
+  // houseMat = CreateMaterial(shadHandle); MaterialSetTexture(houseMat,
+  // "mainTexture", houseTex); auto* houseGameObject =
+  // m_Scene.CreateGameObject();
+  // houseGameObject->AddComponent<RenderComponent>(houseMesh, houseMat);
+  // houseGameObject->AddComponent<TransformComponent>();
 
-    for(float x = -2.0f; x <= 2.0f; x += 2.0f){
-      for(float y = -2.0f; y <= 2.0f; y += 2.0f){
-        GameObject* go = m_Scene.CreateGameObject();
-        go->AddComponent<RenderComponent>(cubeMeshOldHandle, sunMatHandle);
-        go->AddComponent<TransformComponent>(glm::vec3(x, y, 0.0f));
-      }
-    }
+  // for(float x = -2.0f; x <= 2.0f; x += 2.0f){
+  //   for(float y = -2.0f; y <= 2.0f; y += 2.0f){
+  //     GameObject* go = m_Scene.CreateGameObject();
+  //     go->AddComponent<RenderComponent>(cubeMeshOldHandle, sunMatHandle);
+  //     go->AddComponent<TransformComponent>(glm::vec3(x, y, 0.0f));
+  //   }
+  // }
 
-    GameObject* weirdGo = m_Scene.CreateGameObject("loaded obj mesh");
-    weirdGo->AddComponent<RenderComponent>(newMesh, newMat);
-    weirdGo->AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 0.f));
+  // GameObject* weirdGo = m_Scene.CreateGameObject("loaded obj mesh");
+  // weirdGo->AddComponent<RenderComponent>(newMesh, newMat);
+  // weirdGo->AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 0.f));
 
-    // Create viewport framebuffer
-    m_ViewportFramebuffer =
-        std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
+  // Create viewport framebuffer
+  m_ViewportFramebuffer =
+      std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
 
-    // Create the viewport editor panel
-    m_ViewportPanel =
-        m_GUIContext.AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
-    m_GUIContext.AddPanel<SceneHierarchyEditorPanel>(m_Scene, pearlMatHandle,
-                                                     sunMatHandle);
-    m_GUIContext.AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
-    m_GUIContext.AddPanel<InspectorEditorPanel>(m_Scene);
-    m_GUIContext.AddPanel<LoggerEditorPanel>();
-    m_GUIContext.AddPanel<ProjectEditorPanel>(m_Scene);
-    m_GUIContext.AddPanel<AssetEditorPanel>(m_Scene, sunMatHandle);
-    AddMenuBarItems();
+  // Create the viewport editor panel
+  m_ViewportPanel =
+      m_GUIContext.AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
+  m_GUIContext.AddPanel<SceneHierarchyEditorPanel>(m_Scene, pearlMatHandle,
+                                                   sunMatHandle);
+  m_GUIContext.AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
+  m_GUIContext.AddPanel<InspectorEditorPanel>(m_Scene);
+  m_GUIContext.AddPanel<LoggerEditorPanel>();
+  m_GUIContext.AddPanel<ProjectEditorPanel>(m_Scene);
+  m_GUIContext.AddPanel<AssetEditorPanel>(m_Scene, sunMatHandle);
+  AddMenuBarItems();
 
-    // Setup camera aspect ratio
-    int framebufferWidth, frameBufferHeight;
-    glfwGetFramebufferSize(pwin.GetWindow(), &framebufferWidth,
-                           &frameBufferHeight);
-    float aspectRatio = (float)framebufferWidth / (float)frameBufferHeight;
-    m_Camera.SetAspectRatio(aspectRatio);
+  // Setup camera aspect ratio
+  int framebufferWidth, frameBufferHeight;
+  glfwGetFramebufferSize(pwin.GetWindow(), &framebufferWidth,
+                         &frameBufferHeight);
+  float aspectRatio = (float)framebufferWidth / (float)frameBufferHeight;
+  m_Camera.SetAspectRatio(aspectRatio);
 
-    // OpenGL state configuration
-    glFrontFace(GL_CW);
-    glDisable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
+  // OpenGL state configuration
+  glFrontFace(GL_CW);
+  glDisable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
 
-    LOG_INFO << "Initialization finished";
+  m_MessageQueue.subscribe<TestMessage>([&](const TestMessage& data){
+    LOG_INFO << "Message Recieved: " << data.foo;
+  });
+
+  LOG_INFO << "Initialization finished";
 }
 
 // b@UPDATE
 void PearlEngine::RunUpdateLoop() {
-    GLFWwindow *window = pwin.GetWindow();
+  GLFWwindow *window = pwin.GetWindow();
 
-    Initialize();
+  Initialize();
 
-    LOG_INFO << "Starting engine loop";
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-        ProcessInput(window);
+  LOG_INFO << "Starting engine loop";
+  while (!glfwWindowShouldClose(window)) {
+    glfwPollEvents();
+    ProcessInput(window);
 
-        Time::Update();
-        Update();
+    Time::Update();
+    Update();
 
-        Render();
-        RenderEditor();
+    Render();
+    RenderEditor();
 
-        glfwSwapBuffers(window);
-    }
+    glfwSwapBuffers(window);
+  }
 }
 
 void PearlEngine::Update() {
-    // handle viewport resize
-    if (m_ViewportPanel->IsResized()) {
-        glm::vec2 newSize = m_ViewportPanel->GetSize();
-        m_ViewportFramebuffer->Resize(newSize.x, newSize.y);
-        m_Camera.SetAspectRatio(newSize.x / newSize.y);
-    }
+  m_MessageQueue.dispatch();
 
-    // Handle camera controls
-    if (m_ViewportPanel->IsHovered()) {
-        m_CameraController->OnUpdate(m_ViewportPanel->GetMouseDelta(),
-                                     m_ViewportPanel->GetScrollDelta(),
-                                     m_ViewportPanel->IsRightMouseDown(),
-                                     m_ViewportPanel->IsMiddleMouseDown());
-    }
+  // handle viewport resize
+  if (m_ViewportPanel->IsResized()) {
+    glm::vec2 newSize = m_ViewportPanel->GetSize();
+    m_ViewportFramebuffer->Resize(newSize.x, newSize.y);
+    m_Camera.SetAspectRatio(newSize.x / newSize.y);
+  }
 
-    // update objects (currently does nothing, but ready for future!  )
-    m_Scene.Update();
+  // Handle camera controls
+  if (m_ViewportPanel->IsHovered()) {
+    m_CameraController->OnUpdate(m_ViewportPanel->GetMouseDelta(),
+                                 m_ViewportPanel->GetScrollDelta(),
+                                 m_ViewportPanel->IsRightMouseDown(),
+                                 m_ViewportPanel->IsMiddleMouseDown());
+  }
+
+  // update objects (currently does nothing, but ready for future!  )
+  m_Scene.Update();
 }
 
 void PearlEngine::Render() {
-    // Render scene to framebuffer
-    m_ViewportFramebuffer->Bind();
+  // Render scene to framebuffer
+  m_ViewportFramebuffer->Bind();
 
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Scene handles all the rendering now!
-    m_Scene.Render(m_Camera);
+  // Scene handles all the rendering now!
+  m_Scene.Render(m_Camera);
 
-    m_ViewportFramebuffer->Unbind();
+  m_ViewportFramebuffer->Unbind();
 }
 
 void PearlEngine::RenderEditor() {
-    m_GUIContext.BeginFrame();
-    m_GUIContext.RenderEditorPanels();
+  m_GUIContext.BeginFrame();
+  m_GUIContext.RenderEditorPanels();
 
-    // render imgui to the screen
-    int displayW, displayH;
-    glfwGetFramebufferSize(pwin.GetWindow(), &displayW, &displayH);
-    glViewport(0, 0, displayW, displayH);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+  // render imgui to the screen
+  int displayW, displayH;
+  glfwGetFramebufferSize(pwin.GetWindow(), &displayW, &displayH);
+  glViewport(0, 0, displayW, displayH);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
 
-    m_GUIContext.Render();
+  m_GUIContext.Render();
 }
 
 void PearlEngine::ProcessInput(GLFWwindow *window) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, true);
-    } else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-        m_CameraController->Reset();
-    }
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, true);
+  } else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+    m_CameraController->Reset();
+  }
+  else if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS){
+    m_MessageQueue.post(TestMessage{"O key was pressed"});
+  }
 
-    ImGuiIO io = ImGui::GetIO();
-    if (io.WantCaptureMouse || io.WantCaptureKeyboard)
-        return;
+  ImGuiIO io = ImGui::GetIO();
+  if (io.WantCaptureMouse || io.WantCaptureKeyboard)
+    return;
 }
 
 void PearlEngine::AddMenuBarItems() {
-    MenuRegistry::Get().Register("File/Exit", [this]() {
-        glfwSetWindowShouldClose(pwin.GetWindow(), true);
-    });
+  MenuRegistry::Get().Register("File/Exit", [this]() {
+    glfwSetWindowShouldClose(pwin.GetWindow(), true);
+  });
 }

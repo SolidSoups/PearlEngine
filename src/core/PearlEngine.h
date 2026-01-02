@@ -9,6 +9,7 @@
 #include "PanelCommon.h"
 #include "Scene.h"
 #include "ShaderData.h"
+#include "MessageQueue.h"
 
 #include <memory>
 #include <tuple>
@@ -38,6 +39,8 @@ public:
   // RaII rules 👑
   PearlWindow pwin{1800, 1000, "PearlEngine"};
   GUIContext m_GUIContext{pwin.GetWindow()};
+  MessageQueue m_MessageQueue{};
+
 
   // framebuffer
   std::unique_ptr<Framebuffer> m_ViewportFramebuffer;
