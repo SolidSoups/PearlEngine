@@ -1,15 +1,15 @@
 #include "InspectorEditorPanel.h"
 #include "MenuRegistry.h"
 
+#include "MaterialData.h"
 #include "ComponentEditorRegistry.h"
 #include "TransformComponent.h"
 #include "imgui.h"
-#include "EngineContext.h"
 
 #include <iostream>
 
-InspectorEditorPanel::InspectorEditorPanel()
-    : EditorPanel("Inspector"){
+InspectorEditorPanel::InspectorEditorPanel(ServiceLocator* locator)
+    : EditorPanel("Inspector"), r_Scene(locator->Get<Scene>()){
   MenuRegistry::Get().Register("Windows/Inspector", &m_IsOpen);
 }
 
@@ -19,7 +19,7 @@ void InspectorEditorPanel::OnImGuiRender() {
 
   ImGui::Begin(m_Name.c_str());
 
-  GameObject *selectedGO = EngineContext::GetScene().GetSelectedGameObject();
+  GameObject *selectedGO = r_Scene.GetSelectedGameObject();
   if (selectedGO) {
     DrawHeader(selectedGO);
     DrawComponents(selectedGO);

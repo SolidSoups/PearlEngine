@@ -2,19 +2,17 @@
 
 #include "EngineContext.h"
 #include "GUIContext.h"
-#include "InspectorEditorPanel.h"
 #include "PearlWindow.h"
 #include "Camera.h"
 #include "CameraController.h"
 #include "FrameBuffer.h"
-#include "PanelCommon.h"
 #include "Scene.h"
 #include "ShaderData.h"
+#include "ServiceLocator.h"
 #include "MessageQueue.h"
+#include "ViewportEditorPanel.h"
 
 #include <memory>
-#include <tuple>
-#include <vector>
 
 struct GLFWwindow;
 
@@ -56,7 +54,8 @@ public:
 
   ViewportEditorPanel* m_ViewportPanel = nullptr; // needed here
 
-  EngineContext m_EngineContext{m_Scene};
+  EngineContext m_EngineContext{m_Scene, m_MessageQueue};
+  ServiceLocator m_ServiceLocator;
 private:
   bool isInitialized = false;
 };

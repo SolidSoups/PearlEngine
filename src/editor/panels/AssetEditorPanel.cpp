@@ -5,7 +5,6 @@
 #include <string>
 
 #include "RenderComponent.h"
-#include "EngineContext.h"
 #include "TransformComponent.h"
 #include "imgui.h"
 
@@ -49,7 +48,7 @@ void AssetEditorPanel::LoadAsset(const pe::AssetDescriptor &assetDesc) {
         }
         MeshHandle meshHandle = ResourceSystem::Get().Create(mesh);
 
-        GameObject *go = EngineContext::GetScene().CreateGameObject();
+        GameObject *go = r_Scene.CreateGameObject();
         go->AddComponent<RenderComponent>(meshHandle, m_matHandle);
         go->AddComponent<TransformComponent>();
     }

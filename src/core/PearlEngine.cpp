@@ -18,6 +18,8 @@
 #include "Project.h"
 #include "ProjectEditorPanel.h"
 #include "Renderer.h"
+#include "ResourceEditorPanel.h"
+#include "SceneHierarchyEditorPanel.h"
 #include "Time.h"
 #include "TransformComponent.h"
 #include "ViewportEditorPanel.h"
@@ -63,6 +65,9 @@ void PearlEngine::Initialize() {
   glfwMakeContextCurrent(window);
 
   m_CameraController = std::make_unique<CameraController>(&m_Camera);
+
+  // let's register some services
+  m_ServiceLocator.Provide(&m_Scene);
 
   // initialize the time
   Time::Initialize();
@@ -119,12 +124,12 @@ void PearlEngine::Initialize() {
   // Create the viewport editor panel
   m_ViewportPanel =
       m_GUIContext.AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
-  m_GUIContext.AddPanel<SceneHierarchyEditorPanel>();
+  m_GUIContext.AddPanel<SceneHierarchyEditorPanel>(&m_ServiceLocator);
   m_GUIContext.AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
-  m_GUIContext.AddPanel<InspectorEditorPanel>();
+  m_GUIContext.AddPanel<InspectorEditorPanel>(&m_ServiceLocator);
   m_GUIContext.AddPanel<LoggerEditorPanel>();
   m_GUIContext.AddPanel<ProjectEditorPanel>();
-  m_GUIContext.AddPanel<AssetEditorPanel>(sunMatHandle);
+  m_GUIContext.AddPanel<AssetEditorPanel>(sunMatHandle, &m_ServiceLocator);
   AddMenuBarItems();
 
   // Setup camera aspect ratio

@@ -3,11 +3,11 @@
 #include "EditorPanel.h"
 #include "GameObject.h"
 #include "Scene.h"
-#include "MaterialData.h"
+#include "ServiceLocator.h"
 
 class InspectorEditorPanel : public EditorPanel{
 public:
-  InspectorEditorPanel();
+  InspectorEditorPanel(ServiceLocator* locator);
 
 public:
   void OnImGuiRender() override;
@@ -15,4 +15,7 @@ public:
 private:
   void DrawComponents(GameObject* go);
   void DrawHeader(GameObject* go);
+
+private:
+  Scene& r_Scene;
 };
