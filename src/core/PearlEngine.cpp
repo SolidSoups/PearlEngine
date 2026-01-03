@@ -20,6 +20,7 @@
 #include "Renderer.h"
 #include "ResourceEditorPanel.h"
 #include "SceneHierarchyEditorPanel.h"
+#include "SelectionWizard.h"
 #include "Time.h"
 #include "TransformComponent.h"
 #include "ViewportEditorPanel.h"
@@ -47,9 +48,17 @@ PearlEngine::PearlEngine() {
   }
 
   // store the engine as a user pointer in glfw
-  glfwSetWindowUserPointer(pwin.GetWindow(), this);
+  glfwSetWindowUserPointer(pwin.GetWindow(), &m_ServiceLocator);
+
+  // let's register some services
+  m_ServiceLocator.Provide(&m_Scene);
+  m_ServiceLocator.Provide(&m_Camera);
+  m_ServiceLocator.Provide(new MessageQueue);
+  m_ServiceLocator.Provide(new SelectionWizard);
+  m_ServiceLocator.Provide(&pwin);
 
   isInitialized = true;
+
   LOG_INFO << "Engine constructed and initialized";
 }
 
@@ -66,8 +75,6 @@ void PearlEngine::Initialize() {
 
   m_CameraController = std::make_unique<CameraController>(&m_Camera);
 
-  // let's register some services
-  m_ServiceLocator.Provide(&m_Scene);
 
   // initialize the time
   Time::Initialize();

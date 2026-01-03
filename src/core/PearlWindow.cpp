@@ -1,28 +1,36 @@
-#include "PearlWindow.h"
+#include <iostream>
+
 #include <glad/glad.h>
 #include "GLFW/glfw3.h"
-#include <iostream>
-#include "PearlEngine.h"
 
+#include "PearlWindow.h"
+#include "PearlEngine.h"
+#include "ServiceLocator.h"
 #include "Logger.h"
 
 // this callback must be static and not a part of a class
-static void framebuffer_size_callback(GLFWwindow* window, int width, int height){
+static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
   glViewport(0, 0, width, height);
 
-  PearlEngine* engine = static_cast<PearlEngine*>(glfwGetWindowUserPointer(window));
-  if(engine){
+  auto* locator = static_cast<ServiceLocator*>(glfwGetWindowUserPointer(window));
+  if(locator){
     float newAspect = (float)width / (float)height;
-    engine->m_Camera.SetAspectRatio(newAspect);
+    if(locator->IsReady<Camera>()){
+      locator->Get<Camera>().SetAspectRatio(newAspect);
+    }
 
     // update window dimensions
-    engine->pwin.window_width = width;
-    engine->pwin.window_height = height;
+    if(locator->IsReady<PearlWindow>()){
+      auto& pwin = locator->Get<PearlWindow>();
+      pwin.window_width = width;
+      pwin.window_height = height;
+    }
   }
 }
 
-PearlWindow::PearlWindow(int width, int height, const char* title)
-  : window_width(width), window_height(height)
+PearlWindow::PearlWindow(int width, int height, const char* title, ServiceLocator* locator)
+  : window_width(width), window_height(height), r_Camera(locator)
 {
   // initialize and give hints
   glfwInit();  
@@ -57,6 +65,7 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
   glfwMakeContextCurrent(window);
   isInitialized = true;
   LOG_INFO << "Succesfully initialized window";
+  LOG_INFO << "r_Camera state: " << +r_Camera.GetState();
 }
 
 PearlWindow::~PearlWindow(){

@@ -4,12 +4,23 @@
 #include <unordered_map>
 #include <any>
 #include <cassert>
+#include <vector>
+
+#include "IServiceHandle.h"
 
 class ServiceLocator {
 public:
   template<typename T>
   void Provide(T* service){
     m_Services[typeid(T)] = service;
+
+    // see if any handles have requested this service (lazy references)
+    auto it = m_Requests.find(typeid(T));
+    if(it != m_Requests.end()){
+      for(auto* handle : it->second){
+        handle->ProvideService(service);
+      } 
+    }
   }
 
   template<typename T>
@@ -34,6 +45,13 @@ public:
     return std::any_cast<T*>(it->second) != nullptr;
   }
 
+public:
+  template<typename T>
+  void RegisterRequest(IServiceHandle* handle){
+    m_Requests[typeid(T)].push_back(handle);    
+  }
 private:
+  std::unordered_map<std::type_index, std::vector<IServiceHandle*>> m_Requests;
   std::unordered_map<std::type_index, std::any> m_Services;
 };
+

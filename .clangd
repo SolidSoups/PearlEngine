@@ -1,0 +1,20 @@
+CompileFlags:
+  Add: []
+  Remove: []
+
+Index:
+  Background: Build
+
+Diagnostics:
+  ClangTidy:
+    Add: []
+    Remove: []
+  UnusedIncludes: Strict
+
+InlayHints:
+  Enabled: Yes
+  ParameterNames: Yes
+  DeducedTypes: Yes
+
+Completion:
+  AllScopes: No

@@ -35,27 +35,27 @@ private:
   void AddMenuBarItems();
   
 public:
-  // RaII rules 👑
-  PearlWindow pwin{1800, 1000, "PearlEngine"};
-  GUIContext m_GUIContext{pwin.GetWindow()};
+  ShaderHandle m_ShaderHandle;
+
+public:
+  Scene m_Scene;
+  Camera m_Camera{};
+  std::unique_ptr<CameraController> m_CameraController;
   MessageQueue m_MessageQueue{};
 
+  ServiceLocator m_ServiceLocator;
+
+public:
+  PearlWindow pwin{1800, 1000, "PearlEngine", &m_ServiceLocator};
+  GUIContext m_GUIContext{pwin.GetWindow()};
 
   // framebuffer
   std::unique_ptr<Framebuffer> m_ViewportFramebuffer;
   glm::vec2 m_ViewportSize{1280, 70};
-
-  Scene m_Scene;
-
-  Camera m_Camera{};
-  std::unique_ptr<CameraController> m_CameraController;
-
-  ShaderHandle m_ShaderHandle;
-
   ViewportEditorPanel* m_ViewportPanel = nullptr; // needed here
 
+public:
   EngineContext m_EngineContext{m_Scene, m_MessageQueue};
-  ServiceLocator m_ServiceLocator;
 private:
   bool isInitialized = false;
 };
