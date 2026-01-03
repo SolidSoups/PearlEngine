@@ -37,11 +37,6 @@ class AssetSystem {
     // scan assets on initialization
     AssetSystem() { ScanAssets(); }
 
-    // Meyer's singleton getter
-    static AssetSystem &Get() {
-        static AssetSystem instance;
-        return instance;
-    }
     // Get the scanned assets
     const AssetsRegister &GetAssetsDescriptors() const {
         return m_ScannedAssets;
@@ -55,17 +50,3 @@ class AssetSystem {
     void ImportAsset(const FileDescriptor *file);
 };
 } // namespace pe
-
-// helps staticly initialize registration of asset converters
-// create a header file, put this in the bottom and boom, its working
-#define STATIC_INITIALIZE_REGISTER_ASSET_CONVERTER(ExtensionStr,               \
-                                                   AssetConverterType)         \
-    namespace {                                                                \
-    struct AssetConverterType##Registrar {                                     \
-        AssetConverterType##Registrar() {                                      \
-            pe::AssetSystem::Get().AssetConverters.Register(                   \
-                ExtensionStr, std::make_unique<AssetConverterType>());         \
-        }                                                                      \
-    };                                                                         \
-    static AssetConverterType##Registrar s_##AssetConverterType##Registrar;    \
-    }

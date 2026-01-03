@@ -33,6 +33,7 @@
 #include "materialLoaders.h"
 #include "shaderLoaders.h"
 #include "textureLoaders.h"
+#include "converters/OBJ_AssetConverter.h"
 
 // std
 #include <cmath>
@@ -48,14 +49,18 @@ PearlEngine::PearlEngine() {
   }
 
   // store the engine as a user pointer in glfw
-  glfwSetWindowUserPointer(pwin.GetWindow(), &m_ServiceLocator);
+  glfwSetWindowUserPointer(pwin.GetWindow(), &m_EngineServiceLocator);
 
   // let's register some services
-  m_ServiceLocator.Provide(&m_Scene);
-  m_ServiceLocator.Provide(&m_Camera);
-  m_ServiceLocator.Provide(new MessageQueue);
-  m_ServiceLocator.Provide(new SelectionWizard);
-  m_ServiceLocator.Provide(&pwin);
+  m_EngineServiceLocator.Provide(&m_Scene);
+  m_EngineServiceLocator.Provide(&m_Camera);
+  m_EngineServiceLocator.Provide(new MessageQueue);
+  m_EngineServiceLocator.Provide(new SelectionWizard);
+  m_EngineServiceLocator.Provide(&pwin);
+  m_EngineServiceLocator.Provide(&m_AssetSystem);
+
+  // Register asset converters
+  m_AssetSystem.AssetConverters.Register(".obj", std::make_unique<OBJ_AssetConverter>());
 
   isInitialized = true;
 
@@ -131,12 +136,12 @@ void PearlEngine::Initialize() {
   // Create the viewport editor panel
   m_ViewportPanel =
       m_GUIContext.AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
-  m_GUIContext.AddPanel<SceneHierarchyEditorPanel>(&m_ServiceLocator);
+  m_GUIContext.AddPanel<SceneHierarchyEditorPanel>(&m_EngineServiceLocator);
   m_GUIContext.AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
-  m_GUIContext.AddPanel<InspectorEditorPanel>(&m_ServiceLocator);
+  m_GUIContext.AddPanel<InspectorEditorPanel>(&m_EngineServiceLocator);
   m_GUIContext.AddPanel<LoggerEditorPanel>();
-  m_GUIContext.AddPanel<ProjectEditorPanel>();
-  m_GUIContext.AddPanel<AssetEditorPanel>(sunMatHandle, &m_ServiceLocator);
+  m_GUIContext.AddPanel<ProjectEditorPanel>(&m_EngineServiceLocator);
+  m_GUIContext.AddPanel<AssetEditorPanel>(sunMatHandle, &m_EngineServiceLocator);
   AddMenuBarItems();
 
   // Setup camera aspect ratio

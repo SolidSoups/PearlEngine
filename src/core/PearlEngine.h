@@ -11,6 +11,7 @@
 #include "ServiceLocator.h"
 #include "MessageQueue.h"
 #include "ViewportEditorPanel.h"
+#include "AssetSystem.h"
 
 #include <memory>
 
@@ -42,11 +43,11 @@ public:
   Camera m_Camera{};
   std::unique_ptr<CameraController> m_CameraController;
   MessageQueue m_MessageQueue{};
+  pe::AssetSystem m_AssetSystem{};
 
-  ServiceLocator m_ServiceLocator;
-
+  ServiceLocator m_EngineServiceLocator;
 public:
-  PearlWindow pwin{1800, 1000, "PearlEngine", &m_ServiceLocator};
+  PearlWindow pwin{1800, 1000, "PearlEngine", &m_EngineServiceLocator};
   GUIContext m_GUIContext{pwin.GetWindow()};
 
   // framebuffer
