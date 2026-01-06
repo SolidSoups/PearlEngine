@@ -2,11 +2,12 @@
 
 #include <deque>
 #include <mutex>
-#include <typeindex>
-#include "Logger.h"
 
 #include "Message.h"
 
+/** Stores messages in a thread-safe queue for deferred notificaiton.
+ *  Is used exclusively with MessageBus internally to defer notifications
+  */
 class MessageQueue {
   std::deque<Message> m_Queue;
   std::mutex mutex;

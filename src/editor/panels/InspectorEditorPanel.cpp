@@ -20,21 +20,13 @@ InspectorEditorPanel::InspectorEditorPanel(ServiceLocator* locator)
 }
 
 void InspectorEditorPanel::HandleMessage(const Message& msg) {
-  LOG_INFO << "Got a message";
-  const SelectionMessage* sMsg = msg.As<SelectionMessage>();
-  if(!sMsg) return;
-  LOG_INFO << "Message is valid, determining type...";
-
-  SelectionType type = sMsg->data->type;
-
-  if(type == Selection_Clear){
-    LOG_INFO << "Message says Clear!";
-    r_selectedGameObject = nullptr;
-  }
-
-  if(GameObject* go = sMsg->data->SelectionAs<GameObject>()){
-    LOG_INFO << "Message says select GameObject!";
-    r_selectedGameObject = go;
+  if(auto* evt = msg.As<SelectionMessage>()){
+    if(evt->type == Selection_Clear){
+      r_selectedGameObject = nullptr;
+    }
+    else if(evt->type == Selection_GameObject){
+      r_selectedGameObject = evt->SelectionAs<GameObject>();
+    }
   }
 }
 

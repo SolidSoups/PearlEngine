@@ -29,15 +29,23 @@ struct SelectionData {
     GameObject*,
     Camera*> selection;
   template<typename T>
-  T* SelectionAs(){
-    if(auto** ptr = std::get_if<T*>(&selection)){
+  T* SelectionAs() const{
+    if(auto* ptr = std::get_if<T*>(&selection)){
       return *ptr;
     }
     return nullptr;
   }
 };
 struct SelectionMessage {
-  SelectionData* data;
+  SelectionType type;
+  std::variant<std::monostate, GameObject*, Camera*> selection;
+
+  template<typename T>
+  T* SelectionAs() const{
+    if(auto* ptr = std::get_if<T*>(&selection))
+      return *ptr;
+    return nullptr;
+  }
 };
 
 class SelectionWizard {
@@ -70,6 +78,7 @@ public:
   
 private:
   void SendMessage(){
-    r_MessageQueue->Dispatch(SelectionMessage{&m_SelectionData});
+    SelectionMessage msg{m_SelectionData.type, m_SelectionData.selection};
+    r_MessageQueue->Dispatch(msg);
   }
 };
