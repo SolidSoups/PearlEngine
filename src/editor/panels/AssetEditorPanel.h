@@ -7,6 +7,7 @@
 #include "ServiceLocator.h"
 #include "ServiceHandle.h"
 #include "AssetSystem.h"
+#include "ResourceSystem.h"
 #include "imgui.h"
 #include <filesystem>
 #include <string>
@@ -17,7 +18,7 @@ class AssetEditorPanel : public EditorPanel {
 public:
   AssetEditorPanel(const MaterialHandle &handle, ServiceLocator *locator)
       : EditorPanel("Asset Explorer"), m_matHandle(handle), r_Scene(locator->Get<Scene>()),
-        r_AssetSystem(locator) {
+        r_AssetSystem(locator), r_ResourceSystem(locator) {
     MenuRegistry::Get().Register("Windows/Asset Explorer", &m_IsOpen);
     LoadColors();
   }
@@ -36,4 +37,5 @@ private:
 private:
   Scene& r_Scene;
   ServiceHandle<pe::AssetSystem> r_AssetSystem;
+  ServiceHandle<ResourceSystem> r_ResourceSystem;
 };

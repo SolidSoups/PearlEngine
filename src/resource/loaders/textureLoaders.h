@@ -2,4 +2,6 @@
 
 #include "TextureData.h"
 
-TextureHandle LoadTexture(const std::string& filepath, bool generateMipMaps = true);
+class ResourceSystem;
+
+TextureHandle LoadTexture(ResourceSystem* rs, const std::string& filepath, bool generateMipMaps = true);

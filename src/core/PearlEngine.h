@@ -1,6 +1,5 @@
 #pragma once
 
-#include "EngineContext.h"
 #include "GUIContext.h"
 #include "PearlWindow.h"
 #include "Camera.h"
@@ -9,9 +8,9 @@
 #include "Scene.h"
 #include "ShaderData.h"
 #include "ServiceLocator.h"
-#include "MessageQueue.h"
 #include "ViewportEditorPanel.h"
 #include "AssetSystem.h"
+#include "ResourceSystem.h"
 
 #include <memory>
 
@@ -42,12 +41,12 @@ public:
   Scene m_Scene;
   Camera m_Camera{};
   std::unique_ptr<CameraController> m_CameraController;
-  MessageQueue m_MessageQueue{};
   pe::AssetSystem m_AssetSystem{};
+  ResourceSystem m_ResourceSystem{};
 
-  ServiceLocator m_EngineServiceLocator;
+  ServiceLocator serviceLocator;
 public:
-  PearlWindow pwin{1800, 1000, "PearlEngine", &m_EngineServiceLocator};
+  PearlWindow pwin{1800, 1000, "PearlEngine", &serviceLocator};
   GUIContext m_GUIContext{pwin.GetWindow()};
 
   // framebuffer
@@ -55,8 +54,6 @@ public:
   glm::vec2 m_ViewportSize{1280, 70};
   ViewportEditorPanel* m_ViewportPanel = nullptr; // needed here
 
-public:
-  EngineContext m_EngineContext{m_Scene, m_MessageQueue};
 private:
   bool isInitialized = false;
 };

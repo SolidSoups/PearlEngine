@@ -5,12 +5,17 @@
 #include <any>
 #include <cassert>
 #include <vector>
+#include "Logger.h"
 
 #include "IServiceHandle.h"
 
 class ServiceLocator {
 public:
   template <typename T> void Provide(T *service) {
+    if(m_Services.find(typeid(T)) != m_Services.end()){
+      LOG_WARNING << "Service of type " << typeid(T).name() << " already exists!";
+    }
+
     m_Services[typeid(T)] = service;
 
     // see if any handles have requested this service (lazy references)

@@ -2,8 +2,9 @@
 
 #include "EditorPanel.h"
 #include "Scene.h"
-#include "MaterialData.h"
+#include "ServiceHandle.h"
 #include "ServiceLocator.h"
+#include "SelectionWizard.h"
 
 class SceneHierarchyEditorPanel : public EditorPanel{
 public:
@@ -18,4 +19,5 @@ private:
 
 private:
   Scene& r_Scene;
+  ServiceHandle<SelectionWizard> r_SelectionWizard;
 };

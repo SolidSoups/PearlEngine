@@ -2,4 +2,6 @@
 
 #include "ShaderData.h"
 
-ShaderHandle CreateShader(const char *vertexPath, const char *fragmentPath);
+class ResourceSystem;
+
+ShaderHandle CreateShader(ResourceSystem* rs, const char *vertexPath, const char *fragmentPath);

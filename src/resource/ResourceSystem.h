@@ -33,11 +33,6 @@ class ResourceSystem {
     ResourceSystem &operator=(const ResourceSystem &) = delete;
 
   public:
-    static ResourceSystem &Get() {
-        static ResourceSystem instance;
-        return instance;
-    }
-
     IResource *LoadAsset(IAsset *asset) {
         auto *converter = AssetConverters.Get(asset->GetTypeIndex());
         if (!converter) {
@@ -136,16 +131,3 @@ class ResourceSystem {
         m_Managers.clear();
     }
 };
-
-#define STATIC_INITIALIZE_REGISTER_ASSET_TO_RESOURCE_CONVERTER(AssetType,      \
-                                                               ConverterType)  \
-    namespace {                                                                \
-    struct ConverterType##Registrar {                                          \
-        ConverterType##Registrar() {                                           \
-            ResourceSystem::Get().AssetConverters.Register(                    \
-                std::type_index(typeid(AssetType)),                            \
-                std::make_unique<ConverterType>());                            \
-        }                                                                      \
-    };                                                                         \
-    static ConverterType##Registrar s_##ConverterType##Registrar;              \
-    }

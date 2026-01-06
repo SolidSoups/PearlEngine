@@ -16,18 +16,20 @@ struct ShaderData : public IResource {
 };
 PEARL_DEFINE_RESOURCE(Shader, ShaderData, Shader_Asset)
 
-void UseShader(ShaderHandle handle);
-void ResetShader();
-void DestroyShader(ShaderHandle handle);
+class ResourceSystem;
 
-void ShaderSetVec3(ShaderHandle handle, const char *name,
+void UseShader(ResourceSystem* rs, ShaderHandle handle);
+void ResetShader();
+void DestroyShader(ResourceSystem* rs, ShaderHandle handle);
+
+void ShaderSetVec3(ResourceSystem* rs, ShaderHandle handle, const char *name,
                    const glm::vec3 &value);
-void ShaderSetVec4(ShaderHandle handle, const char *name,
+void ShaderSetVec4(ResourceSystem* rs, ShaderHandle handle, const char *name,
                    const glm::vec4 &value);
-void ShaderSetBool(ShaderHandle handle, const char *name, bool value);
-void ShaderSetInt(ShaderHandle handle, const char *name, int value);
-void ShaderSetFloat(ShaderHandle handle, const char *name, float value);
-void ShaderSetMatrix4(ShaderHandle handle, const char *name,
+void ShaderSetBool(ResourceSystem* rs, ShaderHandle handle, const char *name, bool value);
+void ShaderSetInt(ResourceSystem* rs, ShaderHandle handle, const char *name, int value);
+void ShaderSetFloat(ResourceSystem* rs, ShaderHandle handle, const char *name, float value);
+void ShaderSetMatrix4(ResourceSystem* rs, ShaderHandle handle, const char *name,
                       const glm::mat4 &value);
 
 // TODO: Performance Optimization - Uniform Location Caching

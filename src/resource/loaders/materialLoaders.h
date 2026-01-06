@@ -3,5 +3,7 @@
 #include "MaterialData.h"
 #include "ShaderData.h"
 
-MaterialHandle CreateMaterial(ShaderHandle shaderHandle);
+class ResourceSystem;
+
+MaterialHandle CreateMaterial(ResourceSystem* rs, ShaderHandle shaderHandle);
 

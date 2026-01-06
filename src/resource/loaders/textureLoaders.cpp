@@ -6,7 +6,7 @@
 #include "Logger.h"
 #include "ResourceSystem.h"
 
-TextureHandle LoadTexture(const std::string &filepath, bool generateMipMaps) {
+TextureHandle LoadTexture(ResourceSystem* rs, const std::string &filepath, bool generateMipMaps) {
     // set flip flag (global, uses OpenGL coordinates)
     stbi_set_flip_vertically_on_load(true);
 
@@ -89,7 +89,7 @@ TextureHandle LoadTexture(const std::string &filepath, bool generateMipMaps) {
     // free CPU memory (GPU has a copy of data now)
     stbi_image_free(data);
 
-    TextureHandle textureHandle = ResourceSystem::Get().Create(textureData);
+    TextureHandle textureHandle = rs->Create(textureData);
 
     LOG_INFO << "Loaded texture: " << filepath << " (" << width << "x" << height
              << ", " << channels << " channels)";

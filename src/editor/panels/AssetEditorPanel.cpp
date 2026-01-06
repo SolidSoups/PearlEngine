@@ -40,13 +40,13 @@ void AssetEditorPanel::LoadAsset(const pe::AssetDescriptor &assetDesc) {
     if (assetDesc.extension == ".obj") {
         std::unique_ptr<IAsset> asset =
             r_AssetSystem->LoadAsset(&assetDesc);
-        IResource *resource = ResourceSystem::Get().LoadAsset(asset.get());
+        IResource *resource = r_ResourceSystem->LoadAsset(asset.get());
         Mesh *mesh = dynamic_cast<Mesh *>(resource);
         if (!mesh) {
             LOG_ERROR << "RESOURCE IS NOT MESH";
             return;
         }
-        MeshHandle meshHandle = ResourceSystem::Get().Create(mesh);
+        MeshHandle meshHandle = r_ResourceSystem->Create(mesh);
 
         GameObject *go = r_Scene.CreateGameObject();
         go->AddComponent<RenderComponent>(meshHandle, m_matHandle);

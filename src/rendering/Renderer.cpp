@@ -14,19 +14,19 @@ void Renderer::BeginScene(Camera &camera) { s_ActiveCamera = &camera; }
 
 void Renderer::EndScene() { s_ActiveCamera = nullptr; }
 
-void Renderer::Submit(const RenderComponent &renderComp,
+void Renderer::Submit(ResourceSystem* rs, const RenderComponent &renderComp,
                       const TransformComponent &transformComp) {
-    BindMaterial(renderComp.materialHandle);
+    BindMaterial(rs, renderComp.materialHandle);
 
     // Set matrices
     ShaderHandle shaderHandle =
-        MaterialGetShaderHandle(renderComp.materialHandle);
-    ShaderSetMatrix4(shaderHandle, "transform", transformComp.GetModelMatrix());
-    ShaderSetMatrix4(shaderHandle, "view", s_ActiveCamera->GetViewMatrix());
-    ShaderSetMatrix4(shaderHandle, "projection",
+        MaterialGetShaderHandle(rs, renderComp.materialHandle);
+    ShaderSetMatrix4(rs, shaderHandle, "transform", transformComp.GetModelMatrix());
+    ShaderSetMatrix4(rs, shaderHandle, "view", s_ActiveCamera->GetViewMatrix());
+    ShaderSetMatrix4(rs, shaderHandle, "projection",
                      s_ActiveCamera->GetProjectionMatrix());
 
     // Render the mesh
-    Mesh* mesh = ResourceSystem::Get().Get(renderComp.meshHandle);
+    Mesh* mesh = rs->Get(renderComp.meshHandle);
     mesh->Draw();
 }

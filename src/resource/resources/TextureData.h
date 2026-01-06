@@ -21,7 +21,9 @@ public:
 };
 PEARL_DEFINE_RESOURCE(Texture, TextureData, Texture_Asset)
 
-void BindTexture(TextureHandle handle, unsigned int slot);
+class ResourceSystem;
+
+void BindTexture(ResourceSystem* rs, TextureHandle handle, unsigned int slot);
 void UnbindTexture();
-void DestroyTexture(TextureHandle handle);
+void DestroyTexture(ResourceSystem* rs, TextureHandle handle);
 

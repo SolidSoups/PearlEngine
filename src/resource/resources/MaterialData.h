@@ -31,15 +31,17 @@ public:
 };
 PEARL_DEFINE_RESOURCE(Material, MaterialData, Material_Asset)
 
-ShaderHandle MaterialGetShaderHandle(MaterialHandle handle);
+class ResourceSystem;
 
-void BindMaterial(MaterialHandle handle);
+ShaderHandle MaterialGetShaderHandle(ResourceSystem* rs, MaterialHandle handle);
+
+void BindMaterial(ResourceSystem* rs, MaterialHandle handle);
 void UnbindMaterial();
-void DestroyMaterial(MaterialHandle handle);
+void DestroyMaterial(ResourceSystem* rs, MaterialHandle handle);
 
-void MaterialSetFloat(MaterialHandle handle, const std::string& name, float value);
-void MaterialSetInt(MaterialHandle handle, const std::string& name, int value);
-void MaterialSetVec3(MaterialHandle handle, const std::string& name, const glm::vec3& value);
-void MaterialSetVec4(MaterialHandle handle, const std::string& name, const glm::vec4& value);
-void MaterialSetTexture(MaterialHandle handle, const std::string& name, const TextureHandle& value);
-void MaterialSetMat4(MaterialHandle handle, const std::string& name, const glm::mat4& value);
+void MaterialSetFloat(ResourceSystem* rs, MaterialHandle handle, const std::string& name, float value);
+void MaterialSetInt(ResourceSystem* rs, MaterialHandle handle, const std::string& name, int value);
+void MaterialSetVec3(ResourceSystem* rs, MaterialHandle handle, const std::string& name, const glm::vec3& value);
+void MaterialSetVec4(ResourceSystem* rs, MaterialHandle handle, const std::string& name, const glm::vec4& value);
+void MaterialSetTexture(ResourceSystem* rs, MaterialHandle handle, const std::string& name, const TextureHandle& value);
+void MaterialSetMat4(ResourceSystem* rs, MaterialHandle handle, const std::string& name, const glm::mat4& value);

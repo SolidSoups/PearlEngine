@@ -1,16 +1,41 @@
 #include "InspectorEditorPanel.h"
+#include "Logger.h"
 #include "MenuRegistry.h"
 
 #include "MaterialData.h"
 #include "ComponentEditorRegistry.h"
+#include "MessageBus.h"
 #include "TransformComponent.h"
+#include "GameObject.h"
+#include "SelectionWizard.h"
 #include "imgui.h"
 
 #include <iostream>
 
 InspectorEditorPanel::InspectorEditorPanel(ServiceLocator* locator)
-    : EditorPanel("Inspector"), r_Scene(locator->Get<Scene>()){
+    : EditorPanel("Inspector"), r_Scene(locator->Get<Scene>()), 
+      r_selectedGameObject(nullptr){
   MenuRegistry::Get().Register("Windows/Inspector", &m_IsOpen);
+  locator->Get<MessageBus>().Subscribe<SelectionMessage>(this);
+}
+
+void InspectorEditorPanel::HandleMessage(const Message& msg) {
+  LOG_INFO << "Got a message";
+  const SelectionMessage* sMsg = msg.As<SelectionMessage>();
+  if(!sMsg) return;
+  LOG_INFO << "Message is valid, determining type...";
+
+  SelectionType type = sMsg->data->type;
+
+  if(type == Selection_Clear){
+    LOG_INFO << "Message says Clear!";
+    r_selectedGameObject = nullptr;
+  }
+
+  if(GameObject* go = sMsg->data->SelectionAs<GameObject>()){
+    LOG_INFO << "Message says select GameObject!";
+    r_selectedGameObject = go;
+  }
 }
 
 void InspectorEditorPanel::OnImGuiRender() {
@@ -19,10 +44,9 @@ void InspectorEditorPanel::OnImGuiRender() {
 
   ImGui::Begin(m_Name.c_str());
 
-  GameObject *selectedGO = r_Scene.GetSelectedGameObject();
-  if (selectedGO) {
-    DrawHeader(selectedGO);
-    DrawComponents(selectedGO);
+  if (r_selectedGameObject) {
+    DrawHeader(r_selectedGameObject);
+    DrawComponents(r_selectedGameObject);
   }
 
   ImGui::End();

@@ -3,6 +3,7 @@
 #include "TransformComponent.h"
 #include "RenderComponent.h"
 class Camera;
+class ResourceSystem;
 
 class Renderer {
 public:
@@ -10,7 +11,7 @@ public:
   static void BeginScene(Camera& camera);
   static void EndScene();
 
-  static void Submit(const RenderComponent& renderComp, const TransformComponent& transformComp);
+  static void Submit(ResourceSystem* rs, const RenderComponent& renderComp, const TransformComponent& transformComp);
 
 private:
   static Camera* s_ActiveCamera;

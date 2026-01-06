@@ -9,22 +9,19 @@
 
 // src
 #include "AssetEditorPanel.h"
-#include "Cube.h"
-#include "GameObject.h"
 #include "InspectorEditorPanel.h"
 #include "LoggerEditorPanel.h"
 #include "MenuRegistry.h"
 #include "PearlEngine.h"
-#include "Project.h"
+#include "MessageBus.h"
+#include "MessageQueue.h"
 #include "ProjectEditorPanel.h"
 #include "Renderer.h"
 #include "ResourceEditorPanel.h"
 #include "SceneHierarchyEditorPanel.h"
 #include "SelectionWizard.h"
 #include "Time.h"
-#include "TransformComponent.h"
 #include "ViewportEditorPanel.h"
-#include "MessageData.h"
 
 #include "Logger.h"
 #include "MaterialData.h"
@@ -34,6 +31,7 @@
 #include "shaderLoaders.h"
 #include "textureLoaders.h"
 #include "converters/OBJ_AssetConverter.h"
+#include "converters/Mesh_ResourceConverter.h"
 
 // std
 #include <cmath>
@@ -49,18 +47,26 @@ PearlEngine::PearlEngine() {
   }
 
   // store the engine as a user pointer in glfw
-  glfwSetWindowUserPointer(pwin.GetWindow(), &m_EngineServiceLocator);
+  glfwSetWindowUserPointer(pwin.GetWindow(), &serviceLocator);
 
   // let's register some services
-  m_EngineServiceLocator.Provide(&m_Scene);
-  m_EngineServiceLocator.Provide(&m_Camera);
-  m_EngineServiceLocator.Provide(new MessageQueue);
-  m_EngineServiceLocator.Provide(new SelectionWizard);
-  m_EngineServiceLocator.Provide(&pwin);
-  m_EngineServiceLocator.Provide(&m_AssetSystem);
+  serviceLocator.Provide(&m_Scene);
+  serviceLocator.Provide(&m_Camera);
+  serviceLocator.Provide(new SelectionWizard(&serviceLocator));
+  serviceLocator.Provide(&pwin);
+  serviceLocator.Provide(&m_AssetSystem);
+  serviceLocator.Provide(&m_ResourceSystem);
+  serviceLocator.Provide(new MessageBus);
+  serviceLocator.Provide(new MessageQueue);
 
   // Register asset converters
-  m_AssetSystem.AssetConverters.Register(".obj", std::make_unique<OBJ_AssetConverter>());
+  m_AssetSystem.AssetConverters.Register(
+      ".obj", std::make_unique<OBJ_AssetConverter>());
+
+  // Register resource converters
+  m_ResourceSystem.AssetConverters.Register(
+      std::type_index(typeid(Mesh_Asset)),
+      std::make_unique<Mesh_ResourceConverter>());
 
   isInitialized = true;
 
@@ -69,7 +75,7 @@ PearlEngine::PearlEngine() {
 
 PearlEngine::~PearlEngine() {
   LOG_INFO << "Engine deconstructing";
-  ResourceSystem::Get().DestroyAllResources();
+  m_ResourceSystem.DestroyAllResources();
   glfwTerminate();
 }
 
@@ -80,30 +86,37 @@ void PearlEngine::Initialize() {
 
   m_CameraController = std::make_unique<CameraController>(&m_Camera);
 
-
   // initialize the time
   Time::Initialize();
 
   // Load textures (using ResourceSystem)
-  TextureHandle sunshineTextureHandle = LoadTexture("assets/sunshine.png");
-  TextureHandle pearlTextureHandle = LoadTexture("assets/pearl.png");
+  TextureHandle sunshineTextureHandle =
+      LoadTexture(&m_ResourceSystem, "assets/sunshine.png");
+  TextureHandle pearlTextureHandle =
+      LoadTexture(&m_ResourceSystem, "assets/pearl.png");
 
   // Create shader (using ResourceSystem)
-  m_ShaderHandle = CreateShader("shaders/vert.glsl", "shaders/frag.glsl");
+  m_ShaderHandle =
+      CreateShader(&m_ResourceSystem, "shaders/vert.glsl", "shaders/frag.glsl");
 
   // Create new shader
-  ShaderHandle shadHandle =
-      CreateShader("shaders/vertNew.glsl", "shaders/fragNew.glsl");
+  ShaderHandle shadHandle = CreateShader(
+      &m_ResourceSystem, "shaders/vertNew.glsl", "shaders/fragNew.glsl");
 
   // Create new materials for pearl and sunshine
-  MaterialHandle sunMatHandle = CreateMaterial(m_ShaderHandle);
-  MaterialSetTexture(sunMatHandle, "mainTexture", sunshineTextureHandle);
-  MaterialHandle pearlMatHandle = CreateMaterial(m_ShaderHandle);
-  MaterialSetTexture(pearlMatHandle, "mainTexture", pearlTextureHandle);
+  MaterialHandle sunMatHandle =
+      CreateMaterial(&m_ResourceSystem, m_ShaderHandle);
+  MaterialSetTexture(&m_ResourceSystem, sunMatHandle, "mainTexture",
+                     sunshineTextureHandle);
+  MaterialHandle pearlMatHandle =
+      CreateMaterial(&m_ResourceSystem, m_ShaderHandle);
+  MaterialSetTexture(&m_ResourceSystem, pearlMatHandle, "mainTexture",
+                     pearlTextureHandle);
 
   // Create new material
-  MaterialHandle newMat = CreateMaterial(shadHandle);
-  MaterialSetTexture(newMat, "mainTexture", sunshineTextureHandle);
+  MaterialHandle newMat = CreateMaterial(&m_ResourceSystem, shadHandle);
+  MaterialSetTexture(&m_ResourceSystem, newMat, "mainTexture",
+                     sunshineTextureHandle);
 
   // Create the weird mesh
   // const pe::FileDescriptor* houseFile =
@@ -136,12 +149,13 @@ void PearlEngine::Initialize() {
   // Create the viewport editor panel
   m_ViewportPanel =
       m_GUIContext.AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
-  m_GUIContext.AddPanel<SceneHierarchyEditorPanel>(&m_EngineServiceLocator);
-  m_GUIContext.AddPanel<ResourceEditorPanel>(ResourceSystem::Get());
-  m_GUIContext.AddPanel<InspectorEditorPanel>(&m_EngineServiceLocator);
+  m_GUIContext.AddPanel<SceneHierarchyEditorPanel>(&serviceLocator);
+  m_GUIContext.AddPanel<ResourceEditorPanel>(m_ResourceSystem);
+  m_GUIContext.AddPanel<InspectorEditorPanel>(&serviceLocator);
   m_GUIContext.AddPanel<LoggerEditorPanel>();
-  m_GUIContext.AddPanel<ProjectEditorPanel>(&m_EngineServiceLocator);
-  m_GUIContext.AddPanel<AssetEditorPanel>(sunMatHandle, &m_EngineServiceLocator);
+  m_GUIContext.AddPanel<ProjectEditorPanel>(&serviceLocator);
+  m_GUIContext.AddPanel<AssetEditorPanel>(sunMatHandle,
+                                          &serviceLocator);
   AddMenuBarItems();
 
   // Setup camera aspect ratio
@@ -155,10 +169,6 @@ void PearlEngine::Initialize() {
   glFrontFace(GL_CW);
   glDisable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
-
-  m_MessageQueue.subscribe<TestMessage>([&](const TestMessage& data){
-    LOG_INFO << "Message Recieved: " << data.foo;
-  });
 
   LOG_INFO << "Initialization finished";
 }
@@ -177,6 +187,16 @@ void PearlEngine::RunUpdateLoop() {
     Time::Update();
     Update();
 
+    // process messages
+    auto messages = serviceLocator.Get<MessageQueue>().DrainAll();
+    if(messages.size() > 0)
+      LOG_INFO << "Drained " << messages.size() << " messages!";
+    auto& msgBus = serviceLocator.Get<MessageBus>();
+    for(auto& msg : messages){
+      LOG_INFO << "Processing and dispatching a message";
+      msgBus.Dispatch(msg);
+    }
+
     Render();
     RenderEditor();
 
@@ -185,8 +205,6 @@ void PearlEngine::RunUpdateLoop() {
 }
 
 void PearlEngine::Update() {
-  m_MessageQueue.dispatch();
-
   // handle viewport resize
   if (m_ViewportPanel->IsResized()) {
     glm::vec2 newSize = m_ViewportPanel->GetSize();
@@ -204,6 +222,7 @@ void PearlEngine::Update() {
 
   // update objects (currently does nothing, but ready for future!  )
   m_Scene.Update();
+
 }
 
 void PearlEngine::Render() {
@@ -214,7 +233,7 @@ void PearlEngine::Render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Scene handles all the rendering now!
-  m_Scene.Render(m_Camera);
+  m_Scene.Render(&m_ResourceSystem, m_Camera);
 
   m_ViewportFramebuffer->Unbind();
 }
@@ -238,9 +257,7 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, true);
   } else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
     m_CameraController->Reset();
-  }
-  else if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS){
-    m_MessageQueue.post(TestMessage{"O key was pressed"});
+  } else if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
   }
 
   ImGuiIO io = ImGui::GetIO();
