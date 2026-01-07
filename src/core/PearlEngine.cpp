@@ -22,6 +22,7 @@
 #include "SceneHierarchyEditorPanel.h"
 #include "SelectionWizard.h"
 #include "Time.h"
+#include "TransformComponentEditor.h"
 #include "ViewportEditorPanel.h"
 
 #include "Logger.h"
@@ -125,6 +126,7 @@ void PearlEngine::Initialize() {
   // create the main camera
   GameObject* cameraGO = m_Scene.CreateGameObject("Main Camera");
   auto* cmCmp = cameraGO->AddComponent<CameraComponent>();
+  cameraGO->AddComponent<TransformComponent>(cmCmp->cameraData.position);
   m_Scene.SetActiveCamera(cmCmp);
 
   // Create the weird mesh
@@ -171,7 +173,7 @@ void PearlEngine::Initialize() {
   glfwGetFramebufferSize(pwin.GetWindow(), &framebufferWidth,
                          &frameBufferHeight);
   float aspectRatio = (float)framebufferWidth / (float)frameBufferHeight;
-  m_Camera.SetAspectRatio(aspectRatio);
+  m_Camera.SetAspect(aspectRatio);
 
   // OpenGL state configuration
   glFrontFace(GL_CW);
@@ -213,13 +215,11 @@ void PearlEngine::RunUpdateLoop() {
 }
 
 void PearlEngine::Update() {
-  m_Camera.Update(); 
-  
   // handle viewport resize
   if (m_ViewportPanel->IsResized()) {
     glm::vec2 newSize = m_ViewportPanel->GetSize();
     m_ViewportFramebuffer->Resize(newSize.x, newSize.y);
-    m_Camera.SetAspectRatio(newSize.x / newSize.y);
+    m_Camera.SetAspect(newSize.x / newSize.y);
   }
 
   // Handle camera controls

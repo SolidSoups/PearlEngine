@@ -2,6 +2,8 @@
 
 #include "MenuRegistry.h"
 #include "RenderComponent.h"
+#include "CameraComponent.h"
+#include "Camera.h"
 #include "imgui.h"
 #include <string>
 #include "SelectionWizard.h"
@@ -43,8 +45,24 @@ void SceneHierarchyEditorPanel::DrawSceneHierarchy() {
     std::string nameid = gameObject->m_Name + "##" + std::to_string(i);
 
     if (ImGui::Selectable(nameid.c_str(), isSelected)) {
-      LOG_INFO << "Setting selectiong to gameobject";
+      LOG_INFO << "Setting selection to gameobject";
       r_SelectionWizard->SetSelection(Selection_GameObject, gameObject.get());
+    }
+
+    // context menu per gameobject
+    std::string popupid = "GameObject_Context##" + std::to_string(i);
+    if (ImGui::BeginPopupContextItem(popupid.c_str())) {
+      ImGui::Text("%s", gameObject->m_Name.c_str());
+      ImGui::Separator();
+
+      // Preview camera button (only if GameObject has CameraComponent)
+      if (auto* camComp = gameObject->GetComponent<CameraComponent>()) {
+        if (ImGui::MenuItem("Preview Camera")) {
+          ServiceLocator::Get<Camera>().StartPreview(camComp);
+        }
+      }
+
+      ImGui::EndPopup();
     }
   }
 }

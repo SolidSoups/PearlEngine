@@ -1,4 +1,5 @@
 #include "TransformComponentEditor.h"
+#include "Logger.h"
 #include "imgui.h"
 
 void TransformComponentEditor::OnDrawComponent(Component* target){

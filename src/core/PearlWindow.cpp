@@ -15,7 +15,7 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
   float newAspect = (float)width / (float)height;
   if(ServiceLocator::IsReady<Camera>()){
-    ServiceLocator::Get<Camera>().SetAspectRatio(newAspect);
+    ServiceLocator::Get<Camera>().SetAspect(newAspect);
   }
 
   // update window dimensions

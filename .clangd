@@ -9,7 +9,10 @@ Diagnostics:
   ClangTidy:
     Add: []
     Remove: []
-  UnusedIncludes: Strict
+  UnusedIncludes: None  # Disable to reduce log spam
+  Suppress:
+    - "drv_unknown_argument"
+    - "err_drv_unsupported_opt"
 
 InlayHints:
   Enabled: Yes

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <typeindex>
-
 #include "ecs_common.h"
 
+class GameObject;
 
 class Component{
 public:
@@ -12,7 +12,11 @@ public:
   virtual std::type_index GetTypeIndex() const = 0;
 
 public:
-  EntityID owner = 0;
+  EntityID m_ownerID = 0;
+  GameObject* m_Owner = nullptr;
+  GameObject* GetOwner(){
+    return m_Owner;
+  }
 };
 
 #define COMPONENT_CLASS(ClassName) \

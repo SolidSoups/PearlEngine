@@ -1,5 +1,6 @@
 #include "CameraController.h"
 #include <glm/glm.hpp>
+#include <stdatomic.h>
 
 CameraController::CameraController(Camera* camera)
   : m_Camera(camera)
@@ -13,21 +14,50 @@ void CameraController::Reset(){
   m_OrbitDistance = 5.0f;
   UpdateCameraPosition();
   m_OrbitTarget = {0.0f, 0.0f, 0.0f};
-  m_Camera->SetTarget(m_OrbitTarget);
+  m_Camera->GetPreview();
 }
 
 void CameraController::OnUpdate(glm::vec2 mouseDelta, float scrollDelta, bool rightMouseDown, bool middleMouseDown){
+  // we don't want to control a scene camera
+
   if(middleMouseDown){
+    if(m_Camera->IsPreviewing()){
+      m_Camera->StopPreview();
+      RecalculateOrbitFromCamera();
+    }
     Pan(mouseDelta);
     return;
   }
 
   if(rightMouseDown){
+    if(m_Camera->IsPreviewing()){
+      m_Camera->StopPreview();
+      RecalculateOrbitFromCamera();
+    }
     Orbit(mouseDelta);
   } 
   if(scrollDelta != 0){
+    if(m_Camera->IsPreviewing()){
+      m_Camera->StopPreview();
+      RecalculateOrbitFromCamera();
+    }
     Zoom(scrollDelta);
   }
+}
+
+void CameraController::RecalculateOrbitFromCamera(){
+  auto& cam = m_Camera->GetInternal();
+
+  // set the orbit target to where the camera is looking
+  m_OrbitTarget = cam.target;
+
+  // calculate orbit distance
+  m_OrbitDistance = glm::length(cam.position - cam.target);
+
+  // calculate new yaw and pitch from current cameras orientation
+  glm::vec3 direction = glm::normalize(cam.position - cam.target);
+  m_Pitch = glm::degrees(asin(direction.y));
+  m_Yaw = glm::degrees(atan2(direction.z, direction.x));
 }
 
 void CameraController::Orbit(glm::vec2 delta){
@@ -43,7 +73,7 @@ void CameraController::Orbit(glm::vec2 delta){
   float pitchRad = glm::radians(m_Pitch);
 
   UpdateCameraPosition();
-  m_Camera->SetTarget(m_OrbitTarget);
+  m_Camera->GetInternal().target = m_OrbitTarget;
 }
 
 void CameraController::Zoom(float scrollDelta){
@@ -61,20 +91,20 @@ void CameraController::UpdateCameraPosition(){
   position.y = m_OrbitTarget.y + m_OrbitDistance * sin(pitchRad);
   position.z = m_OrbitTarget.z + m_OrbitDistance * cos(pitchRad) * sin(yawRad);
 
-  m_Camera->SetPosition(position);
+  m_Camera->GetInternal().position = position;
 }
 
 void CameraController::Pan(glm::vec2 delta){
   // get camera right and up vectors
-  glm::vec3 forward = m_Camera->GetForward();
-  glm::vec3 right = m_Camera->GetRight();
-  glm::vec3 up = m_Camera->GetUp();
+  auto& camera = m_Camera->GetInternal();
+  glm::vec3 forward = camera.GetForward();
+  glm::vec3 right = camera.GetRight();
+  glm::vec3 up = camera.GetUp();
 
   // move camera and target
   glm::vec3 offset = (-right * delta.x + up * delta.y) * m_PanSensitivity * m_OrbitDistance;
 
-  glm::vec3 newPos = m_Camera->GetPosition() + offset;
-  m_Camera->SetPosition(newPos);
+  camera.position += offset;
   m_OrbitTarget += offset;
-  m_Camera->SetTarget(m_OrbitTarget);
+  camera.target = m_OrbitTarget;
 }

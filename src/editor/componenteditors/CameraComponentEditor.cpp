@@ -28,12 +28,6 @@ void CameraComponentEditor::OnDrawComponent(Component* target){
     ImGui::SameLine(labelWidth);
     ImGui::SliderFloat("##Fov", &cmp->cameraData.fov, 0.0f, 179.f,  "%.1f");
 
-    // draw aspect ratio
-    ImGui::AlignTextToFramePadding();
-    ImGui::Text("Aspect Ratio");
-    ImGui::SameLine(labelWidth);
-    ImGui::InputFloat("##Aspect Ratio", &cmp->cameraData.aspectRatio);
-
     // draw nearplane
     ImGui::AlignTextToFramePadding();
     ImGui::Text("Near Plane");

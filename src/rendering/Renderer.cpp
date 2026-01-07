@@ -14,19 +14,22 @@ void Renderer::BeginScene(Camera &camera) { s_ActiveCamera = &camera; }
 
 void Renderer::EndScene() { s_ActiveCamera = nullptr; }
 
-void Renderer::Submit(ResourceSystem* rs, const RenderComponent &renderComp,
+void Renderer::Submit(ResourceSystem *rs, const RenderComponent &renderComp,
                       const TransformComponent &transformComp) {
-    BindMaterial(rs, renderComp.materialHandle);
+  auto *cameraTarget = s_ActiveCamera->GetCurrentTarget();
+  if (!cameraTarget)
+    return;
+  BindMaterial(rs, renderComp.materialHandle);
 
-    // Set matrices
-    ShaderHandle shaderHandle =
-        MaterialGetShaderHandle(rs, renderComp.materialHandle);
-    ShaderSetMatrix4(rs, shaderHandle, "transform", transformComp.GetModelMatrix());
-    ShaderSetMatrix4(rs, shaderHandle, "view", s_ActiveCamera->GetViewMatrix());
-    ShaderSetMatrix4(rs, shaderHandle, "projection",
-                     s_ActiveCamera->GetProjectionMatrix());
+  // Set matrices
+  ShaderHandle shaderHandle =
+      MaterialGetShaderHandle(rs, renderComp.materialHandle);
+  ShaderSetMatrix4(rs, shaderHandle, "transform",
+                   transformComp.GetModelMatrix());
+  ShaderSetMatrix4(rs, shaderHandle, "view", cameraTarget->GetViewMatrix());
+  ShaderSetMatrix4(rs, shaderHandle, "projection", cameraTarget->GetProjectionMatrix());
 
-    // Render the mesh
-    Mesh* mesh = rs->Get(renderComp.meshHandle);
-    mesh->Draw();
+  // Render the mesh
+  Mesh *mesh = rs->Get(renderComp.meshHandle);
+  mesh->Draw();
 }

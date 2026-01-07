@@ -1,4 +1,5 @@
 #pragma once
+#include "CameraComponent.h"
 #include "CameraData.h"
 #include "ServiceHandle.h"
 #include "ServiceLocator.h"
@@ -6,36 +7,27 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-
-class Camera{
+class Camera {
 public:
   Camera();
 
-  glm::mat4 GetViewMatrix() const;
-  glm::mat4 GetProjectionMatrix() const;
+  void SetAspect(float aspect);
+  CameraData *GetPreview();
+  CameraData *GetCurrentTarget();
 
-  void SetPosition(glm::vec3& position);
-  void SetTarget(glm::vec3& target);
-  void SetAspectRatio(float aspectRatio);
-
-  glm::vec3 GetPosition() const { return m_CameraData.position; }
-  glm::vec3 GetTarget() const { return m_CameraData.target; }
-  glm::vec3 GetForward() const { return m_CameraData.GetForward(); }
-  glm::vec3 GetRight() const { return m_CameraData.GetRight(); }
-  glm::vec3 GetUp() const { return m_CameraData.GetUp(); }
-  float GetAspectRatio() const { return m_CameraData.aspectRatio; }
-
-  void Translate(glm::vec3& offset);
-  void Move(float forward, float right, float up);
-
-  inline CameraData& GetCameraData() { return m_CameraData; }
+  CameraData &GetInternal() { return m_InternalCameraData; }
 
 private:
   ServiceHandle<Scene> r_Scene;
-  CameraData m_CameraData;
+  CameraData m_InternalCameraData;
+  float m_Aspect = 60.f;
 
-  void SyncFromComponent();
+private:
+  bool m_IsPreviewingSceneCamera = false;
+  CameraComponent *m_PreviewTarget = nullptr;
+
 public:
-  void Update();
-
+  inline bool IsPreviewing() const { return m_IsPreviewingSceneCamera; }
+  void StartPreview(CameraComponent *target);
+  void StopPreview();
 };

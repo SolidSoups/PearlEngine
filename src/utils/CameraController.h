@@ -25,6 +25,7 @@ private:
   void Zoom(float scrollDelta);
 
   void UpdateCameraPosition();
+  void RecalculateOrbitFromCamera();
 
   Camera* m_Camera;
   glm::vec3 m_OrbitTarget{0.0f, 0.0f, -2.0f};
