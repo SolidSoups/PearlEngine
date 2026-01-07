@@ -1,4 +1,5 @@
 #pragma once
+#include "CameraData.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -17,38 +18,18 @@ public:
   void SetTarget(glm::vec3& target);
   void SetAspectRatio(float aspectRatio);
 
-  glm::vec3 GetPosition() const { return m_Position; }
-  glm::vec3 GetTarget() const { return m_Target; }
-  glm::vec3 GetForward() const { return m_Forward; }
-  glm::vec3 GetRight() const { return m_Right; }
-  glm::vec3 GetUp() const { return m_Up; }
-  float GetAspectRatio() const { return m_AspectRatio; }
+  glm::vec3 GetPosition() const { return m_CameraData.position; }
+  glm::vec3 GetTarget() const { return m_CameraData.target; }
+  glm::vec3 GetForward() const { return m_CameraData.GetForward(); }
+  glm::vec3 GetRight() const { return m_CameraData.GetRight(); }
+  glm::vec3 GetUp() const { return m_CameraData.GetUp(); }
+  float GetAspectRatio() const { return m_CameraData.aspectRatio; }
 
   void Translate(glm::vec3& offset);
   void Move(float forward, float right, float up);
 
+  inline CameraData& GetCameraData() { return m_CameraData; }
+
 private:
-  // Camera position and orientation
-  glm::vec3 m_Position;
-  glm::vec3 m_Target;
-  glm::vec3 m_WorldUp;
-
-  // Camera basis vectors
-  glm::vec3 m_Forward;
-  glm::vec3 m_Right;
-  glm::vec3 m_Up;
-
-  // Perspective parameters
-  float m_FOV;
-  float m_AspectRatio;
-
-  // Frustrum parameters
-  float m_NearPlane;
-  float m_FarPlane;
-
-  // internal update camera vectors
-  void UpdateCameraVectors();
-
-public: // DEBUG
-  void OutputParameters() const;
+  CameraData m_CameraData;
 };
