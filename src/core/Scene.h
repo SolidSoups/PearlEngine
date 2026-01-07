@@ -4,6 +4,7 @@
 #include <memory>
 #include <strings.h>
 #include <vector>
+#include "CameraComponent.h"
 #include "GameObject.h"
 
 class Camera;
@@ -43,4 +44,11 @@ private:
   EntityID m_NextObjectID = 1;
 
   size_t selectedIndex = 0;
+
+private:
+  CameraComponent* m_ActiveCamera = nullptr;
+
+public:
+  void SetActiveCamera(CameraComponent* camera);
+  CameraComponent* GetActiveCamera() const { return m_ActiveCamera; }
 };

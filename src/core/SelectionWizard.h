@@ -50,8 +50,7 @@ struct SelectionMessage {
 
 class SelectionWizard {
 public:
-  SelectionWizard(ServiceLocator* locator) 
-    : r_MessageQueue(locator){}
+  SelectionWizard() = default;
 private:
   SelectionData m_SelectionData;
   ServiceHandle<MessageQueue> r_MessageQueue;

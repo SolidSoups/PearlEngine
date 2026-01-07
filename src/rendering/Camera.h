@@ -1,15 +1,15 @@
 #pragma once
 #include "CameraData.h"
+#include "ServiceHandle.h"
+#include "ServiceLocator.h"
+#include "Scene.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 
 class Camera{
 public:
-  Camera(
-    glm::vec3 position = glm::vec3(0.0f, 0.0f, 1.0f),
-    glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f),
-    glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f));
+  Camera();
 
   glm::mat4 GetViewMatrix() const;
   glm::mat4 GetProjectionMatrix() const;
@@ -31,5 +31,11 @@ public:
   inline CameraData& GetCameraData() { return m_CameraData; }
 
 private:
+  ServiceHandle<Scene> r_Scene;
   CameraData m_CameraData;
+
+  void SyncFromComponent();
+public:
+  void Update();
+
 };

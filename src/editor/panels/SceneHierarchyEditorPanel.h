@@ -8,7 +8,7 @@
 
 class SceneHierarchyEditorPanel : public EditorPanel{
 public:
-  SceneHierarchyEditorPanel(ServiceLocator* locator);
+  SceneHierarchyEditorPanel();
 
 public:
   void OnImGuiRender() override;

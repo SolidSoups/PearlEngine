@@ -685,6 +685,30 @@ src/editor/MenuBar.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game_engine.dir/build.make CMakeFiles/game_engine.dir/src/editor/MenuBar.cpp.s
 .PHONY : src/editor/MenuBar.cpp.s
 
+src/editor/componenteditors/CameraComponentEditor.o: src/editor/componenteditors/CameraComponentEditor.cpp.o
+.PHONY : src/editor/componenteditors/CameraComponentEditor.o
+
+# target to build an object file
+src/editor/componenteditors/CameraComponentEditor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game_engine.dir/build.make CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.o
+.PHONY : src/editor/componenteditors/CameraComponentEditor.cpp.o
+
+src/editor/componenteditors/CameraComponentEditor.i: src/editor/componenteditors/CameraComponentEditor.cpp.i
+.PHONY : src/editor/componenteditors/CameraComponentEditor.i
+
+# target to preprocess a source file
+src/editor/componenteditors/CameraComponentEditor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game_engine.dir/build.make CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.i
+.PHONY : src/editor/componenteditors/CameraComponentEditor.cpp.i
+
+src/editor/componenteditors/CameraComponentEditor.s: src/editor/componenteditors/CameraComponentEditor.cpp.s
+.PHONY : src/editor/componenteditors/CameraComponentEditor.s
+
+# target to generate assembly for a file
+src/editor/componenteditors/CameraComponentEditor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/game_engine.dir/build.make CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.s
+.PHONY : src/editor/componenteditors/CameraComponentEditor.cpp.s
+
 src/editor/componenteditors/RenderComponentEditor.o: src/editor/componenteditors/RenderComponentEditor.cpp.o
 .PHONY : src/editor/componenteditors/RenderComponentEditor.o
 
@@ -948,30 +972,6 @@ src/main.s: src/main.cpp.s
 src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/game_engine.dir/build.make CMakeFiles/game_engine.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
-
-src/message/MessageQueue.o: src/message/MessageQueue.cpp.o
-.PHONY : src/message/MessageQueue.o
-
-# target to build an object file
-src/message/MessageQueue.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/game_engine.dir/build.make CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.o
-.PHONY : src/message/MessageQueue.cpp.o
-
-src/message/MessageQueue.i: src/message/MessageQueue.cpp.i
-.PHONY : src/message/MessageQueue.i
-
-# target to preprocess a source file
-src/message/MessageQueue.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/game_engine.dir/build.make CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.i
-.PHONY : src/message/MessageQueue.cpp.i
-
-src/message/MessageQueue.s: src/message/MessageQueue.cpp.s
-.PHONY : src/message/MessageQueue.s
-
-# target to generate assembly for a file
-src/message/MessageQueue.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/game_engine.dir/build.make CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.s
-.PHONY : src/message/MessageQueue.cpp.s
 
 src/project/Project.o: src/project/Project.cpp.o
 .PHONY : src/project/Project.o
@@ -1358,6 +1358,9 @@ help:
 	@echo "... src/editor/MenuBar.o"
 	@echo "... src/editor/MenuBar.i"
 	@echo "... src/editor/MenuBar.s"
+	@echo "... src/editor/componenteditors/CameraComponentEditor.o"
+	@echo "... src/editor/componenteditors/CameraComponentEditor.i"
+	@echo "... src/editor/componenteditors/CameraComponentEditor.s"
 	@echo "... src/editor/componenteditors/RenderComponentEditor.o"
 	@echo "... src/editor/componenteditors/RenderComponentEditor.i"
 	@echo "... src/editor/componenteditors/RenderComponentEditor.s"
@@ -1391,9 +1394,6 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
-	@echo "... src/message/MessageQueue.o"
-	@echo "... src/message/MessageQueue.i"
-	@echo "... src/message/MessageQueue.s"
 	@echo "... src/project/Project.o"
 	@echo "... src/project/Project.i"
 	@echo "... src/project/Project.s"

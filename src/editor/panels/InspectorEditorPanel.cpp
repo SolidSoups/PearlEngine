@@ -12,11 +12,11 @@
 
 #include <iostream>
 
-InspectorEditorPanel::InspectorEditorPanel(ServiceLocator* locator)
-    : EditorPanel("Inspector"), r_Scene(locator->Get<Scene>()), 
+InspectorEditorPanel::InspectorEditorPanel()
+    : EditorPanel("Inspector"), r_Scene(ServiceLocator::Get<Scene>()),
       r_selectedGameObject(nullptr){
   MenuRegistry::Get().Register("Windows/Inspector", &m_IsOpen);
-  locator->Get<MessageBus>().Subscribe<SelectionMessage>(this);
+  ServiceLocator::Get<MessageBus>().Subscribe<SelectionMessage>(this);
 }
 
 void InspectorEditorPanel::HandleMessage(const Message& msg) {

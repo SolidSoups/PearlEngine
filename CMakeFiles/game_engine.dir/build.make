@@ -212,10 +212,24 @@ CMakeFiles/game_engine.dir/src/editor/MenuBar.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/game_engine.dir/src/editor/MenuBar.cpp.s"
 	/usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/elias/Projects/PearlEngine/src/editor/MenuBar.cpp -o CMakeFiles/game_engine.dir/src/editor/MenuBar.cpp.s
 
+CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.o: CMakeFiles/game_engine.dir/flags.make
+CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.o: src/editor/componenteditors/CameraComponentEditor.cpp
+CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.o"
+	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.o -MF CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.o.d -o CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.o -c /home/elias/Projects/PearlEngine/src/editor/componenteditors/CameraComponentEditor.cpp
+
+CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.i"
+	/usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/elias/Projects/PearlEngine/src/editor/componenteditors/CameraComponentEditor.cpp > CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.i
+
+CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.s"
+	/usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/elias/Projects/PearlEngine/src/editor/componenteditors/CameraComponentEditor.cpp -o CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.s
+
 CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp.o: src/editor/componenteditors/RenderComponentEditor.cpp
 CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp.o"
 	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp.o -MF CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp.o.d -o CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp.o -c /home/elias/Projects/PearlEngine/src/editor/componenteditors/RenderComponentEditor.cpp
 
 CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp.i: cmake_force
@@ -229,7 +243,7 @@ CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp
 CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.cpp.o: src/editor/componenteditors/TransformComponentEditor.cpp
 CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.cpp.o"
 	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.cpp.o -MF CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.cpp.o.d -o CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.cpp.o -c /home/elias/Projects/PearlEngine/src/editor/componenteditors/TransformComponentEditor.cpp
 
 CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.cpp.i: cmake_force
@@ -243,7 +257,7 @@ CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.
 CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.o: src/editor/panels/AssetEditorPanel.cpp
 CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.o"
 	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.o -MF CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.o.d -o CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.o -c /home/elias/Projects/PearlEngine/src/editor/panels/AssetEditorPanel.cpp
 
 CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.i: cmake_force
@@ -257,7 +271,7 @@ CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.s: cmake_force
 CMakeFiles/game_engine.dir/src/editor/panels/InspectorEditorPanel.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/editor/panels/InspectorEditorPanel.cpp.o: src/editor/panels/InspectorEditorPanel.cpp
 CMakeFiles/game_engine.dir/src/editor/panels/InspectorEditorPanel.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/InspectorEditorPanel.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/InspectorEditorPanel.cpp.o"
 	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/editor/panels/InspectorEditorPanel.cpp.o -MF CMakeFiles/game_engine.dir/src/editor/panels/InspectorEditorPanel.cpp.o.d -o CMakeFiles/game_engine.dir/src/editor/panels/InspectorEditorPanel.cpp.o -c /home/elias/Projects/PearlEngine/src/editor/panels/InspectorEditorPanel.cpp
 
 CMakeFiles/game_engine.dir/src/editor/panels/InspectorEditorPanel.cpp.i: cmake_force
@@ -271,7 +285,7 @@ CMakeFiles/game_engine.dir/src/editor/panels/InspectorEditorPanel.cpp.s: cmake_f
 CMakeFiles/game_engine.dir/src/editor/panels/LoggerEditorPanel.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/editor/panels/LoggerEditorPanel.cpp.o: src/editor/panels/LoggerEditorPanel.cpp
 CMakeFiles/game_engine.dir/src/editor/panels/LoggerEditorPanel.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/LoggerEditorPanel.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/LoggerEditorPanel.cpp.o"
 	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/editor/panels/LoggerEditorPanel.cpp.o -MF CMakeFiles/game_engine.dir/src/editor/panels/LoggerEditorPanel.cpp.o.d -o CMakeFiles/game_engine.dir/src/editor/panels/LoggerEditorPanel.cpp.o -c /home/elias/Projects/PearlEngine/src/editor/panels/LoggerEditorPanel.cpp
 
 CMakeFiles/game_engine.dir/src/editor/panels/LoggerEditorPanel.cpp.i: cmake_force
@@ -285,7 +299,7 @@ CMakeFiles/game_engine.dir/src/editor/panels/LoggerEditorPanel.cpp.s: cmake_forc
 CMakeFiles/game_engine.dir/src/editor/panels/ProjectEditorPanel.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/editor/panels/ProjectEditorPanel.cpp.o: src/editor/panels/ProjectEditorPanel.cpp
 CMakeFiles/game_engine.dir/src/editor/panels/ProjectEditorPanel.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/ProjectEditorPanel.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/ProjectEditorPanel.cpp.o"
 	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/editor/panels/ProjectEditorPanel.cpp.o -MF CMakeFiles/game_engine.dir/src/editor/panels/ProjectEditorPanel.cpp.o.d -o CMakeFiles/game_engine.dir/src/editor/panels/ProjectEditorPanel.cpp.o -c /home/elias/Projects/PearlEngine/src/editor/panels/ProjectEditorPanel.cpp
 
 CMakeFiles/game_engine.dir/src/editor/panels/ProjectEditorPanel.cpp.i: cmake_force
@@ -299,7 +313,7 @@ CMakeFiles/game_engine.dir/src/editor/panels/ProjectEditorPanel.cpp.s: cmake_for
 CMakeFiles/game_engine.dir/src/editor/panels/ResourceEditorPanel.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/editor/panels/ResourceEditorPanel.cpp.o: src/editor/panels/ResourceEditorPanel.cpp
 CMakeFiles/game_engine.dir/src/editor/panels/ResourceEditorPanel.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/ResourceEditorPanel.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/ResourceEditorPanel.cpp.o"
 	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/editor/panels/ResourceEditorPanel.cpp.o -MF CMakeFiles/game_engine.dir/src/editor/panels/ResourceEditorPanel.cpp.o.d -o CMakeFiles/game_engine.dir/src/editor/panels/ResourceEditorPanel.cpp.o -c /home/elias/Projects/PearlEngine/src/editor/panels/ResourceEditorPanel.cpp
 
 CMakeFiles/game_engine.dir/src/editor/panels/ResourceEditorPanel.cpp.i: cmake_force
@@ -313,7 +327,7 @@ CMakeFiles/game_engine.dir/src/editor/panels/ResourceEditorPanel.cpp.s: cmake_fo
 CMakeFiles/game_engine.dir/src/editor/panels/SceneHierarchyEditorPanel.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/editor/panels/SceneHierarchyEditorPanel.cpp.o: src/editor/panels/SceneHierarchyEditorPanel.cpp
 CMakeFiles/game_engine.dir/src/editor/panels/SceneHierarchyEditorPanel.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/SceneHierarchyEditorPanel.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/SceneHierarchyEditorPanel.cpp.o"
 	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/editor/panels/SceneHierarchyEditorPanel.cpp.o -MF CMakeFiles/game_engine.dir/src/editor/panels/SceneHierarchyEditorPanel.cpp.o.d -o CMakeFiles/game_engine.dir/src/editor/panels/SceneHierarchyEditorPanel.cpp.o -c /home/elias/Projects/PearlEngine/src/editor/panels/SceneHierarchyEditorPanel.cpp
 
 CMakeFiles/game_engine.dir/src/editor/panels/SceneHierarchyEditorPanel.cpp.i: cmake_force
@@ -327,7 +341,7 @@ CMakeFiles/game_engine.dir/src/editor/panels/SceneHierarchyEditorPanel.cpp.s: cm
 CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.o: src/editor/panels/ViewportEditorPanel.cpp
 CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.o"
 	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.o -MF CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.o.d -o CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.o -c /home/elias/Projects/PearlEngine/src/editor/panels/ViewportEditorPanel.cpp
 
 CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.i: cmake_force
@@ -341,7 +355,7 @@ CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.s: cmake_fo
 CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.o: src/geometry/Cube.cpp
 CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.o"
 	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.o -MF CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.o.d -o CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.o -c /home/elias/Projects/PearlEngine/src/geometry/Cube.cpp
 
 CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.i: cmake_force
@@ -355,7 +369,7 @@ CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.s: cmake_force
 CMakeFiles/game_engine.dir/src/main.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/main.cpp.o: src/main.cpp
 CMakeFiles/game_engine.dir/src/main.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/game_engine.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/game_engine.dir/src/main.cpp.o"
 	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/main.cpp.o -MF CMakeFiles/game_engine.dir/src/main.cpp.o.d -o CMakeFiles/game_engine.dir/src/main.cpp.o -c /home/elias/Projects/PearlEngine/src/main.cpp
 
 CMakeFiles/game_engine.dir/src/main.cpp.i: cmake_force
@@ -365,20 +379,6 @@ CMakeFiles/game_engine.dir/src/main.cpp.i: cmake_force
 CMakeFiles/game_engine.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/game_engine.dir/src/main.cpp.s"
 	/usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/elias/Projects/PearlEngine/src/main.cpp -o CMakeFiles/game_engine.dir/src/main.cpp.s
-
-CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.o: CMakeFiles/game_engine.dir/flags.make
-CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.o: src/message/MessageQueue.cpp
-CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.o: CMakeFiles/game_engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/elias/Projects/PearlEngine/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.o"
-	ccache /usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.o -MF CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.o.d -o CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.o -c /home/elias/Projects/PearlEngine/src/message/MessageQueue.cpp
-
-CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.i"
-	/usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/elias/Projects/PearlEngine/src/message/MessageQueue.cpp > CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.i
-
-CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.s"
-	/usr/lib64/ccache/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/elias/Projects/PearlEngine/src/message/MessageQueue.cpp -o CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.s
 
 CMakeFiles/game_engine.dir/src/project/Project.cpp.o: CMakeFiles/game_engine.dir/flags.make
 CMakeFiles/game_engine.dir/src/project/Project.cpp.o: src/project/Project.cpp
@@ -574,6 +574,7 @@ game_engine_OBJECTS = \
 "CMakeFiles/game_engine.dir/src/core/Time.cpp.o" \
 "CMakeFiles/game_engine.dir/src/ecs/components/TransformComponent.cpp.o" \
 "CMakeFiles/game_engine.dir/src/editor/MenuBar.cpp.o" \
+"CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.o" \
 "CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp.o" \
 "CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.cpp.o" \
 "CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.o" \
@@ -585,7 +586,6 @@ game_engine_OBJECTS = \
 "CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.o" \
 "CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.o" \
 "CMakeFiles/game_engine.dir/src/main.cpp.o" \
-"CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.o" \
 "CMakeFiles/game_engine.dir/src/project/Project.cpp.o" \
 "CMakeFiles/game_engine.dir/src/rendering/Camera.cpp.o" \
 "CMakeFiles/game_engine.dir/src/rendering/FrameBuffer.cpp.o" \
@@ -613,6 +613,7 @@ game_engine: CMakeFiles/game_engine.dir/src/core/Scene.cpp.o
 game_engine: CMakeFiles/game_engine.dir/src/core/Time.cpp.o
 game_engine: CMakeFiles/game_engine.dir/src/ecs/components/TransformComponent.cpp.o
 game_engine: CMakeFiles/game_engine.dir/src/editor/MenuBar.cpp.o
+game_engine: CMakeFiles/game_engine.dir/src/editor/componenteditors/CameraComponentEditor.cpp.o
 game_engine: CMakeFiles/game_engine.dir/src/editor/componenteditors/RenderComponentEditor.cpp.o
 game_engine: CMakeFiles/game_engine.dir/src/editor/componenteditors/TransformComponentEditor.cpp.o
 game_engine: CMakeFiles/game_engine.dir/src/editor/panels/AssetEditorPanel.cpp.o
@@ -624,7 +625,6 @@ game_engine: CMakeFiles/game_engine.dir/src/editor/panels/SceneHierarchyEditorPa
 game_engine: CMakeFiles/game_engine.dir/src/editor/panels/ViewportEditorPanel.cpp.o
 game_engine: CMakeFiles/game_engine.dir/src/geometry/Cube.cpp.o
 game_engine: CMakeFiles/game_engine.dir/src/main.cpp.o
-game_engine: CMakeFiles/game_engine.dir/src/message/MessageQueue.cpp.o
 game_engine: CMakeFiles/game_engine.dir/src/project/Project.cpp.o
 game_engine: CMakeFiles/game_engine.dir/src/rendering/Camera.cpp.o
 game_engine: CMakeFiles/game_engine.dir/src/rendering/FrameBuffer.cpp.o

@@ -8,7 +8,7 @@
 
 class InspectorEditorPanel : public EditorPanel, IMessageHandler{
 public:
-  InspectorEditorPanel(ServiceLocator* locator);
+  InspectorEditorPanel();
   void HandleMessage(const Message& msg) override;
 
 public:

@@ -13,24 +13,21 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
   glViewport(0, 0, width, height);
 
-  auto* locator = static_cast<ServiceLocator*>(glfwGetWindowUserPointer(window));
-  if(locator){
-    float newAspect = (float)width / (float)height;
-    if(locator->IsReady<Camera>()){
-      locator->Get<Camera>().SetAspectRatio(newAspect);
-    }
+  float newAspect = (float)width / (float)height;
+  if(ServiceLocator::IsReady<Camera>()){
+    ServiceLocator::Get<Camera>().SetAspectRatio(newAspect);
+  }
 
-    // update window dimensions
-    if(locator->IsReady<PearlWindow>()){
-      auto& pwin = locator->Get<PearlWindow>();
-      pwin.window_width = width;
-      pwin.window_height = height;
-    }
+  // update window dimensions
+  if(ServiceLocator::IsReady<PearlWindow>()){
+    auto& pwin = ServiceLocator::Get<PearlWindow>();
+    pwin.window_width = width;
+    pwin.window_height = height;
   }
 }
 
-PearlWindow::PearlWindow(int width, int height, const char* title, ServiceLocator* locator)
-  : window_width(width), window_height(height), r_Camera(locator)
+PearlWindow::PearlWindow(int width, int height, const char* title)
+  : window_width(width), window_height(height), r_Camera()
 {
   // initialize and give hints
   glfwInit();  

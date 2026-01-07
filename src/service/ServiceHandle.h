@@ -13,8 +13,8 @@ enum ServiceHandleState : uint8_t {
 
 template <typename T> class ServiceHandle : public IServiceHandle {
   public:
-    ServiceHandle(ServiceLocator *locator) {
-        locator->RegisterRequest<T>(this);
+    ServiceHandle() {
+        ServiceLocator::RegisterRequest<T>(this);
         m_State = Registered;
     }
 

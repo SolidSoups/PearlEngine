@@ -11,6 +11,9 @@
 #include "ViewportEditorPanel.h"
 #include "AssetSystem.h"
 #include "ResourceSystem.h"
+#include "SelectionWizard.h"
+#include "MessageBus.h"
+#include "MessageQueue.h"
 
 #include <memory>
 
@@ -44,9 +47,13 @@ public:
   pe::AssetSystem m_AssetSystem{};
   ResourceSystem m_ResourceSystem{};
 
-  ServiceLocator serviceLocator;
+private:
+  std::unique_ptr<SelectionWizard> m_SelectionWizard;
+  std::unique_ptr<MessageBus> m_MessageBus;
+  std::unique_ptr<MessageQueue> m_MessageQueue;
+
 public:
-  PearlWindow pwin{1800, 1000, "PearlEngine", &serviceLocator};
+  PearlWindow pwin{1800, 1000, "PearlEngine"};
   GUIContext m_GUIContext{pwin.GetWindow()};
 
   // framebuffer

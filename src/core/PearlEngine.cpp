@@ -9,7 +9,7 @@
 
 // src
 #include "AssetEditorPanel.h"
-#include "CameraComponetnt.h"
+#include "CameraComponent.h"
 #include "InspectorEditorPanel.h"
 #include "LoggerEditorPanel.h"
 #include "MenuRegistry.h"
@@ -47,18 +47,20 @@ PearlEngine::PearlEngine() {
     return;
   }
 
-  // store the engine as a user pointer in glfw
-  glfwSetWindowUserPointer(pwin.GetWindow(), &serviceLocator);
+  // Create owned services
+  m_SelectionWizard = std::make_unique<SelectionWizard>();
+  m_MessageBus = std::make_unique<MessageBus>();
+  m_MessageQueue = std::make_unique<MessageQueue>();
 
-  // let's register some services
-  serviceLocator.Provide(&m_Scene);
-  serviceLocator.Provide(&m_Camera);
-  serviceLocator.Provide(new SelectionWizard(&serviceLocator));
-  serviceLocator.Provide(&pwin);
-  serviceLocator.Provide(&m_AssetSystem);
-  serviceLocator.Provide(&m_ResourceSystem);
-  serviceLocator.Provide(new MessageBus);
-  serviceLocator.Provide(new MessageQueue);
+  // Register all services with static ServiceLocator
+  ServiceLocator::Provide(&m_Scene);
+  ServiceLocator::Provide(&m_Camera);
+  ServiceLocator::Provide(m_SelectionWizard.get());
+  ServiceLocator::Provide(&pwin);
+  ServiceLocator::Provide(&m_AssetSystem);
+  ServiceLocator::Provide(&m_ResourceSystem);
+  ServiceLocator::Provide(m_MessageBus.get());
+  ServiceLocator::Provide(m_MessageQueue.get());
 
   // Register asset converters
   m_AssetSystem.AssetConverters.Register(
@@ -77,6 +79,7 @@ PearlEngine::PearlEngine() {
 PearlEngine::~PearlEngine() {
   LOG_INFO << "Engine deconstructing";
   m_ResourceSystem.DestroyAllResources();
+  ServiceLocator::Reset();
   glfwTerminate();
 }
 
@@ -121,7 +124,8 @@ void PearlEngine::Initialize() {
 
   // create the main camera
   GameObject* cameraGO = m_Scene.CreateGameObject("Main Camera");
-  cameraGO->AddComponent<CameraComponent>();
+  auto* cmCmp = cameraGO->AddComponent<CameraComponent>();
+  m_Scene.SetActiveCamera(cmCmp);
 
   // Create the weird mesh
   // const pe::FileDescriptor* houseFile =
@@ -154,13 +158,12 @@ void PearlEngine::Initialize() {
   // Create the viewport editor panel
   m_ViewportPanel =
       m_GUIContext.AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
-  m_GUIContext.AddPanel<SceneHierarchyEditorPanel>(&serviceLocator);
+  m_GUIContext.AddPanel<SceneHierarchyEditorPanel>();
   m_GUIContext.AddPanel<ResourceEditorPanel>(m_ResourceSystem);
-  m_GUIContext.AddPanel<InspectorEditorPanel>(&serviceLocator);
+  m_GUIContext.AddPanel<InspectorEditorPanel>();
   m_GUIContext.AddPanel<LoggerEditorPanel>();
-  m_GUIContext.AddPanel<ProjectEditorPanel>(&serviceLocator);
-  m_GUIContext.AddPanel<AssetEditorPanel>(sunMatHandle,
-                                          &serviceLocator);
+  m_GUIContext.AddPanel<ProjectEditorPanel>();
+  m_GUIContext.AddPanel<AssetEditorPanel>(sunMatHandle);
   AddMenuBarItems();
 
   // Setup camera aspect ratio
@@ -193,10 +196,10 @@ void PearlEngine::RunUpdateLoop() {
     Update();
 
     // process messages
-    auto messages = serviceLocator.Get<MessageQueue>().DrainAll();
+    auto messages = ServiceLocator::Get<MessageQueue>().DrainAll();
     if(messages.size() > 0)
       LOG_INFO << "Drained " << messages.size() << " messages!";
-    auto& msgBus = serviceLocator.Get<MessageBus>();
+    auto& msgBus = ServiceLocator::Get<MessageBus>();
     for(auto& msg : messages){
       LOG_INFO << "Processing and dispatching a message";
       msgBus.Dispatch(msg);
@@ -210,6 +213,8 @@ void PearlEngine::RunUpdateLoop() {
 }
 
 void PearlEngine::Update() {
+  m_Camera.Update(); 
+  
   // handle viewport resize
   if (m_ViewportPanel->IsResized()) {
     glm::vec2 newSize = m_ViewportPanel->GetSize();

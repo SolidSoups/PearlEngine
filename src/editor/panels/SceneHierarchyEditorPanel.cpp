@@ -6,10 +6,9 @@
 #include <string>
 #include "SelectionWizard.h"
 
-SceneHierarchyEditorPanel::SceneHierarchyEditorPanel(
-    ServiceLocator *engineLocator)
-    : EditorPanel("Scene Hierarchy"), r_Scene(engineLocator->Get<Scene>()),
-      r_SelectionWizard(engineLocator) {
+SceneHierarchyEditorPanel::SceneHierarchyEditorPanel()
+    : EditorPanel("Scene Hierarchy"), r_Scene(ServiceLocator::Get<Scene>()),
+      r_SelectionWizard() {
   MenuRegistry::Get().Register("Windows/Scene Hierarchy", &m_IsOpen);
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CameraComponetnt.h"
+#include "CameraComponent.h"
 #include "ComponentEditor.h"
 #include "ComponentEditorRegistry.h"
 

@@ -33,3 +33,16 @@ void Scene::Render(ResourceSystem* rs, Camera& camera){
 }
 
 const std::vector<std::unique_ptr<GameObject>>& GetGameObjects();
+
+void Scene::SetActiveCamera(CameraComponent* camera) {
+  // unmark previous camera
+  if(m_ActiveCamera){
+    m_ActiveCamera->isMainCamera = false;
+  }
+
+  // set new camera
+  m_ActiveCamera = camera;
+  if(m_ActiveCamera){
+    m_ActiveCamera->isMainCamera = true;
+  }
+}

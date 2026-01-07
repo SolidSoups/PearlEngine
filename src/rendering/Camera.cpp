@@ -1,16 +1,9 @@
 #include "Camera.h"
+#include "ServiceLocator.h"
+#include "CameraComponent.h"
 
-Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 worldUp)
-{
-  m_CameraData.position = position;
-  m_CameraData.target = target;
-  m_CameraData.worldUp = worldUp;
-  m_CameraData.fov = 60.0f;
-  m_CameraData.aspectRatio = 1.0f;
-  m_CameraData.nearPlane = 0.1f;
-  m_CameraData.farPlane = 100.0f;
-  m_CameraData.UpdateCameraVectors();
-}
+Camera::Camera()
+  : r_Scene(){}
 
 glm::mat4 Camera::GetViewMatrix() const{
   return m_CameraData.GetViewMatrix();
@@ -49,4 +42,20 @@ void Camera::Move(float forward, float right, float up){
   m_CameraData.target += m_CameraData.GetRight() * right;
   m_CameraData.target += m_CameraData.GetUp() * up;
   m_CameraData.UpdateCameraVectors();
+}
+
+void Camera::SyncFromComponent(){
+  CameraComponent* activeCam = r_Scene->GetActiveCamera();
+  if(!activeCam) return;
+
+  // pull data from component
+  m_CameraData = activeCam->cameraData;
+
+  // TODO: get the owner and set properties from position and rotatation
+
+  m_CameraData.UpdateCameraVectors();
+}
+
+void Camera::Update(){
+  SyncFromComponent();
 }

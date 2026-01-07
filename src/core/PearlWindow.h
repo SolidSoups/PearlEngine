@@ -10,7 +10,7 @@ class ServiceLocator;
 // handles glfw and glad initialization, manages window
 class PearlWindow{
 public:
-  PearlWindow(int width, int height, const char* title, ServiceLocator* locator);
+  PearlWindow(int width, int height, const char* title);
   ~PearlWindow();
 
   PearlWindow(const PearlWindow&) = delete;             // delete copy-constructor

@@ -15,8 +15,8 @@
 
 class ProjectEditorPanel : public EditorPanel {
   public:
-    ProjectEditorPanel(ServiceLocator* locator)
-        : EditorPanel("Project Explorer"), r_AssetSystem(locator) {
+    ProjectEditorPanel()
+        : EditorPanel("Project Explorer"), r_AssetSystem() {
         MenuRegistry::Get().Register("Windows/Project Explorer", &m_IsOpen);
     }
 

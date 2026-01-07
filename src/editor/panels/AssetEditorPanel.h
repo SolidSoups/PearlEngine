@@ -16,9 +16,9 @@
 
 class AssetEditorPanel : public EditorPanel {
 public:
-  AssetEditorPanel(const MaterialHandle &handle, ServiceLocator *locator)
-      : EditorPanel("Asset Explorer"), m_matHandle(handle), r_Scene(locator->Get<Scene>()),
-        r_AssetSystem(locator), r_ResourceSystem(locator) {
+  AssetEditorPanel(const MaterialHandle &handle)
+      : EditorPanel("Asset Explorer"), m_matHandle(handle), r_Scene(ServiceLocator::Get<Scene>()),
+        r_AssetSystem(), r_ResourceSystem() {
     MenuRegistry::Get().Register("Windows/Asset Explorer", &m_IsOpen);
     LoadColors();
   }
