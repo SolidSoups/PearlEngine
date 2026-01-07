@@ -9,6 +9,7 @@
 
 // src
 #include "AssetEditorPanel.h"
+#include "CameraComponetnt.h"
 #include "InspectorEditorPanel.h"
 #include "LoggerEditorPanel.h"
 #include "MenuRegistry.h"
@@ -117,6 +118,10 @@ void PearlEngine::Initialize() {
   MaterialHandle newMat = CreateMaterial(&m_ResourceSystem, shadHandle);
   MaterialSetTexture(&m_ResourceSystem, newMat, "mainTexture",
                      sunshineTextureHandle);
+
+  // create the main camera
+  GameObject* cameraGO = m_Scene.CreateGameObject("Main Camera");
+  cameraGO->AddComponent<CameraComponent>();
 
   // Create the weird mesh
   // const pe::FileDescriptor* houseFile =

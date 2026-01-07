@@ -10,7 +10,7 @@ struct CameraData{
   glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
   // perspective params
-  float fov = glm::radians(60.0f);
+  float fov = 60.f; // in degrees
   float aspectRatio = 1.0f;
 
   // frustrum params
@@ -23,7 +23,7 @@ struct CameraData{
     return glm::lookAt(position, target, up);
   }
   glm::mat4 GetProjectionMatrix() const {
-    return glm::perspective(fov, aspectRatio, nearPlane, farPlane);
+    return glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);
   }
 
   void UpdateCameraVectors(){

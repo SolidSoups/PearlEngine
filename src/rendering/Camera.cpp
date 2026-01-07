@@ -5,7 +5,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 worldUp)
   m_CameraData.position = position;
   m_CameraData.target = target;
   m_CameraData.worldUp = worldUp;
-  m_CameraData.fov = glm::radians(60.0f);
+  m_CameraData.fov = 60.0f;
   m_CameraData.aspectRatio = 1.0f;
   m_CameraData.nearPlane = 0.1f;
   m_CameraData.farPlane = 100.0f;
