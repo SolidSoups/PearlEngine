@@ -5,17 +5,19 @@
 #include "glm/glm.hpp"
 struct CameraData{
   // camera position and orientation
-  glm::vec3 position;
-  glm::vec3 target;
-  glm::vec3 worldUp;
+  glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+  glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f);
+  glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
   // perspective params
-  float fov;
-  float aspectRatio;
+  float fov = glm::radians(60.0f);
+  float aspectRatio = 1.0f;
 
   // frustrum params
-  float nearPlane;
-  float farPlane;
+  float nearPlane = 0.1f;
+  float farPlane = 100.0f;
+
+  CameraData(){ UpdateCameraVectors(); }
 
   glm::mat4 GetViewMatrix() const {
     return glm::lookAt(position, target, up);

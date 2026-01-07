@@ -50,4 +50,3 @@ void Camera::Move(float forward, float right, float up){
   m_CameraData.target += m_CameraData.GetUp() * up;
   m_CameraData.UpdateCameraVectors();
 }
-
