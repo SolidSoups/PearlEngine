@@ -18,7 +18,7 @@ class AssetEditorPanel : public EditorPanel {
 public:
   AssetEditorPanel(const MaterialHandle &handle)
       : EditorPanel("Asset Explorer"), m_matHandle(handle), r_Scene(ServiceLocator::Get<Scene>()),
-        r_AssetSystem(), r_ResourceSystem() {
+        r_AssetSystem(ServiceLocator::Get<pe::AssetSystem>()), r_ResourceSystem(ServiceLocator::Get<ResourceSystem>()) {
     MenuRegistry::Get().Register("Windows/Asset Explorer", &m_IsOpen);
     LoadColors();
   }
@@ -36,6 +36,6 @@ private:
 
 private:
   Scene& r_Scene;
-  ServiceHandle<pe::AssetSystem> r_AssetSystem;
-  ServiceHandle<ResourceSystem> r_ResourceSystem;
+  pe::AssetSystem& r_AssetSystem;
+  ResourceSystem &r_ResourceSystem;
 };

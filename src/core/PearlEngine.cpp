@@ -65,7 +65,7 @@ PearlEngine::PearlEngine() {
 
   // Register asset converters
   m_AssetSystem.AssetConverters.Register(
-      ".obj", std::make_unique<OBJ_AssetConverter>());
+      "Mesh_Asset", std::make_unique<OBJ_AssetConverter>());
 
   // Register resource converters
   m_ResourceSystem.AssetConverters.Register(
