@@ -99,6 +99,7 @@ target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/asset/loaders
   ${CMAKE_CURRENT_SOURCE_DIR}/src/asset/assets
   ${CMAKE_CURRENT_SOURCE_DIR}/src/asset/serializers
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/asset/converters
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/message
 

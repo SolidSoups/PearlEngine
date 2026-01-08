@@ -16,6 +16,12 @@ struct Handle{
   bool operator==(const Handle& other) const {
     return id == other.id && generation == other.generation;
   };
+  bool operator!=(const Handle& other) const {
+    return id != other.id || generation != other.generation;
+  }
+  bool IsValid(){
+    return id != 0;
+  }
   static constexpr Handle Invalid() {
     return {0, 0};
   };

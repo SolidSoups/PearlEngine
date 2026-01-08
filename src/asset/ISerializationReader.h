@@ -18,8 +18,7 @@ class ISerializationReader {
     virtual void ReadFloat(const std::string &name, float &value) = 0;
     virtual void ReadDouble(const std::string &name, double &value) = 0;
     virtual void ReadBool(const std::string &name, bool &value) = 0;
-    virtual void ReadData(const std::string &name, uint8_t *data,
-                          size_t &size) = 0;
+    virtual void ReadData(const std::string &name, std::vector<unsigned char> &data) = 0;
 
     // several values
     virtual void ReadFloats(const std::string &name,

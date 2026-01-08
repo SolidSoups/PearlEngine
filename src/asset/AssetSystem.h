@@ -7,6 +7,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <optional>
 
 #include "AssetDescriptor.h"
 #include "FileDescriptor.h"
@@ -38,11 +39,15 @@ public:
   // Get the scanned assets
   const std::vector<AssetDescriptor> &GetAssetsDescriptors() const { return m_ScannedAssets; }
 
+  static std::optional<AssetDescriptor> GetParsedAssetDescriptor(const char* path);
+
   // Finds all assets in the assets root folder and
   void ScanAssets();
   // returns an IAsset from the serialized assets directory
   std::unique_ptr<IAsset> LoadAsset(const AssetDescriptor *assetDesc);
   // import an asset from the filesystem, will do all preprocessing necessary
-  void ImportAsset(const FileDescriptor *file);
+  std::unique_ptr<IAsset> CreateAsset(const FileDescriptor *file);
+  void ImportAsset(const FileDescriptor* file);
+  void SaveAsset(std::unique_ptr<IAsset> &asset, const char* name);
 };
 } // namespace pe

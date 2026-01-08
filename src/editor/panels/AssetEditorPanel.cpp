@@ -18,7 +18,7 @@ void AssetEditorPanel::OnImGuiRender() {
   ImGui::Begin(m_Name.c_str(), &m_IsOpen);
 
   for (const auto &asset : r_AssetSystem.GetAssetsDescriptors()) {
-    std::string uniqueName = asset.stem + "##" + asset.localPath.string();
+    std::string uniqueName = asset.stem + "## [" + asset.type + "] " + asset.stem;
 
     if (ImGui::Selectable(uniqueName.c_str())) {
       // noop, only for right clicks

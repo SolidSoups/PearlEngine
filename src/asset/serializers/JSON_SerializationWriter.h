@@ -63,7 +63,7 @@ class JSON_SerializationWriter : public ISerializationWriter {
     void WriteBool(const std::string &name, bool value) override {
         GenericWrite(name, value);
     }
-    void WriteData(const std::string &name, const uint8_t *data,
+    void WriteData(const std::string &name, const unsigned char *data,
                    size_t size) override {
         std::stringstream ss;
         for (size_t i = 0; i < size; i++) {

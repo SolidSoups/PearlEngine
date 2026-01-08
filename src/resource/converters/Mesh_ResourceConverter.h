@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IResourceToAssetConverter.h"
+#include "IResourceConverter.h"
 #include "Logger.h"
 #include "Mesh.h"
 #include "Mesh_Asset.h"

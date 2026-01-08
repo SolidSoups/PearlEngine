@@ -16,6 +16,7 @@
 #include "PearlEngine.h"
 #include "MessageBus.h"
 #include "MessageQueue.h"
+#include "Project.h"
 #include "ProjectEditorPanel.h"
 #include "Renderer.h"
 #include "ResourceEditorPanel.h"
@@ -25,15 +26,18 @@
 #include "TransformComponentEditor.h"
 #include "ViewportEditorPanel.h"
 
+#include "Mesh_ResourceConverter.h"
+#include "Texture_ResourceConverter.h"
 #include "Logger.h"
 #include "MaterialData.h"
 #include "ResourceSystem.h"
 #include "TextureData.h"
+#include "converters/OBJ_AssetConverter.h"
+#include "converters/Texture_AssetConverter.h"
+
 #include "materialLoaders.h"
 #include "shaderLoaders.h"
 #include "textureLoaders.h"
-#include "converters/OBJ_AssetConverter.h"
-#include "converters/Mesh_ResourceConverter.h"
 
 // std
 #include <cmath>
@@ -69,10 +73,20 @@ PearlEngine::PearlEngine() {
   m_AssetSystem.AssetConverters.Register(
       ".obj", std::make_unique<OBJ_AssetConverter>());
 
+  m_AssetSystem.AssetConverters.Register(
+      "Texture_Asset", std::make_unique<Texture_AssetConverter>());
+  m_AssetSystem.AssetConverters.Register(
+      ".png", std::make_unique<Texture_AssetConverter>());
+  m_AssetSystem.AssetConverters.Register(
+      ".jpg", std::make_unique<Texture_AssetConverter>());
+
   // Register resource converters
   m_ResourceSystem.AssetConverters.Register(
       std::type_index(typeid(Mesh_Asset)),
       std::make_unique<Mesh_ResourceConverter>());
+  m_ResourceSystem.AssetConverters.Register(
+      std::type_index(typeid(Texture_Asset)),
+      std::make_unique<Texture_ResourceConverter>());
 
   isInitialized = true;
 
@@ -121,13 +135,13 @@ void PearlEngine::Initialize() {
                      pearlTextureHandle);
 
   // Create new material
-  MaterialHandle newMat = CreateMaterial(&m_ResourceSystem, shadHandle);
-  MaterialSetTexture(&m_ResourceSystem, newMat, "mainTexture",
-                     sunshineTextureHandle);
+  // MaterialHandle newMat = CreateMaterial(&m_ResourceSystem, shadHandle);
+  // MaterialSetTexture(&m_ResourceSystem, newMat, "mainTexture",
+  //                    sunshineTextureHandle);
 
   // create the main camera
-  GameObject* cameraGO = m_Scene.CreateGameObject("Main Camera");
-  auto* cmCmp = cameraGO->AddComponent<CameraComponent>();
+  GameObject *cameraGO = m_Scene.CreateGameObject("Main Camera");
+  auto *cmCmp = cameraGO->AddComponent<CameraComponent>();
   cameraGO->AddComponent<TransformComponent>(cmCmp->cameraData.position);
   m_Scene.SetActiveCamera(cmCmp);
 
@@ -201,10 +215,10 @@ void PearlEngine::RunUpdateLoop() {
 
     // process messages
     auto messages = ServiceLocator::Get<MessageQueue>().DrainAll();
-    if(messages.size() > 0)
+    if (messages.size() > 0)
       LOG_INFO << "Drained " << messages.size() << " messages!";
-    auto& msgBus = ServiceLocator::Get<MessageBus>();
-    for(auto& msg : messages){
+    auto &msgBus = ServiceLocator::Get<MessageBus>();
+    for (auto &msg : messages) {
       LOG_INFO << "Processing and dispatching a message";
       msgBus.Dispatch(msg);
     }
@@ -234,7 +248,6 @@ void PearlEngine::Update() {
 
   // update objects (currently does nothing, but ready for future!  )
   m_Scene.Update();
-
 }
 
 void PearlEngine::Render() {

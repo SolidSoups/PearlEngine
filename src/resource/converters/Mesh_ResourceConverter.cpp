@@ -9,8 +9,6 @@ IResource *Mesh_ResourceConverter::ConvertToResource(IAsset *asset) {
     return nullptr;
   }
 
-  LOG_INFO << "No segfaul 2.1";
   IResource *newMesh = new Mesh(meshAsset->vertices, meshAsset->indices);
-  LOG_INFO << "No segfaul 2.2";
   return newMesh;
 };

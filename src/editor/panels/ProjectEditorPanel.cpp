@@ -34,6 +34,6 @@ void ProjectEditorPanel::OnImGuiRender() {
 
 void ProjectEditorPanel::LoadAsset(const pe::FileDescriptor& file){
     if(file.extension == ".obj"){
-        r_AssetSystem->ImportAsset(&file);
+        r_AssetSystem->CreateAsset(&file);
     }
 }

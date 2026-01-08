@@ -1,7 +1,12 @@
 #include "AssetSystem.h"
+#include "AssetDescriptor.h"
 #include "FileDescriptor.h"
+#include "IAsset.h"
 #include "JSON_SerializationWriter.h"
 #include "Mesh_Asset.h"
+#include "Texture_Asset.h"
+#include "converters/Texture_AssetConverter.h"
+#include <optional>
 
 void pe::AssetSystem::ScanAssets() {
   m_ScannedAssets.clear();
@@ -22,27 +27,10 @@ void pe::AssetSystem::ScanAssets() {
   for (const auto &dirEntry : iterator) {
     const auto &path = dirEntry.path();
 
-    // split original file name in two to get original extension
-    // example: sunshine.png -> "sunshine" and ".png";
-    std::string fileName{path.filename().string()};
-    size_t lastDot = fileName.rfind('.');
-    size_t secondLastDot = fileName.rfind('.', lastDot - 1);
-    if(secondLastDot == std::string::npos){
-      LOG_ERROR << "Failed to scan asset at path: " << path;
+    auto desc = GetParsedAssetDescriptor(path.c_str());
+    if(desc == std::nullopt)
       continue;
-    }
-
-    // LOG_INFO << "Found File\n"
-    //          << "Stem: " << fileName.substr(0, pos1) << "\n"
-    //          << "Type: " << fileName.substr(pos1 + 1, pos2) << "\n"
-    //          << "Extension: " << path.extension() << "\n"
-    //          << "Path: " << path;
-
-    // add entry to our assets address book
-    std::string stem = fileName.substr(0, secondLastDot);
-    std::string type = fileName.substr(secondLastDot + 1, lastDot-secondLastDot -1);
-    std::string ext = fileName.substr(lastDot);
-    m_ScannedAssets.emplace_back(stem, type, ext, path);
+    m_ScannedAssets.push_back(desc.value());
   }
 }
 
@@ -50,8 +38,9 @@ std::unique_ptr<IAsset>
 pe::AssetSystem::LoadAsset(const AssetDescriptor *assetDesc) {
   // Create the appropriate asset based on descriptor file extension
   IAssetConverter *converter = AssetConverters.Get(assetDesc->type);
-  if (!converter){
-    LOG_ERROR << "Failed to find converter for asset at path " << assetDesc->localPath;
+  if (!converter) {
+    LOG_ERROR << "Failed to find converter for asset at path "
+              << assetDesc->localPath;
     return nullptr;
   }
   auto asset = converter->CreateEmptyAsset();
@@ -66,9 +55,9 @@ pe::AssetSystem::LoadAsset(const AssetDescriptor *assetDesc) {
   std::string headerStr, uuidStr;
   reader->ReadString("header", headerStr);
   reader->ReadString("uuid", uuidStr);
-
-  // set the uuid and populate asset properties
   asset->uuid = UUID::FromString(uuidStr);
+
+  // populate asset properties
   asset->AcceptDeserializer(reader);
 
   // at this point, we either return the asset or
@@ -77,30 +66,64 @@ pe::AssetSystem::LoadAsset(const AssetDescriptor *assetDesc) {
   return asset;
 }
 
-void pe::AssetSystem::ImportAsset(const FileDescriptor *file) {
+std::unique_ptr<IAsset>
+pe::AssetSystem::CreateAsset(const FileDescriptor *file) {
   // do we have a converter for this file extension?
   IAssetConverter *converter = AssetConverters.Get(file->extension);
-  if(!converter){
+  if (!converter) {
     LOG_ERROR << "No asset converter could be found for extension '"
-      << file->extension << "'";
-    return;
+              << file->extension << "'";
+    return nullptr;
   }
   std::unique_ptr<IAsset> asset = converter->ConvertToAsset(file);
+  return asset;
+}
 
-  // serialize asset (JSON for now)
+void pe::AssetSystem::ImportAsset(const FileDescriptor *file) {
+  std::unique_ptr<IAsset> asset = CreateAsset(file);
+  if (!asset)
+    return;
+  SaveAsset(asset, file->stem.c_str());
+}
+
+void pe::AssetSystem::SaveAsset(std::unique_ptr<IAsset> &asset,
+                                const char *name) {
+  if (!asset) {
+    LOG_ERROR << "Cannot save! Asset is nullptr!";
+    return;
+  }
   auto writer = std::make_unique<JSON_SerializationWriter>();
   writer->WriteString("header", "SerializedObject");
   writer->WriteString("uuid", asset->uuid.str());
   asset->AcceptSerializer(writer.get());
   std::vector<uint8_t> bytes = writer->GetBytes();
 
-  std::string dest = c_AssetsRoot.string() + "/" + file->stem + "." +
+  std::string dest = c_AssetsRoot.string() + "/" + name + "." +
                      asset->GetAssetTypeName() + ".json";
-  DEBUG_FileDescriptor(file);
-  LOG_INFO << "Writing to destination: " << dest;
+
   if (!FileIO::WriteFile(dest.c_str(), bytes)) {
     LOG_ERROR << "File writing failed for asset file: " << dest;
-  } else
+  } else {
     LOG_INFO << "Succesfully wrote asset file: " << dest;
-  ScanAssets();
+    ScanAssets();
+  }
+};
+
+std::optional<pe::AssetDescriptor>
+pe::AssetSystem::GetParsedAssetDescriptor(const char *path) {
+  std::filesystem::path fullPath{path};
+  std::string fileName{fullPath.filename().string()};
+
+  size_t lastDot = fileName.rfind('.');
+  size_t secondLastDot = fileName.rfind('.', lastDot - 1);
+  if (secondLastDot == std::string::npos) {
+    LOG_ERROR << "Incorrect format on file: " << path;
+    return std::nullopt;
+  }
+
+  std::string stem = fileName.substr(0, secondLastDot);
+  std::string type =
+      fileName.substr(secondLastDot + 1, lastDot - secondLastDot - 1);
+  std::string ext = fileName.substr(lastDot);
+  return AssetDescriptor{stem, type, ext, path};
 }

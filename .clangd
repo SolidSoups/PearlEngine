@@ -5,6 +5,17 @@ CompileFlags:
 Index:
   Background: Build
   StandardLibrary: No  # Don't index standard library to save memory
+  External:
+    MountPoint: .
+    # Exclude external dependencies from indexing to prevent hangs
+    Server: none
+  # Only index src/ directory
+  Include:
+    - "src/.*"
+  Exclude:
+    - "external/.*"
+    - "build/.*"
+    - ".cache/.*"
 
 Diagnostics:
   ClangTidy:

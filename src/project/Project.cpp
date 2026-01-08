@@ -64,3 +64,16 @@ const pe::FileDescriptor* pe::Project::FindFileByPath(const std::filesystem::pat
     }
     return nullptr;
 }
+
+
+std::optional<pe::FileDescriptor> pe::Project::GetParsedFileDescriptor(const char* filepath){
+  std::string filePath{filepath};
+  size_t lastDot = filePath.rfind('.');
+  if(lastDot == std::string::npos){
+    LOG_ERROR << "File has no extension";
+    return std::nullopt;
+  }
+  std::string stem = filePath.substr(0, lastDot);
+  std::string extension = filePath.substr(lastDot);
+  return FileDescriptor{stem, extension, filePath};
+}
