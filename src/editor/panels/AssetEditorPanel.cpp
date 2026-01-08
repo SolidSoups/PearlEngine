@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 
+#include "Logger.h"
 #include "RenderComponent.h"
 #include "TransformComponent.h"
 #include "imgui.h"
@@ -18,7 +19,8 @@ void AssetEditorPanel::OnImGuiRender() {
   ImGui::Begin(m_Name.c_str(), &m_IsOpen);
 
   for (const auto &asset : r_AssetSystem.GetAssetsDescriptors()) {
-    std::string uniqueName = asset.stem + "## [" + asset.type + "] " + asset.stem;
+    std::string uniqueName =
+        "[" + asset.type + "] " + asset.stem + "##" + asset.localPath.string();
 
     if (ImGui::Selectable(uniqueName.c_str())) {
       // noop, only for right clicks
