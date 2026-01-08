@@ -1,11 +1,12 @@
 #include "LoggerEditorPanel.h"
 
+#include "ImGuiHelpers.h"
 #include "Logger.h"
 #include "imgui.h"
 
-void LoggerEditorPanel::OnImGuiRender(){
-  if(!m_IsOpen) return;
-
+void LoggerEditorPanel::OnImGuiRender() {
+  if (!m_IsOpen)
+    return;
 
   ImGui::Begin(m_Name.c_str(), nullptr, ImGuiWindowFlags_MenuBar);
   DrawMenuBar();
@@ -13,28 +14,52 @@ void LoggerEditorPanel::OnImGuiRender(){
   ImGui::End();
 }
 
+void LoggerEditorPanel::DrawMenuBar() {
+  static bool shouldOpenPopup = false;
 
-void LoggerEditorPanel::DrawMenuBar(){
-  if(ImGui::BeginMenuBar()){
-    if(ImGui::MenuItem("Clear Buffer")){
+  if (ImGui::BeginMenuBar()) {
+    if (ImGui::MenuItem("Clear Buffer")) {
       m_Logger.ClearLog();
+    }
+    if (ImGui::MenuItem("Test Searchable Popup")) {
+      shouldOpenPopup = true; 
     }
     ImGui::EndMenuBar();
   }
+  if(shouldOpenPopup){
+    ImGui::OpenPopup("##SearchablePopup_test_selector");
+    shouldOpenPopup = false;
+  }
+
+  const std::vector<std::string> test = {
+      "I am a test",        "You are not",  "Who you say you are",
+      "What is 42?",        "Whats 9 + 10", "Another one",
+      "Testing testing...", "OKOKOKOKOKOK", "One last one"};
+  int selectedIndex = 0;
+  if (SearchablePopup("test_selector", "Select some text", test, &selectedIndex)){ 
+    if(selectedIndex >= 0)
+      LOG_INFO << "We have selected: " << test[selectedIndex];
+  }
 }
 
-
-void LoggerEditorPanel::DrawLogArea(){
+void LoggerEditorPanel::DrawLogArea() {
   // scroll log area
   ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
-  ImGui::BeginChild("LogScrollArea", ImVec2(0,0), true, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+  ImGui::BeginChild("LogScrollArea", ImVec2(0, 0), true,
+                    ImGuiWindowFlags_AlwaysVerticalScrollbar);
 
-  for(const auto& log : m_Logger.GetLogs()){
+  for (const auto &log : m_Logger.GetLogs()) {
     ImVec4 sevColor;
-    switch(log.severity){
-      case INFO:    sevColor = ImVec4(0.3f, 0.9f, 0.3f, 1.0f); break; // Green
-      case WARNING: sevColor = ImVec4(1.0f, 0.8f, 0.0f, 1.0f); break; // Yellow
-      case ERROR:   sevColor = ImVec4(1.0f, 0.3f, 0.3f, 1.0f); break; // red
+    switch (log.severity) {
+    case INFO:
+      sevColor = ImVec4(0.3f, 0.9f, 0.3f, 1.0f);
+      break; // Green
+    case WARNING:
+      sevColor = ImVec4(1.0f, 0.8f, 0.0f, 1.0f);
+      break; // Yellow
+    case ERROR:
+      sevColor = ImVec4(1.0f, 0.3f, 0.3f, 1.0f);
+      break; // red
     }
 
     // severity

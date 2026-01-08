@@ -18,19 +18,16 @@
 #include "StaticRegistry.h"
 
 namespace pe {
-using AssetsRegister = std::vector<AssetDescriptor>;
-using ConverterRegistry = StaticRegistry<std::string, IAssetConverter>;
-
 class AssetSystem {
 public:
   // the registry of asset converters to use
   // every file extension needs a converter
   // to preprocess the file into an applicable format
-  ConverterRegistry AssetConverters;
+  StaticRegistry<std::string, IAssetConverter> AssetConverters;
 
 private:
   // Tracks all assets in the assets directory
-  AssetsRegister m_ScannedAssets;
+  std::vector<AssetDescriptor> m_ScannedAssets;
   // The root of the assets directory
   const std::filesystem::path c_AssetsRoot{"project_assets"};
 
@@ -39,7 +36,7 @@ public:
   AssetSystem() { ScanAssets(); }
 
   // Get the scanned assets
-  const AssetsRegister &GetAssetsDescriptors() const { return m_ScannedAssets; }
+  const std::vector<AssetDescriptor> &GetAssetsDescriptors() const { return m_ScannedAssets; }
 
   // Finds all assets in the assets root folder and
   void ScanAssets();

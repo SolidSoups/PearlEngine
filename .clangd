@@ -1,9 +1,10 @@
 CompileFlags:
-  Add: []
+  Add: [-Wno-unknown-warning-option]
   Remove: []
 
 Index:
   Background: Build
+  StandardLibrary: No  # Don't index standard library to save memory
 
 Diagnostics:
   ClangTidy:

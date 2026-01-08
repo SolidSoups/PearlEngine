@@ -1,4 +1,5 @@
 #include "RenderComponentEditor.h"
+#include "AssetDescriptor.h"
 #include "AssetSystem.h"
 #include "imgui.h"
 #include "ServiceLocator.h"
@@ -30,10 +31,10 @@ void RenderComponentEditor::OnDrawComponent(Component *target) {
   auto &assetSystem = ServiceLocator::Get<pe::AssetSystem>();
   const auto &assets = assetSystem.GetAssetsDescriptors();
 
-  std::vector<const pe::AssetDescriptor *> meshAssets;
+  std::vector<std::string> meshAssetNames;
   for (const pe::AssetDescriptor &assetd : assets) {
     if (assetd.type == "Mesh_Asset") {
-      meshAssets.push_back(&assetd);
+      meshAssetNames.push_back(assetd.stem);
     }
   }
 
@@ -43,11 +44,8 @@ void RenderComponentEditor::OnDrawComponent(Component *target) {
     ImGui::OpenPopup("##SearchablePopup_mesh_selector");
   }
 
-  const pe::AssetDescriptor *selectedMesh = nullptr;
-  if(SearchablePopup("mesh_selector", meshAssets, 
-                     [](const pe::AssetDescriptor* desc) {
-    return desc->stem; },
-     &selectedMesh)){
-    
+  int selectedIndex = -1;
+  if(SearchablePopup("mesh_selector", "Select a mesh", meshAssetNames, &selectedIndex) && selectedIndex > -1){
+   LOG_INFO << "We selected: " << meshAssetNames[selectedIndex]; 
   }
 }

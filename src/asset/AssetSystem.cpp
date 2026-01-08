@@ -78,6 +78,11 @@ pe::AssetSystem::LoadAsset(const AssetDescriptor *assetDesc) {
 void pe::AssetSystem::ImportAsset(const FileDescriptor *file) {
   // do we have a converter for this file extension?
   IAssetConverter *converter = AssetConverters.Get(file->extension);
+  if(!converter){
+    LOG_ERROR << "No asset converter could be found for extension '"
+      << file->extension << "'";
+    return;
+  }
   std::unique_ptr<IAsset> asset = converter->ConvertToAsset(file);
 
   // serialize asset (JSON for now)
