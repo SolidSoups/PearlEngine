@@ -40,9 +40,7 @@ void AssetEditorPanel::LoadAsset(const pe::AssetDescriptor &assetDesc) {
   if (assetDesc.type == "Mesh_Asset") {
     std::unique_ptr<IAsset> asset = r_AssetSystem.LoadAsset(&assetDesc);
     IResource *resource = r_ResourceSystem.LoadAsset(asset.get());
-    LOG_INFO << "No segfault 2";
     Mesh *mesh = dynamic_cast<Mesh *>(resource);
-    LOG_INFO << "No segfault 3";
     if (!mesh) {
       LOG_ERROR << "RESOURCE IS NOT MESH";
       return;

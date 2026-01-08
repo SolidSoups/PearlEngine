@@ -1,6 +1,7 @@
 #include "RenderComponentEditor.h"
 #include "AssetDescriptor.h"
 #include "AssetSystem.h"
+#include "ResourceSystem.h"
 #include "imgui.h"
 #include "ServiceLocator.h"
 #include "ImGuiHelpers.h"
@@ -46,6 +47,8 @@ void RenderComponentEditor::OnDrawComponent(Component *target) {
 
   int selectedIndex = -1;
   if(SearchablePopup("mesh_selector", "Select a mesh", meshAssetNames, &selectedIndex) && selectedIndex > -1){
-   LOG_INFO << "We selected: " << meshAssetNames[selectedIndex]; 
+    if(RenderComponent* renderComp = dynamic_cast<RenderComponent*>(target)){
+      renderComp->SetMeshFromAsset(assets[selectedIndex]);
+    }
   }
 }

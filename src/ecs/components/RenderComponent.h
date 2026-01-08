@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "MaterialData.h"
 #include "Mesh.h"
+#include "AssetDescriptor.h"
 
 // thats it
 struct RenderComponent : Component{
@@ -11,6 +12,8 @@ struct RenderComponent : Component{
 public:
   MeshHandle meshHandle;          // what to render
   MaterialHandle materialHandle;  // how to render it
+  
+  void SetMeshFromAsset(const pe::AssetDescriptor& desc);
 
   RenderComponent(
     MeshHandle meshH,

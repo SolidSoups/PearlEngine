@@ -50,8 +50,10 @@ std::unique_ptr<IAsset>
 pe::AssetSystem::LoadAsset(const AssetDescriptor *assetDesc) {
   // Create the appropriate asset based on descriptor file extension
   IAssetConverter *converter = AssetConverters.Get(assetDesc->type);
-  if (!converter)
+  if (!converter){
+    LOG_ERROR << "Failed to find converter for asset at path " << assetDesc->localPath;
     return nullptr;
+  }
   auto asset = converter->CreateEmptyAsset();
 
   // Load the file
