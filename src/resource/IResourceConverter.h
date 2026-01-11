@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IAsset.h"
-#include "IResource.h"
 
 class IResourceToAssetConverter {
   public:

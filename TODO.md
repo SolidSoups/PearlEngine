@@ -15,7 +15,7 @@ This document tracks planned improvements to the resource system based on a comp
 Currently, calling `LoadTexture("brick.png")` multiple times loads the same file from disk repeatedly, creates duplicate GPU resources, and wastes VRAM. For example, 100 objects using the same texture would create 100 copies in GPU memory instead of sharing one.
 
 **Solution:**
-Add a `std::unordered_map<std::string, TextureHandle>` cache that checks if a resource is already loaded before reading from disk. Return the existing handle if found, otherwise load and cache it.
+Add a `std::unordered_map<std::string, TextureDataHandle>` cache that checks if a resource is already loaded before reading from disk. Return the existing handle if found, otherwise load and cache it.
 
 **Benefits:**
 - Faster loading times (disk I/O only once per unique file)

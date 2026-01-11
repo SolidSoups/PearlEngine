@@ -4,4 +4,4 @@
 
 class ResourceSystem;
 
-ShaderHandle CreateShader(ResourceSystem* rs, const char *vertexPath, const char *fragmentPath);
+ShaderDataHandle CreateShader(ResourceSystem* rs, const char *vertexPath, const char *fragmentPath);

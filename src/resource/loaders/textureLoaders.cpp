@@ -6,10 +6,10 @@
 #include "Logger.h"
 #include "ResourceSystem.h"
 
-TextureHandle LoadTexture(ResourceSystem *rs, const std::string &filepath,
+TextureDataHandle LoadTexture(ResourceSystem *rs, const std::string &filepath,
                           bool generateMipMaps) {
   LOG_WARNING << "LoadTexture(..) is deprecated.";
-  return TextureHandle::Invalid();
+  return TextureDataHandle::Invalid();
 
   // set flip flag (global, uses OpenGL coordinates)
   stbi_set_flip_vertically_on_load(true);
@@ -93,7 +93,7 @@ TextureHandle LoadTexture(ResourceSystem *rs, const std::string &filepath,
   // free CPU memory (GPU has a copy of data now)
   stbi_image_free(data);
 
-  TextureHandle textureHandle = rs->Create(textureData);
+  TextureDataHandle textureHandle = rs->Create(textureData);
 
   LOG_INFO << "Loaded texture: " << filepath << " (" << width << "x" << height
            << ", " << channels << " channels)";

@@ -1,7 +1,6 @@
 #include "RenderComponent.h"
 #include "AssetDescriptor.h"
 #include "AssetSystem.h"
-#include "IResource.h"
 #include "Logger.h"
 #include "ResourceSystem.h"
 #include "ServiceLocator.h"
@@ -50,7 +49,7 @@ void RenderComponent::SetMaterialFromTextureAsset(const pe::AssetDescriptor& des
   }
   
   auto& resourceSystem = ServiceLocator::Get<ResourceSystem>();
-  TextureHandle texHandle = resourceSystem.LoadAsset<TextureData>(texAsset);
+  TextureDataHandle texHandle = resourceSystem.LoadAsset<TextureData>(texAsset);
   
   MaterialSetTexture(&resourceSystem, materialHandle, "mainTexture", texHandle);
 }

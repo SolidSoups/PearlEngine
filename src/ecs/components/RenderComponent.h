@@ -11,13 +11,13 @@ struct RenderComponent : Component{
 
 public:
   MeshHandle meshHandle;          // what to render
-  MaterialHandle materialHandle;  // how to render it
+  MaterialDataHandle materialHandle;  // how to render it
   
   void SetMeshFromAsset(const pe::AssetDescriptor& desc);
   void SetMaterialFromTextureAsset(const pe::AssetDescriptor& desc);
 
   RenderComponent(
     MeshHandle meshH,
-    MaterialHandle matH
+    MaterialDataHandle matH
   ) : meshHandle(meshH), materialHandle(matH) {}
 };

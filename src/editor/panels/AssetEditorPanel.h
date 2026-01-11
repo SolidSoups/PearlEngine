@@ -16,7 +16,7 @@
 
 class AssetEditorPanel : public EditorPanel {
 public:
-  AssetEditorPanel(const MaterialHandle &handle)
+  AssetEditorPanel(const MaterialDataHandle &handle)
       : EditorPanel("Asset Explorer"), m_matHandle(handle), r_Scene(ServiceLocator::Get<Scene>()),
         r_AssetSystem(ServiceLocator::Get<pe::AssetSystem>()), r_ResourceSystem(ServiceLocator::Get<ResourceSystem>()) {
     MenuRegistry::Get().Register("Windows/Asset Explorer", &m_IsOpen);
@@ -29,7 +29,7 @@ private:
   void LoadAsset(const pe::AssetDescriptor &file);
 
 private:
-  MaterialHandle m_matHandle;
+  MaterialDataHandle m_matHandle;
   std::unordered_map<std::string, ImVec4> ExtensionToColor;
   const std::filesystem::path c_EditorSettingsPath{"editor_settings"};
   void LoadColors();

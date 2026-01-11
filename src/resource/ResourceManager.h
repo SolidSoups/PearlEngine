@@ -2,59 +2,55 @@
 
 #include "Handle.h"
 #include "HandleAllocator.h"
-#include "IResource.h"
 #include "Logger.h"
 #include "ResourceManagerBase.h"
 #include <iterator>
 #include <unordered_map>
-#include "ResourceTraits.h"
 
-template <typename Tag> class ResourceManager : public ResourceManagerBase {
-public:
-  using Data = typename TagToData<Tag>::Data;
-
+template <typename T> 
+class ResourceManager : public ResourceManagerBase {
 private:
-  HandleAllocator<Tag> m_Allocator;
-  std::unordered_map<Handle<Tag>, IResource *> m_Resources;
+  HandleAllocator<T> m_Allocator;
+  std::unordered_map<Handle<T>, T*> m_Resources;
 
 public:
-  Handle<Tag> Create(IResource *resource) {
+  Handle<T> Create(T *resource) {
     LOG_INFO << "Creating resource";
     auto handle = m_Allocator.Allocate();
     m_Resources.emplace(handle, resource);
     return handle;
   }
 
-  Data *Get(Handle<Tag> handle) {
+  T *Get(Handle<T> handle) {
     if (!m_Allocator.IsValid(handle))
       return nullptr;
 
-    // find resource
     auto it = m_Resources.find(handle);
     if (it == m_Resources.end())
       return nullptr;
 
-    // downcast datatype
-    IResource *resourceData = it->second;
-    Data *data = dynamic_cast<Data *>(resourceData);
-    return data;
+    return it->second;
   }
 
-  void Destroy(Handle<Tag> handle) {
-    if (m_Resources[handle])
-      delete m_Resources[handle];
-
-    m_Resources.erase(handle);
-    m_Allocator.Free(handle);
+  void Destroy(Handle<T> handle) {
+    auto it = m_Resources.find(handle);
+    if(it != m_Resources.end() && it->second){
+      delete it->second;
+      m_Resources.erase(it);
+      m_Allocator.Free(handle);
+    }
   }
 
-  // this might work for now. TODO: investigate if we need manual cleanup or
-  // cleanup of handle allocator
-  void DestroyAll() override { m_Resources.clear(); }
+  void DestroyAll() override {
+    for(auto& [handle, resource] : m_Resources){
+      if(resource) delete resource;
+      m_Allocator.Free(handle);
+    }
+    m_Resources.clear();
+  }
 
   auto &GetAll() { return m_Resources; }
   const auto &GetAll() const { return m_Resources; }
-
-  const HandleAllocator<Tag> &GetAllocator() const { return m_Allocator; }
+  const HandleAllocator<T> &GetAllocator() const { return m_Allocator; }
   const size_t GetResourceSize() const { return m_Resources.size(); }
 };

@@ -111,9 +111,9 @@ void PearlEngine::Initialize() {
   Time::Initialize();
 
   // Load textures (using ResourceSystem)
-  TextureHandle sunshineTextureHandle =
+  TextureDataHandle sunshineTextureDataHandle =
       LoadTexture(&m_ResourceSystem, "assets/sunshine.png");
-  TextureHandle pearlTextureHandle =
+  TextureDataHandle pearlTextureDataHandle =
       LoadTexture(&m_ResourceSystem, "assets/pearl.png");
 
   // Create shader (using ResourceSystem)
@@ -121,23 +121,23 @@ void PearlEngine::Initialize() {
       CreateShader(&m_ResourceSystem, "shaders/vert.glsl", "shaders/frag.glsl");
 
   // Create new shader
-  ShaderHandle shadHandle = CreateShader(
+  ShaderDataHandle shadHandle = CreateShader(
       &m_ResourceSystem, "shaders/vertNew.glsl", "shaders/fragNew.glsl");
 
   // Create new materials for pearl and sunshine
-  MaterialHandle sunMatHandle =
+  MaterialDataHandle sunMatHandle =
       CreateMaterial(&m_ResourceSystem, shadHandle);
   MaterialSetTexture(&m_ResourceSystem, sunMatHandle, "mainTexture",
-                     sunshineTextureHandle);
-  MaterialHandle pearlMatHandle =
+                     sunshineTextureDataHandle);
+  MaterialDataHandle pearlMatHandle =
       CreateMaterial(&m_ResourceSystem, shadHandle);
   MaterialSetTexture(&m_ResourceSystem, pearlMatHandle, "mainTexture",
-                     pearlTextureHandle);
+                     pearlTextureDataHandle);
 
   // Create new material
-  // MaterialHandle newMat = CreateMaterial(&m_ResourceSystem, shadHandle);
+  // MaterialDataHandle newMat = CreateMaterial(&m_ResourceSystem, shadHandle);
   // MaterialSetTexture(&m_ResourceSystem, newMat, "mainTexture",
-  //                    sunshineTextureHandle);
+  //                    sunshineTextureDataHandle);
 
   // create the main camera
   GameObject *cameraGO = m_Scene.CreateGameObject("Main Camera");
@@ -149,8 +149,8 @@ void PearlEngine::Initialize() {
   // const pe::FileDescriptor* houseFile =
   // pe::Project::Get().FindFile("medieval house", ".obj"); MeshHandle
   // houseMesh = CreateMeshFromObjFile(houseFile->localPath.c_str());
-  // TextureHandle houseTex =
-  // LoadTexture("assets/31-village-house/house2.png"); MaterialHandle
+  // TextureDataHandle houseTex =
+  // LoadTexture("assets/31-village-house/house2.png"); MaterialDataHandle
   // houseMat = CreateMaterial(shadHandle); MaterialSetTexture(houseMat,
   // "mainTexture", houseTex); auto* houseGameObject =
   // m_Scene.CreateGameObject();

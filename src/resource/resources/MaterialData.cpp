@@ -6,7 +6,7 @@
 #include "Logger.h"
 
 namespace {
-MaterialData *GetMaterialData(ResourceSystem* rs, MaterialHandle handle, const char *functionName) {
+MaterialData *GetMaterialData(ResourceSystem* rs, MaterialDataHandle handle, const char *functionName) {
     MaterialData *data = rs->Get(handle);
     if (!data) {
         std::cerr << "MaterialData.cpp: " << functionName
@@ -16,7 +16,7 @@ MaterialData *GetMaterialData(ResourceSystem* rs, MaterialHandle handle, const c
 }
 }; // namespace
 
-ShaderHandle MaterialGetShaderHandle(ResourceSystem* rs, MaterialHandle handle) {
+ShaderDataHandle MaterialGetShaderHandle(ResourceSystem* rs, MaterialDataHandle handle) {
     MaterialData *materialData =
         GetMaterialData(rs, handle, "MaterialGetShaderHandle");
     if (!materialData)
@@ -25,12 +25,12 @@ ShaderHandle MaterialGetShaderHandle(ResourceSystem* rs, MaterialHandle handle) 
     return materialData->shaderHandle;
 }
 
-void BindMaterial(ResourceSystem* rs, MaterialHandle handle) {
+void BindMaterial(ResourceSystem* rs, MaterialDataHandle handle) {
     MaterialData *materialData = GetMaterialData(rs, handle, "BindMaterial");
     if (!materialData)
         return;
 
-    ShaderHandle shaderHandle = materialData->shaderHandle;
+    ShaderDataHandle shaderHandle = materialData->shaderHandle;
 
     UseShader(rs, shaderHandle);
 
@@ -68,13 +68,13 @@ void BindMaterial(ResourceSystem* rs, MaterialHandle handle) {
     }
 }
 
-void DestroyMaterial(ResourceSystem* rs, MaterialHandle handle) {
+void DestroyMaterial(ResourceSystem* rs, MaterialDataHandle handle) {
     if (!rs->Get(handle))
         return;
     rs->Destroy(handle);
 }
 
-void MaterialSetFloat(ResourceSystem* rs, MaterialHandle handle, const std::string &name,
+void MaterialSetFloat(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name,
                       float value) {
     MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetFloat");
     if (!materialData)
@@ -82,14 +82,14 @@ void MaterialSetFloat(ResourceSystem* rs, MaterialHandle handle, const std::stri
     materialData->floats[name] = value;
 }
 
-void MaterialSetInt(ResourceSystem* rs, MaterialHandle handle, const std::string &name, int value) {
+void MaterialSetInt(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name, int value) {
     MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetInt");
     if (!materialData)
         return;
     materialData->ints[name] = value;
 }
 
-void MaterialSetVec3(ResourceSystem* rs, MaterialHandle handle, const std::string &name,
+void MaterialSetVec3(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name,
                      const glm::vec3 &value) {
     MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetVec3");
     if (!materialData)
@@ -97,7 +97,7 @@ void MaterialSetVec3(ResourceSystem* rs, MaterialHandle handle, const std::strin
     materialData->vec3s[name] = value;
 }
 
-void MaterialSetVec4(ResourceSystem* rs, MaterialHandle handle, const std::string &name,
+void MaterialSetVec4(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name,
                      const glm::vec4 &value) {
     MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetVec4");
     if (!materialData)
@@ -105,15 +105,15 @@ void MaterialSetVec4(ResourceSystem* rs, MaterialHandle handle, const std::strin
     materialData->vec4s[name] = value;
 }
 
-void MaterialSetTexture(ResourceSystem* rs, MaterialHandle handle, const std::string &name,
-                        const TextureHandle &value) {
+void MaterialSetTexture(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name,
+                        const TextureDataHandle &value) {
     MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetTexture");
     if (!materialData)
         return;
     materialData->textureHandles[name] = value;
 }
 
-void MaterialSetMat4(ResourceSystem* rs, MaterialHandle handle, const std::string &name,
+void MaterialSetMat4(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name,
                      const glm::mat4 &value) {
     MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetMat4");
     if (!materialData)

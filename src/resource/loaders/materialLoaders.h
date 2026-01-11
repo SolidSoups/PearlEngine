@@ -5,5 +5,5 @@
 
 class ResourceSystem;
 
-MaterialHandle CreateMaterial(ResourceSystem* rs, ShaderHandle shaderHandle);
+MaterialDataHandle CreateMaterial(ResourceSystem* rs, ShaderDataHandle shaderHandle);
 

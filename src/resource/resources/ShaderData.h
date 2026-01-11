@@ -4,33 +4,39 @@
 #include <glm/glm.hpp>
 
 #include "Handle.h"
-#include "IResource.h"
 #include "ResourceMacros.h"
 #include "Shader_Asset.h"
 
-struct ShaderData : public IResource {
-    RESOURCE_CLASS(ShaderData)
-  public:
-    ShaderData(GLuint _id) : id(_id) {}
-    GLuint id = 0;
+struct ShaderData {
+  RESOURCE_CLASS(ShaderData)
+public:
+  ShaderData(const char* vertFile, const char* fragFile);
+  ShaderData(GLuint _id) : id(_id) {}
+  GLuint id = 0;
+
+private:
+  GLuint compileShader(const char* code, unsigned int type);  
 };
-PEARL_DEFINE_RESOURCE(Shader, ShaderData, Shader_Asset)
+PEARL_DEFINE_RESOURCE(ShaderData)
 
 class ResourceSystem;
 
-void UseShader(ResourceSystem* rs, ShaderHandle handle);
+void UseShader(ResourceSystem *rs, ShaderDataHandle handle);
 void ResetShader();
-void DestroyShader(ResourceSystem* rs, ShaderHandle handle);
+void DestroyShader(ResourceSystem *rs, ShaderDataHandle handle);
 
-void ShaderSetVec3(ResourceSystem* rs, ShaderHandle handle, const char *name,
-                   const glm::vec3 &value);
-void ShaderSetVec4(ResourceSystem* rs, ShaderHandle handle, const char *name,
-                   const glm::vec4 &value);
-void ShaderSetBool(ResourceSystem* rs, ShaderHandle handle, const char *name, bool value);
-void ShaderSetInt(ResourceSystem* rs, ShaderHandle handle, const char *name, int value);
-void ShaderSetFloat(ResourceSystem* rs, ShaderHandle handle, const char *name, float value);
-void ShaderSetMatrix4(ResourceSystem* rs, ShaderHandle handle, const char *name,
-                      const glm::mat4 &value);
+void ShaderSetVec3(ResourceSystem *rs, ShaderDataHandle handle,
+                   const char *name, const glm::vec3 &value);
+void ShaderSetVec4(ResourceSystem *rs, ShaderDataHandle handle,
+                   const char *name, const glm::vec4 &value);
+void ShaderSetBool(ResourceSystem *rs, ShaderDataHandle handle,
+                   const char *name, bool value);
+void ShaderSetInt(ResourceSystem *rs, ShaderDataHandle handle, const char *name,
+                  int value);
+void ShaderSetFloat(ResourceSystem *rs, ShaderDataHandle handle,
+                    const char *name, float value);
+void ShaderSetMatrix4(ResourceSystem *rs, ShaderDataHandle handle,
+                      const char *name, const glm::mat4 &value);
 
 // TODO: Performance Optimization - Uniform Location Caching
 // Currently calling glGetUniformLocation() on every uniform set, which is a

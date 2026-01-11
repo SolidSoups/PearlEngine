@@ -38,7 +38,7 @@ private:
   void AddMenuBarItems();
   
 public:
-  ShaderHandle m_ShaderHandle;
+  ShaderDataHandle m_ShaderHandle;
 
 public:
   Scene m_Scene;

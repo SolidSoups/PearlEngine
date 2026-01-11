@@ -2,8 +2,8 @@
 
 #include <string>
 #include <unordered_map>
+#include <memory>
 
-#include "IResource.h"
 #include "ResourceMacros.h"
 #include "glm/glm.hpp"
 #include "glm/mat4x4.hpp"
@@ -13,35 +13,43 @@
 #include "Material_Asset.h"
 #include "Handle.h"
 
-struct MaterialData : public IResource{
-    RESOURCE_CLASS(MaterialData)
-private:
+struct MaterialData {
+  RESOURCE_CLASS(MaterialData)
 public:
-    MaterialData(ShaderHandle _shaderHandle) 
-    : shaderHandle(_shaderHandle) {}
+  MaterialData(std::shared_ptr<ShaderData> _shader) : shader(_shader) {}
 
 public:
-    ShaderHandle shaderHandle; 
-    std::unordered_map<std::string, float> floats;
-    std::unordered_map<std::string, glm::vec3> vec3s;
-    std::unordered_map<std::string, glm::vec4> vec4s;
-    std::unordered_map<std::string, int> ints;
-    std::unordered_map<std::string, TextureHandle> textureHandles;
-    std::unordered_map<std::string, glm::mat4> mat4s;
+  ShaderDataHandle shaderHandle;
+  std::shared_ptr<ShaderData> shader;
+public:
+  std::unordered_map<std::string, float> floats;
+  std::unordered_map<std::string, glm::vec3> vec3s;
+  std::unordered_map<std::string, glm::vec4> vec4s;
+  std::unordered_map<std::string, int> ints;
+  std::unordered_map<std::string, TextureDataHandle> textureHandles;
+  std::unordered_map<std::string, glm::mat4> mat4s;
 };
-PEARL_DEFINE_RESOURCE(Material, MaterialData, Material_Asset)
+PEARL_DEFINE_RESOURCE(MaterialData)
 
 class ResourceSystem;
 
-ShaderHandle MaterialGetShaderHandle(ResourceSystem* rs, MaterialHandle handle);
+ShaderDataHandle MaterialGetShaderHandle(ResourceSystem *rs,
+                                         MaterialDataHandle handle);
 
-void BindMaterial(ResourceSystem* rs, MaterialHandle handle);
+void BindMaterial(ResourceSystem *rs, MaterialDataHandle handle);
 void UnbindMaterial();
-void DestroyMaterial(ResourceSystem* rs, MaterialHandle handle);
+void DestroyMaterial(ResourceSystem *rs, MaterialDataHandle handle);
 
-void MaterialSetFloat(ResourceSystem* rs, MaterialHandle handle, const std::string& name, float value);
-void MaterialSetInt(ResourceSystem* rs, MaterialHandle handle, const std::string& name, int value);
-void MaterialSetVec3(ResourceSystem* rs, MaterialHandle handle, const std::string& name, const glm::vec3& value);
-void MaterialSetVec4(ResourceSystem* rs, MaterialHandle handle, const std::string& name, const glm::vec4& value);
-void MaterialSetTexture(ResourceSystem* rs, MaterialHandle handle, const std::string& name, const TextureHandle& value);
-void MaterialSetMat4(ResourceSystem* rs, MaterialHandle handle, const std::string& name, const glm::mat4& value);
+void MaterialSetFloat(ResourceSystem *rs, MaterialDataHandle handle,
+                      const std::string &name, float value);
+void MaterialSetInt(ResourceSystem *rs, MaterialDataHandle handle,
+                    const std::string &name, int value);
+void MaterialSetVec3(ResourceSystem *rs, MaterialDataHandle handle,
+                     const std::string &name, const glm::vec3 &value);
+void MaterialSetVec4(ResourceSystem *rs, MaterialDataHandle handle,
+                     const std::string &name, const glm::vec4 &value);
+void MaterialSetTexture(ResourceSystem *rs, MaterialDataHandle handle,
+                        const std::string &name,
+                        const TextureDataHandle &value);
+void MaterialSetMat4(ResourceSystem *rs, MaterialDataHandle handle,
+                     const std::string &name, const glm::mat4 &value);

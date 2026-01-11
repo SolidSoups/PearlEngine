@@ -62,7 +62,7 @@ GLuint CompileShader(const char *code, ShaderType type) {
     return shaderID;
 }
 
-ShaderData *GetShaderData(ResourceSystem* rs, ShaderHandle handle, const char *functionName) {
+ShaderData *GetShaderData(ResourceSystem* rs, ShaderDataHandle handle, const char *functionName) {
     ShaderData *data = rs->Get(handle);
     if (!data) {
         std::cerr << "ShaderData.cpp: " << functionName
@@ -72,7 +72,7 @@ ShaderData *GetShaderData(ResourceSystem* rs, ShaderHandle handle, const char *f
 }
 }; // namespace
 
-ShaderHandle CreateShader(ResourceSystem* rs, const char *vertexPath, const char *fragmentPath) {
+ShaderDataHandle CreateShader(ResourceSystem* rs, const char *vertexPath, const char *fragmentPath) {
     std::string vertexCode = ReadShaderFile(vertexPath);
     std::string fragmentCode = ReadShaderFile(fragmentPath);
 
@@ -108,7 +108,7 @@ ShaderHandle CreateShader(ResourceSystem* rs, const char *vertexPath, const char
 
     // create da handle
     ShaderData *newShaderData = new ShaderData(shaderObjectID);
-    ShaderHandle shaderHandle =
+    ShaderDataHandle shaderHandle =
         rs->Create<ShaderData>(newShaderData);
 
     LOG_INFO << "Created shader with paths:\n\tvert: " << vertexPath

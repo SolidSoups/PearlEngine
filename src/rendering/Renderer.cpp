@@ -22,7 +22,7 @@ void Renderer::Submit(ResourceSystem *rs, const RenderComponent &renderComp,
   BindMaterial(rs, renderComp.materialHandle);
 
   // Set matrices
-  ShaderHandle shaderHandle =
+  ShaderDataHandle shaderHandle =
       MaterialGetShaderHandle(rs, renderComp.materialHandle);
   ShaderSetMatrix4(rs, shaderHandle, "transform",
                    transformComp.GetModelMatrix());
