@@ -15,8 +15,6 @@ namespace{
 #define GET_TEXTURE_OR_NULL(rs, handle) GetTextureData(rs, handle, __func__)
 TextureData* GetTextureData(ResourceSystem* rs, TextureHandle handle, const char* functionName){
   TextureData* data = rs->Get(handle);
-  if(!data)
-    LOG_INFO << "TextureData.cpp: " << functionName << ": TextureData is null";
   return data;
 }
 };

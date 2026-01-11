@@ -38,10 +38,12 @@ struct CameraData {
     return forward;
   }
   inline glm::vec3 &GetRight() {
+    GetForward();  // Ensure forward is up-to-date
     right = glm::normalize(glm::cross(forward, worldUp));
-    return forward;
+    return right;
   }
   inline glm::vec3 &GetUp() {
+    GetRight();  // Ensure right is up-to-date
     up = glm::normalize(glm::cross(right, forward));
     return up;
   }

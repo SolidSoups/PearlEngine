@@ -21,24 +21,7 @@ void LoggerEditorPanel::DrawMenuBar() {
     if (ImGui::MenuItem("Clear Buffer")) {
       m_Logger.ClearLog();
     }
-    if (ImGui::MenuItem("Test Searchable Popup")) {
-      shouldOpenPopup = true; 
-    }
     ImGui::EndMenuBar();
-  }
-  if(shouldOpenPopup){
-    ImGui::OpenPopup("##SearchablePopup_test_selector");
-    shouldOpenPopup = false;
-  }
-
-  const std::vector<std::string> test = {
-      "I am a test",        "You are not",  "Who you say you are",
-      "What is 42?",        "Whats 9 + 10", "Another one",
-      "Testing testing...", "OKOKOKOKOKOK", "One last one"};
-  int selectedIndex = 0;
-  if (SearchablePopup("test_selector", "Select some text", test, &selectedIndex)){ 
-    if(selectedIndex >= 0)
-      LOG_INFO << "We have selected: " << test[selectedIndex];
   }
 }
 

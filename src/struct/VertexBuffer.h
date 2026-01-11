@@ -35,6 +35,6 @@ class VertexBuffer {
         glBindBuffer(GL_ARRAY_BUFFER, m_BufferID);
         glBufferData(GL_ARRAY_BUFFER, vertexCount * vertexSize * sizeof(float), data, GL_STATIC_DRAW);
     }
-    void Bind() const { glBindBuffer(GL_VERTEX_ARRAY, m_BufferID); }
+    void Bind() const { glBindBuffer(GL_ARRAY_BUFFER, m_BufferID); }
     inline const unsigned int GetVertexCount() const { return m_Count; }
 };

@@ -14,6 +14,7 @@ public:
   MaterialHandle materialHandle;  // how to render it
   
   void SetMeshFromAsset(const pe::AssetDescriptor& desc);
+  void SetMaterialFromTextureAsset(const pe::AssetDescriptor& desc);
 
   RenderComponent(
     MeshHandle meshH,

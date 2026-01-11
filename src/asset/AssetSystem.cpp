@@ -5,6 +5,7 @@
 #include "JSON_SerializationWriter.h"
 #include "Mesh_Asset.h"
 #include "Texture_Asset.h"
+#include "converters/OBJ_AssetConverter.h"
 #include "converters/Texture_AssetConverter.h"
 #include <optional>
 

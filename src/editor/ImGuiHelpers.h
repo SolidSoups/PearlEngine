@@ -12,15 +12,23 @@
 #include "imgui_internal.h"
 
 namespace {
-inline std::string toLower(const std::string& str){
+inline std::string toLower(const std::string &str) {
   std::string result = str;
   std::transform(result.begin(), result.end(), result.begin(),
-                 [](const char c){return std::tolower(c); });
+                 [](const char c) { return std::tolower(c); });
   return result;
 }
 };
 
-inline bool SearchablePopup(const char *id,const char*title, const std::vector<std::string> &items, int* selectedIndex, bool caseInsensitive = true){
+// next step, create a searchable popup with a "selector function" that
+// preserves the original indexes
+// TODO: i would prefer a reference over an pointer to the selected item
+template<typename T>
+inline bool SearchablePopup(const char *id, const char *title,
+                            const std::vector<T> &items,
+                            std::function<std::string(T)> getName,
+                            std::function<bool(T)> validateItem,
+                            T& outSelectedItem, bool caseInsensitive = true){
   struct PopupState {
     char searchBuffer[256] = "";
     bool firstFrame = true;
@@ -29,75 +37,83 @@ inline bool SearchablePopup(const char *id,const char*title, const std::vector<s
   static std::map<std::string, PopupState> states;
 
   std::string popupId = std::string("##SearchablePopup_") + id;
-  PopupState& state = states[popupId];
+  PopupState &state = states[popupId];
 
   bool shouldClose = false;
   bool result = false;
 
-
-  if (ImGui::BeginPopupModal(popupId.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.5f,1.0f));
+  if (ImGui::BeginPopupModal(popupId.c_str(), nullptr,
+                             ImGuiWindowFlags_AlwaysAutoResize)) {
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.5f, 1.0f));
     ImGui::Text("%s", title);
     ImGui::PopStyleColor();
     ImGui::Separator();
-    if(state.firstFrame){
+    if (state.firstFrame) {
       LOG_INFO << "Set keyboard focus";
       ImGui::SetKeyboardFocusHere();
       state.firstFrame = false;
     }
-    ImGui::InputText("##search", state.searchBuffer, sizeof(state.searchBuffer));
+    ImGui::InputText("##search", state.searchBuffer,
+                     sizeof(state.searchBuffer));
 
     ImGui::Separator();
 
     ImGui::BeginChild("##ItemList", ImVec2(200, 200), true);
-    for(size_t i = 0; i< items.size(); i++){
-      const std::string& item = items[i];
+    for (size_t i = 0; i < items.size(); i++) {
+      const T &item = items[i];
+      if(!validateItem(item)) continue;
+      std::string name = getName(item);
 
-      // skip if it doesn't match search, case insensitive 
-      if(caseInsensitive){
+      // skip if it doesn't match search, case insensitive
+      if (caseInsensitive) {
         std::string searchLower = toLower(std::string(state.searchBuffer));
-        if(!searchLower.empty()){
-          std::string itemLower = toLower(item);
-          if(itemLower.find(searchLower) == std::string::npos)
+        if (!searchLower.empty()) {
+          std::string itemLower = toLower(name);
+          if (itemLower.find(searchLower) == std::string::npos)
             continue;
         }
       }
 
-      if(ImGui::Selectable(item.c_str(), state.tempSelection == (int)i)){
+      if (ImGui::Selectable(name.c_str(), state.tempSelection == (int)i)) {
         state.tempSelection = i;
       }
     }
 
-    if(ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0)){
+    if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0)) {
       state.tempSelection = -1;
     }
     ImGui::EndChild();
 
     ImGui::Separator();
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 0.5f));
-    if(state.tempSelection >= 0){
-      std::string bldStr = "Selected: " + items[state.tempSelection];
+    if (state.tempSelection >= 0 && state.tempSelection < items.size()) {
+      std::string bldStr = "Selected: " + getName(items[state.tempSelection]);
       ImGui::Text("%s", bldStr.c_str());
-    }
-    else{
+    } else {
       ImGui::Text("Selected: None");
     }
     ImGui::PopStyleColor();
 
     // add a cancel button
-    if(ImGui::Button("Ok")){
-      if(state.tempSelection >= 0){
-        *selectedIndex = state.tempSelection;
+    if (ImGui::Button("Ok")) {
+      shouldClose = true;
+      if (state.tempSelection >= 0 && state.tempSelection < items.size()) {
+        LOG_INFO << "Clicked ok and setting selection";
+        outSelectedItem = items[state.tempSelection];
+        LOG_INFO << "Set selected item to " ;
+          LOG_INFO << getName(outSelectedItem);
         result = true;
-        shouldClose = true;
+      }
+      else{
+        LOG_ERROR << "Bounds check failed!";
       }
     }
     ImGui::SameLine();
-    if(ImGui::Button("Cancel")){
+    if (ImGui::Button("Cancel")) {
       shouldClose = true;
     }
 
-    if(shouldClose){
+    if (shouldClose) {
       state.searchBuffer[0] = '\0';
       state.tempSelection = -1;
       state.firstFrame = true;
@@ -105,8 +121,7 @@ inline bool SearchablePopup(const char *id,const char*title, const std::vector<s
     }
 
     ImGui::EndPopup();
-  }
-  else {
+  } else {
     state.firstFrame = true;
     state.tempSelection = -1;
   }

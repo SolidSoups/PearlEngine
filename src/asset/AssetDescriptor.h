@@ -2,6 +2,7 @@
 
 #include <filesystem>
 
+#include "Logger.h"
 #include "UUID.h"
 
 namespace pe {
@@ -17,5 +18,14 @@ struct AssetDescriptor {
                   const std::filesystem::path &localPath)
       : stem(stem), type(type), extension(extension),
         localPath(localPath) {}
+
+
+  void Debug() const{
+    LOG_INFO
+      << "Stem: " << stem << "\n"
+      << "Type: " << type << "\n"
+      << "Extension: " << extension << "\n"
+      << "LocalPath: " << localPath;
+  }
 };
 } // namespace pe

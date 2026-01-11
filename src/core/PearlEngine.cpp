@@ -126,11 +126,11 @@ void PearlEngine::Initialize() {
 
   // Create new materials for pearl and sunshine
   MaterialHandle sunMatHandle =
-      CreateMaterial(&m_ResourceSystem, m_ShaderHandle);
+      CreateMaterial(&m_ResourceSystem, shadHandle);
   MaterialSetTexture(&m_ResourceSystem, sunMatHandle, "mainTexture",
                      sunshineTextureHandle);
   MaterialHandle pearlMatHandle =
-      CreateMaterial(&m_ResourceSystem, m_ShaderHandle);
+      CreateMaterial(&m_ResourceSystem, shadHandle);
   MaterialSetTexture(&m_ResourceSystem, pearlMatHandle, "mainTexture",
                      pearlTextureHandle);
 
