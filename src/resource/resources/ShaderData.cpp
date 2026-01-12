@@ -29,7 +29,7 @@ ShaderData::ShaderData(const char* vertFile, const char* fragFile){
   glGetProgramiv(shaderObjectID, GL_LINK_STATUS, &success);
   if(!success){
     glGetProgramInfoLog(shaderObjectID, 512, NULL, infoLog);
-    LOG_ERROR << "Shader linking failed!";
+    LOG_ERROR << "Shader linking failed! infoLog: " << infoLog;
     return;
   }
 
@@ -53,7 +53,7 @@ GLuint ShaderData::compileShader(const char* code, unsigned int type){
   glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
   if(!success){
     glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-    LOG_ERROR << "Compiling shader ("<< type << ") failed!";
+    LOG_ERROR << "Compiling shader ("<< type << ") failed! infoLog: " << infoLog;
     return 0;
   }
 

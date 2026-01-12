@@ -1,5 +1,6 @@
 #include "FileSystem.h"
 #include <fstream>
+#include <filesystem>
 
 #include "Logger.h"
 
@@ -36,4 +37,53 @@ bool FileSystem::writeFile(const char* filePath, const std::vector<char> &bytes)
     return false;
   }
   return true;
+}
+std::vector<FileSystem::FileDescriptor> FileSystem::getAllFiles(){
+  const std::filesystem::path root{"assets"};
+
+  std::error_code ec;
+  auto iterator = std::filesystem::recursive_directory_iterator{root, ec};
+
+  if(ec){
+    LOG_ERROR 
+      << "Failed to open directory '{" 
+      << root.string() << "}': " << ec.message().c_str();
+    return {};
+  }
+
+  std::vector<FileDescriptor> files;
+  for(auto const& dir_entry : iterator){
+    const auto& path = dir_entry.path();
+    const char* stem = path.stem().c_str();
+    const char* ext = path.extension().c_str();
+    const char* p = path.relative_path().c_str();
+    files.emplace_back(stem, ext, p);
+  }
+  return files;
+}
+std::vector<FileSystem::FileDescriptor> FileSystem::queryFiles(const char *extension){
+  const std::filesystem::path root{"assets"};
+
+  std::error_code ec;
+  auto iterator = std::filesystem::recursive_directory_iterator{root, ec};
+
+  if(ec){
+    LOG_ERROR 
+      << "Failed to open directory '{" 
+      << root.string() << "}': " << ec.message().c_str();
+    return {};
+  }
+
+  std::vector<FileDescriptor> files;
+  for(auto const& dir_entry : iterator){
+    const auto& path = dir_entry.path();
+    const char* ext = path.extension().c_str();
+
+    if(ext != extension) continue;
+
+    const char* stem = path.stem().c_str();
+    const char* p = path.relative_path().c_str();
+    files.emplace_back(stem, ext, p);
+  }
+  return files;
 }

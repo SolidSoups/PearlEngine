@@ -17,6 +17,8 @@ std::shared_ptr<ShaderData> ShaderLoader::load(const char* vertPath, const char*
     LOG_ERROR << "Failed to load frag file at path: " << fragPath;
     return nullptr;
   }
+  vertBytes.push_back('\0');
+  fragBytes.push_back('\0');
   
   return std::make_shared<ShaderData>(vertBytes.data(), fragBytes.data());
 }

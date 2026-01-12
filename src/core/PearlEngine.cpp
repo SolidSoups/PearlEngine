@@ -84,16 +84,15 @@ void PearlEngine::Initialize() {
 
   // Create shaders using new loaders
   auto shader = ShaderLoader::load("shaders/vert.glsl", "shaders/frag.glsl");
-  auto shader2 = ShaderLoader::load("shaders/vertNew.glsl", "shaders/fragNew.glsl");
 
   // Create materials using new loaders
   MaterialLoader matLoader;
-  auto sunMaterial = matLoader.create(shader2);
+  auto sunMaterial = matLoader.create(shader);
   if (sunMaterial && sunshineTexture) {
       sunMaterial->setTexture("mainTexture", sunshineTexture);
   }
 
-  auto pearlMaterial = matLoader.create(shader2);
+  auto pearlMaterial = matLoader.create(shader);
   if (pearlMaterial && pearlTexture) {
       pearlMaterial->setTexture("mainTexture", pearlTexture);
   }
