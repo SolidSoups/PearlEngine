@@ -165,7 +165,7 @@ inline bool SearchablePopup(const char *id, const char *title,
     ImGui::BeginChild("##ItemList", ImVec2(200, 200), true);
     for (size_t i = 0; i < items.size(); i++) {
       const T &item = items[i];
-      std::string name = getName(item);
+      std::string name = getName(item) + "##" + std::to_string(i);
 
       // skip if it doesn't match search, case insensitive
       if (caseInsensitive) {

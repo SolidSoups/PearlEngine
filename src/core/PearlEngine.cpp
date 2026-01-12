@@ -9,6 +9,7 @@
 
 // src
 #include "CameraComponent.h"
+#include "DefaultResources.h"
 #include "MenuRegistry.h"
 #include "PearlEngine.h"
 #include "MessageBus.h"
@@ -59,6 +60,7 @@ PearlEngine::PearlEngine() {
   ServiceLocator::Provide(&pwin);
   ServiceLocator::Provide(m_MessageBus.get());
   ServiceLocator::Provide(m_MessageQueue.get());
+  ServiceLocator::Provide(new DefaultResources);
 
   isInitialized = true;
 
@@ -86,7 +88,7 @@ void PearlEngine::Initialize() {
   auto pearlTexture = TextureLoader::load("assets/pearl.png");
 
   // Create shaders using new loaders
-  auto shader = ShaderLoader::load("shaders/vert.glsl", "shaders/frag.glsl");
+  auto shader = ServiceLocator::Get<DefaultResources>().getDefaultShader();
 
   // Create materials using new loaders
   MaterialLoader matLoader;

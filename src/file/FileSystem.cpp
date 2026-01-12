@@ -1,6 +1,7 @@
 #include "FileSystem.h"
 #include <fstream>
 #include <filesystem>
+#include <cstring>
 
 #include "Logger.h"
 
@@ -76,7 +77,7 @@ std::vector<FileSystem::FileDescriptor> FileSystem::queryFiles(const char *exten
     const auto& path = dir_entry.path();
     const char* ext = path.extension().c_str();
 
-    if(ext != extension) continue;
+    if(strcmp(ext, extension) != 0) continue;
 
     files.emplace_back(path.stem(), path.extension(), path.relative_path());
   }

@@ -145,12 +145,16 @@ std::shared_ptr<Mesh> MeshLoader::loadObj(const char *filePath) {
   std::vector<glm::vec3> objNormals;
   std::vector<unsigned int> objIndices;
   loadAndParseObjFile(filePath, objVertices, objUvs, objNormals, objIndices);
+  LOG_INFO << "Loaded and parsed obj file";
 
   // convert to opengl format
   std::vector<float> vertices;
   std::vector<unsigned int> indices;
   reformatObjToOpenGl(objVertices, objUvs, objNormals, objIndices, vertices,
                       indices);
+  LOG_INFO << "Reformated loaded obj file to OpenGL format";
 
-  return std::make_shared<Mesh>(vertices, indices);
+  auto ptr = std::make_shared<Mesh>(vertices, indices);
+  LOG_INFO << "Created shared mesh ptr";
+  return ptr;
 }

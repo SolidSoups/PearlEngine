@@ -18,6 +18,7 @@ public:
     std::string localPath; // eg. asset/miedeval house
     FileDescriptor(std::string _stem, std::string _extension, std::string _path)
       : stem(_stem), extension(_extension), localPath(_path){}
+    FileDescriptor() = default;
     std::string getFullName() const { return stem + extension; }
   };
   static std::vector<FileDescriptor> getAllFiles();
