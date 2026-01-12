@@ -1,4 +1,4 @@
-#include "MeshLoader.h"
+#include "MeshManager.h"
 
 #include <filesystem>
 #include <cstring>
@@ -9,7 +9,9 @@
 #include "Mesh.h"
 #include "Logger.h"
 
-bool MeshLoader::loadAndParseObjFile(const char *path,
+#include "Mesh.h"
+
+bool MeshManager::loadAndParseObjFile(const char *path,
                                      std::vector<glm::vec3> &outObjVertices,
                                      std::vector<glm::vec2> &outObjUvs,
                                      std::vector<glm::vec3> &outObjNormals,
@@ -94,7 +96,7 @@ bool MeshLoader::loadAndParseObjFile(const char *path,
   }
   return true;
 }
-void MeshLoader::reformatObjToOpenGl(
+void MeshManager::reformatObjToOpenGl(
     const std::vector<glm::vec3> &objVertices,
     const std::vector<glm::vec2> &objUvs,
     const std::vector<glm::vec3> &objNormals,
@@ -138,7 +140,16 @@ void MeshLoader::reformatObjToOpenGl(
   }
 }
 
-std::shared_ptr<Mesh> MeshLoader::loadObj(const char *filePath) {
+std::shared_ptr<Mesh> MeshManager::loadOBJ(const char *filePath) {
+  auto it = m_Cache.find(filePath);
+  if(it != m_Cache.end()){
+    // this mesh is cached, don't bother creating a new one
+    LOG_INFO << "Used mesh from cache";
+    return it->second; 
+  }
+  LOG_INFO << "Loading and creating new mesh";
+
+
   // parse obj file
   std::vector<glm::vec3> objVertices;
   std::vector<glm::vec2> objUvs;
@@ -154,7 +165,6 @@ std::shared_ptr<Mesh> MeshLoader::loadObj(const char *filePath) {
                       indices);
   LOG_INFO << "Reformated loaded obj file to OpenGL format";
 
-  auto ptr = std::make_shared<Mesh>(vertices, indices);
-  LOG_INFO << "Created shared mesh ptr";
-  return ptr;
+  m_Cache[filePath] = std::make_shared<Mesh>(vertices, indices);
+  return m_Cache[filePath];
 }

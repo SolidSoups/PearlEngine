@@ -5,7 +5,7 @@
 #include "imgui.h"
 
 #include "FileSystem.h"
-#include "MeshLoader.h"
+#include "MeshManager.h"
 #include "MaterialLoader.h"
 #include "ServiceLocator.h"
 #include "ImGuiHelpers.h"
@@ -50,7 +50,7 @@ void RenderComponentEditor::OnDrawComponent(Component *target) {
                                                  [](FileSystem::FileDescriptor desc){ return desc.stem;}, 
                                                  selectedFile)){
     LOG_INFO << "Loading mesh";
-    std::shared_ptr<Mesh> loadedMesh = MeshLoader::loadObj(selectedFile.localPath.c_str());
+    std::shared_ptr<Mesh> loadedMesh = ServiceLocator::Get<MeshManager>().loadOBJ(selectedFile.localPath.c_str());
     LOG_INFO << "Mesh is loaded";
     if(loadedMesh){
       LOG_INFO << "Set render comp mesh";

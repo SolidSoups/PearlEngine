@@ -12,6 +12,7 @@
 #include "DefaultResources.h"
 #include "MenuRegistry.h"
 #include "PearlEngine.h"
+#include "MeshManager.h"
 #include "MessageBus.h"
 #include "MessageQueue.h"
 #include "Project.h"
@@ -61,6 +62,7 @@ PearlEngine::PearlEngine() {
   ServiceLocator::Provide(m_MessageBus.get());
   ServiceLocator::Provide(m_MessageQueue.get());
   ServiceLocator::Provide(new DefaultResources);
+  ServiceLocator::Provide(new MeshManager);
 
   isInitialized = true;
 
