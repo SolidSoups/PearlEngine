@@ -9,19 +9,22 @@
 
 // src
 #include "CameraComponent.h"
-#include "InspectorEditorPanel.h"
-#include "LoggerEditorPanel.h"
 #include "MenuRegistry.h"
 #include "PearlEngine.h"
 #include "MessageBus.h"
 #include "MessageQueue.h"
 #include "Project.h"
 #include "Renderer.h"
-#include "SceneHierarchyEditorPanel.h"
 #include "SelectionWizard.h"
 #include "Time.h"
+
+// editor panels
+#include "InspectorEditorPanel.h"
+#include "LoggerEditorPanel.h"
+#include "SceneHierarchyEditorPanel.h"
 #include "TransformComponentEditor.h"
 #include "ViewportEditorPanel.h"
+#include "FileSystemEditorPanel.h"
 
 #include "Logger.h"
 #include "MaterialData.h"
@@ -137,6 +140,7 @@ void PearlEngine::Initialize() {
   m_GUIContext.AddPanel<SceneHierarchyEditorPanel>();
   m_GUIContext.AddPanel<InspectorEditorPanel>();
   m_GUIContext.AddPanel<LoggerEditorPanel>();
+  m_GUIContext.AddPanel<FileSystemEditorPanel>();
   AddMenuBarItems();
 
   // Setup camera aspect ratio

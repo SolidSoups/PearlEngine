@@ -3,6 +3,8 @@
 // static class
 #include <cstddef>
 #include <vector>
+#include <string>
+
 class FileSystem {
 
 public:
@@ -11,11 +13,12 @@ public:
 
 public:
   struct FileDescriptor {
-    const char* stem;
-    const char* extension;
-    const char* localPath; // eg. asset/miedeval house
-    FileDescriptor(const char* _stem, const char* _extension, const char* _path)
+    std::string stem;
+    std::string extension;
+    std::string localPath; // eg. asset/miedeval house
+    FileDescriptor(std::string _stem, std::string _extension, std::string _path)
       : stem(_stem), extension(_extension), localPath(_path){}
+    std::string getFullName() const { return stem + extension; }
   };
   static std::vector<FileDescriptor> getAllFiles();
   static std::vector<FileDescriptor> queryFiles(const char* extension);

@@ -54,10 +54,7 @@ std::vector<FileSystem::FileDescriptor> FileSystem::getAllFiles(){
   std::vector<FileDescriptor> files;
   for(auto const& dir_entry : iterator){
     const auto& path = dir_entry.path();
-    const char* stem = path.stem().c_str();
-    const char* ext = path.extension().c_str();
-    const char* p = path.relative_path().c_str();
-    files.emplace_back(stem, ext, p);
+    files.emplace_back(path.stem(), path.extension(), path.relative_path());
   }
   return files;
 }
@@ -81,9 +78,7 @@ std::vector<FileSystem::FileDescriptor> FileSystem::queryFiles(const char *exten
 
     if(ext != extension) continue;
 
-    const char* stem = path.stem().c_str();
-    const char* p = path.relative_path().c_str();
-    files.emplace_back(stem, ext, p);
+    files.emplace_back(path.stem(), path.extension(), path.relative_path());
   }
   return files;
 }
