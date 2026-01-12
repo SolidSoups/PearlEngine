@@ -5,6 +5,7 @@
 #include <stb_image.h>
 
 #include "TextureData.h"
+#include "Logger.h"
 
 std::shared_ptr<TextureData> TextureLoader::load(const char* path, bool genMipMaps){
   // set flip flag (global, uses OpenGL coordinates)

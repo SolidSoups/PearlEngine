@@ -4,6 +4,7 @@
 
 #include "FileSystem.h"
 #include "Logger.h"
+#include "ShaderData.h"
 
 std::shared_ptr<ShaderData> ShaderLoader::load(const char* vertPath, const char* fragPath){
   // load shader files

@@ -9,8 +9,6 @@
 #include "ShaderData.h"
 #include "ServiceLocator.h"
 #include "ViewportEditorPanel.h"
-#include "AssetSystem.h"
-#include "ResourceSystem.h"
 #include "SelectionWizard.h"
 #include "MessageBus.h"
 #include "MessageQueue.h"
@@ -36,16 +34,11 @@ private:
 
 private:
   void AddMenuBarItems();
-  
-public:
-  ShaderDataHandle m_ShaderHandle;
 
 public:
   Scene m_Scene;
   Camera m_Camera{};
   std::unique_ptr<CameraController> m_CameraController;
-  pe::AssetSystem m_AssetSystem{};
-  ResourceSystem m_ResourceSystem{};
 
 private:
   std::unique_ptr<SelectionWizard> m_SelectionWizard;

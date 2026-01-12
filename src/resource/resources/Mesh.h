@@ -3,13 +3,13 @@
 #include <vector>
 
 #include "ElementBuffer.h"
-#include "Mesh_Asset.h"
-#include "ResourceMacros.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 
 class Mesh {
-  RESOURCE_CLASS(Mesh)
+  // Prevent copying
+  Mesh(const Mesh&) = delete;
+  Mesh& operator=(const Mesh&) = delete;
 
   private:
     VertexArray m_VAO;
@@ -26,4 +26,3 @@ class Mesh {
     ~Mesh();
     void Draw();
 };
-PEARL_DEFINE_RESOURCE(Mesh)

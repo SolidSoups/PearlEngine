@@ -3,21 +3,17 @@
 #include "Component.h"
 #include "MaterialData.h"
 #include "Mesh.h"
-#include "AssetDescriptor.h"
 
 // thats it
 struct RenderComponent : Component{
   COMPONENT_CLASS(RenderComponent)
 
 public:
-  MeshHandle meshHandle;          // what to render
-  MaterialDataHandle materialHandle;  // how to render it
-  
-  void SetMeshFromAsset(const pe::AssetDescriptor& desc);
-  void SetMaterialFromTextureAsset(const pe::AssetDescriptor& desc);
+  std::shared_ptr<Mesh> mesh;                    // what to render
+  std::shared_ptr<MaterialData> material;        // how to render it
 
   RenderComponent(
-    MeshHandle meshH,
-    MaterialDataHandle matH
-  ) : meshHandle(meshH), materialHandle(matH) {}
+    std::shared_ptr<Mesh> _mesh,
+    std::shared_ptr<MaterialData> _material
+  ) : mesh(_mesh), material(_material) {}
 };

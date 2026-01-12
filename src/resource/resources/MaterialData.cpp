@@ -1,122 +1,72 @@
 #include "MaterialData.h"
-
-#include "ResourceSystem.h"
-#include <iostream>
-
 #include "Logger.h"
 
-namespace {
-MaterialData *GetMaterialData(ResourceSystem* rs, MaterialDataHandle handle, const char *functionName) {
-    MaterialData *data = rs->Get(handle);
-    if (!data) {
-        std::cerr << "MaterialData.cpp: " << functionName
-                  << ": MaterialData is null" << "\n";
-    }
-    return data;
-}
-}; // namespace
+MaterialData::MaterialData(std::shared_ptr<ShaderData> _shader) : shader(_shader) {}
 
-ShaderDataHandle MaterialGetShaderHandle(ResourceSystem* rs, MaterialDataHandle handle) {
-    MaterialData *materialData =
-        GetMaterialData(rs, handle, "MaterialGetShaderHandle");
-    if (!materialData)
-        return {};
-
-    return materialData->shaderHandle;
-}
-
-void BindMaterial(ResourceSystem* rs, MaterialDataHandle handle) {
-    MaterialData *materialData = GetMaterialData(rs, handle, "BindMaterial");
-    if (!materialData)
+void MaterialData::bind() {
+    if (!shader) {
+        LOG_ERROR << "MaterialData::bind: shader is null";
         return;
+    }
 
-    ShaderDataHandle shaderHandle = materialData->shaderHandle;
-
-    UseShader(rs, shaderHandle);
+    shader->use();
 
     // Upload all ints
-    for (const auto &[name, value] : materialData->ints) {
-        ShaderSetInt(rs, shaderHandle, name.c_str(), value);
+    for (const auto &[name, value] : ints) {
+        shader->setInt(name.c_str(), value);
     }
 
     // Upload all floats
-    for (const auto &[name, value] : materialData->floats) {
-        ShaderSetFloat(rs, shaderHandle, name.c_str(), value);
+    for (const auto &[name, value] : floats) {
+        shader->setFloat(name.c_str(), value);
     }
 
     // Upload all vec3s
-    for (const auto &[name, value] : materialData->vec3s) {
-        ShaderSetVec3(rs, shaderHandle, name.c_str(), value);
+    for (const auto &[name, value] : vec3s) {
+        shader->setVec3(name.c_str(), value);
     }
 
     // Upload all vec4s
-    for (const auto &[name, value] : materialData->vec4s) {
-        ShaderSetVec4(rs, shaderHandle, name.c_str(), value);
+    for (const auto &[name, value] : vec4s) {
+        shader->setVec4(name.c_str(), value);
     }
 
     // Upload all textures
     int textureSlot = 0;
-    for (const auto &[name, textureHandle] : materialData->textureHandles) {
-        BindTexture(rs, textureHandle, textureSlot);
-        ShaderSetInt(rs, shaderHandle, name.c_str(), textureSlot);
-        textureSlot++;
+    for (const auto &[name, texture] : textures) {
+        if (texture) {
+            texture->bind(textureSlot);
+            shader->setInt(name.c_str(), textureSlot);
+            textureSlot++;
+        }
     }
 
     // Upload all matrixes
-    for (const auto &[name, matrix4] : materialData->mat4s) {
-        ShaderSetMatrix4(rs, shaderHandle, name.c_str(), matrix4);
+    for (const auto &[name, matrix4] : mat4s) {
+        shader->setMatrix4(name.c_str(), matrix4);
     }
 }
 
-void DestroyMaterial(ResourceSystem* rs, MaterialDataHandle handle) {
-    if (!rs->Get(handle))
-        return;
-    rs->Destroy(handle);
+void MaterialData::setFloat(const std::string &name, float value) {
+    floats[name] = value;
 }
 
-void MaterialSetFloat(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name,
-                      float value) {
-    MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetFloat");
-    if (!materialData)
-        return;
-    materialData->floats[name] = value;
+void MaterialData::setInt(const std::string &name, int value) {
+    ints[name] = value;
 }
 
-void MaterialSetInt(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name, int value) {
-    MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetInt");
-    if (!materialData)
-        return;
-    materialData->ints[name] = value;
+void MaterialData::setVec3(const std::string &name, const glm::vec3 &value) {
+    vec3s[name] = value;
 }
 
-void MaterialSetVec3(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name,
-                     const glm::vec3 &value) {
-    MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetVec3");
-    if (!materialData)
-        return;
-    materialData->vec3s[name] = value;
+void MaterialData::setVec4(const std::string &name, const glm::vec4 &value) {
+    vec4s[name] = value;
 }
 
-void MaterialSetVec4(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name,
-                     const glm::vec4 &value) {
-    MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetVec4");
-    if (!materialData)
-        return;
-    materialData->vec4s[name] = value;
+void MaterialData::setTexture(const std::string &name, std::shared_ptr<TextureData> texture) {
+    textures[name] = texture;
 }
 
-void MaterialSetTexture(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name,
-                        const TextureDataHandle &value) {
-    MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetTexture");
-    if (!materialData)
-        return;
-    materialData->textureHandles[name] = value;
-}
-
-void MaterialSetMat4(ResourceSystem* rs, MaterialDataHandle handle, const std::string &name,
-                     const glm::mat4 &value) {
-    MaterialData *materialData = GetMaterialData(rs, handle, "MaterialSetMat4");
-    if (!materialData)
-        return;
-    materialData->mat4s[name] = value;
+void MaterialData::setMat4(const std::string &name, const glm::mat4 &value) {
+    mat4s[name] = value;
 }

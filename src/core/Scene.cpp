@@ -20,14 +20,14 @@ void Scene::Update(){
   // in the future we update the objects here
 }
 
-void Scene::Render(ResourceSystem* rs, Camera& camera){
+void Scene::Render(Camera& camera){
   Renderer::BeginScene(camera);
   for(auto& object : m_GameObjects){
     auto transform = object->GetComponent<TransformComponent>();
     auto renderComp = object->GetComponent<RenderComponent>();
 
     if(transform && renderComp)
-      Renderer::Submit(rs, *renderComp, *transform);
+      Renderer::Submit(*renderComp, *transform);
   }
   Renderer::EndScene();
 }

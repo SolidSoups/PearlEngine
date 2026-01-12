@@ -8,7 +8,6 @@
 #include "GameObject.h"
 
 class Camera;
-class ResourceSystem;
 
 class Scene{
 public:
@@ -21,7 +20,7 @@ public:
 
   // Scene operations
   void Update();
-  void Render(ResourceSystem* rs, Camera& camera);
+  void Render(Camera& camera);
 
   GameObject* GetSelectedGameObject(){
     if(selectedIndex < 0 || selectedIndex >= m_GameObjects.size()) return nullptr;

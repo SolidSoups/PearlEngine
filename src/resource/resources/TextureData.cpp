@@ -8,16 +8,7 @@
 #include <iostream>
 
 // src
-#include "ResourceSystem.h"
 #include "Logger.h"
-
-namespace{
-#define GET_TEXTURE_OR_NULL(rs, handle) GetTextureData(rs, handle, __func__)
-TextureData* GetTextureData(ResourceSystem* rs, TextureDataHandle handle, const char* functionName){
-  TextureData* data = rs->Get(handle);
-  return data;
-}
-};
 
 
 TextureData::TextureData(unsigned char* data, uint32_t width, uint32_t height, uint32_t channels, bool genMipMaps){
@@ -144,22 +135,12 @@ TextureData::TextureData(const std::vector<unsigned char>& pixelData, uint32_t w
   this->channels = channels;
 }
 
-void BindTexture(ResourceSystem* rs, TextureDataHandle handle, unsigned int slot){
-  TextureData* textureData = GET_TEXTURE_OR_NULL(rs, handle);
-  if(!textureData) return;
-
+// New method-based API implementation
+void TextureData::bind(unsigned int slot) {
   glActiveTexture(GL_TEXTURE0 + slot);
-  glBindTexture(GL_TEXTURE_2D, textureData->id);
+  glBindTexture(GL_TEXTURE_2D, id);
 }
 
-void UnbindTexture(){
+void TextureData::unbind() {
   glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void DestroyTexture(ResourceSystem* rs, TextureDataHandle handle){
-  TextureData* textureData = GET_TEXTURE_OR_NULL(rs, handle);
-  if(!textureData) return;
-
-  glDeleteTextures(1, &textureData->id);
-  rs->Destroy(handle);
 }

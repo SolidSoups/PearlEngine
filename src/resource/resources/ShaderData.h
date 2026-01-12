@@ -3,40 +3,30 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include "Handle.h"
-#include "ResourceMacros.h"
-#include "Shader_Asset.h"
-
 struct ShaderData {
-  RESOURCE_CLASS(ShaderData)
+  // Prevent copying
+  ShaderData(const ShaderData&) = delete;
+  ShaderData& operator=(const ShaderData&) = delete;
+
 public:
   ShaderData(const char* vertFile, const char* fragFile);
   ShaderData(GLuint _id) : id(_id) {}
+
+  // New method-based API
+  void use();
+  void setVec3(const char* name, const glm::vec3& value);
+  void setVec4(const char* name, const glm::vec4& value);
+  void setBool(const char* name, bool value);
+  void setInt(const char* name, int value);
+  void setFloat(const char* name, float value);
+  void setMatrix4(const char* name, const glm::mat4& value);
+  static void reset();
+
   GLuint id = 0;
 
 private:
-  GLuint compileShader(const char* code, unsigned int type);  
+  GLuint compileShader(const char* code, unsigned int type);
 };
-PEARL_DEFINE_RESOURCE(ShaderData)
-
-class ResourceSystem;
-
-void UseShader(ResourceSystem *rs, ShaderDataHandle handle);
-void ResetShader();
-void DestroyShader(ResourceSystem *rs, ShaderDataHandle handle);
-
-void ShaderSetVec3(ResourceSystem *rs, ShaderDataHandle handle,
-                   const char *name, const glm::vec3 &value);
-void ShaderSetVec4(ResourceSystem *rs, ShaderDataHandle handle,
-                   const char *name, const glm::vec4 &value);
-void ShaderSetBool(ResourceSystem *rs, ShaderDataHandle handle,
-                   const char *name, bool value);
-void ShaderSetInt(ResourceSystem *rs, ShaderDataHandle handle, const char *name,
-                  int value);
-void ShaderSetFloat(ResourceSystem *rs, ShaderDataHandle handle,
-                    const char *name, float value);
-void ShaderSetMatrix4(ResourceSystem *rs, ShaderDataHandle handle,
-                      const char *name, const glm::mat4 &value);
 
 // TODO: Performance Optimization - Uniform Location Caching
 // Currently calling glGetUniformLocation() on every uniform set, which is a

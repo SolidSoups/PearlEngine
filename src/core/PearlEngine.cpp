@@ -8,7 +8,6 @@
 #include <imgui.h>
 
 // src
-#include "AssetEditorPanel.h"
 #include "CameraComponent.h"
 #include "InspectorEditorPanel.h"
 #include "LoggerEditorPanel.h"
@@ -17,27 +16,20 @@
 #include "MessageBus.h"
 #include "MessageQueue.h"
 #include "Project.h"
-#include "ProjectEditorPanel.h"
 #include "Renderer.h"
-#include "ResourceEditorPanel.h"
 #include "SceneHierarchyEditorPanel.h"
 #include "SelectionWizard.h"
 #include "Time.h"
 #include "TransformComponentEditor.h"
 #include "ViewportEditorPanel.h"
 
-#include "Mesh_ResourceConverter.h"
-#include "Texture_ResourceConverter.h"
 #include "Logger.h"
 #include "MaterialData.h"
-#include "ResourceSystem.h"
 #include "TextureData.h"
-#include "converters/OBJ_AssetConverter.h"
-#include "converters/Texture_AssetConverter.h"
 
-#include "materialLoaders.h"
-#include "shaderLoaders.h"
-#include "textureLoaders.h"
+#include "ShaderLoader.h"
+#include "TextureLoader.h"
+#include "MaterialLoader.h"
 
 // std
 #include <cmath>
@@ -62,31 +54,8 @@ PearlEngine::PearlEngine() {
   ServiceLocator::Provide(&m_Camera);
   ServiceLocator::Provide(m_SelectionWizard.get());
   ServiceLocator::Provide(&pwin);
-  ServiceLocator::Provide(&m_AssetSystem);
-  ServiceLocator::Provide(&m_ResourceSystem);
   ServiceLocator::Provide(m_MessageBus.get());
   ServiceLocator::Provide(m_MessageQueue.get());
-
-  // Register asset converters
-  m_AssetSystem.AssetConverters.Register(
-      "Mesh_Asset", std::make_unique<OBJ_AssetConverter>());
-  m_AssetSystem.AssetConverters.Register(
-      ".obj", std::make_unique<OBJ_AssetConverter>());
-
-  m_AssetSystem.AssetConverters.Register(
-      "Texture_Asset", std::make_unique<Texture_AssetConverter>());
-  m_AssetSystem.AssetConverters.Register(
-      ".png", std::make_unique<Texture_AssetConverter>());
-  m_AssetSystem.AssetConverters.Register(
-      ".jpg", std::make_unique<Texture_AssetConverter>());
-
-  // Register resource converters
-  m_ResourceSystem.AssetConverters.Register(
-      std::type_index(typeid(Mesh_Asset)),
-      std::make_unique<Mesh_ResourceConverter>());
-  m_ResourceSystem.AssetConverters.Register(
-      std::type_index(typeid(Texture_Asset)),
-      std::make_unique<Texture_ResourceConverter>());
 
   isInitialized = true;
 
@@ -95,7 +64,6 @@ PearlEngine::PearlEngine() {
 
 PearlEngine::~PearlEngine() {
   LOG_INFO << "Engine deconstructing";
-  m_ResourceSystem.DestroyAllResources();
   ServiceLocator::Reset();
   glfwTerminate();
 }
@@ -110,34 +78,25 @@ void PearlEngine::Initialize() {
   // initialize the time
   Time::Initialize();
 
-  // Load textures (using ResourceSystem)
-  TextureDataHandle sunshineTextureDataHandle =
-      LoadTexture(&m_ResourceSystem, "assets/sunshine.png");
-  TextureDataHandle pearlTextureDataHandle =
-      LoadTexture(&m_ResourceSystem, "assets/pearl.png");
+  // Load textures using new loaders
+  auto sunshineTexture = TextureLoader::load("assets/sunshine.png");
+  auto pearlTexture = TextureLoader::load("assets/pearl.png");
 
-  // Create shader (using ResourceSystem)
-  m_ShaderHandle =
-      CreateShader(&m_ResourceSystem, "shaders/vert.glsl", "shaders/frag.glsl");
+  // Create shaders using new loaders
+  auto shader = ShaderLoader::load("shaders/vert.glsl", "shaders/frag.glsl");
+  auto shader2 = ShaderLoader::load("shaders/vertNew.glsl", "shaders/fragNew.glsl");
 
-  // Create new shader
-  ShaderDataHandle shadHandle = CreateShader(
-      &m_ResourceSystem, "shaders/vertNew.glsl", "shaders/fragNew.glsl");
+  // Create materials using new loaders
+  MaterialLoader matLoader;
+  auto sunMaterial = matLoader.create(shader2);
+  if (sunMaterial && sunshineTexture) {
+      sunMaterial->setTexture("mainTexture", sunshineTexture);
+  }
 
-  // Create new materials for pearl and sunshine
-  MaterialDataHandle sunMatHandle =
-      CreateMaterial(&m_ResourceSystem, shadHandle);
-  MaterialSetTexture(&m_ResourceSystem, sunMatHandle, "mainTexture",
-                     sunshineTextureDataHandle);
-  MaterialDataHandle pearlMatHandle =
-      CreateMaterial(&m_ResourceSystem, shadHandle);
-  MaterialSetTexture(&m_ResourceSystem, pearlMatHandle, "mainTexture",
-                     pearlTextureDataHandle);
-
-  // Create new material
-  // MaterialDataHandle newMat = CreateMaterial(&m_ResourceSystem, shadHandle);
-  // MaterialSetTexture(&m_ResourceSystem, newMat, "mainTexture",
-  //                    sunshineTextureDataHandle);
+  auto pearlMaterial = matLoader.create(shader2);
+  if (pearlMaterial && pearlTexture) {
+      pearlMaterial->setTexture("mainTexture", pearlTexture);
+  }
 
   // create the main camera
   GameObject *cameraGO = m_Scene.CreateGameObject("Main Camera");
@@ -177,11 +136,8 @@ void PearlEngine::Initialize() {
   m_ViewportPanel =
       m_GUIContext.AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
   m_GUIContext.AddPanel<SceneHierarchyEditorPanel>();
-  m_GUIContext.AddPanel<ResourceEditorPanel>(m_ResourceSystem);
   m_GUIContext.AddPanel<InspectorEditorPanel>();
   m_GUIContext.AddPanel<LoggerEditorPanel>();
-  m_GUIContext.AddPanel<ProjectEditorPanel>();
-  m_GUIContext.AddPanel<AssetEditorPanel>(sunMatHandle);
   AddMenuBarItems();
 
   // Setup camera aspect ratio
@@ -258,7 +214,7 @@ void PearlEngine::Render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Scene handles all the rendering now!
-  m_Scene.Render(&m_ResourceSystem, m_Camera);
+  m_Scene.Render(m_Camera);
 
   m_ViewportFramebuffer->Unbind();
 }

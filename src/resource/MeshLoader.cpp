@@ -95,10 +95,11 @@ bool MeshLoader::loadAndParseObjFile(const char *path,
   return true;
 }
 void MeshLoader::reformatObjToOpenGl(
-    const std::vector<unsigned int> &objIndices,
     const std::vector<glm::vec3> &objVertices,
     const std::vector<glm::vec2> &objUvs,
-    const std::vector<glm::vec3> &objNormals, std::vector<float> &outVertices,
+    const std::vector<glm::vec3> &objNormals,
+    const std::vector<unsigned int> &objIndices,
+    std::vector<float> &outVertices,
     std::vector<unsigned int> &outIndices) {
   // clear the output refernces
   outVertices.clear();
