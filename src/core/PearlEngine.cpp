@@ -106,6 +106,10 @@ void PearlEngine::Initialize() {
   cameraGO->AddComponent<TransformComponent>(cmCmp->cameraData.position);
   m_Scene.SetActiveCamera(cmCmp);
 
+
+  auto go1 = m_Scene.CreateGameObject();
+  go1->AddComponent<TransformComponent>();
+  go1->AddComponent<RenderComponent>();
   // Create the weird mesh
   // const pe::FileDescriptor* houseFile =
   // pe::Project::Get().FindFile("medieval house", ".obj"); MeshHandle

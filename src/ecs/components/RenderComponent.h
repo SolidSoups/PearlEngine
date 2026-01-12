@@ -16,4 +16,5 @@ public:
     std::shared_ptr<Mesh> _mesh,
     std::shared_ptr<MaterialData> _material
   ) : mesh(_mesh), material(_material) {}
+  RenderComponent() : mesh(nullptr), material(nullptr){}
 };

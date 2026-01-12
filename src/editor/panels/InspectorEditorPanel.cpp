@@ -2,12 +2,14 @@
 #include "Logger.h"
 #include "MenuRegistry.h"
 
+#include "ImGuiHelpers.h"
 #include "MaterialData.h"
 #include "ComponentEditorRegistry.h"
 #include "MessageBus.h"
 #include "TransformComponent.h"
 #include "GameObject.h"
 #include "SelectionWizard.h"
+#include "RenderComponent.h"
 #include "imgui.h"
 
 #include <iostream>
@@ -60,6 +62,7 @@ void InspectorEditorPanel::DrawHeader(GameObject *go) {
 void InspectorEditorPanel::DrawComponents(GameObject *go) {
   const auto &components = go->GetAllComponents();
 
+  // draw all components
   for (auto &[key, comp] : components) {
     ComponentEditor *editor = GET_COMPONENT_EDITOR_WITH_TYPEID(comp->GetTypeIndex());
     const char *name = comp->GetComponentName();
@@ -90,6 +93,28 @@ void InspectorEditorPanel::DrawComponents(GameObject *go) {
 
       ImGui::PopStyleVar();
       ImGui::PopStyleColor();
+    }
+  }
+
+  // draw add component 
+  ImGui::Separator();
+  if(ImGui::Button("Add Component##Button", ImVec2(-1, 0))){
+    ImGui::OpenPopup("##SearchablePopup_Add_Component");
+  }
+  
+  std::vector<std::string> compChoices = {
+    "Render Component",
+    "Something else",
+    "Physics Component"
+  };
+  std::string selected = "";
+  if(SearchablePopup<std::string>(
+    "Add_Component",
+    "Add Component", compChoices, 
+    [](std::string choice){ return choice; },
+     selected)){
+    if(selected == "Render Component"){
+      go->AddComponent<RenderComponent>();
     }
   }
 }
