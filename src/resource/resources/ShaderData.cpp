@@ -33,6 +33,10 @@ ShaderData::ShaderData(const char* vertFile, const char* fragFile){
     return;
   }
 
+  GLint binaryLength = 0;
+  glGetProgramiv(shaderObjectID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+  bytesSize = (size_t)binaryLength;
+
   // delete old shaders (they are now linked)
   glDeleteShader(vert);
   glDeleteShader(frag);

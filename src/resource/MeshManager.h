@@ -6,16 +6,29 @@
 
 #include <glm/glm.hpp>
 
+#include "Mesh.h"
+
 class Mesh;
 
 class MeshManager {
+private:
+  std::unordered_map<std::string, std::shared_ptr<Mesh>> m_Cache;
 
 public:
-  // loading functions for different filetypes
   std::shared_ptr<Mesh> loadOBJ(const char *filePath);
 
+  const size_t getCacheSize() const { return m_Cache.size(); }
+  const size_t calcMemorySize() const {
+    size_t totalSize = 0;
+    for(const auto& [str, shared_ptr] : m_Cache){
+      if(shared_ptr.get()){
+        totalSize += shared_ptr->getMemorySize();
+      }
+    }
+    return totalSize;
+  }
+
 private:
-  // helper functions
   bool loadAndParseObjFile(const char *path,
                            std::vector<glm::vec3> &outObjVertices,
                            std::vector<glm::vec2> &outObjUvs,
@@ -27,8 +40,4 @@ private:
                            const std::vector<unsigned int> &objIndices,
                            std::vector<float> &outVertices,
                            std::vector<unsigned int> &outIndices);
-
-private:
-  // the actual caching here
-  std::unordered_map<std::string, std::shared_ptr<Mesh>> m_Cache;
 };

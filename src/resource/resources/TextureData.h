@@ -12,10 +12,6 @@ struct TextureData {
   TextureData& operator=(const TextureData&) = delete;
 
 public:
-  TextureData(const std::vector<unsigned char>& pixelData, uint32_t width, uint32_t height, uint32_t channels, bool generateMipMaps);
-  // deprecated, but keep for now
-  TextureData(uint32_t _width, uint32_t _height, uint32_t _channels)
-        : width(_width), height(_height), channels(_channels) {}
   TextureData(unsigned char* data, uint32_t width, uint32_t height, uint32_t channels, bool genMipMaps=true);
 
   // New method-based API
@@ -25,5 +21,7 @@ public:
   uint32_t width;
   uint32_t height;
   uint32_t channels;
+
+  size_t getMemorySize() const { return width * height * channels;}
   GLuint id = 0;
 };

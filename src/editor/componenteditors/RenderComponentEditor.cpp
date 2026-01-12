@@ -1,7 +1,7 @@
 #include "RenderComponentEditor.h"
 
 #include "DefaultResources.h"
-#include "TextureLoader.h"
+#include "TextureManager.h"
 #include "imgui.h"
 
 #include "FileSystem.h"
@@ -64,7 +64,7 @@ void RenderComponentEditor::OnDrawComponent(Component *target) {
                                                  [](FileSystem::FileDescriptor desc){ return desc.stem;}, 
                                                  selectedFile)){
     // try to load the texture
-    auto texPtr = TextureLoader::load(selectedFile.localPath.c_str(), false);
+    auto texPtr = ServiceLocator::Get<TextureManager>().load(selectedFile.localPath.c_str(), false);
     if(!texPtr){
       LOG_ERROR << "Texture could not be loaded!";
       return;

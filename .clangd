@@ -3,12 +3,8 @@ CompileFlags:
   Remove: []
 
 Index:
-  Background: Build
+  Background: Build  # Re-enabled with strict limits (no CLI --background-index)
   StandardLibrary: No  # Don't index standard library to save memory
-  External:
-    MountPoint: .
-    # Exclude external dependencies from indexing to prevent hangs
-    Server: none
   # Only index src/ directory
   Include:
     - "src/.*"

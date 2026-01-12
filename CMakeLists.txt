@@ -3,6 +3,7 @@ project(PearlEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -fno-omit-frame-pointer")
 
 # Enable colored compiler diagnostics
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

@@ -17,6 +17,8 @@ Mesh::Mesh(const std::vector<float> &vertices,
                         (void *)(3 * sizeof(float)));
   m_VAO.DefineAttribute(m_VBO, 2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                         (void *)(5 * sizeof(float)));
+
+  m_MemorySize = vertices.size() * sizeof(float) + indices.size() * sizeof(unsigned int);
 }
 Mesh::~Mesh() {}
 

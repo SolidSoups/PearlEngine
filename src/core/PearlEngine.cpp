@@ -10,15 +10,18 @@
 // src
 #include "CameraComponent.h"
 #include "DefaultResources.h"
+#include "MemoryEditorPanel.h"
 #include "MenuRegistry.h"
 #include "PearlEngine.h"
-#include "MeshManager.h"
 #include "MessageBus.h"
 #include "MessageQueue.h"
 #include "Project.h"
 #include "Renderer.h"
 #include "SelectionWizard.h"
 #include "Time.h"
+
+#include "MeshManager.h"
+#include "TextureManager.h"
 
 // editor panels
 #include "InspectorEditorPanel.h"
@@ -32,8 +35,8 @@
 #include "MaterialData.h"
 #include "TextureData.h"
 
-#include "ShaderLoader.h"
-#include "TextureLoader.h"
+#include "ShaderManager.h"
+#include "TextureManager.h"
 #include "MaterialLoader.h"
 
 // std
@@ -61,8 +64,10 @@ PearlEngine::PearlEngine() {
   ServiceLocator::Provide(&pwin);
   ServiceLocator::Provide(m_MessageBus.get());
   ServiceLocator::Provide(m_MessageQueue.get());
-  ServiceLocator::Provide(new DefaultResources);
   ServiceLocator::Provide(new MeshManager);
+  ServiceLocator::Provide(new TextureManager);
+  ServiceLocator::Provide(new ShaderManager);
+  ServiceLocator::Provide(new DefaultResources);
 
   isInitialized = true;
 
@@ -86,13 +91,19 @@ void PearlEngine::Initialize() {
   Time::Initialize();
 
   // Load textures using new loaders
-  auto sunshineTexture = TextureLoader::load("assets/sunshine.png");
-  auto pearlTexture = TextureLoader::load("assets/pearl.png");
+  LOG_INFO << "loading textures";
+  if(!ServiceLocator::IsReady<TextureManager>()){
+    LOG_ERROR << "TextureManager is not ready!";
+  }
+  auto sunshineTexture = ServiceLocator::Get<TextureManager>().load("assets/sunshine.png");
+  auto pearlTexture = ServiceLocator::Get<TextureManager>().load("assets/pearl.png");
 
   // Create shaders using new loaders
+  LOG_INFO << "Setting default shader";
   auto shader = ServiceLocator::Get<DefaultResources>().getDefaultShader();
 
   // Create materials using new loaders
+  LOG_INFO << "setting texture";
   MaterialLoader matLoader;
   auto sunMaterial = matLoader.create(shader);
   if (sunMaterial && sunshineTexture) {
@@ -149,6 +160,7 @@ void PearlEngine::Initialize() {
   m_GUIContext.AddPanel<InspectorEditorPanel>();
   m_GUIContext.AddPanel<LoggerEditorPanel>();
   m_GUIContext.AddPanel<FileSystemEditorPanel>();
+  m_GUIContext.AddPanel<MemoryEditorPanel>();
   AddMenuBarItems();
 
   // Setup camera aspect ratio

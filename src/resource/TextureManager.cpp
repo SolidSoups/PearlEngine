@@ -1,4 +1,4 @@
-#include "TextureLoader.h"
+#include "TextureManager.h"
 
 #include <memory>
 
@@ -7,7 +7,14 @@
 #include "TextureData.h"
 #include "Logger.h"
 
-std::shared_ptr<TextureData> TextureLoader::load(const char* path, bool genMipMaps){
+std::shared_ptr<TextureData> TextureManager::load(const char* path, bool genMipMaps){
+  auto it = m_Cache.find(path);
+  if(it != m_Cache.end()){
+    // texture is cached
+    return it->second;
+  }
+
+
   // set flip flag (global, uses OpenGL coordinates)
   stbi_set_flip_vertically_on_load(true);
 
@@ -25,7 +32,12 @@ std::shared_ptr<TextureData> TextureLoader::load(const char* path, bool genMipMa
     return {};
   }
 
-  auto texture = std::make_shared<TextureData>(data, width, height, channels, genMipMaps);
+
+  // cache texture
+  m_Cache[path] = std::make_shared<TextureData>(data, width, height, channels, genMipMaps);
+
+  // free image data (we don't need it anymore)
   stbi_image_free(data);
-  return texture;
+
+  return m_Cache[path];
 }

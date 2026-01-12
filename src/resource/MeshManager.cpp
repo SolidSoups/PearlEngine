@@ -144,11 +144,8 @@ std::shared_ptr<Mesh> MeshManager::loadOBJ(const char *filePath) {
   auto it = m_Cache.find(filePath);
   if(it != m_Cache.end()){
     // this mesh is cached, don't bother creating a new one
-    LOG_INFO << "Used mesh from cache";
     return it->second; 
   }
-  LOG_INFO << "Loading and creating new mesh";
-
 
   // parse obj file
   std::vector<glm::vec3> objVertices;
@@ -166,5 +163,7 @@ std::shared_ptr<Mesh> MeshManager::loadOBJ(const char *filePath) {
   LOG_INFO << "Reformated loaded obj file to OpenGL format";
 
   m_Cache[filePath] = std::make_shared<Mesh>(vertices, indices);
+
+
   return m_Cache[filePath];
 }

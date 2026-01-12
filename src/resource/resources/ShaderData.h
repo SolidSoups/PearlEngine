@@ -24,8 +24,11 @@ public:
 
   GLuint id = 0;
 
+  size_t getMemorySize() const { return bytesSize; }
+
 private:
   GLuint compileShader(const char* code, unsigned int type);
+  size_t bytesSize = 0;
 };
 
 // TODO: Performance Optimization - Uniform Location Caching

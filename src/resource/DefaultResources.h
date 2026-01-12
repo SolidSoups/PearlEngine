@@ -3,7 +3,8 @@
 #include <memory>
 
 #include "ShaderData.h"
-#include "ShaderLoader.h"
+#include "ShaderManager.h"
+#include "ServiceLocator.h"
 
 class DefaultResources{
 private:
@@ -11,7 +12,7 @@ private:
 
 public:
   DefaultResources(){
-    m_DefaultShader = ShaderLoader::load("shaders/vert.glsl", "shaders/frag.glsl");
+    m_DefaultShader = ServiceLocator::Get<ShaderManager>().load("shaders/vert.glsl", "shaders/frag.glsl");
   }
   std::shared_ptr<ShaderData> getDefaultShader() const { return m_DefaultShader; }
 };
