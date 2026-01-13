@@ -50,9 +50,9 @@ void MemoryEditorPanel::OnImGuiRender(){
   std::string formShdBytes = formatBytes((float)shaderMemSize);
   ImGui::Text("Shader Size: %s", formShdBytes.c_str());
   ImGui::Text("Shader Count: %zu", shdMng.getCacheSize());
-  ImGui::Separator();
-  ImGui::Text("Material Size: %s");
-  ImGui::Text("Material Count: %zu");
+  // ImGui::Separator();
+  // ImGui::Text("Material Count: %zu");
+  // ImGui::Text("Material Size: %s");
 
   ImGui::End();
 }

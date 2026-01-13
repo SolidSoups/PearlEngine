@@ -7,14 +7,19 @@ Mesh::Mesh(const std::vector<float> &vertices,
   m_VAO.GenerateVertexArrays();
   m_VAO.Bind();
 
+  // upload 8 floats per vertex
   m_VBO.GenerateVertexBuffers(vertices.data(), vertices.size() / 8, 8);
+
+  // upload triangle indices
   m_EBO.GenerateElementBuffers(indices.data(), indices.size());
 
-  // define attribute
+  // attribute 0: position (3 floats start at 0)
   m_VAO.DefineAttribute(m_VBO, 0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                         (void *)0);
+  // attribute 1: UV (2 floats offset at 3)
   m_VAO.DefineAttribute(m_VBO, 1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                         (void *)(3 * sizeof(float)));
+  // attribute 2: Normal (3 floats offset at 5)
   m_VAO.DefineAttribute(m_VBO, 2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                         (void *)(5 * sizeof(float)));
 
