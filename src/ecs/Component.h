@@ -1,6 +1,7 @@
 #pragma once
 
 #include <typeindex>
+#include "ComponentFlags.h"
 #include "ecs_common.h"
 
 class GameObject;
@@ -10,6 +11,9 @@ public:
   virtual ~Component() = default;
   virtual const char* GetComponentName() const = 0;
   virtual std::type_index GetTypeIndex() const = 0;
+  virtual ComponentFlags GetCompFlags() const {
+    return ComponentFlags_None;
+  }
 
 public:
   EntityID m_ownerID = 0;
@@ -17,6 +21,7 @@ public:
   GameObject* GetOwner(){
     return m_Owner;
   }
+
 };
 
 #define COMPONENT_CLASS(ClassName) \

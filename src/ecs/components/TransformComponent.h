@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "Component.h"
+#include "ComponentFlags.h"
 
 struct TransformComponent : Component{
   COMPONENT_CLASS(TransformComponent)
@@ -29,4 +30,9 @@ public:
   void SetRotation(float angle, const glm::vec3& axis);
   void SetPosition(const glm::vec3& position);
   void SetScale(const glm::vec3& scale);
+
+public:
+  ComponentFlags GetCompFlags() const override {
+    return ComponentFlags_SortHighest;
+  }
 };

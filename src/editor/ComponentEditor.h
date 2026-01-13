@@ -2,6 +2,7 @@
 
 #include "Component.h"
 
+
 class ComponentEditor{
 public:
   ComponentEditor() = default;

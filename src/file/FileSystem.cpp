@@ -75,9 +75,9 @@ std::vector<FileSystem::FileDescriptor> FileSystem::queryFiles(const char *exten
   std::vector<FileDescriptor> files;
   for(auto const& dir_entry : iterator){
     const auto& path = dir_entry.path();
-    const char* ext = path.extension().c_str();
+    std::string ext = path.extension().string();
 
-    if(strcmp(ext, extension) != 0) continue;
+    if(strcmp(ext.c_str(), extension) != 0) continue;
 
     files.emplace_back(path.stem(), path.extension(), path.relative_path());
   }
