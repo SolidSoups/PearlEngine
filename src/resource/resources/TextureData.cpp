@@ -1,6 +1,7 @@
 #include "TextureData.h"
 
 // lib
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
 
@@ -12,11 +13,27 @@
 
 
 TextureData::TextureData(unsigned char* data, uint32_t width, uint32_t height, uint32_t channels, bool genMipMaps){
-  if (width > 1024 || height > 1024) {
+  if(!data){
+    LOG_ERROR << "data is nullptr";
+    return;
+  }
+
+  // check size
+  int maxSize;
+  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+  if (width > maxSize || height > maxSize) {
     LOG_WARNING << "Image size " << width << "x" << height
-      << " is exceeding. OpenGL may not be able to handle such "
+      << " is exceeding of" << maxSize << ". OpenGL may not be able to handle such "
       "large textures";
   }
+
+  // warning threshold
+  if (width > 2048 || height > 2048) {
+    LOG_WARNING << "Large texture: " << width << "x" << height
+      << " (" << (width * height * channels / 1024 / 1024) << " MB)";
+  }
+
+
 
   // Determine OpenGL data formats
   GLenum internalFormat = 0, dataFormat = 0;

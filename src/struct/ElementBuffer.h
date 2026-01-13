@@ -36,9 +36,10 @@ public:
 
 public:
   void GenerateElementBuffers(const unsigned int *data, unsigned int count) {
-    if (data == nullptr)
-      LOG_INFO << "data is nullptr!";
-      m_Count = count;
+    if (data == nullptr){
+      LOG_INFO << "Element data is nullptr!";
+    }
+    m_Count = count;
 
     glGenBuffers(1, &m_BufferId);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_BufferId);

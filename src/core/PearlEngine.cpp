@@ -8,6 +8,8 @@
 #include <imgui.h>
 
 // src
+#include "ServiceLocator.h"
+#include "UserGUI.h"
 #include "CameraComponent.h"
 #include "DefaultResources.h"
 #include "MemoryEditorPanel.h"
@@ -77,6 +79,7 @@ PearlEngine::PearlEngine() {
 PearlEngine::~PearlEngine() {
   LOG_INFO << "Engine deconstructing";
   ServiceLocator::Reset();
+  UserGUI::Destroy();
   glfwTerminate();
 }
 
@@ -107,12 +110,12 @@ void PearlEngine::Initialize() {
   MaterialLoader matLoader;
   auto sunMaterial = matLoader.create(shader);
   if (sunMaterial && sunshineTexture) {
-      sunMaterial->setTexture("mainTexture", sunshineTexture);
+      sunMaterial->setTexture("albedoMap", sunshineTexture);
   }
 
   auto pearlMaterial = matLoader.create(shader);
   if (pearlMaterial && pearlTexture) {
-      pearlMaterial->setTexture("mainTexture", pearlTexture);
+      pearlMaterial->setTexture("albedoMap", pearlTexture);
   }
 
   // create the main camera
@@ -125,29 +128,6 @@ void PearlEngine::Initialize() {
   auto go1 = m_Scene.CreateGameObject();
   go1->AddComponent<TransformComponent>();
   go1->AddComponent<RenderComponent>();
-  // Create the weird mesh
-  // const pe::FileDescriptor* houseFile =
-  // pe::Project::Get().FindFile("medieval house", ".obj"); MeshHandle
-  // houseMesh = CreateMeshFromObjFile(houseFile->localPath.c_str());
-  // TextureDataHandle houseTex =
-  // LoadTexture("assets/31-village-house/house2.png"); MaterialDataHandle
-  // houseMat = CreateMaterial(shadHandle); MaterialSetTexture(houseMat,
-  // "mainTexture", houseTex); auto* houseGameObject =
-  // m_Scene.CreateGameObject();
-  // houseGameObject->AddComponent<RenderComponent>(houseMesh, houseMat);
-  // houseGameObject->AddComponent<TransformComponent>();
-
-  // for(float x = -2.0f; x <= 2.0f; x += 2.0f){
-  //   for(float y = -2.0f; y <= 2.0f; y += 2.0f){
-  //     GameObject* go = m_Scene.CreateGameObject();
-  //     go->AddComponent<RenderComponent>(cubeMeshOldHandle, sunMatHandle);
-  //     go->AddComponent<TransformComponent>(glm::vec3(x, y, 0.0f));
-  //   }
-  // }
-
-  // GameObject* weirdGo = m_Scene.CreateGameObject("loaded obj mesh");
-  // weirdGo->AddComponent<RenderComponent>(newMesh, newMat);
-  // weirdGo->AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 0.f));
 
   // Create viewport framebuffer
   m_ViewportFramebuffer =
@@ -245,6 +225,7 @@ void PearlEngine::Render() {
 void PearlEngine::RenderEditor() {
   m_GUIContext.BeginFrame();
   m_GUIContext.RenderEditorPanels();
+  UserGUI::Render();
 
   // render imgui to the screen
   int displayW, displayH;

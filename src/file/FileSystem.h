@@ -22,6 +22,7 @@ public:
     std::string getFullName() const { return stem + extension; }
   };
   static std::vector<FileDescriptor> getAllFiles();
-  static std::vector<FileDescriptor> queryFiles(const char* extension);
+  static std::vector<FileDescriptor> queryFiles(const std::string& extension);
+  static std::vector<FileDescriptor> queryFiles(const std::vector<std::string> &extensions);
 
 };

@@ -1,4 +1,5 @@
 #include "FileSystem.h"
+#include <algorithm>
 #include <fstream>
 #include <filesystem>
 #include <cstring>
@@ -59,7 +60,7 @@ std::vector<FileSystem::FileDescriptor> FileSystem::getAllFiles(){
   }
   return files;
 }
-std::vector<FileSystem::FileDescriptor> FileSystem::queryFiles(const char *extension){
+std::vector<FileSystem::FileDescriptor> FileSystem::queryFiles(const std::string& extension){
   const std::filesystem::path root{"assets"};
 
   std::error_code ec;
@@ -77,7 +78,32 @@ std::vector<FileSystem::FileDescriptor> FileSystem::queryFiles(const char *exten
     const auto& path = dir_entry.path();
     std::string ext = path.extension().string();
 
-    if(strcmp(ext.c_str(), extension) != 0) continue;
+    if(ext != extension) continue;
+
+    files.emplace_back(path.stem(), path.extension(), path.relative_path());
+  }
+  return files;
+}
+std::vector<FileSystem::FileDescriptor> FileSystem::queryFiles(const std::vector<std::string>& extensions){
+  const std::filesystem::path root{"assets"};
+
+  std::error_code ec;
+  auto iterator = std::filesystem::recursive_directory_iterator{root, ec};
+
+  if(ec){
+    LOG_ERROR 
+      << "Failed to open directory '{" 
+      << root.string() << "}': " << ec.message().c_str();
+    return {};
+  }
+
+  std::vector<FileDescriptor> files;
+  for(auto const& dir_entry : iterator){
+    const auto& path = dir_entry.path();
+    std::string ext = path.extension().string();
+
+    auto it = std::find(extensions.begin(), extensions.end(), ext);
+    if(it == extensions.end()) continue;
 
     files.emplace_back(path.stem(), path.extension(), path.relative_path());
   }

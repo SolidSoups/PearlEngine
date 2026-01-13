@@ -18,7 +18,6 @@ struct MaterialData {
 public:
   MaterialData(std::shared_ptr<ShaderData> _shader);
 
-  // New method-based API
   void bind();
   void setFloat(const std::string& name, float value);
   void setInt(const std::string& name, int value);
@@ -27,6 +26,9 @@ public:
   void setTexture(const std::string& name, std::shared_ptr<TextureData> texture);
   void setMat4(const std::string& name, const glm::mat4& value);
   std::shared_ptr<ShaderData> getShader() const { return shader; }
+
+  bool textureExists(const std::string& name);
+
 
 private:
   std::shared_ptr<ShaderData> shader;

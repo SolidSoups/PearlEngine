@@ -85,6 +85,7 @@ target_include_directories(game_engine PRIVATE
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/editor
   ${CMAKE_CURRENT_SOURCE_DIR}/src/editor/panels
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/editor/popups
   ${CMAKE_CURRENT_SOURCE_DIR}/src/editor/componenteditors
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/resourceNew

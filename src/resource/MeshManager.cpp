@@ -11,11 +11,10 @@
 
 #include "Mesh.h"
 
-bool MeshManager::loadAndParseObjFile(const char *path,
-                                     std::vector<glm::vec3> &outObjVertices,
-                                     std::vector<glm::vec2> &outObjUvs,
-                                     std::vector<glm::vec3> &outObjNormals,
-                                     std::vector<unsigned int> &outObjIndices) {
+bool MeshManager::loadAndParseObjFile(
+    const char *path, std::vector<glm::vec3> &outObjVertices,
+    std::vector<glm::vec2> &outObjUvs, std::vector<glm::vec3> &outObjNormals,
+    std::vector<unsigned int> &outObjIndices) {
   // clear output references
   outObjIndices.clear();
   outObjVertices.clear();
@@ -26,18 +25,34 @@ bool MeshManager::loadAndParseObjFile(const char *path,
   file.exceptions(std::ifstream::badbit); // ensure exceptions
 
   try {
+    LOG_INFO << "Attempting to open OBJ file: " << path;
     file.open(path);
+
+    if (!file.is_open()) {
+      LOG_ERROR << "Failed to open OBJ file: " << path;
+      return false;
+    }
+
+    LOG_INFO << "Successfully opened OBJ file";
 
     // read line by line
     int faceIteration = 0;
+    int lineCount = 0;
     std::string line;
     while (std::getline(file, line)) {
+      lineCount++;
       char lineHeader[124];
       int result = sscanf(line.c_str(), "%s", lineHeader);
 
-      // we've reached the end of file, lets quit out
-      if (result == EOF)
-        break;
+      // Debug: log first 10 lines
+      if (lineCount <= 10) {
+        LOG_INFO << "Line " << lineCount << " (len=" << line.length() << "): " << line;
+      }
+
+      // skip empty/whitespace-only lines
+      if (result == EOF) {
+        continue;
+      }
 
       // otherwise, lets parse
       if (strcmp(lineHeader, "v") == 0) { // parse vertex
@@ -89,10 +104,16 @@ bool MeshManager::loadAndParseObjFile(const char *path,
         outObjIndices.push_back(normalIndex[2]);
       }
     }
+    LOG_INFO << "Finished parsing OBJ file. Read " << lineCount << " lines, "
+             << "found " << outObjVertices.size() << " vertices, "
+             << outObjUvs.size() << " UVs, " << outObjNormals.size() << " normals, "
+             << (outObjIndices.size() / 9) << " faces";
     file.close();
   } catch (std::ifstream::failure e) {
     LOG_ERROR << "File stream failed to read '" << path << "', " << e.what();
     return false;
+  } catch (std::exception &e){
+    LOG_ERROR << "Unexpected error reading file '" << path << "', " << e.what();
   }
   return true;
 }
@@ -101,8 +122,7 @@ void MeshManager::reformatObjToOpenGl(
     const std::vector<glm::vec2> &objUvs,
     const std::vector<glm::vec3> &objNormals,
     const std::vector<unsigned int> &objIndices,
-    std::vector<float> &outVertices,
-    std::vector<unsigned int> &outIndices) {
+    std::vector<float> &outVertices, std::vector<unsigned int> &outIndices) {
   // clear the output refernces
   outVertices.clear();
   outIndices.clear();
@@ -141,10 +161,11 @@ void MeshManager::reformatObjToOpenGl(
 }
 
 std::shared_ptr<Mesh> MeshManager::loadOBJ(const char *filePath) {
+  LOG_INFO << "Loading OBJ from filepath: " << filePath;
   auto it = m_Cache.find(filePath);
-  if(it != m_Cache.end()){
+  if (it != m_Cache.end()) {
     // this mesh is cached, don't bother creating a new one
-    return it->second; 
+    return it->second;
   }
 
   // parse obj file
@@ -152,8 +173,15 @@ std::shared_ptr<Mesh> MeshManager::loadOBJ(const char *filePath) {
   std::vector<glm::vec2> objUvs;
   std::vector<glm::vec3> objNormals;
   std::vector<unsigned int> objIndices;
-  loadAndParseObjFile(filePath, objVertices, objUvs, objNormals, objIndices);
-  LOG_INFO << "Loaded and parsed obj file";
+  bool success = loadAndParseObjFile(filePath, objVertices, objUvs, objNormals,
+                                     objIndices);
+  if (!success) {
+    LOG_ERROR << "Failed to load and parse Obj file: " << filePath;
+    return nullptr;
+  }
+  LOG_INFO << "Loaded and parsed obj file, vertices: " << objVertices.size()
+           << ", uvs: " << objUvs.size() << ", normals: " << objNormals.size()
+           << ", indices: " << objIndices.size() << ";";
 
   // convert to opengl format
   std::vector<float> vertices;
@@ -163,7 +191,6 @@ std::shared_ptr<Mesh> MeshManager::loadOBJ(const char *filePath) {
   LOG_INFO << "Reformated loaded obj file to OpenGL format";
 
   m_Cache[filePath] = std::make_shared<Mesh>(vertices, indices);
-
 
   return m_Cache[filePath];
 }
