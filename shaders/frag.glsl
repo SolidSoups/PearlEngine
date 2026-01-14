@@ -27,7 +27,7 @@ void main() {
   float specularIntensity = texture(specularMap, texCoord).r;
 
   // ambient component
-  FragColor.xyz += (materialAmbient * light_ambient).xyz;
+  FragColor.xyz += (materialAmbient * light_ambient * texColor).xyz;
 
   // normalize interpolated normal vector
   vec3 normalizedNormal = normalize(normal);
@@ -38,7 +38,7 @@ void main() {
   // diffuse component
   float diffuseIntensity = max(dot(lightDirection, normalizedNormal), 0.0);
   if (diffuseIntensity > 0.0) {
-    vec3 diffuse = diffuseIntensity * light_diffuse.xyz * materialDiffuse.xyz;
+    vec3 diffuse = diffuseIntensity * light_diffuse.xyz * materialDiffuse.xyz * texColor.xyz;
     float distance = length(light_position - fragPosition);
 
     float attenuation = 1.0 / (light_attenuation.x + light_attenuation.y * distance + light_attenuation.z * pow(distance, 2.0));

@@ -24,5 +24,6 @@ public:
 
 public:
   std::shared_ptr<ShaderData> load(const char* vertPath, const char* fragPath);
+  void recompileAll();
 
 };

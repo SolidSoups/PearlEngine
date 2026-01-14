@@ -1,47 +1,74 @@
 #include "ShaderData.h"
-#include "Logger.h"
 
 #include <string>
 #include <sstream>
 #include <fstream>
 #include <iostream>
+
 #include <glm/gtc/type_ptr.hpp>
 
-ShaderData::ShaderData(const char* vertFile, const char* fragFile){
-  // compile shaders
-  GLuint vert = compileShader(vertFile, GL_VERTEX_SHADER);
-  GLuint frag = compileShader(fragFile, GL_FRAGMENT_SHADER);
-  if(vert == 0 || frag == 0){
-    return;
+#include "Logger.h"
+#include "FileSystem.h"
+
+ShaderData::ShaderData(const std::string& vertPath, const std::string &fragPath)
+  : m_VertPath(vertPath), m_FragPath(fragPath)
+{
+  reload();
+}
+
+bool ShaderData::reload(){
+  if(m_VertPath.empty() || m_FragPath.empty()){
+    LOG_WARNING << "Cannot reload shader: no source paths stored";
+    return false;
   }
 
-  // create program
-  GLuint shaderObjectID = glCreateProgram();
+  std::vector<char> vertBytes, fragBytes;
+  if(!FileSystem::loadFile(m_VertPath.c_str(), vertBytes)){
+    LOG_ERROR << "Failed to load vertex file at path: " << m_FragPath;
+    return false;
+  }
+  if(!FileSystem::loadFile(m_FragPath.c_str(), fragBytes)){
+    LOG_ERROR << "Failed to load frag file at path: " << m_VertPath;
+    return false;
+  }
 
-  // attach and link program with compiled shaders
-  glAttachShader(shaderObjectID, vert);
-  glAttachShader(shaderObjectID, frag);
-  glLinkProgram(shaderObjectID);
+  // compile shaders
+  GLuint newVert = compileShader(vertBytes.data(), GL_VERTEX_SHADER);
+  GLuint newFrag = compileShader(fragBytes.data(), GL_FRAGMENT_SHADER);
+  if(newVert == 0 || newFrag == 0){
+    LOG_ERROR << "Shader compilation failed!, keeping old shader (if any)";
+    if(newVert) glDeleteShader(newVert);
+    if(newFrag) glDeleteShader(newFrag);
+    return false;
+  }
 
-  // check for linking errors
+  // link new program
+  GLuint newProgram = glCreateProgram();
+  glAttachShader(newProgram, newVert);
+  glAttachShader(newProgram, newFrag);
+  glLinkProgram(newProgram);
+
   int success;
   char infoLog[512];
-  glGetProgramiv(shaderObjectID, GL_LINK_STATUS, &success);
+  glGetProgramiv(newProgram, GL_LINK_STATUS, &success);
   if(!success){
-    glGetProgramInfoLog(shaderObjectID, 512, NULL, infoLog);
+    glGetProgramInfoLog(newProgram, 512, NULL, infoLog);
     LOG_ERROR << "Shader linking failed! infoLog: " << infoLog;
-    return;
+    glDeleteProgram(newProgram);
+    glDeleteShader(newVert);
+    glDeleteShader(newFrag);
+    return false;
   }
 
-  GLint binaryLength = 0;
-  glGetProgramiv(shaderObjectID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
-  bytesSize = (size_t)binaryLength;
+  if(id) glDeleteProgram(id);
+  id = newProgram;
 
   // delete old shaders (they are now linked)
-  glDeleteShader(vert);
-  glDeleteShader(frag);
+  glDeleteShader(newVert);
+  glDeleteShader(newFrag);
 
-  id = shaderObjectID;
+  id = newProgram;
+  return true;
 }
 
 GLuint ShaderData::compileShader(const char* code, unsigned int type){

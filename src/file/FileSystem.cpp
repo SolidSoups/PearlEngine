@@ -19,6 +19,7 @@ bool FileSystem::loadFile(const char *filePath, std::vector<char>& outBytes){
     std::vector<char> bytes(fileSize);
     inFile.read(reinterpret_cast<char*>(bytes.data()), fileSize);
     outBytes = bytes;
+    outBytes.push_back('\0');
   } catch(const std::exception &e){
     LOG_ERROR << "Unexpected error reading file: " << e.what();
     return false;

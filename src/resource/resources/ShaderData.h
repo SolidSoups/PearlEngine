@@ -1,34 +1,36 @@
 #pragma once
 
+#include <string>
+
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
 struct ShaderData {
-  // Prevent copying
-  ShaderData(const ShaderData&) = delete;
-  ShaderData& operator=(const ShaderData&) = delete;
+private:
+  GLuint compileShader(const char *code, unsigned int type);
+  size_t bytesSize = 0;
+  std::string m_VertPath = "";
+  std::string m_FragPath = "";
 
 public:
-  ShaderData(const char* vertFile, const char* fragFile);
+  ShaderData(const std::string &vertPath, const std::string &fragPath);
   ShaderData(GLuint _id) : id(_id) {}
+  ShaderData(const ShaderData &) = delete;
+  ShaderData &operator=(const ShaderData &) = delete;
+  size_t getMemorySize() const { return bytesSize; }
+  bool reload();
 
-  // New method-based API
+public:
   void use();
-  void setVec3(const char* name, const glm::vec3& value);
-  void setVec4(const char* name, const glm::vec4& value);
-  void setBool(const char* name, bool value);
-  void setInt(const char* name, int value);
-  void setFloat(const char* name, float value);
-  void setMatrix4(const char* name, const glm::mat4& value);
+  void setVec3(const char *name, const glm::vec3 &value);
+  void setVec4(const char *name, const glm::vec4 &value);
+  void setBool(const char *name, bool value);
+  void setInt(const char *name, int value);
+  void setFloat(const char *name, float value);
+  void setMatrix4(const char *name, const glm::mat4 &value);
   static void reset();
 
   GLuint id = 0;
-
-  size_t getMemorySize() const { return bytesSize; }
-
-private:
-  GLuint compileShader(const char* code, unsigned int type);
-  size_t bytesSize = 0;
 };
 
 // TODO: Performance Optimization - Uniform Location Caching

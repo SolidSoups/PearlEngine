@@ -242,8 +242,10 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, true);
   } else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
     m_CameraController->Reset();
-  } else if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-  }
+  } else if (glfwGetKey(window, GLFW_KEY_F5) == GLFW_PRESS){
+    LOG_INFO << "Recompiling all shaders!";
+    ServiceLocator::Get<ShaderManager>().recompileAll();
+  } 
 
   ImGuiIO io = ImGui::GetIO();
   if (io.WantCaptureMouse || io.WantCaptureKeyboard)
@@ -253,5 +255,10 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
 void PearlEngine::AddMenuBarItems() {
   MenuRegistry::Get().Register("File/Exit", [this]() {
     glfwSetWindowShouldClose(pwin.GetWindow(), true);
+  });
+
+  MenuRegistry::Get().Register("Tools/Reload Shaders", []() {
+    LOG_INFO << "Recompiling all shaders!";
+    ServiceLocator::Get<ShaderManager>().recompileAll();
   });
 }
