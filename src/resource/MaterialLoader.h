@@ -1,11 +1,11 @@
 #pragma once
 
-struct MaterialData;
+struct Material;
 struct ShaderData;
 
 #include <memory>
 class MaterialLoader {
   
 public:
-  static std::shared_ptr<MaterialData> create(std::shared_ptr<ShaderData> shader);
+  static std::shared_ptr<Material> create(std::shared_ptr<ShaderData> shader);
 };

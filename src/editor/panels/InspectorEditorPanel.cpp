@@ -5,7 +5,7 @@
 #include "MenuRegistry.h"
 
 #include "ImGuiHelpers.h"
-#include "MaterialData.h"
+#include "Material.h"
 #include "ComponentEditorRegistry.h"
 #include "MessageBus.h"
 #include "TransformComponent.h"

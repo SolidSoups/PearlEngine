@@ -1,6 +1,6 @@
 #include "RenderComponentEditor.h"
 
-#include "DefaultResources.h"
+#include "Defaults.h"
 #include "TextureManager.h"
 #include "UserGUI.h"
 #include "imgui.h"
@@ -34,7 +34,7 @@ void RenderComponentEditor::trySetCompTexture(
   // set loaded texture
   if (!comp->material.get())
     comp->material = MaterialLoader::create(
-        ServiceLocator::Get<DefaultResources>().getDefaultShader());
+        Defaults::getDefaultShader());
   comp->material->setTexture(slot, texPtr);
 }
 

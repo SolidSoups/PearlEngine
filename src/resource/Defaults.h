@@ -8,14 +8,14 @@
 #include "ShaderManager.h"
 #include "ServiceLocator.h"
 
-class DefaultResources {
+class Defaults {
 private:
-  std::shared_ptr<ShaderData> m_DefaultShader;
-  std::shared_ptr<TextureData> m_WhiteTexture;
-  std::shared_ptr<TextureData> m_BlackTexture;
+  static std::shared_ptr<ShaderData> m_DefaultShader;
+  static std::shared_ptr<TextureData> m_WhiteTexture;
+  static std::shared_ptr<TextureData> m_BlackTexture;
 
 public:
-  DefaultResources() {
+  static void Init() {
     m_DefaultShader = ServiceLocator::Get<ShaderManager>().load(
         "shaders/vert.glsl", "shaders/frag.glsl");
 
@@ -27,10 +27,13 @@ public:
     unsigned char blackPixel[] = {0, 0, 0, 255};
     m_BlackTexture = std::make_shared<TextureData>(blackPixel, 1, 1, 4, false);
   }
-  std::shared_ptr<ShaderData> getDefaultShader() const {
+  static std::shared_ptr<ShaderData> getDefaultShader() {
     return m_DefaultShader;
   }
-  std::shared_ptr<TextureData> getWhiteTexture() const { return m_WhiteTexture; }
-  std::shared_ptr<TextureData> getBlackTexture() const { return m_BlackTexture; }
-
+  static std::shared_ptr<TextureData> getWhiteTexture() {
+    return m_WhiteTexture;
+  }
+  static std::shared_ptr<TextureData> getBlackTexture() {
+    return m_BlackTexture;
+  }
 };

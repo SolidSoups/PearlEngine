@@ -1,14 +1,18 @@
-#include "MaterialData.h"
-#include "DefaultResources.h"
+#include "Material.h"
+#include "Defaults.h"
 #include "Logger.h"
 #include "ServiceLocator.h"
 
-MaterialData::MaterialData(std::shared_ptr<ShaderData> _shader)
+Material::Material(std::shared_ptr<ShaderData> _shader)
     : shader(_shader) {}
 
-void MaterialData::bind() {
+std::shared_ptr<Material> Material::createDefault(){
+  return std::make_shared<Material>(Defaults::getDefaultShader());
+}
+
+void Material::bind() {
   if (!shader) {
-    LOG_ERROR << "MaterialData::bind: shader is null";
+    LOG_ERROR << "Material::bind: shader is null";
     return;
   }
 
@@ -35,20 +39,19 @@ void MaterialData::bind() {
   }
 
   // Upload all textures
-  auto& defaults = ServiceLocator::Get<DefaultResources>();
   int textureSlot = 0;
 
   auto albedo = textures.find("albedoMap");
   auto albedoTex = (albedo != textures.end() && albedo->second)
                     ? albedo->second
-                    : defaults.getWhiteTexture();
+                    : Defaults::getWhiteTexture();
   albedoTex->bind(textureSlot);
   shader->setInt("albedoMap", textureSlot++);
 
   auto spec = textures.find("specularMap");
   auto specTex = (spec != textures.end() && spec->second)
                     ? spec->second
-                    : defaults.getBlackTexture();
+                    : Defaults::getBlackTexture();
   albedoTex->bind(textureSlot);
   shader->setInt("specularMap", textureSlot++);
 
@@ -58,32 +61,32 @@ void MaterialData::bind() {
   }
 }
 
-void MaterialData::setFloat(const std::string &name, float value) {
+void Material::setFloat(const std::string &name, float value) {
   floats[name] = value;
 }
 
-void MaterialData::setInt(const std::string &name, int value) {
+void Material::setInt(const std::string &name, int value) {
   ints[name] = value;
 }
 
-void MaterialData::setVec3(const std::string &name, const glm::vec3 &value) {
+void Material::setVec3(const std::string &name, const glm::vec3 &value) {
   vec3s[name] = value;
 }
 
-void MaterialData::setVec4(const std::string &name, const glm::vec4 &value) {
+void Material::setVec4(const std::string &name, const glm::vec4 &value) {
   vec4s[name] = value;
 }
 
-void MaterialData::setTexture(const std::string &name,
+void Material::setTexture(const std::string &name,
                               std::shared_ptr<TextureData> texture) {
   textures[name] = texture;
 }
 
-void MaterialData::setMat4(const std::string &name, const glm::mat4 &value) {
+void Material::setMat4(const std::string &name, const glm::mat4 &value) {
   mat4s[name] = value;
 }
 
-bool MaterialData::textureExists(const std::string &name) {
+bool Material::textureExists(const std::string &name) {
   auto it = textures.find(name);
   return it != textures.end() && it->second.get();
 }

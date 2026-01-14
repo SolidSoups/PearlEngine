@@ -1,9 +1,9 @@
 #include "MaterialLoader.h"
 
-#include "MaterialData.h"
+#include "Material.h"
 #include "ShaderData.h"
 
 
-std::shared_ptr<MaterialData> MaterialLoader::create(std::shared_ptr<ShaderData> shader){
-  return std::make_shared<MaterialData>(shader);
+std::shared_ptr<Material> MaterialLoader::create(std::shared_ptr<ShaderData> shader){
+  return std::make_shared<Material>(shader);
 }

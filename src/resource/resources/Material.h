@@ -10,13 +10,16 @@
 #include "ShaderData.h"
 #include "TextureData.h"
 
-struct MaterialData {
+struct Material {
   // Prevent copying
-  MaterialData(const MaterialData&) = delete;
-  MaterialData& operator=(const MaterialData&) = delete;
+  Material(const Material&) = delete;
+  Material& operator=(const Material&) = delete;
 
 public:
-  MaterialData(std::shared_ptr<ShaderData> _shader);
+  Material(std::shared_ptr<ShaderData> _shader);
+
+  // create an empty material with default shader
+  static std::shared_ptr<Material> createDefault();
 
   void bind();
   void setFloat(const std::string& name, float value);

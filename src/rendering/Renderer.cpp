@@ -1,6 +1,6 @@
 #include "Renderer.h"
 #include "Camera.h"
-#include "MaterialData.h"
+#include "Material.h"
 #include "ShaderData.h"
 #include "Mesh.h"
 

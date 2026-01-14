@@ -11,7 +11,7 @@
 #include "ServiceLocator.h"
 #include "UserGUI.h"
 #include "CameraComponent.h"
-#include "DefaultResources.h"
+#include "Defaults.h"
 #include "MemoryEditorPanel.h"
 #include "MenuRegistry.h"
 #include "PearlEngine.h"
@@ -34,7 +34,7 @@
 #include "FileSystemEditorPanel.h"
 
 #include "Logger.h"
-#include "MaterialData.h"
+#include "Material.h"
 #include "TextureData.h"
 
 #include "ShaderManager.h"
@@ -69,7 +69,7 @@ PearlEngine::PearlEngine() {
   ServiceLocator::Provide(new MeshManager);
   ServiceLocator::Provide(new TextureManager);
   ServiceLocator::Provide(new ShaderManager);
-  ServiceLocator::Provide(new DefaultResources);
+  Defaults::Init();
 
   isInitialized = true;
 
@@ -103,7 +103,7 @@ void PearlEngine::Initialize() {
 
   // Create shaders using new loaders
   LOG_INFO << "Setting default shader";
-  auto shader = ServiceLocator::Get<DefaultResources>().getDefaultShader();
+  auto shader = Defaults::getDefaultShader();
 
   // Create materials using new loaders
   LOG_INFO << "setting texture";
