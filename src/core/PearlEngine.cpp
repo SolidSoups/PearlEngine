@@ -1,4 +1,10 @@
-// libResourceSystem.h
+// std
+#include <cmath>
+#include <iostream>
+#include <memory>
+#include <optional>
+
+// lib
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/common.hpp>
@@ -8,24 +14,28 @@
 #include <imgui.h>
 
 // src
-#include "ServiceLocator.h"
-#include "UserGUI.h"
-#include "CameraComponent.h"
-#include "Defaults.h"
-#include "MemoryEditorPanel.h"
-#include "MenuRegistry.h"
 #include "PearlEngine.h"
+#include "AmbientLightEditorPanel.h"
+#include "CameraController.h"
+#include "Project.h"
+#include "UserGUI.h"
+#include "Renderer.h"
+#include "Time.h"
+#include "ServiceLocator.h"
+#include "SelectionWizard.h"
+#include "Defaults.h"
 #include "MessageBus.h"
 #include "MessageQueue.h"
-#include "Project.h"
-#include "Renderer.h"
-#include "SelectionWizard.h"
-#include "Time.h"
+#include "CameraComponent.h"
 
 #include "MeshManager.h"
 #include "TextureManager.h"
+#include "ShaderManager.h"
+#include "MaterialLoader.h"
 
-// editor panels
+// editor
+#include "MenuRegistry.h"
+#include "MemoryEditorPanel.h"
 #include "InspectorEditorPanel.h"
 #include "LoggerEditorPanel.h"
 #include "SceneHierarchyEditorPanel.h"
@@ -37,15 +47,7 @@
 #include "Material.h"
 #include "TextureData.h"
 
-#include "ShaderManager.h"
-#include "TextureManager.h"
-#include "MaterialLoader.h"
 
-// std
-#include <cmath>
-#include <iostream>
-#include <memory>
-#include <optional>
 
 PearlEngine::PearlEngine() {
   if (!pwin.IsInitialized()) {
@@ -59,6 +61,11 @@ PearlEngine::PearlEngine() {
   m_MessageBus = std::make_unique<MessageBus>();
   m_MessageQueue = std::make_unique<MessageQueue>();
 
+  // Create resource managers
+  m_MeshManager = std::make_unique<MeshManager>();
+  m_TextureManager = std::make_unique<TextureManager>();
+  m_ShaderManager = std::make_unique<ShaderManager>();
+
   // Register all services with static ServiceLocator
   ServiceLocator::Provide(&m_Scene);
   ServiceLocator::Provide(&m_Camera);
@@ -66,9 +73,9 @@ PearlEngine::PearlEngine() {
   ServiceLocator::Provide(&pwin);
   ServiceLocator::Provide(m_MessageBus.get());
   ServiceLocator::Provide(m_MessageQueue.get());
-  ServiceLocator::Provide(new MeshManager);
-  ServiceLocator::Provide(new TextureManager);
-  ServiceLocator::Provide(new ShaderManager);
+  ServiceLocator::Provide(m_MeshManager.get());
+  ServiceLocator::Provide(m_TextureManager.get());
+  ServiceLocator::Provide(m_ShaderManager.get());
   Defaults::Init();
 
   isInitialized = true;
@@ -78,7 +85,7 @@ PearlEngine::PearlEngine() {
 
 PearlEngine::~PearlEngine() {
   LOG_INFO << "Engine deconstructing";
-  ServiceLocator::Reset();
+  ServiceLocator::Destroy();
   UserGUI::Destroy();
   glfwTerminate();
 }
@@ -141,6 +148,7 @@ void PearlEngine::Initialize() {
   m_GUIContext.AddPanel<LoggerEditorPanel>();
   m_GUIContext.AddPanel<FileSystemEditorPanel>();
   m_GUIContext.AddPanel<MemoryEditorPanel>();
+  m_GUIContext.AddPanel<AmbientLightEditorPanel>();
   AddMenuBarItems();
 
   // Setup camera aspect ratio
@@ -244,7 +252,7 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
     m_CameraController->Reset();
   } else if (glfwGetKey(window, GLFW_KEY_F5) == GLFW_PRESS){
     LOG_INFO << "Recompiling all shaders!";
-    ServiceLocator::Get<ShaderManager>().recompileAll();
+    m_ShaderManager->recompileAll();
   } 
 
   ImGuiIO io = ImGui::GetIO();
@@ -257,8 +265,8 @@ void PearlEngine::AddMenuBarItems() {
     glfwSetWindowShouldClose(pwin.GetWindow(), true);
   });
 
-  MenuRegistry::Get().Register("Tools/Reload Shaders", []() {
+  MenuRegistry::Get().Register("Tools/Reload Shaders", [this]() {
     LOG_INFO << "Recompiling all shaders!";
-    ServiceLocator::Get<ShaderManager>().recompileAll();
+    m_ShaderManager->recompileAll();
   });
 }

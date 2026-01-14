@@ -11,7 +11,7 @@
 #include "ServiceLocator.h"
 #include "ImGuiHelpers.h"
 
-void RenderComponentEditor::OnDrawComponent(Component *target) {
+void RenderComponentEditor::OnDrawComponent(IComponent *target) {
   RenderComponent *renderComp = dynamic_cast<RenderComponent *>(target);
   if (!renderComp)
     return;

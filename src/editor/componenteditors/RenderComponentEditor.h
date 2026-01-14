@@ -8,7 +8,7 @@
 
 class RenderComponentEditor : public ComponentEditor{
 public:
-  void OnDrawComponent(Component* target) override;
+  void OnDrawComponent(IComponent* target) override;
 
 private:
   void DrawTexture(RenderComponent* comp);

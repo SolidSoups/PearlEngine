@@ -4,11 +4,11 @@ in vec2 texCoord;
 in vec3 normal;
 in vec3 fragPosition;
 in vec3 viewDirection;
+in vec4 ambientLight;
 
 uniform sampler2D albedoMap;
 uniform sampler2D specularMap;
 
-uniform vec4 light_ambient = vec4(0.2, 0.2, 0.2, 1.0);
 uniform vec4 light_diffuse = vec4(1.0, 0.9, 0.8, 1.0);
 uniform vec4 light_specular = vec4(0.9, 0.8, 0.7, 1.0);
 uniform vec3 light_position = vec3(10.0, 25.0, 15.0);
@@ -27,7 +27,7 @@ void main() {
   float specularIntensity = texture(specularMap, texCoord).r;
 
   // ambient component
-  FragColor.xyz += (materialAmbient * light_ambient * texColor).xyz;
+  FragColor.xyz += (materialAmbient * ambientLight * texColor).xyz;
 
   // normalize interpolated normal vector
   vec3 normalizedNormal = normalize(normal);

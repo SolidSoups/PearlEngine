@@ -6,7 +6,7 @@
 
 class CameraComponentEditor : public ComponentEditor{
 public:
-  void OnDrawComponent(Component* target) override;
+  void OnDrawComponent(IComponent* target) override;
 };
 
 STATIC_REGISTER_COMPONENT_EDITOR(CameraComponent, CameraComponentEditor)

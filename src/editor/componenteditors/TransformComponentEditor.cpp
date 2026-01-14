@@ -2,7 +2,7 @@
 #include "Logger.h"
 #include "imgui.h"
 
-void TransformComponentEditor::OnDrawComponent(Component* target){
+void TransformComponentEditor::OnDrawComponent(IComponent* target){
   constexpr float labelWidth = 80.f;
   TransformComponent* transform = dynamic_cast<TransformComponent*>(target); 
 

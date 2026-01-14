@@ -3,7 +3,7 @@
 #include "imgui.h"
 #include "Scene.h"
 
-void CameraComponentEditor::OnDrawComponent(Component* target){
+void CameraComponentEditor::OnDrawComponent(IComponent* target){
   constexpr float labelWidth = 140.f;
 
   if(CameraComponent* cmp = dynamic_cast<CameraComponent*>(target)){

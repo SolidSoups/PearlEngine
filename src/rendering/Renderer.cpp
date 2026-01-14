@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "AmbientLightData.h"
 #include "Camera.h"
 #include "Material.h"
 #include "ShaderData.h"
@@ -6,12 +7,14 @@
 
 Camera *Renderer::s_ActiveCamera = nullptr;
 
+
 void Renderer::BeginScene(Camera &camera) { s_ActiveCamera = &camera; }
 
 void Renderer::EndScene() { s_ActiveCamera = nullptr; }
 
 void Renderer::Submit(const RenderComponent &renderComp,
-                      const TransformComponent &transformComp) {
+                      const TransformComponent &transformComp,
+                      const AmbientLightData& ambientData) {
   auto *cameraTarget = s_ActiveCamera->GetCurrentTarget();
   if (!cameraTarget)
     return;
@@ -30,6 +33,8 @@ void Renderer::Submit(const RenderComponent &renderComp,
   shader->setMatrix4("view", cameraTarget->GetViewMatrix());
   shader->setMatrix4("projection", cameraTarget->GetProjectionMatrix());
   shader->setVec3("cameraPosition", cameraTarget->position);
+  shader->setVec4("ambientColor", ambientData.color);
+  shader->setFloat("ambientIntensity", ambientData.intensity);
 
   // Render the mesh
   if (renderComp.mesh) {

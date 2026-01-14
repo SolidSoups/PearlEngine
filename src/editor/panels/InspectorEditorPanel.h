@@ -19,7 +19,7 @@ public:
 
 private:
   void DrawComponents(GameObject* go);
-  void DrawComp(Component* comp);
+  void DrawComp(IComponent* comp);
   void DrawHeader(GameObject* go);
 
 private:

@@ -19,6 +19,7 @@ template <typename T> class ServiceHandle : public IServiceHandle {
     }
 
     ServiceHandleState const GetState() const { return m_State; }
+  bool const IsReady() const { return m_State == Ready; }
 
   public:
     void ProvideService(void *service) override {

@@ -9,6 +9,7 @@
 
 #include "IServiceHandle.h"
 
+// NEVER, ABSOLUTELY NEVER ALLOWED TO OWN DATA
 class ServiceLocator {
 public:
   template <typename T> static void Provide(T *service) {
@@ -62,7 +63,7 @@ public:
     instance.m_Requests[typeid(T)].push_back(handle);
   }
 
-  static void Reset() {
+  static void Destroy() {
     auto& instance = GetInstance();
     instance.m_Services.clear();
     instance.m_Requests.clear();

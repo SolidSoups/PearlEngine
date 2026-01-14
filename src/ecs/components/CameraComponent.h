@@ -3,7 +3,7 @@
 #include "CameraData.h"
 #include "Component.h"
 
-struct CameraComponent : Component {
+struct CameraComponent : public IComponent {
   COMPONENT_CLASS(CameraComponent)
 
 public:

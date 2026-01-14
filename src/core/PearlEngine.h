@@ -3,15 +3,18 @@
 #include "GUIContext.h"
 #include "PearlWindow.h"
 #include "Camera.h"
-#include "CameraController.h"
-#include "FrameBuffer.h"
 #include "Scene.h"
-#include "ShaderData.h"
-#include "ServiceLocator.h"
-#include "ViewportEditorPanel.h"
 #include "SelectionWizard.h"
 #include "MessageBus.h"
 #include "MessageQueue.h"
+
+class Framebuffer;
+class ViewportEditorPanel;
+class CameraController;
+
+class MeshManager;
+class TextureManager;
+class ShaderManager;
 
 #include <memory>
 
@@ -44,6 +47,10 @@ private:
   std::unique_ptr<SelectionWizard> m_SelectionWizard;
   std::unique_ptr<MessageBus> m_MessageBus;
   std::unique_ptr<MessageQueue> m_MessageQueue;
+
+  std::unique_ptr<MeshManager> m_MeshManager;
+  std::unique_ptr<TextureManager> m_TextureManager;
+  std::unique_ptr<ShaderManager> m_ShaderManager;
 
 public:
   PearlWindow pwin{1800, 1000, "PearlEngine"};

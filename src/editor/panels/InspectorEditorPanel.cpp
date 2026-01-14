@@ -12,6 +12,7 @@
 #include "GameObject.h"
 #include "SelectionWizard.h"
 #include "RenderComponent.h"
+#include "TransformComponentEditor.h"
 #include "imgui.h"
 
 #include <iostream>
@@ -86,19 +87,21 @@ void InspectorEditorPanel::DrawComponents(GameObject *go) {
     ImGui::OpenPopup("##SearchablePopup_Add_Component");
   }
 
-  std::vector<std::string> compChoices = {"Render Component", "Something else",
-                                          "Physics Component"};
+  std::vector<std::string> compChoices = {"Render Component", "Ambient Light",
+                                          "Transform"};
   std::string selected = "";
   if (SearchablePopup<std::string>(
           "Add_Component", "Add Component", compChoices,
           [](std::string choice) { return choice; }, selected)) {
     if (selected == "Render Component") {
       go->AddComponent<RenderComponent>();
+    } else if (selected == "Transform"){
+      go->AddComponent<TransformComponent>();
     }
   }
 }
 
-void InspectorEditorPanel::DrawComp(Component *comp) {
+void InspectorEditorPanel::DrawComp(IComponent *comp) {
   if(!comp) return;
 
   ComponentEditor *editor =

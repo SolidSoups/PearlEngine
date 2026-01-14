@@ -62,7 +62,6 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
   glfwMakeContextCurrent(window);
   isInitialized = true;
   LOG_INFO << "Succesfully initialized window";
-  LOG_INFO << "r_Camera state: " << +r_Camera.GetState();
 }
 
 PearlWindow::~PearlWindow(){

@@ -6,6 +6,7 @@
 #include <vector>
 #include "CameraComponent.h"
 #include "GameObject.h"
+#include "AmbientLightData.h"
 
 class Camera;
 
@@ -38,6 +39,10 @@ public:
   // Query
   inline size_t GetObjectCount() const { return m_GameObjects.size(); }
   inline const std::vector<std::unique_ptr<GameObject>>& GetGameObjects() const { return m_GameObjects; };
+
+  // Scene-level lighting
+  AmbientLightData ambientLight;
+
 private:
   std::vector<std::unique_ptr<GameObject>> m_GameObjects;
   EntityID m_NextObjectID = 1;

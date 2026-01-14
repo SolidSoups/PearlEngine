@@ -11,6 +11,6 @@ public:
 
   virtual void OnInit(){}
   // will be called inside an imgui child window
-  virtual void OnDrawComponent(Component* target) = 0;
+  virtual void OnDrawComponent(IComponent* target) = 0;
   virtual const int GetSortOrder() const { return 0; }
 };

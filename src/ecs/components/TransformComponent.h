@@ -5,7 +5,7 @@
 #include "Component.h"
 #include "ComponentFlags.h"
 
-struct TransformComponent : Component{
+struct TransformComponent : public IComponent{
   COMPONENT_CLASS(TransformComponent)
 
 public:

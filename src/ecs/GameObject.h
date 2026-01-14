@@ -10,7 +10,7 @@
 
 class GameObject {
   EntityID m_ID;
-  std::unordered_map<std::type_index, std::unique_ptr<Component>> m_Components;
+  std::unordered_map<std::type_index, std::unique_ptr<IComponent>> m_Components;
 
 public:
   std::string m_Name;

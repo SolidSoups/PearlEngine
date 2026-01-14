@@ -27,7 +27,7 @@ void Scene::Render(Camera& camera){
     auto renderComp = object->GetComponent<RenderComponent>();
 
     if(transform && renderComp)
-      Renderer::Submit(*renderComp, *transform);
+      Renderer::Submit(*renderComp, *transform, ambientLight);
   }
   Renderer::EndScene();
 }

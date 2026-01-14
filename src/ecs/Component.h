@@ -6,9 +6,9 @@
 
 class GameObject;
 
-class Component{
+class IComponent{
 public:
-  virtual ~Component() = default;
+  virtual ~IComponent() = default;
   virtual const char* GetComponentName() const = 0;
   virtual std::type_index GetTypeIndex() const = 0;
   virtual ComponentFlags GetCompFlags() const {

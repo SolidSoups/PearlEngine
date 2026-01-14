@@ -5,7 +5,7 @@
 #include "Mesh.h"
 
 // thats it
-struct RenderComponent : Component{
+struct RenderComponent : public IComponent{
   COMPONENT_CLASS(RenderComponent)
 
 public:
