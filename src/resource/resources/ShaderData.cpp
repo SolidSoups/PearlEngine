@@ -48,6 +48,7 @@ GLuint ShaderData::compileShader(const char* code, unsigned int type){
   GLuint shaderID;
   int success;
   char infoLog[512];
+  std::string typeStr = (type == GL_VERTEX_SHADER) ? "vertex": "frag";
 
   shaderID = glCreateShader(type);
   glShaderSource(shaderID, 1, &code, NULL);
@@ -57,9 +58,10 @@ GLuint ShaderData::compileShader(const char* code, unsigned int type){
   glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
   if(!success){
     glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-    LOG_ERROR << "Compiling shader ("<< type << ") failed! infoLog: " << infoLog;
+    LOG_ERROR << "Compiling shader ("<< typeStr  << ") failed! infoLog: " << infoLog;
     return 0;
   }
+  LOG_INFO << "Compiling shader (" << typeStr << ") succeded!";
 
   return shaderID;
 }
