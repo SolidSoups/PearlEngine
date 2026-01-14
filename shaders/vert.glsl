@@ -1,28 +1,27 @@
 #version 330 core
-layout (location=0) in vec3 aPosition; // the position coordinates
-layout (location=1) in vec2 aTexCoord; // the uv coordinates
-layout (location=2) in vec3 aNormal; // the normal coordinates 
+layout (location=0) in vec3 aPosition; // vertex position in model space
+layout (location=1) in vec2 aTexCoord; // texture coordinates
+layout (location=2) in vec3 aNormal; // vertex normal in model space
 
-// out vec3 FragColor; // specify a color output to the fragment shader
-out vec2 TexCoord;
-out vec3 NormalCoord;
-out vec3 position;
-out vec3 cameraDir;
+out vec2 texCoord;
+out vec3 normal;
+out vec3 fragPosition;
+out vec3 viewDirection;
 
 uniform mat4 transform;
 uniform mat4 projection;
 uniform mat4 view;
-uniform vec4 camera;
+uniform vec3 cameraPosition;
 
 void main(){
-  mat4 mvp = projection * view * transform; 
+  mat4 mvp = projection * view * transform;
   gl_Position = mvp * vec4(aPosition, 1.0);
-  position = (transform * vec4(aPosition, 1)).xyz;
+  fragPosition = (transform * vec4(aPosition, 1.0)).xyz;
 
-  // pass along
-  TexCoord = aTexCoord;
-  NormalCoord = aNormal;
+  // pass texture coordinates and normals to fragment shader
+  texCoord = aTexCoord;
+  normal = aNormal;
 
-  // calculate vector to eye from vertex
-  cameraDir = normalize((camera.xyz - position.xyz));
+  // calculate direction from fragment to camera
+  viewDirection = normalize(cameraPosition - fragPosition);
 }

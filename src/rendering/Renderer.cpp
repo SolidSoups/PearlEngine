@@ -26,12 +26,10 @@ void Renderer::Submit(const RenderComponent &renderComp,
   if (!shader)
     return;
 
-  glm::vec4 cameraPos = glm::vec4(cameraTarget->position, 1.0f);
-
   shader->setMatrix4("transform", transformComp.GetModelMatrix());
   shader->setMatrix4("view", cameraTarget->GetViewMatrix());
   shader->setMatrix4("projection", cameraTarget->GetProjectionMatrix());
-  shader->setVec4("camera", cameraPos);
+  shader->setVec3("cameraPosition", cameraTarget->position);
 
   // Render the mesh
   if (renderComp.mesh) {
