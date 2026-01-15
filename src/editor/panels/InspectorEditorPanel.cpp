@@ -8,6 +8,7 @@
 #include "Material.h"
 #include "ComponentEditorRegistry.h"
 #include "MessageBus.h"
+#include "PointLightComponent.h"
 #include "TransformComponent.h"
 #include "GameObject.h"
 #include "SelectionWizard.h"
@@ -88,7 +89,7 @@ void InspectorEditorPanel::DrawComponents(GameObject *go) {
   }
 
   std::vector<std::string> compChoices = {"Render Component", "Ambient Light",
-                                          "Transform"};
+                                          "Transform", "Point Light"};
   std::string selected = "";
   if (SearchablePopup<std::string>(
           "Add_Component", "Add Component", compChoices,
@@ -97,6 +98,8 @@ void InspectorEditorPanel::DrawComponents(GameObject *go) {
       go->AddComponent<RenderComponent>();
     } else if (selected == "Transform"){
       go->AddComponent<TransformComponent>();
+    } else if (selected == "Point Light"){
+      go->AddComponent<PointLightComponent>();
     }
   }
 }

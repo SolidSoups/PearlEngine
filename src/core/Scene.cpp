@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 
+#include "PointLightComponent.h"
 #include "RenderComponent.h"
 #include "Renderer.h"
 
@@ -21,13 +22,17 @@ void Scene::Update(){
 }
 
 void Scene::Render(Camera& camera){
-  Renderer::BeginScene(camera);
+
+  // pass 1, upload generic data
+  Renderer::BeginScene(camera, ambientLight);
+  Renderer::SubmitLights(GetPointLights());
+
   for(auto& object : m_GameObjects){
     auto transform = object->GetComponent<TransformComponent>();
     auto renderComp = object->GetComponent<RenderComponent>();
 
     if(transform && renderComp)
-      Renderer::Submit(*renderComp, *transform, ambientLight);
+      Renderer::Submit(*renderComp, *transform);
   }
   Renderer::EndScene();
 }
@@ -45,4 +50,15 @@ void Scene::SetActiveCamera(CameraComponent* camera) {
   if(m_ActiveCamera){
     m_ActiveCamera->isMainCamera = true;
   }
+}
+
+std::vector<PointLightComponent*> Scene::GetPointLights() const {
+  std::vector<PointLightComponent*> lights;
+  for(auto& object : m_GameObjects){
+    auto light = object->GetComponent<PointLightComponent>();
+    if(light){
+      lights.push_back(light);
+    }
+  }
+  return lights;
 }

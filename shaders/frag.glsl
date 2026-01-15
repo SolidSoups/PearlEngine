@@ -9,6 +9,20 @@ in vec4 ambientLight;
 uniform sampler2D albedoMap;
 uniform sampler2D specularMap;
 
+struct PointLight {
+  vec3 position;
+  vec3 color;
+  float intensity;
+  float range;
+  float constant;
+  float linear;
+  float quadratic;
+};
+
+#define MAX_POINT_LIGHTS 16
+uniform int numPointLights;
+uniform PointLight pointLights[MAX_POINT_LIGHTS];
+
 uniform vec4 light_diffuse = vec4(1.0, 0.9, 0.8, 1.0);
 uniform vec4 light_specular = vec4(0.9, 0.8, 0.7, 1.0);
 uniform vec3 light_position = vec3(10.0, 25.0, 15.0);
@@ -21,38 +35,60 @@ uniform int materialShininess = 8;
 
 out vec4 FragColor;
 
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 texColor, float specularIntensity) {
+  vec3 lightDir = normalize(light.position - fragPos);
+  float distance = length(light.position - fragPos);
+
+  // check if fragment is within range
+  if (distance > light.range) {
+    return vec3(0.0);
+  }
+
+  // Attenuation
+  float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * distance * distance);
+
+  // Diffuse
+  float diffuseIntensity = max(dot(lightDir, normal), 0.0);
+  vec3 diffuse = diffuseIntensity * light.color * light.intensity * materialDiffuse.xyz * texColor.xyz;
+
+  // Specular (Blinn-Phong)
+  vec3 specular = vec3(0.0);
+  if (diffuseIntensity > 0.0) {
+    vec3 halfVector = normalize(lightDir + viewDir);
+    float specularBase = max(dot(halfVector, normal), 0.0);
+
+    float specularPower = specularBase;
+    for (int i = 0; i < materialShininess; ++i) {
+      specularPower *= specularBase;
+    }
+
+    specular = specularPower * light.color * light.intensity * materialSpecular.xyz * specularIntensity;
+  }
+
+  return (diffuse + specular) * attenuation;
+}
+
 void main() {
   vec4 texColor = texture(albedoMap, texCoord);
-  FragColor = vec4(0.0, 0.0, 0.0, texColor.a);
   float specularIntensity = texture(specularMap, texCoord).r;
+
+  // start with ambient
+  FragColor = vec4((materialAmbient * ambientLight * texColor).xyz, texColor.a);
+
+  // normalize interpolated normal
+  vec3 normalizedNormal = normalize(normal);
 
   // ambient component
   FragColor.xyz += (materialAmbient * ambientLight * texColor).xyz;
 
-  // normalize interpolated normal vector
-  vec3 normalizedNormal = normalize(normal);
-
-  // direction from fragment to light
-  vec3 lightDirection = normalize(light_position - fragPosition);
-
-  // diffuse component
-  float diffuseIntensity = max(dot(lightDirection, normalizedNormal), 0.0);
-  if (diffuseIntensity > 0.0) {
-    vec3 diffuse = diffuseIntensity * light_diffuse.xyz * materialDiffuse.xyz * texColor.xyz;
-    float distance = length(light_position - fragPosition);
-
-    float attenuation = 1.0 / (light_attenuation.x + light_attenuation.y * distance + light_attenuation.z * pow(distance, 2.0));
-    FragColor.xyz += diffuse * attenuation;
-
-    // specular component (Blinn-Phong)
-    vec3 halfVector = normalize(lightDirection + viewDirection);
-    float specularBase = max(dot(halfVector, normalizedNormal), 0.0);
-
-    float specularPower = specularBase;
-    for(int i = 0; i < materialShininess; ++i){
-      specularPower *= specularBase;
-    }
-
-    FragColor.xyz += specularPower * light_specular.xyz * attenuation * materialSpecular.xyz * specularIntensity;
+  for (int i = 0; i < numPointLights && i < MAX_POINT_LIGHTS; i++) {
+    FragColor.xyz += CalculatePointLight(
+        pointLights[i],
+        normalizedNormal,
+        fragPosition,
+        viewDirection,
+        texColor.xyz,
+        specularIntensity
+      );
   }
 }
