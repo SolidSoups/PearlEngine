@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "TextureData.h"
+#include "TextureConfig.h"
 
 class TextureManager {
 private:
@@ -23,5 +24,5 @@ public:
   }
 
 public:
-  std::shared_ptr<TextureData> load(const char* path, bool genMipmaps = true);
+  std::shared_ptr<TextureData> load(const char* path, const TextureConfig& config = TextureConfig());
 };

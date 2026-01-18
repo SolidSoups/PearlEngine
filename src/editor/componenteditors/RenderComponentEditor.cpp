@@ -19,7 +19,13 @@ void RenderComponentEditor::OnDrawComponent(IComponent *target) {
   bool openMeshPopup = false, openMatPopup = false;
   float labelWidth = 180.f;
 
-  DrawTexture(renderComp);
+  textureCreator.renderImGui();
+  if(textureCreator.isDirty()){
+    // set texture
+    auto newTexture = textureCreator.create();
+    if(newTexture)
+      renderComp->material->setTexture("albedoMap", newTexture);
+  }
   DrawMesh(renderComp);
 
   // draw mesh section

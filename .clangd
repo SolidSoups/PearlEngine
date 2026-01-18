@@ -3,15 +3,11 @@ CompileFlags:
   Remove: []
 
 Index:
-  Background: Build  # Re-enabled with strict limits (no CLI --background-index)
+  Background: Skip  # DISABLED - was causing memory death spiral
   StandardLibrary: No  # Don't index standard library to save memory
-  # Only index src/ directory
-  Include:
-    - "src/.*"
-  Exclude:
-    - "external/.*"
-    - "build/.*"
-    - ".cache/.*"
+
+# Note: PathExclude not needed with Background: Skip
+# Files are only analyzed when opened, not indexed in bulk
 
 Diagnostics:
   ClangTidy:

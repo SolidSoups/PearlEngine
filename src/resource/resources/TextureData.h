@@ -6,15 +6,14 @@
 #include <string>
 #include <vector>
 
+#include "TextureConfig.h"
+
 struct TextureData {
-  // Prevent copying
-  TextureData(const TextureData&) = delete;
-  TextureData& operator=(const TextureData&) = delete;
+  TextureData(unsigned char *data, uint32_t width, uint32_t height,
+              uint32_t channels, const TextureConfig& config = TextureConfig());
+  TextureData(const TextureData &) = delete;
+  TextureData &operator=(const TextureData &) = delete;
 
-public:
-  TextureData(unsigned char* data, uint32_t width, uint32_t height, uint32_t channels, bool genMipMaps=true);
-
-  // New method-based API
   void bind(unsigned int slot);
   static void unbind();
 
@@ -22,6 +21,6 @@ public:
   uint32_t height;
   uint32_t channels;
 
-  size_t getMemorySize() const { return width * height * channels;}
+  size_t getMemorySize() const { return width * height * channels; }
   GLuint id = 0;
 };

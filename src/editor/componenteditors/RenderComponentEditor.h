@@ -2,6 +2,7 @@
 
 #include "ComponentEditor.h"
 #include "ComponentEditorRegistry.h"
+#include "TextureCreator.h"
 #include "TextureData.h"
 #include "RenderComponent.h"
 
@@ -15,6 +16,8 @@ private:
   void DrawMesh(RenderComponent* comp); 
 
   void trySetCompTexture(RenderComponent* comp, const std::string& slot, std::shared_ptr<TextureData> texture);
+
+  TextureCreator textureCreator;
 };
 
 STATIC_REGISTER_COMPONENT_EDITOR(RenderComponent, RenderComponentEditor)

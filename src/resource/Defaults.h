@@ -19,13 +19,13 @@ public:
     m_DefaultShader = ServiceLocator::Get<ShaderManager>().load(
         "shaders/vert.glsl", "shaders/frag.glsl");
 
-    // create default white texture
+    // Create black and white textures
     unsigned char whitePixel[] = {255, 255, 255, 255};
-    m_WhiteTexture = std::make_shared<TextureData>(whitePixel, 1, 1, 4, false);
-
-    // create default black texture
     unsigned char blackPixel[] = {0, 0, 0, 255};
-    m_BlackTexture = std::make_shared<TextureData>(blackPixel, 1, 1, 4, false);
+    TextureConfig config;
+    config.generateMipMaps = false;
+    m_WhiteTexture = std::make_shared<TextureData>(whitePixel, 1, 1, 4, config);
+    m_BlackTexture = std::make_shared<TextureData>(blackPixel, 1, 1, 4, config);
   }
   static std::shared_ptr<ShaderData> getDefaultShader() {
     return m_DefaultShader;
