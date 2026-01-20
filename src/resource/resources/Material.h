@@ -21,7 +21,7 @@ public:
   // create an empty material with default shader
   static std::shared_ptr<Material> createDefault();
 
-  void bind();
+  void bind(std::shared_ptr<ShaderData> overrideShader = nullptr);
   void setFloat(const std::string& name, float value);
   void setInt(const std::string& name, int value);
   void setVec3(const std::string& name, const glm::vec3& value);

@@ -17,7 +17,8 @@ private:
 
   void trySetCompTexture(RenderComponent* comp, const std::string& slot, std::shared_ptr<TextureData> texture);
 
-  TextureCreator textureCreator;
+  TextureCreator m_AlbedoTexture;
+  TextureCreator m_SpecTexture;
 };
 
 STATIC_REGISTER_COMPONENT_EDITOR(RenderComponent, RenderComponentEditor)

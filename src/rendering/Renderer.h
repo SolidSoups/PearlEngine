@@ -20,4 +20,10 @@ private:
   static Camera* s_ActiveCamera;
   static AmbientLightData m_AmbientData;
   static std::vector<PointLightComponent*> m_PointLights;
+  static bool m_bGeometryPassEnabled; 
+  static std::shared_ptr<ShaderData> m_NextShader;
+
+public:
+  static void SetGeometryPassEnabled(bool value);
+  static void SetNextShader(std::shared_ptr<ShaderData> shader);
 };

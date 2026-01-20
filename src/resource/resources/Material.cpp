@@ -10,54 +10,55 @@ std::shared_ptr<Material> Material::createDefault(){
   return std::make_shared<Material>(Defaults::getDefaultShader());
 }
 
-void Material::bind() {
+void Material::bind(std::shared_ptr<ShaderData> overrideShader) {
   if (!shader) {
     LOG_ERROR << "Material::bind: shader is null";
     return;
   }
 
-  shader->use();
+  auto activeShader = overrideShader ? overrideShader : shader;
+  activeShader->use();
 
   // Upload all ints
   for (const auto &[name, value] : ints) {
-    shader->setInt(name.c_str(), value);
+    activeShader->setInt(name.c_str(), value);
   }
 
   // Upload all floats
   for (const auto &[name, value] : floats) {
-    shader->setFloat(name.c_str(), value);
+    activeShader->setFloat(name.c_str(), value);
   }
 
   // Upload all vec3s
   for (const auto &[name, value] : vec3s) {
-    shader->setVec3(name.c_str(), value);
+    activeShader->setVec3(name.c_str(), value);
   }
 
   // Upload all vec4s
   for (const auto &[name, value] : vec4s) {
-    shader->setVec4(name.c_str(), value);
+    activeShader->setVec4(name.c_str(), value);
   }
 
   // Upload all textures
   int textureSlot = 0;
 
-  auto albedo = textures.find("albedoMap");
+  auto albedo = textures.find("texture_diffuse1");
   auto albedoTex = (albedo != textures.end() && albedo->second)
                     ? albedo->second
                     : Defaults::getWhiteTexture();
   albedoTex->bind(textureSlot);
-  shader->setInt("albedoMap", textureSlot++);
+  activeShader->setInt("texture_diffuse1", textureSlot++);
 
-  auto spec = textures.find("specularMap");
+  auto spec = textures.find("texture_specular1");
   auto specTex = (spec != textures.end() && spec->second)
                     ? spec->second
                     : Defaults::getBlackTexture();
   albedoTex->bind(textureSlot);
-  shader->setInt("specularMap", textureSlot++);
+  activeShader->setInt("texture_specular1", textureSlot++);
 
   // Upload all matrixes
   for (const auto &[name, matrix4] : mat4s) {
-    shader->setMatrix4(name.c_str(), matrix4);
+    activeShader->setMatrix4(name.c_str(), matrix4);
   }
 }
 

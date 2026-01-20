@@ -16,7 +16,7 @@ class TextureCreator {
   bool b_isDirty = false;
 
 public:
-  void renderImGui();
+  void renderImGui(const char* id);
   bool isDirty() const { return b_isDirty; }
   std::shared_ptr<TextureData> create();
 };

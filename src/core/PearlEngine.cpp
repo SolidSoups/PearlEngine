@@ -27,6 +27,7 @@
 #include "MessageBus.h"
 #include "MessageQueue.h"
 #include "CameraComponent.h"
+#include "Renderer.h"
 
 #include "MeshManager.h"
 #include "TextureManager.h"
@@ -46,8 +47,6 @@
 #include "Logger.h"
 #include "Material.h"
 #include "TextureData.h"
-
-
 
 PearlEngine::PearlEngine() {
   if (!pwin.IsInitialized()) {
@@ -102,27 +101,33 @@ void PearlEngine::Initialize() {
 
   // Load textures using new loaders
   LOG_INFO << "loading textures";
-  if(!ServiceLocator::IsReady<TextureManager>()){
+  if (!ServiceLocator::IsReady<TextureManager>()) {
     LOG_ERROR << "TextureManager is not ready!";
   }
-  auto sunshineTexture = ServiceLocator::Get<TextureManager>().load("assets/sunshine.png");
-  auto pearlTexture = ServiceLocator::Get<TextureManager>().load("assets/pearl.png");
+  auto sunshineTexture =
+      ServiceLocator::Get<TextureManager>().load("assets/sunshine.png");
+  auto pearlTexture =
+      ServiceLocator::Get<TextureManager>().load("assets/pearl.png");
 
   // Create shaders using new loaders
   LOG_INFO << "Setting default shader";
   auto shader = Defaults::getDefaultShader();
+
+  // create shaders
+  m_GeometryShader = m_ShaderManager->load("shaders/geometryVert.glsl", "shaders/geometryFrag.glsl");
+  m_DisplayShader = m_ShaderManager->load("shaders/displayVert.glsl", "shaders/displayFrag.glsl");
 
   // Create materials using new loaders
   LOG_INFO << "setting texture";
   MaterialLoader matLoader;
   auto sunMaterial = matLoader.create(shader);
   if (sunMaterial && sunshineTexture) {
-      sunMaterial->setTexture("albedoMap", sunshineTexture);
+    sunMaterial->setTexture("albedoMap", sunshineTexture);
   }
 
   auto pearlMaterial = matLoader.create(shader);
   if (pearlMaterial && pearlTexture) {
-      pearlMaterial->setTexture("albedoMap", pearlTexture);
+    pearlMaterial->setTexture("albedoMap", pearlTexture);
   }
 
   // create the main camera
@@ -131,7 +136,6 @@ void PearlEngine::Initialize() {
   cameraGO->AddComponent<TransformComponent>(cmCmp->cameraData.position);
   m_Scene.SetActiveCamera(cmCmp);
 
-
   auto go1 = m_Scene.CreateGameObject();
   go1->AddComponent<TransformComponent>();
   go1->AddComponent<RenderComponent>();
@@ -139,6 +143,25 @@ void PearlEngine::Initialize() {
   // Create viewport framebuffer
   m_ViewportFramebuffer =
       std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
+
+  // initialize g buffer
+  m_GBuffer = std::make_unique<GBuffer>(m_ViewportSize.x, m_ViewportSize.y);
+  Renderer::SetGeometryPassEnabled(true);
+
+  // create the fullscreen quad
+  std::vector<float> quadVertices = {
+      // positions        // uv       // normals
+      -1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // top-left
+      -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-left
+      1.0f,  -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-right
+      1.0f,  1.0f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  // top-right
+  };
+
+  std::vector<unsigned int> quadIndices = {
+      0, 1, 2, // first triangle
+      0, 2, 3  // second triangle
+  };
+  m_FullscreenQuad = std::make_unique<Mesh>(quadVertices, quadIndices);
 
   // Create the viewport editor panel
   m_ViewportPanel =
@@ -203,6 +226,10 @@ void PearlEngine::Update() {
     glm::vec2 newSize = m_ViewportPanel->GetSize();
     m_ViewportFramebuffer->Resize(newSize.x, newSize.y);
     m_Camera.SetAspect(newSize.x / newSize.y);
+    m_GBuffer->resize(newSize.x, newSize.y);
+
+    m_ViewportSize.x = newSize.x;
+    m_ViewportSize.y = newSize.y;
   }
 
   // Handle camera controls
@@ -218,14 +245,61 @@ void PearlEngine::Update() {
 }
 
 void PearlEngine::Render() {
-  // Render scene to framebuffer
-  m_ViewportFramebuffer->Bind();
+  // Pass 1: Geometry pass
+  m_GBuffer->bind();
+  glClearColor(0, 0, 0, 1.0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  Renderer::SetGeometryPassEnabled(true);
+  Renderer::SetNextShader(m_GeometryShader);
+  m_GeometryShader->use();
+
+  m_Scene.Render(m_Camera);
+
+  Renderer::SetGeometryPassEnabled(false);
+  m_GBuffer->unbind();
+
+  // Pass 2: Display pass
+  m_ViewportFramebuffer->Bind();
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  // Scene handles all the rendering now!
-  m_Scene.Render(m_Camera);
+  m_DisplayShader->use();
+  m_DisplayShader->setInt("textureSampler", 0);
+
+  int halfWidth = m_ViewportSize.x / 2;
+  int halfHeight = m_ViewportSize.y / 2;
+
+  // top left quadrant
+  glViewport(0, halfHeight, halfWidth, halfHeight);
+  m_DisplayShader->setInt("bufferType", 0);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetPositionTexture());
+  m_FullscreenQuad->Draw();
+
+  // top right quadrant
+  glViewport(halfWidth, halfHeight, halfWidth, halfHeight);
+  m_DisplayShader->setInt("bufferType", 1);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetNormalTexture());
+  m_FullscreenQuad->Draw();
+
+  // bottom left quadrant
+  glViewport(0, 0, halfWidth, halfHeight);
+  m_DisplayShader->setInt("bufferType", 2);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetAlbedoSpecTexture());
+  m_FullscreenQuad->Draw();
+
+  // bottom rigth quadrant
+  glViewport(halfWidth, 0, halfWidth, halfHeight);
+  m_DisplayShader->setInt("bufferType", 3);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetDepthTexture());
+  m_FullscreenQuad->Draw();
+
+  // reset viewport
+  glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
 
   m_ViewportFramebuffer->Unbind();
 }
@@ -250,10 +324,10 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, true);
   } else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
     m_CameraController->Reset();
-  } else if (glfwGetKey(window, GLFW_KEY_F5) == GLFW_PRESS){
+  } else if (glfwGetKey(window, GLFW_KEY_F5) == GLFW_PRESS) {
     LOG_INFO << "Recompiling all shaders!";
     m_ShaderManager->recompileAll();
-  } 
+  }
 
   ImGuiIO io = ImGui::GetIO();
   if (io.WantCaptureMouse || io.WantCaptureKeyboard)

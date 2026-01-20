@@ -6,6 +6,7 @@
 class ComponentEditor{
 public:
   ComponentEditor() = default;
+  virtual ~ComponentEditor() = default;
 
 public:
 

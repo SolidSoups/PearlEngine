@@ -10,6 +10,17 @@
 Camera *Renderer::s_ActiveCamera = nullptr;
 AmbientLightData Renderer::m_AmbientData;
 std::vector<PointLightComponent*> Renderer::m_PointLights;
+bool Renderer::m_bGeometryPassEnabled = false; 
+std::shared_ptr<ShaderData> Renderer::m_NextShader = nullptr;
+
+
+void Renderer::SetGeometryPassEnabled(bool value){
+  m_bGeometryPassEnabled = value;
+}
+
+void Renderer::SetNextShader(std::shared_ptr<ShaderData> shader){
+  m_NextShader = shader;
+}
 
 void Renderer::BeginScene(Camera &camera, const AmbientLightData &ambientData) {
   s_ActiveCamera = &camera;
@@ -29,12 +40,22 @@ void Renderer::Submit(const RenderComponent &renderComp,
     return;
 
   // Bind material (uploads shader + uniforms + textures)
-  if (!renderComp.material)
-    return;
-  renderComp.material->bind();
+  std::shared_ptr<ShaderData> shader;
+  if(!m_bGeometryPassEnabled){
+    if (!renderComp.material)
+      return;
+    renderComp.material->bind();
+    shader = renderComp.material->getShader();
+  }
+  else{
+    if(!renderComp.material)
+      return;
+    shader = m_NextShader;
+    shader->use();
+    renderComp.material->bind(shader);
+  }
 
   // Set matrices
-  auto shader = renderComp.material->getShader();
   if (!shader)
     return;
 
@@ -42,29 +63,29 @@ void Renderer::Submit(const RenderComponent &renderComp,
   shader->setMatrix4("transform", transformComp.GetModelMatrix());
   shader->setMatrix4("view", cameraTarget->GetViewMatrix());
   shader->setMatrix4("projection", cameraTarget->GetProjectionMatrix());
-  shader->setVec3("cameraPosition", cameraTarget->position);
+  // shader->setVec3("cameraPosition", cameraTarget->position);
 
   // set ambient light
-  shader->setVec4("ambientColor", m_AmbientData.color);
-  shader->setFloat("ambientIntensity", m_AmbientData.intensity);
+  // shader->setVec4("ambientColor", m_AmbientData.color);
+  // shader->setFloat("ambientIntensity", m_AmbientData.intensity);
 
   // upload light
-  shader->setInt("numPointLights", m_PointLights.size());
+  // shader->setInt("numPointLights", m_PointLights.size());
   // LOG_INFO << "Uploading " << m_PointLights.size() << " lights!";
-  for(int i=0; i < m_PointLights.size(); i++){
-    auto& light = m_PointLights[i];
-    // TODO: this should be BUILT into the component parent
-    auto transform = light->GetOwner()->GetComponent<TransformComponent>();
-
-    std::string base = "pointLights[" + std::to_string(i) + "].";
-    shader->setVec3((base + "position").c_str(), transform->position);
-    shader->setVec3((base + "color").c_str(), glm::vec3(light->data.color));
-    shader->setFloat((base + "intensity").c_str(), light->data.intensity);
-    shader->setFloat((base + "range").c_str(), light->data.radius);
-    shader->setFloat((base + "constant").c_str(), light->data.constantAttenuation);
-    shader->setFloat((base + "linear").c_str(), light->data.linearAttenuation);
-    shader->setFloat((base + "quadratic").c_str(), light->data.quadraticAttenuation);
-  }
+  // for(int i=0; i < m_PointLights.size(); i++){
+  //   auto& light = m_PointLights[i];
+  //   // TODO: this should be BUILT into the component parent
+  //   auto transform = light->GetOwner()->GetComponent<TransformComponent>();
+  //
+  //   std::string base = "pointLights[" + std::to_string(i) + "].";
+  //   shader->setVec3((base + "position").c_str(), transform->position);
+  //   shader->setVec3((base + "color").c_str(), glm::vec3(light->data.color));
+  //   shader->setFloat((base + "intensity").c_str(), light->data.intensity);
+  //   shader->setFloat((base + "range").c_str(), light->data.radius);
+  //   shader->setFloat((base + "constant").c_str(), light->data.constantAttenuation);
+  //   shader->setFloat((base + "linear").c_str(), light->data.linearAttenuation);
+  //   shader->setFloat((base + "quadratic").c_str(), light->data.quadraticAttenuation);
+  // }
 
 
   // Render the mesh

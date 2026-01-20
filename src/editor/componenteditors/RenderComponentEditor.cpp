@@ -19,12 +19,19 @@ void RenderComponentEditor::OnDrawComponent(IComponent *target) {
   bool openMeshPopup = false, openMatPopup = false;
   float labelWidth = 180.f;
 
-  textureCreator.renderImGui();
-  if(textureCreator.isDirty()){
+  m_AlbedoTexture.renderImGui("albedoEditor");
+  if(m_AlbedoTexture.isDirty()){
     // set texture
-    auto newTexture = textureCreator.create();
+    auto newTexture = m_AlbedoTexture.create();
     if(newTexture)
-      renderComp->material->setTexture("albedoMap", newTexture);
+      renderComp->material->setTexture("texture_diffuse1", newTexture);
+  }
+  m_SpecTexture.renderImGui("specEditor");
+  if(m_SpecTexture.isDirty()){
+    // set texture
+    auto newTexture = m_SpecTexture.create();
+    if(newTexture)
+      renderComp->material->setTexture("texture_specular1", newTexture);
   }
   DrawMesh(renderComp);
 

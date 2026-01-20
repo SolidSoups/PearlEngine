@@ -2,7 +2,10 @@
 
 #include "GUIContext.h"
 #include "PearlWindow.h"
+#include "GBuffer.h"
+#include "Mesh.h"
 #include "Camera.h"
+#include "ShaderData.h"
 #include "Scene.h"
 #include "SelectionWizard.h"
 #include "MessageBus.h"
@@ -60,6 +63,13 @@ public:
   std::unique_ptr<Framebuffer> m_ViewportFramebuffer;
   glm::vec2 m_ViewportSize{1280, 70};
   ViewportEditorPanel* m_ViewportPanel = nullptr; // needed here
+
+  // Gbuffer stuff
+  std::unique_ptr<GBuffer> m_GBuffer;
+  std::shared_ptr<Mesh> m_FullscreenQuad;
+
+  std::shared_ptr<ShaderData> m_GeometryShader;
+  std::shared_ptr<ShaderData> m_DisplayShader;
 
 private:
   bool isInitialized = false;

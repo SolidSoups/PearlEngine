@@ -7,6 +7,7 @@
 #include "TextureManager.h"
 #include "ServiceLocator.h"
 
+
 GLenum convertFilterMode(int index) {
   const GLenum filters[] = {
     GL_NEAREST, GL_LINEAR,
@@ -24,7 +25,8 @@ GLenum convertWrapMode(int index){
   return wraps[index];
 }
 
-void TextureCreator::renderImGui(){
+void TextureCreator::renderImGui(const char* id){
+  ImGui::PushID(id);
   ImGui::SeparatorText("Source File");
   if(UserGUI::DrawFile(filePath))
     b_isDirty = true;
@@ -91,6 +93,7 @@ void TextureCreator::renderImGui(){
     b_isDirty = true;
   config.wrapS = convertWrapMode(wrapSIndex);
   config.wrapT = convertWrapMode(wrapTIndex);
+  ImGui::PopID();
 }
 
 std::shared_ptr<TextureData> TextureCreator::create(){
