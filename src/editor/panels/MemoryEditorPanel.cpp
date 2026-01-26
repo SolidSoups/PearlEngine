@@ -3,18 +3,19 @@
 #include <string>
 #include <cstdio>
 
-#include "ShaderManager.h"
-#include "TextureManager.h"
 #include "imgui.h"
 
 #include "ServiceLocator.h"
+#include "ShaderManager.h"
+#include "TextureManager.h"
 #include "MeshManager.h"
+#include "memoryUsage.h"
 
-std::string formatBytes(float bytes){
-  const char* units[] = {"B", "kB", "MB", "GB"}; 
+std::string formatBytes(float bytes) {
+  const char *units[] = {"B", "kB", "MB", "GB"};
   int unitIndex = 0;
 
-  while(bytes >= 1024.0f && unitIndex < 3){
+  while (bytes >= 1024.0f && unitIndex < 3) {
     bytes /= 1024.0f;
     unitIndex++;
   }
@@ -24,12 +25,13 @@ std::string formatBytes(float bytes){
   return std::string(buffer);
 }
 
-void MemoryEditorPanel::OnImGuiRender(){
-  if(!m_IsOpen) return;
+void MemoryEditorPanel::OnImGuiRender() {
+  if (!m_IsOpen)
+    return;
 
-  MeshManager& meshMng = ServiceLocator::Get<MeshManager>();
-  TextureManager& texMng = ServiceLocator::Get<TextureManager>();
-  ShaderManager& shdMng = ServiceLocator::Get<ShaderManager>();
+  MeshManager &meshMng = ServiceLocator::Get<MeshManager>();
+  TextureManager &texMng = ServiceLocator::Get<TextureManager>();
+  ShaderManager &shdMng = ServiceLocator::Get<ShaderManager>();
 
   ImGui::Begin(m_Name.c_str());
 
@@ -50,9 +52,8 @@ void MemoryEditorPanel::OnImGuiRender(){
   std::string formShdBytes = formatBytes((float)shaderMemSize);
   ImGui::Text("Shader Size: %s", formShdBytes.c_str());
   ImGui::Text("Shader Count: %zu", shdMng.getCacheSize());
-  // ImGui::Separator();
-  // ImGui::Text("Material Count: %zu");
-  // ImGui::Text("Material Size: %s");
-
+  ImGui::Separator();
+  long procMem = getMemoryUsageMB();
+  ImGui::Text("Total Program Memory: %ld MB", procMem);
   ImGui::End();
 }
