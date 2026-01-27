@@ -10,8 +10,17 @@
 #include "GameObject.h"
 #include "TransformComponent.h"
 
-GameObject* Scene::CreateGameObject(std::string name){
+GameObject* Scene::CreateGameObject(const std::string& name){
   auto newGO = std::make_unique<GameObject>(m_NextObjectID++, name);
+  newGO->AddComponent<TransformComponent>();
+  GameObject* ptr = newGO.get();
+  m_GameObjects.push_back(std::move(newGO));
+  return ptr;
+}
+GameObject* Scene::CreatePointLight(const std::string& name){
+  auto newGO = std::make_unique<GameObject>(m_NextObjectID++, name);
+  newGO->AddComponent<TransformComponent>();
+  newGO->AddComponent<PointLightComponent>();
   GameObject* ptr = newGO.get();
   m_GameObjects.push_back(std::move(newGO));
   return ptr;

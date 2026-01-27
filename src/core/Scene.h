@@ -17,7 +17,8 @@ public:
   ~Scene() = default;
 
   // Object management
-  GameObject* CreateGameObject(std::string name = "gameObject");
+  GameObject* CreateGameObject(const std::string& name = "gameObject");
+  GameObject* CreatePointLight(const std::string& name = "PointLight");
   inline void Clear() { m_GameObjects.clear(); }
 
   // Scene operations

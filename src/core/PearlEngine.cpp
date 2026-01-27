@@ -139,16 +139,25 @@ void PearlEngine::Initialize() {
   // create the main camera
   GameObject *cameraGO = m_Scene.CreateGameObject("Main Camera");
   auto *cmCmp = cameraGO->AddComponent<CameraComponent>();
-  cameraGO->AddComponent<TransformComponent>(cmCmp->cameraData.position);
+  cameraGO->GetComponent<TransformComponent>()->position = cmCmp->cameraData.position;
   m_Scene.SetActiveCamera(cmCmp);
 
+  // create house model
   auto go1 = m_Scene.CreateGameObject("Test house");
-  auto houseTransformComp = go1->AddComponent<TransformComponent>();
   auto houseRenderComp = go1->AddComponent<RenderComponent>();
   houseRenderComp->mesh = m_MeshManager->loadOBJ("assets/medieval house.obj");
   houseRenderComp->material = MaterialLoader::create(Defaults::getDefaultShader());
   auto houseTex = m_TextureManager->load("assets/house2.png");
   houseRenderComp->material->setTexture("texture_diffuse1", houseTex);
+
+  // create some lights in the scene
+  for(int i=0; i<3; i++){
+    auto newLight = m_Scene.CreatePointLight();
+    newLight->GetComponent<TransformComponent>()->position 
+      = glm::vec3(-6.f + i*4.f, 8.f, -4.5f + i*3.f);
+    auto lightComp = newLight->GetComponent<PointLightComponent>();
+    lightComp->data.radius = 8.f;
+  }
 
   // Create viewport framebuffer
   m_ViewportFramebuffer =
