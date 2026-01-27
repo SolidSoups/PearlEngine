@@ -23,7 +23,7 @@ class ShaderManager;
 
 struct GLFWwindow;
 
-class PearlEngine{
+class PearlEngine {
 public:
   PearlEngine();
   ~PearlEngine();
@@ -34,9 +34,14 @@ public:
   void Render();
   void RenderEditor();
 
+  void GeometryRenderPass();
+  void QuadDebugRenderPass();
+  void LightingPass();
+
   inline bool IsInitialized() { return isInitialized; }
+
 private:
-  void ProcessInput(GLFWwindow* window);
+  void ProcessInput(GLFWwindow *window);
 
 private:
   void AddMenuBarItems();
@@ -62,7 +67,7 @@ public:
   // framebuffer
   std::unique_ptr<Framebuffer> m_ViewportFramebuffer;
   glm::vec2 m_ViewportSize{1280, 70};
-  ViewportEditorPanel* m_ViewportPanel = nullptr; // needed here
+  ViewportEditorPanel *m_ViewportPanel = nullptr; // needed here
 
   // Gbuffer stuff
   std::unique_ptr<GBuffer> m_GBuffer;
@@ -70,6 +75,7 @@ public:
 
   std::shared_ptr<ShaderData> m_GeometryShader;
   std::shared_ptr<ShaderData> m_DisplayShader;
+  std::shared_ptr<ShaderData> m_LightShader;
 
 private:
   bool isInitialized = false;

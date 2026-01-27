@@ -48,6 +48,8 @@
 #include "Material.h"
 #include "TextureData.h"
 
+// #define DEBUG_GBUFFER
+
 PearlEngine::PearlEngine() {
   if (!pwin.IsInitialized()) {
     isInitialized = false;
@@ -114,8 +116,12 @@ void PearlEngine::Initialize() {
   auto shader = Defaults::getDefaultShader();
 
   // create shaders
-  m_GeometryShader = m_ShaderManager->load("shaders/geometryVert.glsl", "shaders/geometryFrag.glsl");
-  m_DisplayShader = m_ShaderManager->load("shaders/displayVert.glsl", "shaders/displayFrag.glsl");
+  m_GeometryShader = m_ShaderManager->load("shaders/geometryVert.glsl",
+                                           "shaders/geometryFrag.glsl");
+  m_DisplayShader = m_ShaderManager->load("shaders/displayVert.glsl",
+                                          "shaders/displayFrag.glsl");
+  m_LightShader =
+      m_ShaderManager->load("shaders/lightVert.glsl", "shaders/lightFrag.glsl");
 
   // Create materials using new loaders
   LOG_INFO << "setting texture";
@@ -136,9 +142,13 @@ void PearlEngine::Initialize() {
   cameraGO->AddComponent<TransformComponent>(cmCmp->cameraData.position);
   m_Scene.SetActiveCamera(cmCmp);
 
-  auto go1 = m_Scene.CreateGameObject();
-  go1->AddComponent<TransformComponent>();
-  go1->AddComponent<RenderComponent>();
+  auto go1 = m_Scene.CreateGameObject("Test house");
+  auto houseTransformComp = go1->AddComponent<TransformComponent>();
+  auto houseRenderComp = go1->AddComponent<RenderComponent>();
+  houseRenderComp->mesh = m_MeshManager->loadOBJ("assets/medieval house.obj");
+  houseRenderComp->material = MaterialLoader::create(Defaults::getDefaultShader());
+  auto houseTex = m_TextureManager->load("assets/house2.png");
+  houseRenderComp->material->setTexture("texture_diffuse1", houseTex);
 
   // Create viewport framebuffer
   m_ViewportFramebuffer =
@@ -245,21 +255,44 @@ void PearlEngine::Update() {
 }
 
 void PearlEngine::Render() {
-  // Pass 1: Geometry pass
-  m_GBuffer->bind();
-  glClearColor(0, 0, 0, 1.0);
+  GeometryRenderPass();
+#ifdef DEBUG_GBUFFER
+  QuadDebugRenderPass();
+#else
+  LightingPass();
+#endif
+}
+
+void PearlEngine::LightingPass() {
+  m_ViewportFramebuffer->Bind();
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  Renderer::SetGeometryPassEnabled(true);
-  Renderer::SetNextShader(m_GeometryShader);
-  m_GeometryShader->use();
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetPositionTexture());
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetNormalTexture());
+  glActiveTexture(GL_TEXTURE2);
+  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetAlbedoSpecTexture());
+  glActiveTexture(GL_TEXTURE3);
+  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetDepthTexture());
 
-  m_Scene.Render(m_Camera);
+  // send light uniforms
+  m_LightShader->use();
+  // we need to set the texture uniforms
+  m_LightShader->setInt("gPosition", 0);
+  m_LightShader->setInt("gNormal", 1);
+  m_LightShader->setInt("gAlbedoSpec", 2);
+  m_LightShader->setInt("gDepthStencil", 3);
+  Renderer::SubmitLights(m_Scene.GetPointLights());
+  Renderer::SendLightUniforms(m_LightShader);
+  m_LightShader->setVec3("viewPos", m_Camera.GetCurrentTarget()->position);
+  glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
+  m_FullscreenQuad->Draw();
+  m_ViewportFramebuffer->Unbind();
+}
 
-  Renderer::SetGeometryPassEnabled(false);
-  m_GBuffer->unbind();
-
-  // Pass 2: Display pass
+void PearlEngine::QuadDebugRenderPass() {
   m_ViewportFramebuffer->Bind();
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -302,6 +335,21 @@ void PearlEngine::Render() {
   glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
 
   m_ViewportFramebuffer->Unbind();
+}
+
+void PearlEngine::GeometryRenderPass() {
+  m_GBuffer->bind();
+  glClearColor(0, 0, 0, 1.0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  Renderer::SetGeometryPassEnabled(true);
+  Renderer::SetNextShader(m_GeometryShader);
+  m_GeometryShader->use();
+
+  m_Scene.Render(m_Camera);
+
+  Renderer::SetGeometryPassEnabled(false);
+  m_GBuffer->unbind();
 }
 
 void PearlEngine::RenderEditor() {

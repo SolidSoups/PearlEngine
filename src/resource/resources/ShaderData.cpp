@@ -35,8 +35,14 @@ bool ShaderData::reload(){
   // compile shaders
   GLuint newVert = compileShader(vertBytes.data(), GL_VERTEX_SHADER);
   GLuint newFrag = compileShader(fragBytes.data(), GL_FRAGMENT_SHADER);
-  if(newVert == 0 || newFrag == 0){
-    LOG_ERROR << "Shader compilation failed!, keeping old shader (if any)";
+  if(newVert == 0){
+    LOG_ERROR << "Shader compilation failed for vert file '" << m_VertPath << "', keeping old shader (if any)";
+    if(newVert) glDeleteShader(newVert);
+    if(newFrag) glDeleteShader(newFrag);
+    return false;
+  }
+  if(newFrag == 0){
+    LOG_ERROR << "Shader compilation failed for frag file '" << m_FragPath << "', keeping old shader (if any)";
     if(newVert) glDeleteShader(newVert);
     if(newFrag) glDeleteShader(newFrag);
     return false;

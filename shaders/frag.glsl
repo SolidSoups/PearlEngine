@@ -39,11 +39,6 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
   vec3 lightDir = normalize(light.position - fragPos);
   float distance = length(light.position - fragPos);
 
-  // check if fragment is within range
-  if (distance > light.range) {
-    return vec3(0.0);
-  }
-
   // Attenuation
   float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * distance * distance);
 

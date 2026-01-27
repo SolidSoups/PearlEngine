@@ -44,11 +44,6 @@ bool MeshManager::loadAndParseObjFile(
       char lineHeader[124];
       int result = sscanf(line.c_str(), "%s", lineHeader);
 
-      // Debug: log first 10 lines
-      if (lineCount <= 10) {
-        LOG_INFO << "Line " << lineCount << " (len=" << line.length() << "): " << line;
-      }
-
       // skip empty/whitespace-only lines
       if (result == EOF) {
         continue;
@@ -104,10 +99,6 @@ bool MeshManager::loadAndParseObjFile(
         outObjIndices.push_back(normalIndex[2]);
       }
     }
-    LOG_INFO << "Finished parsing OBJ file. Read " << lineCount << " lines, "
-             << "found " << outObjVertices.size() << " vertices, "
-             << outObjUvs.size() << " UVs, " << outObjNormals.size() << " normals, "
-             << (outObjIndices.size() / 9) << " faces";
     file.close();
   } catch (std::ifstream::failure e) {
     LOG_ERROR << "File stream failed to read '" << path << "', " << e.what();
