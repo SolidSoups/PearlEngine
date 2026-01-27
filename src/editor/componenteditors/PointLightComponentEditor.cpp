@@ -21,7 +21,7 @@ void PointLightComponentEditor::OnDrawComponent(IComponent* component){
   ImGui::AlignTextToFramePadding();
   ImGui::Text("Intensity");
   ImGui::SameLine(labelWidth);
-  ImGui::DragFloat("##Intensity", &pointLightComp->data.intensity);
+  ImGui::SliderFloat("##Intensity", &pointLightComp->data.intensity, 0.0f, 10.0f);
 
   ImGui::SeparatorText("Attenuation");
 
@@ -33,19 +33,13 @@ void PointLightComponentEditor::OnDrawComponent(IComponent* component){
 
   // draw constant attenuation
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Constant Attenuation");
-  ImGui::SameLine(labelWidth);
-  ImGui::DragFloat("##ConstAtten", &pointLightComp->data.constantAttenuation);
-
-  // draw constant attenuation
-  ImGui::AlignTextToFramePadding();
   ImGui::Text("Linear Attenuation");
   ImGui::SameLine(labelWidth);
-  ImGui::DragFloat("##LinearAtten", &pointLightComp->data.linearAttenuation);
+  ImGui::DragFloat("##LinearAtten", &pointLightComp->data.linearAttenuation, 0.001f, 0.0f, 1.0f);
 
   // draw quadratic attenuation
   ImGui::AlignTextToFramePadding();
   ImGui::Text("Quadratic Attenuation");
   ImGui::SameLine(labelWidth);
-  ImGui::DragFloat("##QuadAtten", &pointLightComp->data.quadraticAttenuation);
+  ImGui::DragFloat("##QuadAtten", &pointLightComp->data.quadraticAttenuation, 0.001f, 0.0f, 2.0f);
 }
