@@ -88,6 +88,9 @@ void SceneHierarchyEditorPanel::DrawContextMenu() {
     if(ImGui::MenuItem("Create PointLight")){
       r_Scene.CreatePointLight();
     }
+    if(ImGui::MenuItem("Create Cube")){
+      r_Scene.CreateCube();
+    }
     ImGui::EndPopup();
   }
 }

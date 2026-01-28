@@ -61,14 +61,11 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
 
   glfwMakeContextCurrent(window);
   isInitialized = true;
-  LOG_INFO << "Succesfully initialized window";
 }
 
 PearlWindow::~PearlWindow(){
-  LOG_INFO << "Terminating Window";
   if(window != nullptr){
     glfwDestroyWindow(window);
   }
-  LOG_INFO << "PearlWindow terminated!";
 }
 

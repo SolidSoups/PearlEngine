@@ -15,4 +15,22 @@ struct TextureConfig {
   GLenum wrapS = GL_REPEAT;
   GLenum wrapT = GL_REPEAT;
   TextureConfig() = default;
+
+  bool operator==(const TextureConfig& other) const {
+    return (
+      generateMipMaps == other.generateMipMaps &&
+      maxMipMapLevel == other.maxMipMapLevel &&
+      minFilter == other.minFilter &&
+      magFilter == other.magFilter &&
+      lodBias == other.lodBias &&
+      minLod == other.minLod &&
+      maxLod == other.maxLod &&
+      antisotropicLevel == other.antisotropicLevel &&
+      wrapS == other.wrapS &&
+      wrapT == other.wrapT
+    );
+  }
+  bool operator !=(const TextureConfig& other) const {
+    return !(*this == other);
+  }
 };

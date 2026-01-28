@@ -24,7 +24,6 @@ public:
     auto it = m_Handlers.find(msg.GetTypeID());
     if (it != m_Handlers.end()) {
       for (auto *handler : it->second) {
-        LOG_INFO << "Dispatching message to handler";
         handler->HandleMessage(msg);
       }
     }

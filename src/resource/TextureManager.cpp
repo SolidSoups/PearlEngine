@@ -12,8 +12,12 @@ TextureManager::load(const char *path,
                      const TextureConfig &config) {
   auto it = m_Cache.find(path);
   if (it != m_Cache.end()) {
-    // texture is cached
-    return it->second;
+    if(it->second.config == config) 
+      return it->second.texture;
+     
+    // config has changed, delete entry and regenerate
+    // probably very inefficient
+    m_Cache.erase(it); 
   }
 
   // set flip flag (global, uses OpenGL coordinates)
@@ -33,10 +37,11 @@ TextureManager::load(const char *path,
   }
 
   // cache texture
-  m_Cache[path] = std::make_shared<TextureData>(data, width, height, channels, config);
+  cache_entry newEntry{std::make_shared<TextureData>(data, width, height, channels, config), config};
+  m_Cache[path] = newEntry;
 
   // free image data (we don't need it anymore)
   stbi_image_free(data);
 
-  return m_Cache[path];
+  return m_Cache[path].texture;
 }

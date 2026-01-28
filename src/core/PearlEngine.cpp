@@ -53,7 +53,6 @@
 PearlEngine::PearlEngine() {
   if (!pwin.IsInitialized()) {
     isInitialized = false;
-    LOG_INFO << "Engine failed to construct and initialize";
     return;
   }
 
@@ -81,18 +80,15 @@ PearlEngine::PearlEngine() {
 
   isInitialized = true;
 
-  LOG_INFO << "Engine constructed and initialized";
 }
 
 PearlEngine::~PearlEngine() {
-  LOG_INFO << "Engine deconstructing";
   ServiceLocator::Destroy();
   UserGUI::Destroy();
   glfwTerminate();
 }
 
 void PearlEngine::Initialize() {
-  LOG_INFO << "Beginning initialization";
   GLFWwindow *window = pwin.GetWindow();
   glfwMakeContextCurrent(window);
 
@@ -102,7 +98,6 @@ void PearlEngine::Initialize() {
   Time::Initialize();
 
   // Load textures using new loaders
-  LOG_INFO << "loading textures";
   if (!ServiceLocator::IsReady<TextureManager>()) {
     LOG_ERROR << "TextureManager is not ready!";
   }
@@ -112,7 +107,6 @@ void PearlEngine::Initialize() {
       ServiceLocator::Get<TextureManager>().load("assets/pearl.png");
 
   // Create shaders using new loaders
-  LOG_INFO << "Setting default shader";
   auto shader = Defaults::getDefaultShader();
 
   // create shaders
@@ -124,7 +118,6 @@ void PearlEngine::Initialize() {
       m_ShaderManager->load("shaders/lightVert.glsl", "shaders/lightFrag.glsl");
 
   // Create materials using new loaders
-  LOG_INFO << "setting texture";
   MaterialLoader matLoader;
   auto sunMaterial = matLoader.create(shader);
   if (sunMaterial && sunshineTexture) {
@@ -145,9 +138,9 @@ void PearlEngine::Initialize() {
   // create house model
   auto go1 = m_Scene.CreateGameObject("Test house");
   auto houseRenderComp = go1->AddComponent<RenderComponent>();
-  houseRenderComp->mesh = m_MeshManager->loadOBJ("assets/medieval house.obj");
+  houseRenderComp->mesh = m_MeshManager->loadOBJ("assets/viking house/Viking_House.obj");
   houseRenderComp->material = MaterialLoader::create(Defaults::getDefaultShader());
-  auto houseTex = m_TextureManager->load("assets/house2.png");
+  auto houseTex = m_TextureManager->load("assets/viking house/Viking_House.png");
   houseRenderComp->material->setTexture("texture_diffuse1", houseTex);
 
   // create some lights in the scene
@@ -205,7 +198,6 @@ void PearlEngine::Initialize() {
   glDisable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
 
-  LOG_INFO << "Initialization finished";
 }
 
 // b@UPDATE
@@ -214,7 +206,6 @@ void PearlEngine::RunUpdateLoop() {
 
   Initialize();
 
-  LOG_INFO << "Starting engine loop";
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
     ProcessInput(window);
@@ -224,11 +215,8 @@ void PearlEngine::RunUpdateLoop() {
 
     // process messages
     auto messages = ServiceLocator::Get<MessageQueue>().DrainAll();
-    if (messages.size() > 0)
-      LOG_INFO << "Drained " << messages.size() << " messages!";
     auto &msgBus = ServiceLocator::Get<MessageBus>();
     for (auto &msg : messages) {
-      LOG_INFO << "Processing and dispatching a message";
       msgBus.Dispatch(msg);
     }
 
@@ -382,7 +370,6 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
   } else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
     m_CameraController->Reset();
   } else if (glfwGetKey(window, GLFW_KEY_F5) == GLFW_PRESS) {
-    LOG_INFO << "Recompiling all shaders!";
     m_ShaderManager->recompileAll();
   }
 
@@ -397,7 +384,6 @@ void PearlEngine::AddMenuBarItems() {
   });
 
   MenuRegistry::Get().Register("Tools/Reload Shaders", [this]() {
-    LOG_INFO << "Recompiling all shaders!";
     m_ShaderManager->recompileAll();
   });
 }

@@ -25,15 +25,12 @@ bool MeshManager::loadAndParseObjFile(
   file.exceptions(std::ifstream::badbit); // ensure exceptions
 
   try {
-    LOG_INFO << "Attempting to open OBJ file: " << path;
     file.open(path);
 
     if (!file.is_open()) {
       LOG_ERROR << "Failed to open OBJ file: " << path;
       return false;
     }
-
-    LOG_INFO << "Successfully opened OBJ file";
 
     // read line by line
     int faceIteration = 0;
@@ -171,16 +168,12 @@ std::shared_ptr<Mesh> MeshManager::loadOBJ(const char *filePath) {
     LOG_ERROR << "Failed to load and parse Obj file: " << filePath;
     return nullptr;
   }
-  LOG_INFO << "Loaded and parsed obj file, vertices: " << objVertices.size()
-           << ", uvs: " << objUvs.size() << ", normals: " << objNormals.size()
-           << ", indices: " << objIndices.size() << ";";
 
   // convert to opengl format
   std::vector<float> vertices;
   std::vector<unsigned int> indices;
   reformatObjToOpenGl(objVertices, objUvs, objNormals, objIndices, vertices,
                       indices);
-  LOG_INFO << "Reformated loaded obj file to OpenGL format";
 
   m_Cache[filePath] = std::make_shared<Mesh>(vertices, indices);
 

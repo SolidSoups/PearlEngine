@@ -38,7 +38,6 @@ GUIContext::GUIContext(GLFWwindow* window){
   const char* glsl_version = "#version 330";
   ImGui_ImplOpenGL3_Init(glsl_version);
 
-  LOG_INFO << "GUI Context initialized!";
 }
 
 GUIContext::~GUIContext(){
@@ -77,7 +76,6 @@ void GUIContext::Shutdown(){
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
 
-  LOG_INFO << "GUI context shutdown";
 }
 
 void GUIContext::DrawToolbar(){

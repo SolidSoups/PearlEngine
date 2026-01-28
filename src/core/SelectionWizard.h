@@ -64,7 +64,6 @@ public:
 public:
   template<typename T>
   void SetSelection(SelectionType type, T* selectionObject) {
-    LOG_INFO << "Setting selection for " << typeid(T).name();
     m_SelectionData.selection = selectionObject;
     m_SelectionData.type = type;
     SendMessage();

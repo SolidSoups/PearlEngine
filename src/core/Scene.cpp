@@ -9,6 +9,8 @@
 
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "Mesh.h"
+#include "Cube.h"
 
 GameObject* Scene::CreateGameObject(const std::string& name){
   auto newGO = std::make_unique<GameObject>(m_NextObjectID++, name);
@@ -18,12 +20,17 @@ GameObject* Scene::CreateGameObject(const std::string& name){
   return ptr;
 }
 GameObject* Scene::CreatePointLight(const std::string& name){
-  auto newGO = std::make_unique<GameObject>(m_NextObjectID++, name);
-  newGO->AddComponent<TransformComponent>();
+  GameObject* newGO = CreateGameObject(name);
   newGO->AddComponent<PointLightComponent>();
-  GameObject* ptr = newGO.get();
-  m_GameObjects.push_back(std::move(newGO));
-  return ptr;
+  return newGO;
+}
+GameObject* Scene::CreateCube(const std::string& name){
+  GameObject* newGO = CreateGameObject(name);
+  auto renderComp = newGO->AddComponent<RenderComponent>();
+  std::vector<float> vertices(Cube::s_Vertices, Cube::s_Vertices + Cube::s_VertexCount);
+  std::vector<unsigned int> indices(Cube::s_Indices, Cube::s_Indices + Cube::s_IndexCount);
+  renderComp->mesh = std::make_shared<Mesh>(vertices, indices);
+  return newGO;
 }
 
 void Scene::Update(){

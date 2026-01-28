@@ -21,6 +21,7 @@ void RenderComponentEditor::OnDrawComponent(IComponent *target) {
 
   m_AlbedoTexture.renderImGui("albedoEditor");
   if(m_AlbedoTexture.isDirty()){
+    LOG_INFO << "Albedo Texture is dirty, regenerating";
     // set texture
     auto newTexture = m_AlbedoTexture.create();
     if(newTexture)
@@ -28,6 +29,7 @@ void RenderComponentEditor::OnDrawComponent(IComponent *target) {
   }
   m_SpecTexture.renderImGui("specEditor");
   if(m_SpecTexture.isDirty()){
+    LOG_INFO << "Specular Texture is dirty, regenerating";
     // set texture
     auto newTexture = m_SpecTexture.create();
     if(newTexture)

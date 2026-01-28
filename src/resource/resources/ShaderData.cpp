@@ -94,7 +94,6 @@ GLuint ShaderData::compileShader(const char* code, unsigned int type){
     LOG_ERROR << "Compiling shader ("<< typeStr  << ") failed! infoLog: " << infoLog;
     return 0;
   }
-  LOG_INFO << "Compiling shader (" << typeStr << ") succeded!";
 
   return shaderID;
 }

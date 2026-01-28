@@ -19,6 +19,7 @@ public:
   // Object management
   GameObject* CreateGameObject(const std::string& name = "gameObject");
   GameObject* CreatePointLight(const std::string& name = "PointLight");
+  GameObject* CreateCube(const std::string& name = "Cube");
   inline void Clear() { m_GameObjects.clear(); }
 
   // Scene operations
