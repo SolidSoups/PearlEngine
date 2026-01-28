@@ -60,7 +60,7 @@ bool MeshManager::loadAndParseObjFile(
       else if (strcmp(lineHeader, "vt") == 0) {
         glm::vec2 uv;
         sscanf(line.c_str(), "vt %f %f\n", &uv.x, &uv.y);
-        uv.y = 1.0f - uv.y;
+        // uv.y = 1.0f - uv.y;
         outObjUvs.push_back(uv);
       }
 
