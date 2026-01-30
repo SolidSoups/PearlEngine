@@ -1,6 +1,17 @@
 #pragma once
 
 #include <cstdint>
+#include <bitset>
 
+#include <glm/glm.hpp>
 
-using EntityID = uint32_t;
+namespace ecs {
+using Entity = std::uint32_t;
+const Entity MAX_ENTITIES = 5000;
+
+// comp
+using ComponentType = std::uint8_t;
+const ComponentType MAX_COMPONENTS = 32;
+
+using Signature = std::bitset<MAX_COMPONENTS>;
+}

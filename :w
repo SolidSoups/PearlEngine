@@ -1,0 +1,40 @@
+#pragma once
+
+#include "Logger.h"
+
+
+class EntityManager{
+public:
+  EntityManager(){
+    for(Entity entity = 0; entity < MAX_ENTITIES; ++entity){
+      mAvailableEntities.push(entity);
+    }
+  }
+
+  Entity CreateEntity(){
+    if(mLivingEntityCount < MAX_ENTITIES){
+      LOG_ERROR << "Too many entities in existance";
+      return -1;
+    }
+    
+    // take an id from the top of the queue
+    Entity id = mAvailableEntities.front();
+    mAvailableEntities.pop();
+    ++mLivingEntityCount;
+
+    return id;
+  }
+
+  void DestroyEntity(Entity entity){
+    assert(entity < MAX_ENTITIES && "Entity out of range");
+    if(entity < MAX_ENTITIES){
+      LOG_ERROR << "Entity out of range";
+      return;
+    }
+
+    // invalidate the destroyed entity's signature
+    mSignatures[entity].reset();
+
+    // put the destroyed id at the back of the queue
+  }
+};

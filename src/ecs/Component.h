@@ -4,6 +4,7 @@
 #include "ComponentFlags.h"
 #include "ecs_common.h"
 
+
 class GameObject;
 
 class IComponent{
