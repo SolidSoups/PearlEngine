@@ -1,12 +1,8 @@
 #pragma once
 
 #include "CameraData.h"
-#include "Component.h"
 
-struct CameraComponent : public IComponent {
-  COMPONENT_CLASS(CameraComponent)
-
-public:
+struct CameraComponent {
   CameraData cameraData;
   bool isMainCamera = false;
 

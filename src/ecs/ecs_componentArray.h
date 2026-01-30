@@ -12,6 +12,7 @@ class IComponentArray {
 public:
   virtual ~IComponentArray() = default;
   virtual void EntityDestroyed(Entity entity) = 0;
+  virtual bool HasEntity(Entity entity) const = 0;
 };
 
 template <typename T> class ComponentArray : public IComponentArray {
@@ -57,6 +58,10 @@ public:
     if(mEntityToIndexMap.find(entity) != mEntityToIndexMap.end()){
       RemoveData(entity);
     }
+  }
+
+  bool HasEntity(Entity entity) const override {
+    return mEntityToIndexMap.find(entity) != mEntityToIndexMap.end();
   }
 
 private:

@@ -3,7 +3,7 @@
 #include "PointLightComponent.h"
 #include "imgui.h"
 
-void PointLightComponentEditor::OnDrawComponent(IComponent* component){
+void PointLightComponentEditor::OnDrawComponent(void* component, [[maybe_unused]] ecs::Entity entity){
   PointLightComponent* pointLightComp = static_cast<PointLightComponent*>(component);
   if(!pointLightComp) return;
 

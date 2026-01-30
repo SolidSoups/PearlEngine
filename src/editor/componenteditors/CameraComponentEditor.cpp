@@ -3,10 +3,10 @@
 #include "imgui.h"
 #include "Scene.h"
 
-void CameraComponentEditor::OnDrawComponent(IComponent* target){
+void CameraComponentEditor::OnDrawComponent(void* target, ecs::Entity entity){
   constexpr float labelWidth = 140.f;
 
-  if(CameraComponent* cmp = dynamic_cast<CameraComponent*>(target)){
+  if(CameraComponent* cmp = static_cast<CameraComponent*>(target)){
 
     // Camera main toggle
     ImGui::AlignTextToFramePadding();
@@ -15,7 +15,7 @@ void CameraComponentEditor::OnDrawComponent(IComponent* target){
     if(ImGui::Checkbox("##Main Camera", &cmp->isMainCamera)){
       if(cmp->isMainCamera){
         Scene& mainScene = ServiceLocator::Get<Scene>();
-        mainScene.SetActiveCamera(cmp);
+        mainScene.SetActiveCamera(entity);
       }
     }
     

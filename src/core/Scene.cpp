@@ -7,30 +7,57 @@
 #include "RenderComponent.h"
 #include "Renderer.h"
 
-#include "GameObject.h"
 #include "TransformComponent.h"
+#include "NameComponent.h"
 #include "Mesh.h"
 #include "Cube.h"
 
-GameObject* Scene::CreateGameObject(const std::string& name){
-  auto newGO = std::make_unique<GameObject>(m_NextObjectID++, name);
-  newGO->AddComponent<TransformComponent>();
-  GameObject* ptr = newGO.get();
-  m_GameObjects.push_back(std::move(newGO));
-  return ptr;
+Scene::Scene() {
+  m_Coordinator.Init();
+
+  // Register all component types
+  m_Coordinator.RegisterComponent<TransformComponent>();
+  m_Coordinator.RegisterComponent<RenderComponent>();
+  m_Coordinator.RegisterComponent<CameraComponent>();
+  m_Coordinator.RegisterComponent<PointLightComponent>();
+  m_Coordinator.RegisterComponent<NameComponent>();
 }
-GameObject* Scene::CreatePointLight(const std::string& name){
-  GameObject* newGO = CreateGameObject(name);
-  newGO->AddComponent<PointLightComponent>();
-  return newGO;
+
+ecs::Entity Scene::CreateEntity(const std::string& name){
+  ecs::Entity entity = m_Coordinator.CreateEntity();
+  m_Coordinator.AddComponent(entity, NameComponent{name});
+  m_Coordinator.AddComponent(entity, TransformComponent{});
+  m_Entities.push_back(entity);
+  return entity;
 }
-GameObject* Scene::CreateCube(const std::string& name){
-  GameObject* newGO = CreateGameObject(name);
-  auto renderComp = newGO->AddComponent<RenderComponent>();
+
+ecs::Entity Scene::CreatePointLight(const std::string& name){
+  ecs::Entity entity = CreateEntity(name);
+  m_Coordinator.AddComponent(entity, PointLightComponent{});
+  return entity;
+}
+
+ecs::Entity Scene::CreateCube(const std::string& name){
+  ecs::Entity entity = CreateEntity(name);
+  RenderComponent renderComp;
   std::vector<float> vertices(Cube::s_Vertices, Cube::s_Vertices + Cube::s_VertexCount);
   std::vector<unsigned int> indices(Cube::s_Indices, Cube::s_Indices + Cube::s_IndexCount);
-  renderComp->mesh = std::make_shared<Mesh>(vertices, indices);
-  return newGO;
+  renderComp.mesh = std::make_shared<Mesh>(vertices, indices);
+  m_Coordinator.AddComponent(entity, renderComp);
+  return entity;
+}
+
+void Scene::DestroyEntity(ecs::Entity entity) {
+  m_Coordinator.DestroyEntity(entity);
+  m_Entities.erase(std::remove(m_Entities.begin(), m_Entities.end(), entity), m_Entities.end());
+}
+
+void Scene::Clear() {
+  for (auto entity : m_Entities) {
+    m_Coordinator.DestroyEntity(entity);
+  }
+  m_Entities.clear();
+  m_ActiveCamera = ecs::NULL_ENTITY;
 }
 
 void Scene::Update(){
@@ -41,39 +68,51 @@ void Scene::Render(Camera& camera){
 
   // pass 1, upload generic data
   Renderer::BeginScene(camera, ambientLight);
-  Renderer::SubmitLights(GetPointLights());
+  Renderer::SubmitLights(*this);
 
-  for(auto& object : m_GameObjects){
-    auto transform = object->GetComponent<TransformComponent>();
-    auto renderComp = object->GetComponent<RenderComponent>();
+  for(auto entity : m_Entities){
+    if(!m_Coordinator.HasComponent<TransformComponent>(entity)) continue;
+    if(!m_Coordinator.HasComponent<RenderComponent>(entity)) continue;
 
-    if(transform && renderComp)
-      Renderer::Submit(*renderComp, *transform);
+    auto& transform = m_Coordinator.GetComponent<TransformComponent>(entity);
+    auto& renderComp = m_Coordinator.GetComponent<RenderComponent>(entity);
+
+    Renderer::Submit(renderComp, transform);
   }
   Renderer::EndScene();
 }
 
-const std::vector<std::unique_ptr<GameObject>>& GetGameObjects();
-
-void Scene::SetActiveCamera(CameraComponent* camera) {
-  // unmark previous camera
-  if(m_ActiveCamera){
-    m_ActiveCamera->isMainCamera = false;
+std::string Scene::GetEntityName(ecs::Entity entity) {
+  if (m_Coordinator.HasComponent<NameComponent>(entity)) {
+    return m_Coordinator.GetComponent<NameComponent>(entity).name;
   }
+  return "Entity_" + std::to_string(entity);
+}
 
-  // set new camera
-  m_ActiveCamera = camera;
-  if(m_ActiveCamera){
-    m_ActiveCamera->isMainCamera = true;
+void Scene::SetEntityName(ecs::Entity entity, const std::string& name) {
+  if (m_Coordinator.HasComponent<NameComponent>(entity)) {
+    m_Coordinator.GetComponent<NameComponent>(entity).name = name;
   }
 }
 
-std::vector<PointLightComponent*> Scene::GetPointLights() const {
-  std::vector<PointLightComponent*> lights;
-  for(auto& object : m_GameObjects){
-    auto light = object->GetComponent<PointLightComponent>();
-    if(light){
-      lights.push_back(light);
+void Scene::SetActiveCamera(ecs::Entity cameraEntity) {
+  // unmark previous camera
+  if(m_ActiveCamera != ecs::NULL_ENTITY && m_Coordinator.HasComponent<CameraComponent>(m_ActiveCamera)){
+    m_Coordinator.GetComponent<CameraComponent>(m_ActiveCamera).isMainCamera = false;
+  }
+
+  // set new camera
+  m_ActiveCamera = cameraEntity;
+  if(m_ActiveCamera != ecs::NULL_ENTITY && m_Coordinator.HasComponent<CameraComponent>(m_ActiveCamera)){
+    m_Coordinator.GetComponent<CameraComponent>(m_ActiveCamera).isMainCamera = true;
+  }
+}
+
+std::vector<ecs::Entity> Scene::GetPointLightEntities() const {
+  std::vector<ecs::Entity> lights;
+  for(auto entity : m_Entities){
+    if(const_cast<ecs::Coordinator&>(m_Coordinator).HasComponent<PointLightComponent>(entity)){
+      lights.push_back(entity);
     }
   }
   return lights;

@@ -1,11 +1,10 @@
 #pragma once
 
-#include "Component.h"
 #include "EditorPanel.h"
-#include "GameObject.h"
 #include "IMessageHandler.h"
 #include "Scene.h"
 #include "ServiceLocator.h"
+#include "ecs_common.h"
 
 class ComponentEditor;
 
@@ -18,13 +17,14 @@ public:
   void OnImGuiRender() override;
 
 private:
-  void DrawComponents(GameObject* go);
-  void DrawComp(IComponent* comp);
-  void DrawHeader(GameObject* go);
+  void DrawComponents(ecs::Entity entity);
+  template<typename T>
+  void DrawComponentIfPresent(ecs::Entity entity);
+  void DrawHeader(ecs::Entity entity);
 
 private:
   Scene& r_Scene;
 
 private:
-  GameObject* r_selectedGameObject;
+  ecs::Entity m_SelectedEntity = ecs::NULL_ENTITY;
 };

@@ -33,40 +33,40 @@ void SceneHierarchyEditorPanel::OnImGuiRender() {
 }
 
 void SceneHierarchyEditorPanel::DrawSceneHierarchy() {
-  if(r_SelectionWizard.GetState() == Ready)
-    LOG_INFO << "r_SelectionWizard is ready!";
+  // iterate through scene entities
+  const auto &entities = r_Scene.GetEntities();
+  auto& coordinator = r_Scene.GetCoordinator();
 
-  // iterate through scene objects
-  const auto &sceneObjects = r_Scene.GetGameObjects();
-  for (size_t i = 0; i < sceneObjects.size(); i++) {
-    const auto &gameObject = sceneObjects[i];
+  for (size_t i = 0; i < entities.size(); i++) {
+    ecs::Entity entity = entities[i];
 
-    // is this game object selected?
-    GameObject* selection = r_SelectionWizard->GetSelectedObject<GameObject>();
-    bool isSelected = selection == gameObject.get();
+    // is this entity selected?
+    ecs::Entity selectedEntity = r_SelectionWizard->GetSelectedEntity();
+    bool isSelected = selectedEntity == entity;
+
+    // get entity name
+    std::string entityName = r_Scene.GetEntityName(entity);
 
     // create name id
-    std::string nameid = gameObject->m_Name + "##" + std::to_string(i);
+    std::string nameid = entityName + "##" + std::to_string(i);
 
-    // show selectable for gameobject
+    // show selectable for entity
     if (ImGui::Selectable(nameid.c_str(), isSelected)) {
-      // if pressed, set selection to this gameobject
-      r_SelectionWizard->SetSelection(Selection_GameObject, gameObject.get());
+      // if pressed, set selection to this entity
+      r_SelectionWizard->SetSelection(entity);
     }
 
-    // context menu per gameobject
-    std::string popupid = "GameObject_Context##" + std::to_string(i);
+    // context menu per entity
+    std::string popupid = "Entity_Context##" + std::to_string(i);
     if (ImGui::BeginPopupContextItem(popupid.c_str())) {
       // show name
-      ImGui::Text("%s", gameObject->m_Name.c_str());
+      ImGui::Text("%s", entityName.c_str());
       ImGui::Separator();
 
-      // Preview camera button (only if GameObject has CameraComponent)
-      // TODO: this will get cluttered the more functionality i add to the 
-      // scene hierarchy panel
-      if (auto* camComp = gameObject->GetComponent<CameraComponent>()) {
+      // Preview camera button (only if Entity has CameraComponent)
+      if (coordinator.HasComponent<CameraComponent>(entity)) {
         if (ImGui::MenuItem("Preview Camera")) {
-          ServiceLocator::Get<Camera>().StartPreview(camComp);
+          ServiceLocator::Get<Camera>().StartPreview(entity);
         }
       }
 
@@ -76,14 +76,14 @@ void SceneHierarchyEditorPanel::DrawSceneHierarchy() {
 }
 
 void SceneHierarchyEditorPanel::DrawContextMenu() {
-  // allow pressing right mouse and dissalow opening over gameobject items
+  // allow pressing right mouse and dissalow opening over entity items
   ImGuiPopupFlags flags =
       ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems;
 
   if (ImGui::BeginPopupContextWindow("HierarchyContextMenu", flags)) {
-    // create an empty gameObject
-    if (ImGui::MenuItem("Create empty GameObject")) {
-      r_Scene.CreateGameObject();
+    // create an empty Entity
+    if (ImGui::MenuItem("Create empty Entity")) {
+      r_Scene.CreateEntity();
     }
     if(ImGui::MenuItem("Create PointLight")){
       r_Scene.CreatePointLight();

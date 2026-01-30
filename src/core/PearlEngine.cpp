@@ -27,6 +27,10 @@
 #include "MessageBus.h"
 #include "MessageQueue.h"
 #include "CameraComponent.h"
+#include "PointLightComponent.h"
+#include "TransformComponent.h"
+#include "RenderComponent.h"
+#include "ecs_common.h"
 #include "Renderer.h"
 
 #include "MeshManager.h"
@@ -130,26 +134,29 @@ void PearlEngine::Initialize() {
   }
 
   // create the main camera
-  GameObject *cameraGO = m_Scene.CreateGameObject("Main Camera");
-  auto *cmCmp = cameraGO->AddComponent<CameraComponent>();
-  cameraGO->GetComponent<TransformComponent>()->position = cmCmp->cameraData.position;
-  m_Scene.SetActiveCamera(cmCmp);
+  ecs::Entity cameraEntity = m_Scene.CreateEntity("Main Camera");
+  auto& coordinator = m_Scene.GetCoordinator();
+  coordinator.AddComponent(cameraEntity, CameraComponent{});
+  auto& camComp = coordinator.GetComponent<CameraComponent>(cameraEntity);
+  coordinator.GetComponent<TransformComponent>(cameraEntity).position = camComp.cameraData.position;
+  m_Scene.SetActiveCamera(cameraEntity);
 
   // create house model
-  auto go1 = m_Scene.CreateGameObject("Test house");
-  auto houseRenderComp = go1->AddComponent<RenderComponent>();
-  houseRenderComp->mesh = m_MeshManager->loadOBJ("assets/viking house/Viking_House.obj");
-  houseRenderComp->material = MaterialLoader::create(Defaults::getDefaultShader());
+  ecs::Entity houseEntity = m_Scene.CreateEntity("Test house");
+  RenderComponent houseRenderComp;
+  houseRenderComp.mesh = m_MeshManager->loadOBJ("assets/viking house/Viking_House.obj");
+  houseRenderComp.material = MaterialLoader::create(Defaults::getDefaultShader());
   auto houseTex = m_TextureManager->load("assets/viking house/Viking_House.png");
-  houseRenderComp->material->setTexture("texture_diffuse1", houseTex);
+  houseRenderComp.material->setTexture("texture_diffuse1", houseTex);
+  coordinator.AddComponent(houseEntity, houseRenderComp);
 
   // create some lights in the scene
   for(int i=0; i<3; i++){
-    auto newLight = m_Scene.CreatePointLight();
-    newLight->GetComponent<TransformComponent>()->position 
+    ecs::Entity newLight = m_Scene.CreatePointLight();
+    coordinator.GetComponent<TransformComponent>(newLight).position
       = glm::vec3(-6.f + i*4.f, 8.f, -4.5f + i*3.f);
-    auto lightComp = newLight->GetComponent<PointLightComponent>();
-    lightComp->data.radius = 8.f;
+    auto& lightComp = coordinator.GetComponent<PointLightComponent>(newLight);
+    lightComp.data.radius = 8.f;
   }
 
   // Create viewport framebuffer
@@ -281,7 +288,7 @@ void PearlEngine::LightingPass() {
   m_LightShader->setInt("gNormal", 1);
   m_LightShader->setInt("gAlbedoSpec", 2);
   m_LightShader->setInt("gDepthStencil", 3);
-  Renderer::SubmitLights(m_Scene.GetPointLights());
+  Renderer::SubmitLights(m_Scene);
   Renderer::SendLightUniforms(m_LightShader);
   m_LightShader->setVec3("viewPos", m_Camera.GetCurrentTarget()->position);
   glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);

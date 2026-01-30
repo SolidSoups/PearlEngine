@@ -5,6 +5,7 @@
 #include "ServiceHandle.h"
 #include "ServiceLocator.h"
 #include "SelectionWizard.h"
+#include "ecs_common.h"
 
 class SceneHierarchyEditorPanel : public EditorPanel{
 public:

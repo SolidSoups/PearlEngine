@@ -46,6 +46,11 @@ public:
     return GetComponentArray<T>()->GetData(entity);
   }
 
+  template<typename T>
+  bool HasComponent(Entity entity){
+    return GetComponentArray<T>()->HasEntity(entity);
+  }
+
   void EntityDestroyed(Entity entity){
     // notify each component array that an entity as been destroyed
     for(const auto& pair : mComponentArrays){

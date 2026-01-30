@@ -9,11 +9,12 @@
 
 class RenderComponentEditor : public ComponentEditor{
 public:
-  void OnDrawComponent(IComponent* target) override;
+  void OnDrawComponent(void* target, ecs::Entity entity) override;
+  const char* GetComponentName() const override { return "RenderComponent"; }
 
 private:
   void DrawTexture(RenderComponent* comp);
-  void DrawMesh(RenderComponent* comp); 
+  void DrawMesh(RenderComponent* comp);
 
   void trySetCompTexture(RenderComponent* comp, const std::string& slot, std::shared_ptr<TextureData> texture);
 

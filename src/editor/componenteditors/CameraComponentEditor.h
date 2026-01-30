@@ -6,7 +6,8 @@
 
 class CameraComponentEditor : public ComponentEditor{
 public:
-  void OnDrawComponent(IComponent* target) override;
+  void OnDrawComponent(void* target, ecs::Entity entity) override;
+  const char* GetComponentName() const override { return "CameraComponent"; }
 };
 
 STATIC_REGISTER_COMPONENT_EDITOR(CameraComponent, CameraComponentEditor)

@@ -4,6 +4,7 @@
 #include "ServiceHandle.h"
 #include "ServiceLocator.h"
 #include "Scene.h"
+#include "ecs_common.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -24,10 +25,10 @@ private:
 
 private:
   bool m_IsPreviewingSceneCamera = false;
-  CameraComponent *m_PreviewTarget = nullptr;
+  ecs::Entity m_PreviewTarget = ecs::NULL_ENTITY;
 
 public:
   inline bool IsPreviewing() const { return m_IsPreviewingSceneCamera; }
-  void StartPreview(CameraComponent *target);
+  void StartPreview(ecs::Entity cameraEntity);
   void StopPreview();
 };

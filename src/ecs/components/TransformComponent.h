@@ -2,13 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "Component.h"
-#include "ComponentFlags.h"
-
-struct TransformComponent : public IComponent{
-  COMPONENT_CLASS(TransformComponent)
-
-public:
+struct TransformComponent {
   glm::vec3 position{0.0f};
   glm::vec3 rotation{0.0f};
   glm::vec3 scale{1.0f};
@@ -30,9 +24,4 @@ public:
   void SetRotation(float angle, const glm::vec3& axis);
   void SetPosition(const glm::vec3& position);
   void SetScale(const glm::vec3& scale);
-
-public:
-  ComponentFlags GetCompFlags() const override {
-    return ComponentFlags_SortHighest;
-  }
 };

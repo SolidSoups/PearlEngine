@@ -1,7 +1,7 @@
 #pragma once
 #include "Camera.h"
-#include "GameObject.h"
 #include "Message.h"
+#include "ecs_common.h"
 #include <typeindex>
 #include "MessageQueue.h"
 #include "ServiceHandle.h"
@@ -17,35 +17,23 @@ enum SelectionType : uint8_t {
   Selection_Clear,
 
   // types of selections
-  Selection_GameObject,
+  Selection_Entity,
 
   Selection_MAX
 };
 
 struct SelectionData {
-  SelectionType type;
-  std::variant<
-    std::monostate,
-    GameObject*,
-    Camera*> selection;
-  template<typename T>
-  T* SelectionAs() const{
-    if(auto* ptr = std::get_if<T*>(&selection)){
-      return *ptr;
-    }
-    return nullptr;
+  SelectionType type = Selection_None;
+  ecs::Entity selectedEntity = ecs::NULL_ENTITY;
+
+  bool HasSelection() const {
+    return type == Selection_Entity && selectedEntity != ecs::NULL_ENTITY;
   }
 };
+
 struct SelectionMessage {
   SelectionType type;
-  std::variant<std::monostate, GameObject*, Camera*> selection;
-
-  template<typename T>
-  T* SelectionAs() const{
-    if(auto* ptr = std::get_if<T*>(&selection))
-      return *ptr;
-    return nullptr;
-  }
+  ecs::Entity selectedEntity;
 };
 
 class SelectionWizard {
@@ -56,27 +44,29 @@ private:
   ServiceHandle<MessageQueue> r_MessageQueue;
 
 public:
-  SelectionData& GetSelectionData() { return m_SelectionData; } 
-  template<typename T> T* GetSelectedObject() {
-    return m_SelectionData.SelectionAs<T>();
+  SelectionData& GetSelectionData() { return m_SelectionData; }
+  ecs::Entity GetSelectedEntity() const {
+    return m_SelectionData.selectedEntity;
+  }
+  bool HasSelection() const {
+    return m_SelectionData.HasSelection();
   }
 
 public:
-  template<typename T>
-  void SetSelection(SelectionType type, T* selectionObject) {
-    m_SelectionData.selection = selectionObject;
-    m_SelectionData.type = type;
+  void SetSelection(ecs::Entity entity) {
+    m_SelectionData.selectedEntity = entity;
+    m_SelectionData.type = Selection_Entity;
     SendMessage();
   };
   void ClearSelection(){
-    m_SelectionData.selection = std::monostate{};
+    m_SelectionData.selectedEntity = ecs::NULL_ENTITY;
     m_SelectionData.type = Selection_Clear;
     SendMessage();
   }
-  
+
 private:
   void SendMessage(){
-    SelectionMessage msg{m_SelectionData.type, m_SelectionData.selection};
+    SelectionMessage msg{m_SelectionData.type, m_SelectionData.selectedEntity};
     r_MessageQueue->Dispatch(msg);
   }
 };

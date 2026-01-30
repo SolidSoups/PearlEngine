@@ -5,59 +5,55 @@
 #include <strings.h>
 #include <vector>
 #include "CameraComponent.h"
-#include "GameObject.h"
 #include "AmbientLightData.h"
 #include "PointLightComponent.h"
+#include "ecs_coordinator.h"
+#include "ecs_common.h"
 
 class Camera;
 
 class Scene{
 public:
-  Scene() = default;
+  Scene();
   ~Scene() = default;
 
   // Object management
-  GameObject* CreateGameObject(const std::string& name = "gameObject");
-  GameObject* CreatePointLight(const std::string& name = "PointLight");
-  GameObject* CreateCube(const std::string& name = "Cube");
-  inline void Clear() { m_GameObjects.clear(); }
+  ecs::Entity CreateEntity(const std::string& name = "Entity");
+  ecs::Entity CreatePointLight(const std::string& name = "PointLight");
+  ecs::Entity CreateCube(const std::string& name = "Cube");
+  void DestroyEntity(ecs::Entity entity);
+  void Clear();
 
   // Scene operations
   void Update();
   void Render(Camera& camera);
 
-  GameObject* GetSelectedGameObject(){
-    if(selectedIndex < 0 || selectedIndex >= m_GameObjects.size()) return nullptr;
-
-    return m_GameObjects[selectedIndex].get();
-  }
-
-  void SetSelectedIndex(size_t index){
-    if(index < 0 || index >= m_GameObjects.size())
-      selectedIndex = -1;
-    else
-      selectedIndex = index;
-  }
-
   // Query
-  inline size_t GetObjectCount() const { return m_GameObjects.size(); }
-  inline const std::vector<std::unique_ptr<GameObject>>& GetGameObjects() const { return m_GameObjects; };
+  inline size_t GetEntityCount() const { return m_Entities.size(); }
+  inline const std::vector<ecs::Entity>& GetEntities() const { return m_Entities; }
 
-  std::vector<PointLightComponent*> GetPointLights() const;
+  // Coordinator access for component operations
+  ecs::Coordinator& GetCoordinator() { return m_Coordinator; }
+  const ecs::Coordinator& GetCoordinator() const { return m_Coordinator; }
+
+  // Entity name helpers
+  std::string GetEntityName(ecs::Entity entity);
+  void SetEntityName(ecs::Entity entity, const std::string& name);
+
+  // Get entities with PointLightComponent (returns entity IDs, not component pointers)
+  std::vector<ecs::Entity> GetPointLightEntities() const;
 
   // Scene-level lighting
   AmbientLightData ambientLight;
 
 private:
-  std::vector<std::unique_ptr<GameObject>> m_GameObjects;
-  EntityID m_NextObjectID = 1;
-
-  size_t selectedIndex = 0;
+  ecs::Coordinator m_Coordinator;
+  std::vector<ecs::Entity> m_Entities;
 
 private:
-  CameraComponent* m_ActiveCamera = nullptr;
+  ecs::Entity m_ActiveCamera = ecs::NULL_ENTITY;
 
 public:
-  void SetActiveCamera(CameraComponent* camera);
-  CameraComponent* GetActiveCamera() const { return m_ActiveCamera; }
+  void SetActiveCamera(ecs::Entity cameraEntity);
+  ecs::Entity GetActiveCamera() const { return m_ActiveCamera; }
 };

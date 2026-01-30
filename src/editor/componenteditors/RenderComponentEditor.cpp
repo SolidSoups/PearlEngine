@@ -11,8 +11,8 @@
 #include "ServiceLocator.h"
 #include "ImGuiHelpers.h"
 
-void RenderComponentEditor::OnDrawComponent(IComponent *target) {
-  RenderComponent *renderComp = dynamic_cast<RenderComponent *>(target);
+void RenderComponentEditor::OnDrawComponent(void *target, [[maybe_unused]] ecs::Entity entity) {
+  RenderComponent *renderComp = static_cast<RenderComponent *>(target);
   if (!renderComp)
     return;
 

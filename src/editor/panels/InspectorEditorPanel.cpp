@@ -1,6 +1,5 @@
 #include "InspectorEditorPanel.h"
 #include "ComponentEditor.h"
-#include "ComponentFlags.h"
 #include "Logger.h"
 #include "MenuRegistry.h"
 
@@ -10,7 +9,8 @@
 #include "MessageBus.h"
 #include "PointLightComponent.h"
 #include "TransformComponent.h"
-#include "GameObject.h"
+#include "CameraComponent.h"
+#include "NameComponent.h"
 #include "SelectionWizard.h"
 #include "RenderComponent.h"
 #include "TransformComponentEditor.h"
@@ -20,7 +20,7 @@
 
 InspectorEditorPanel::InspectorEditorPanel()
     : EditorPanel("Inspector"), r_Scene(ServiceLocator::Get<Scene>()),
-      r_selectedGameObject(nullptr) {
+      m_SelectedEntity(ecs::NULL_ENTITY) {
   MenuRegistry::Get().Register("Windows/Inspector", &m_IsOpen);
   ServiceLocator::Get<MessageBus>().Subscribe<SelectionMessage>(this);
 }
@@ -28,9 +28,9 @@ InspectorEditorPanel::InspectorEditorPanel()
 void InspectorEditorPanel::HandleMessage(const Message &msg) {
   if (auto *evt = msg.As<SelectionMessage>()) {
     if (evt->type == Selection_Clear) {
-      r_selectedGameObject = nullptr;
-    } else if (evt->type == Selection_GameObject) {
-      r_selectedGameObject = evt->SelectionAs<GameObject>();
+      m_SelectedEntity = ecs::NULL_ENTITY;
+    } else if (evt->type == Selection_Entity) {
+      m_SelectedEntity = evt->selectedEntity;
     }
   }
 }
@@ -41,75 +41,36 @@ void InspectorEditorPanel::OnImGuiRender() {
 
   ImGui::Begin(m_Name.c_str());
 
-  if (r_selectedGameObject) {
-    DrawHeader(r_selectedGameObject);
-    DrawComponents(r_selectedGameObject);
+  if (m_SelectedEntity != ecs::NULL_ENTITY) {
+    DrawHeader(m_SelectedEntity);
+    DrawComponents(m_SelectedEntity);
   }
 
   ImGui::End();
 }
 
-void InspectorEditorPanel::DrawHeader(GameObject *go) {
+void InspectorEditorPanel::DrawHeader(ecs::Entity entity) {
   static char nameBuffer[512];
-  strncpy(nameBuffer, go->m_Name.c_str(), sizeof(nameBuffer) - 1);
+  std::string entityName = r_Scene.GetEntityName(entity);
+  strncpy(nameBuffer, entityName.c_str(), sizeof(nameBuffer) - 1);
   nameBuffer[sizeof(nameBuffer) - 1] = '\0';
 
   ImGui::BeginChild("GameObjectHeader", ImVec2(0, 0),
                     ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar);
   if (ImGui::InputText("##GameObjectName", nameBuffer, sizeof(nameBuffer),
                        ImGuiInputTextFlags_EnterReturnsTrue)) {
-    go->m_Name = nameBuffer;
+    r_Scene.SetEntityName(entity, nameBuffer);
   }
   ImGui::EndChild();
 }
 
-void InspectorEditorPanel::DrawComponents(GameObject *go) {
-  const auto &components = go->GetAllComponents();
+template<typename T>
+void InspectorEditorPanel::DrawComponentIfPresent(ecs::Entity entity) {
+  auto& coordinator = r_Scene.GetCoordinator();
+  if (!coordinator.HasComponent<T>(entity)) return;
 
-  // draw all highest priority components
-  for(auto &[key, comp] : components){
-    ComponentFlags flags = comp->GetCompFlags();
-    if((ComponentFlags_SortHighest & flags) == 0) continue;
-
-    DrawComp(comp.get());
-  }
-
-  // draw all other components
-  for (auto &[key, comp] : components) {
-    ComponentFlags flags = comp->GetCompFlags();
-    if((ComponentFlags_SortHighest & flags) != 0) continue;
-
-    DrawComp(comp.get());
-  }
-
-  // draw add component
-  ImGui::Separator();
-  if (ImGui::Button("Add Component##Button", ImVec2(-1, 0))) {
-    ImGui::OpenPopup("##SearchablePopup_Add_Component");
-  }
-
-  std::vector<std::string> compChoices = {"Render Component", "Ambient Light",
-                                          "Transform", "Point Light"};
-  std::string selected = "";
-  if (SearchablePopup<std::string>(
-          "Add_Component", "Add Component", compChoices,
-          [](std::string choice) { return choice; }, selected)) {
-    if (selected == "Render Component") {
-      go->AddComponent<RenderComponent>();
-    } else if (selected == "Transform"){
-      go->AddComponent<TransformComponent>();
-    } else if (selected == "Point Light"){
-      go->AddComponent<PointLightComponent>();
-    }
-  }
-}
-
-void InspectorEditorPanel::DrawComp(IComponent *comp) {
-  if(!comp) return;
-
-  ComponentEditor *editor =
-    GET_COMPONENT_EDITOR_WITH_TYPEID(comp->GetTypeIndex());
-  const char *name = comp->GetComponentName();
+  ComponentEditor* editor = GET_COMPONENT_EDITOR(T);
+  const char* name = editor ? editor->GetComponentName() : typeid(T).name();
 
   if (ImGui::CollapsingHeader(name, ImGuiTreeNodeFlags_DefaultOpen)) {
     ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
@@ -123,9 +84,10 @@ void InspectorEditorPanel::DrawComp(IComponent *comp) {
     ImGui::Indent(10.f);
 
     // here we draw the components editor
-    if (editor)
-      editor->OnDrawComponent(comp);
-    else {
+    if (editor) {
+      T& comp = coordinator.GetComponent<T>(entity);
+      editor->OnDrawComponent(&comp, entity);
+    } else {
       ImGui::PushTextWrapPos(0.0f);
       ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.7f, 0.2f, 1.0f));
       ImGui::Text("WARNING: No component editor has been registered for %s "
@@ -141,5 +103,38 @@ void InspectorEditorPanel::DrawComp(IComponent *comp) {
 
     ImGui::PopStyleVar();
     ImGui::PopStyleColor();
+  }
+}
+
+void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
+  auto& coordinator = r_Scene.GetCoordinator();
+
+  // Draw components in order (TransformComponent first as highest priority)
+  DrawComponentIfPresent<TransformComponent>(entity);
+  DrawComponentIfPresent<CameraComponent>(entity);
+  DrawComponentIfPresent<RenderComponent>(entity);
+  DrawComponentIfPresent<PointLightComponent>(entity);
+
+  // draw add component
+  ImGui::Separator();
+  if (ImGui::Button("Add Component##Button", ImVec2(-1, 0))) {
+    ImGui::OpenPopup("##SearchablePopup_Add_Component");
+  }
+
+  std::vector<std::string> compChoices = {"Render Component",
+                                          "Transform", "Point Light", "Camera"};
+  std::string selected = "";
+  if (SearchablePopup<std::string>(
+          "Add_Component", "Add Component", compChoices,
+          [](std::string choice) { return choice; }, selected)) {
+    if (selected == "Render Component" && !coordinator.HasComponent<RenderComponent>(entity)) {
+      coordinator.AddComponent(entity, RenderComponent{});
+    } else if (selected == "Transform" && !coordinator.HasComponent<TransformComponent>(entity)){
+      coordinator.AddComponent(entity, TransformComponent{});
+    } else if (selected == "Point Light" && !coordinator.HasComponent<PointLightComponent>(entity)){
+      coordinator.AddComponent(entity, PointLightComponent{});
+    } else if (selected == "Camera" && !coordinator.HasComponent<CameraComponent>(entity)){
+      coordinator.AddComponent(entity, CameraComponent{});
+    }
   }
 }

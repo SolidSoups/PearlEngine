@@ -4,13 +4,17 @@
 #include "PointLightComponent.h"
 #include "TransformComponent.h"
 #include "RenderComponent.h"
+#include "ecs_common.h"
+#include <vector>
+
 class Camera;
+class Scene;
 
 class Renderer {
 public:
   // Scene management
   static void BeginScene(Camera &camera, const AmbientLightData &ambientData);
-  static void SubmitLights(const std::vector<PointLightComponent *> lights);
+  static void SubmitLights(Scene& scene);
   static void EndScene();
 
   static void Submit(const RenderComponent &renderComp,
@@ -20,7 +24,8 @@ public:
 private:
   static Camera *s_ActiveCamera;
   static AmbientLightData m_AmbientData;
-  static std::vector<PointLightComponent *> m_PointLights;
+  static std::vector<ecs::Entity> m_PointLightEntities;
+  static Scene* m_Scene;
   static bool m_bGeometryPassEnabled;
   static std::shared_ptr<ShaderData> m_NextShader;
 
