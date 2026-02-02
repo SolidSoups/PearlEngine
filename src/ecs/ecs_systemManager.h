@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <iostream>
 
 #include "ecs_common.h"
 #include "ecs_system.h"
@@ -45,7 +46,12 @@ public:
     for (auto const &pair : mSystems) {
       auto const &type = pair.first;
       auto const &system = pair.second;
-      auto const &systemSignature = mSignatures[type];
+
+      auto sig_it = mSignatures.find(type);
+      if(sig_it == mSignatures.end()) {
+        continue;
+      }
+      auto const &systemSignature = sig_it->second;
 
       // Entity signature matches system signature - insert into set
       if ((entitySignature & systemSignature) == systemSignature) {
@@ -59,7 +65,7 @@ public:
   }
 
 private:
-  std::unordered_map<const char *, Signature> mSignatures{};
-  std::unordered_map<const char *, std::shared_ptr<System>> mSystems{};
+  std::unordered_map<std::string, Signature> mSignatures{};
+  std::unordered_map<std::string, std::shared_ptr<System>> mSystems{};
 };
 } // namespace ecs

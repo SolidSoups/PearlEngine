@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "ecs_common.h"
+#include "Logger.h"
 
 class IComponentArray {
 public:

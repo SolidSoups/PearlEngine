@@ -17,6 +17,7 @@
 #include "PearlEngine.h"
 #include "AmbientLightEditorPanel.h"
 #include "CameraController.h"
+#include "PointLightSystem.h"
 #include "Project.h"
 #include "UserGUI.h"
 #include "Renderer.h"
@@ -93,6 +94,7 @@ PearlEngine::~PearlEngine() {
 }
 
 void PearlEngine::Initialize() {
+  LOG_INFO << "Initializing!";
   GLFWwindow *window = pwin.GetWindow();
   glfwMakeContextCurrent(window);
 
@@ -205,6 +207,7 @@ void PearlEngine::Initialize() {
   glDisable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
 
+  LOG_INFO << "Finished initialization";
 }
 
 // b@UPDATE
@@ -268,6 +271,22 @@ void PearlEngine::Render() {
 #endif
 }
 
+void PearlEngine::GeometryRenderPass() {
+  m_GBuffer->bind();
+  glClearColor(0, 0, 0, 1.0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  Renderer::SetGeometryPassEnabled(true);
+  Renderer::SetNextShader(m_GeometryShader);
+  m_GeometryShader->use();
+
+  m_Scene.Render(m_Camera);
+
+  Renderer::SetGeometryPassEnabled(false);
+  m_GBuffer->unbind();
+}
+
+
 void PearlEngine::LightingPass() {
   m_ViewportFramebuffer->Bind();
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -290,7 +309,9 @@ void PearlEngine::LightingPass() {
   m_LightShader->setInt("gAlbedoSpec", 2);
   m_LightShader->setInt("gDepthStencil", 3);
   Renderer::SubmitLights(m_Scene);
-  Renderer::SendLightUniforms(m_LightShader);
+  // Renderer::SendLightUniforms(m_LightShader);
+  Renderer::SendAmbientLightUniforms(m_LightShader);
+  m_Scene.mPointLightSystem->SendUniforms(m_LightShader);
   m_LightShader->setVec3("viewPos", m_Camera.GetCurrentTarget()->position);
   glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
   m_FullscreenQuad->Draw();
@@ -342,20 +363,6 @@ void PearlEngine::QuadDebugRenderPass() {
   m_ViewportFramebuffer->Unbind();
 }
 
-void PearlEngine::GeometryRenderPass() {
-  m_GBuffer->bind();
-  glClearColor(0, 0, 0, 1.0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  Renderer::SetGeometryPassEnabled(true);
-  Renderer::SetNextShader(m_GeometryShader);
-  m_GeometryShader->use();
-
-  m_Scene.Render(m_Camera);
-
-  Renderer::SetGeometryPassEnabled(false);
-  m_GBuffer->unbind();
-}
 
 void PearlEngine::RenderEditor() {
   m_GUIContext.BeginFrame();

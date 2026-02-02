@@ -10,6 +10,8 @@
 #include "ecs_coordinator.h"
 #include "ecs_common.h"
 
+class RenderSystem;
+class PointLightSystem;
 class Camera;
 
 class Scene{
@@ -52,6 +54,10 @@ private:
 
 private:
   ecs::Entity m_ActiveCamera = ecs::NULL_ENTITY;
+
+  std::shared_ptr<RenderSystem> mRenderSystem;
+public:
+  std::shared_ptr<PointLightSystem> mPointLightSystem;
 
 public:
   void SetActiveCamera(ecs::Entity cameraEntity);

@@ -6,6 +6,8 @@
 #include "PointLightComponent.h"
 #include "RenderComponent.h"
 #include "Renderer.h"
+#include "RenderSystem.h"
+#include "PointLightSystem.h"
 
 #include "TransformComponent.h"
 #include "NameComponent.h"
@@ -21,31 +23,24 @@ Scene::Scene() {
   m_Coordinator.RegisterComponent<CameraComponent>();
   m_Coordinator.RegisterComponent<PointLightComponent>();
   m_Coordinator.RegisterComponent<NameComponent>();
+
+  // Register render system
+  mRenderSystem = m_Coordinator.RegisterSystem<RenderSystem>();
+  ecs::Signature rsSignature;
+  rsSignature.set(m_Coordinator.GetComponentType<RenderComponent>());
+  rsSignature.set(m_Coordinator.GetComponentType<TransformComponent>());
+  m_Coordinator.SetSystemSignature<RenderSystem>(rsSignature);
+  mRenderSystem->Init(&m_Coordinator);
+
+  // Register light system
+  mPointLightSystem = m_Coordinator.RegisterSystem<PointLightSystem>();
+  ecs::Signature lsSignature;
+  lsSignature.set(m_Coordinator.GetComponentType<TransformComponent>());
+  lsSignature.set(m_Coordinator.GetComponentType<PointLightComponent>());
+  m_Coordinator.SetSystemSignature<PointLightSystem>(lsSignature);
+  mPointLightSystem->Init(&m_Coordinator);
 }
 
-ecs::Entity Scene::CreateEntity(const std::string& name){
-  ecs::Entity entity = m_Coordinator.CreateEntity();
-  m_Coordinator.AddComponent(entity, NameComponent{name});
-  m_Coordinator.AddComponent(entity, TransformComponent{});
-  m_Entities.push_back(entity);
-  return entity;
-}
-
-ecs::Entity Scene::CreatePointLight(const std::string& name){
-  ecs::Entity entity = CreateEntity(name);
-  m_Coordinator.AddComponent(entity, PointLightComponent{});
-  return entity;
-}
-
-ecs::Entity Scene::CreateCube(const std::string& name){
-  ecs::Entity entity = CreateEntity(name);
-  RenderComponent renderComp;
-  std::vector<float> vertices(Cube::s_Vertices, Cube::s_Vertices + Cube::s_VertexCount);
-  std::vector<unsigned int> indices(Cube::s_Indices, Cube::s_Indices + Cube::s_IndexCount);
-  renderComp.mesh = std::make_shared<Mesh>(vertices, indices);
-  m_Coordinator.AddComponent(entity, renderComp);
-  return entity;
-}
 
 void Scene::DestroyEntity(ecs::Entity entity) {
   m_Coordinator.DestroyEntity(entity);
@@ -70,15 +65,7 @@ void Scene::Render(Camera& camera){
   Renderer::BeginScene(camera, ambientLight);
   Renderer::SubmitLights(*this);
 
-  for(auto entity : m_Entities){
-    if(!m_Coordinator.HasComponent<TransformComponent>(entity)) continue;
-    if(!m_Coordinator.HasComponent<RenderComponent>(entity)) continue;
-
-    auto& transform = m_Coordinator.GetComponent<TransformComponent>(entity);
-    auto& renderComp = m_Coordinator.GetComponent<RenderComponent>(entity);
-
-    Renderer::Submit(renderComp, transform);
-  }
+  mRenderSystem->RenderAll();
   Renderer::EndScene();
 }
 
@@ -116,4 +103,34 @@ std::vector<ecs::Entity> Scene::GetPointLightEntities() const {
     }
   }
   return lights;
+}
+
+
+
+
+
+
+
+ecs::Entity Scene::CreateEntity(const std::string& name){
+  ecs::Entity entity = m_Coordinator.CreateEntity();
+  m_Coordinator.AddComponent(entity, NameComponent{name});
+  m_Coordinator.AddComponent(entity, TransformComponent{});
+  m_Entities.push_back(entity);
+  return entity;
+}
+
+ecs::Entity Scene::CreatePointLight(const std::string& name){
+  ecs::Entity entity = CreateEntity(name);
+  m_Coordinator.AddComponent(entity, PointLightComponent{});
+  return entity;
+}
+
+ecs::Entity Scene::CreateCube(const std::string& name){
+  ecs::Entity entity = CreateEntity(name);
+  RenderComponent renderComp;
+  std::vector<float> vertices(Cube::s_Vertices, Cube::s_Vertices + Cube::s_VertexCount);
+  std::vector<unsigned int> indices(Cube::s_Indices, Cube::s_Indices + Cube::s_IndexCount);
+  renderComp.mesh = std::make_shared<Mesh>(vertices, indices);
+  m_Coordinator.AddComponent(entity, renderComp);
+  return entity;
 }

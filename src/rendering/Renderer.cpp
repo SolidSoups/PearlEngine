@@ -74,11 +74,12 @@ void Renderer::Submit(const RenderComponent &renderComp,
   }
 }
 
-void Renderer::SendLightUniforms(std::shared_ptr<ShaderData> shader) {
-  // set ambient light
+void Renderer::SendAmbientLightUniforms(std::shared_ptr<ShaderData> shader){
   shader->setVec4("ambientColor", m_AmbientData.color);
   shader->setFloat("ambientIntensity", m_AmbientData.intensity);
+}
 
+void Renderer::SendLightUniforms(std::shared_ptr<ShaderData> shader) {
   if (!m_Scene) return;
 
   auto& coordinator = m_Scene->GetCoordinator();

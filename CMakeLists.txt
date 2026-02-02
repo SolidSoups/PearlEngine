@@ -104,6 +104,7 @@ target_include_directories(game_engine PRIVATE
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs/components
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs/systems
   external/stb
   external/glm
   external/rapidjson/include

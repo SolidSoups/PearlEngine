@@ -19,6 +19,7 @@ public:
 
     mComponentTypes.insert({typeName, mNextComponentType});
     mComponentArrays.insert({typeName, std::make_shared<ComponentArray<T>>()});
+    ++mNextComponentType;
   }
 
   template<typename T>
@@ -60,8 +61,8 @@ public:
   }
 
 private:
-  std::unordered_map<const char*, ComponentType> mComponentTypes{};
-  std::unordered_map<const char*, std::shared_ptr<IComponentArray>> mComponentArrays{};
+  std::unordered_map<std::string, ComponentType> mComponentTypes{};
+  std::unordered_map<std::string, std::shared_ptr<IComponentArray>> mComponentArrays{};
   ComponentType mNextComponentType{};
 
   template<typename T>

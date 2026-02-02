@@ -20,6 +20,7 @@ public:
   static void Submit(const RenderComponent &renderComp,
                      const TransformComponent &transformComp);
   static void SendLightUniforms(std::shared_ptr<ShaderData> shader);
+  static void SendAmbientLightUniforms(std::shared_ptr<ShaderData> shader);
 
 private:
   static Camera *s_ActiveCamera;
