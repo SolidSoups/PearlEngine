@@ -93,6 +93,9 @@ PearlEngine::~PearlEngine() {
   
   // causes issues
   m_FullscreenQuad.reset();
+
+  LOG_INFO << "Terminating GLFW";
+  glfwTerminate();
 }
 
 void PearlEngine::Initialize() {

@@ -71,7 +71,7 @@ public:
 
   // Gbuffer stuff
   std::unique_ptr<GBuffer> m_GBuffer;
-  std::shared_ptr<Mesh> m_FullscreenQuad;
+  std::unique_ptr<Mesh> m_FullscreenQuad;
 
   std::shared_ptr<ShaderData> m_GeometryShader;
   std::shared_ptr<ShaderData> m_DisplayShader;

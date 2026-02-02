@@ -2,13 +2,17 @@
 // src
 #include "PearlEngine.h"
 #include <iostream>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 int main() {
-  PearlEngine engine;
-  if (!engine.IsInitialized()) {
+  PearlEngine* engine = new PearlEngine;
+  if (!engine->IsInitialized()) {
     return -1;
   }
 
-  engine.RunUpdateLoop();
+  engine->RunUpdateLoop();
+  delete engine;
+  glfwTerminate();
   return 0;
 }
