@@ -1,40 +1,93 @@
-#pragma once
+#include "GBuffer.h"
 
-#include "Logger.h"
+#include <stdexcept>
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
-class EntityManager{
-public:
-  EntityManager(){
-    for(Entity entity = 0; entity < MAX_ENTITIES; ++entity){
-      mAvailableEntities.push(entity);
-    }
+GBuffer::GBuffer(uint16_t width, uint16_t height)
+  : m_Width(width), m_Height(height)
+{
+  glGenFramebuffers(1, &m_GBuffer);
+  glBindFramebuffer(GL_FRAMEBUFFER, m_GBuffer);
+
+  // position color buffer
+  glGenTextures(1, &m_GPosition);
+  glBindTexture(GL_TEXTURE_2D, m_GPosition);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_FLOAT, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_GPosition, 0);
+
+  // normal color buffer
+  glGenTextures(1, &m_GNormal);
+  glBindTexture(GL_TEXTURE_2D, m_GNormal);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_FLOAT, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_GNormal, 0);
+  
+  // color + specular color buffer 
+  glGenTextures(1, &m_GAlbedoSpec);
+  glBindTexture(GL_TEXTURE_2D, m_GAlbedoSpec);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_GAlbedoSpec, 0);
+
+  // tell opengl which color attachments we'll use (of this framebuffer) for rendering
+  unsigned int attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+  glDrawBuffers(3, attachments);
+
+  // depth texture
+  glGenTextures(1, &m_DepthTexture);
+  glBindTexture(GL_TEXTURE_2D, m_DepthTexture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, (GLsizei)width, (GLsizei)height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthTexture, 0);
+
+  // completeness check
+  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
+    throw std::runtime_error("GBuffer is incomplete");
   }
 
-  Entity CreateEntity(){
-    if(mLivingEntityCount < MAX_ENTITIES){
-      LOG_ERROR << "Too many entities in existance";
-      return -1;
-    }
-    
-    // take an id from the top of the queue
-    Entity id = mAvailableEntities.front();
-    mAvailableEntities.pop();
-    ++mLivingEntityCount;
+  // unbind 
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
-    return id;
-  }
+GBuffer::~GBuffer(){
+	if(m_GPosition != 0)   glDeleteTextures(1, &m_GPosition);
+	if(m_GNormal != 0)   glDeleteTextures(1, &m_GNormal);
+	if(m_GAlbedoSpec != 0)   glDeleteTextures(1, &m_GAlbedoSpec);
+	if(m_DepthTexture != 0)   glDeleteTextures(1, &m_DepthTexture);
+	if(m_GBuffer != 0)   glDeleteFramebuffers(1, &m_GBuffer);
+}
 
-  void DestroyEntity(Entity entity){
-    assert(entity < MAX_ENTITIES && "Entity out of range");
-    if(entity < MAX_ENTITIES){
-      LOG_ERROR << "Entity out of range";
-      return;
-    }
 
-    // invalidate the destroyed entity's signature
-    mSignatures[entity].reset();
+void GBuffer::bind(){
+  glBindFramebuffer(GL_FRAMEBUFFER, m_GBuffer);  
+  glViewport(0, 0, m_Width, m_Height);
+}
 
-    // put the destroyed id at the back of the queue
-  }
-};
+void GBuffer::unbind(){
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void GBuffer::resize(uint16_t width, uint16_t height){
+  m_Width = width;
+  m_Height = height;
+
+  glBindTexture(GL_TEXTURE_2D, m_GPosition);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+
+  glBindTexture(GL_TEXTURE_2D, m_GNormal);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+
+  glBindTexture(GL_TEXTURE_2D, m_GAlbedoSpec);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+  glBindTexture(GL_TEXTURE_2D, m_DepthTexture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+}

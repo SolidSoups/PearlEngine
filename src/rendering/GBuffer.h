@@ -23,4 +23,8 @@ private:
   unsigned int m_GNormal = 0;
   unsigned int m_GAlbedoSpec = 0;
   unsigned int m_DepthTexture = 0;
+
+
+  uint16_t m_Width;
+  uint16_t m_Height;
 };

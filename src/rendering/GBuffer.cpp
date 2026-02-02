@@ -5,7 +5,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-GBuffer::GBuffer(uint16_t width, uint16_t height){
+GBuffer::GBuffer(uint16_t width, uint16_t height)
+  : m_Width(width), m_Height(height)
+{
   glGenFramebuffers(1, &m_GBuffer);
   glBindFramebuffer(GL_FRAMEBUFFER, m_GBuffer);
 
@@ -65,6 +67,7 @@ GBuffer::~GBuffer(){
 
 void GBuffer::bind(){
   glBindFramebuffer(GL_FRAMEBUFFER, m_GBuffer);  
+  glViewport(0, 0, m_Width, m_Height);
 }
 
 void GBuffer::unbind(){
@@ -72,6 +75,9 @@ void GBuffer::unbind(){
 }
 
 void GBuffer::resize(uint16_t width, uint16_t height){
+  m_Width = width;
+  m_Height = height;
+
   glBindTexture(GL_TEXTURE_2D, m_GPosition);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 

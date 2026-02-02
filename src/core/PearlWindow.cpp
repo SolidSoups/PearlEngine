@@ -13,10 +13,10 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
   glViewport(0, 0, width, height);
 
-  float newAspect = (float)width / (float)height;
-  if(ServiceLocator::IsReady<Camera>()){
-    ServiceLocator::Get<Camera>().SetAspect(newAspect);
-  }
+  // float newAspect = (float)width / (float)height;
+  // if(ServiceLocator::IsReady<Camera>()){
+  //   ServiceLocator::Get<Camera>().SetAspect(newAspect);
+  // }
 
   // update window dimensions
   if(ServiceLocator::IsReady<PearlWindow>()){

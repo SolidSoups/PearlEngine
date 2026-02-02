@@ -238,6 +238,7 @@ void PearlEngine::Update() {
   // handle viewport resize
   if (m_ViewportPanel->IsResized()) {
     glm::vec2 newSize = m_ViewportPanel->GetSize();
+
     m_ViewportFramebuffer->Resize(newSize.x, newSize.y);
     m_Camera.SetAspect(newSize.x / newSize.y);
     m_GBuffer->resize(newSize.x, newSize.y);
