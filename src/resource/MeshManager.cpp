@@ -5,11 +5,37 @@
 #include <optional>
 #include <fstream>
 #include <map>
+#include <iostream>
 
 #include "Mesh.h"
 #include "Logger.h"
 
 #include "Mesh.h"
+
+std::vector<std::string> splitWhiteSpace(const char *line) {
+  const char *ptr = line;
+  std::vector<std::string> f_verts;
+  std::string temp_str;
+  ptr += 2; // skip whitespace
+
+  while (*ptr != '\0') {
+    if (*ptr == ' ') {
+      if (!temp_str.empty()) { // skip pushing empty strings
+        f_verts.push_back(temp_str);
+        temp_str = "";
+      }
+    } else {
+      temp_str += *ptr;
+    }
+
+    ptr++;
+  }
+  // push final vertex (if any)
+  if (!temp_str.empty()) {
+    f_verts.push_back(temp_str);
+  }
+  return f_verts;
+}
 
 bool MeshManager::loadAndParseObjFile(
     const char *path, std::vector<glm::vec3> &outObjVertices,
@@ -70,38 +96,56 @@ bool MeshManager::loadAndParseObjFile(
 
       // parse the dreaded face
       else if (strcmp(lineHeader, "f") == 0) {
-        faceIteration++;
-        std::string vertex1, vertex2, vertex3;
-        unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-        int matches = sscanf(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d\n",
-                             &vertexIndex[0], &uvIndex[0], &normalIndex[0],
-                             &vertexIndex[1], &uvIndex[1], &normalIndex[1],
-                             &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
-        if (matches != 9) {
-          LOG_ERROR << "Unexpected number of matches when parsing "
-                       "faces. Iteration: "
-                    << faceIteration;
+        std::vector<std::string> tokens = splitWhiteSpace(line.c_str());
+        LOG_INFO << "Working on line with " << tokens.size()
+                 << "tokens, see here \n"
+                 << line;
+
+        size_t num_vertices = tokens.size();
+        if (num_vertices < 3) {
+          LOG_ERROR << "Face must have at least 3 vertices";
           return false;
         }
-        // vertex 1
-        outObjIndices.push_back(vertexIndex[0]);
-        outObjIndices.push_back(uvIndex[0]);
-        outObjIndices.push_back(normalIndex[0]);
-        // vertex 2
-        outObjIndices.push_back(vertexIndex[1]);
-        outObjIndices.push_back(uvIndex[1]);
-        outObjIndices.push_back(normalIndex[1]);
-        // vertex 3
-        outObjIndices.push_back(vertexIndex[2]);
-        outObjIndices.push_back(uvIndex[2]);
-        outObjIndices.push_back(normalIndex[2]);
+
+        // construct sets of split up vertices
+        // (so we can access them very easily without parsing)
+        std::vector<std::array<unsigned int, 3>> face_vertices(num_vertices);
+        for (int i = 0; i < tokens.size(); i++) {
+          int matches = sscanf(tokens[i].c_str(), "%d/%d/%d",
+                               &face_vertices[i][0], // pos
+                               &face_vertices[i][1], // uv
+                               &face_vertices[i][2]  // normal
+          );
+          if (matches != 3) {
+            LOG_WARNING << "Unexpected number of matches (" << matches
+                        << ") when parsing vertex through faces";
+            return false;
+          }
+        }
+
+        // construct triangles using Fan Triangulization method
+        // (using first vertex as the center)
+        for (size_t i = 0; i < num_vertices - 1; i++) {
+          // out: v[0], v[i], v[i+1]
+          outObjIndices.push_back(face_vertices[0][0]);
+          outObjIndices.push_back(face_vertices[0][1]);
+          outObjIndices.push_back(face_vertices[0][2]);
+
+          outObjIndices.push_back(face_vertices[i][0]);
+          outObjIndices.push_back(face_vertices[i][1]);
+          outObjIndices.push_back(face_vertices[i][2]);
+
+          outObjIndices.push_back(face_vertices[i + 1][0]);
+          outObjIndices.push_back(face_vertices[i + 1][1]);
+          outObjIndices.push_back(face_vertices[i + 1][2]);
+        }
       }
     }
     file.close();
   } catch (std::ifstream::failure e) {
     LOG_ERROR << "File stream failed to read '" << path << "', " << e.what();
     return false;
-  } catch (std::exception &e){
+  } catch (std::exception &e) {
     LOG_ERROR << "Unexpected error reading file '" << path << "', " << e.what();
   }
   return true;
