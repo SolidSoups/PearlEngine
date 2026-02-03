@@ -37,6 +37,7 @@ public:
   void GeometryRenderPass();
   void QuadDebugRenderPass();
   void LightingPass();
+  void FlatShadePass();
 
   inline bool IsInitialized() { return isInitialized; }
 
@@ -76,7 +77,10 @@ public:
   std::shared_ptr<ShaderData> m_GeometryShader;
   std::shared_ptr<ShaderData> m_DisplayShader;
   std::shared_ptr<ShaderData> m_LightShader;
+  std::shared_ptr<ShaderData> m_FlatShader;
 
 private:
   bool isInitialized = false;
+  bool bDebugGBuffer = false;
+  bool bFlatShade = false;
 };

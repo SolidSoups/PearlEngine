@@ -124,6 +124,8 @@ void PearlEngine::Initialize() {
                                           "shaders/displayFrag.glsl");
   m_LightShader =
       m_ShaderManager->load("shaders/lightVert.glsl", "shaders/lightFrag.glsl");
+  m_FlatShader = 
+    m_ShaderManager->load("shaders/flatVert.glsl", "shaders/flatFrag.glsl");
 
   // Create materials using new loaders
   MaterialLoader matLoader;
@@ -266,11 +268,18 @@ void PearlEngine::Update() {
 
 void PearlEngine::Render() {
   GeometryRenderPass();
-#ifdef DEBUG_GBUFFER
-  QuadDebugRenderPass();
-#else
-  LightingPass();
-#endif
+
+  if(bDebugGBuffer){
+    QuadDebugRenderPass();
+  }
+  else{
+    if(!bFlatShade){
+      LightingPass();
+    }
+    else{
+      FlatShadePass();
+    }
+  }
 }
 
 void PearlEngine::GeometryRenderPass() {
@@ -288,6 +297,19 @@ void PearlEngine::GeometryRenderPass() {
   m_GBuffer->unbind();
 }
 
+void PearlEngine::FlatShadePass(){
+  m_ViewportFramebuffer->Bind();
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetAlbedoSpecTexture());
+
+  m_FlatShader->use();
+  glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
+  m_FullscreenQuad->Draw();
+  m_ViewportFramebuffer->Unbind();
+}
 
 void PearlEngine::LightingPass() {
   m_ViewportFramebuffer->Bind();
@@ -367,6 +389,7 @@ void PearlEngine::QuadDebugRenderPass() {
 }
 
 
+
 void PearlEngine::RenderEditor() {
   m_GUIContext.BeginFrame();
   m_GUIContext.RenderEditorPanels();
@@ -404,4 +427,7 @@ void PearlEngine::AddMenuBarItems() {
   MenuRegistry::Get().Register("Tools/Reload Shaders", [this]() {
     m_ShaderManager->recompileAll();
   });
+  
+  MenuRegistry::Get().Register("Tools/Debug G-Buffer", &bDebugGBuffer);
+  MenuRegistry::Get().Register("Tools/Flat Shade", &bFlatShade);
 }
