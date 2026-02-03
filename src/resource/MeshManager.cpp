@@ -97,9 +97,6 @@ bool MeshManager::loadAndParseObjFile(
       // parse the dreaded face
       else if (strcmp(lineHeader, "f") == 0) {
         std::vector<std::string> tokens = splitWhiteSpace(line.c_str());
-        LOG_INFO << "Working on line with " << tokens.size()
-                 << "tokens, see here \n"
-                 << line;
 
         size_t num_vertices = tokens.size();
         if (num_vertices < 3) {

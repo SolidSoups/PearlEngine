@@ -19,28 +19,24 @@ void RenderComponentEditor::OnDrawComponent(void *target, [[maybe_unused]] ecs::
   bool openMeshPopup = false, openMatPopup = false;
   float labelWidth = 180.f;
 
-  m_AlbedoTexture.renderImGui("albedoEditor");
+  // display and update albedo map
+  m_AlbedoTexture.renderImGui("texture_diffuse1");
   if(m_AlbedoTexture.isDirty()){
-    LOG_INFO << "Albedo Texture is dirty, regenerating";
-    // set texture
-    auto newTexture = m_AlbedoTexture.create();
-    if(newTexture)
+    if(auto newTexture = m_AlbedoTexture.create())
       renderComp->material->setTexture("texture_diffuse1", newTexture);
   }
-  m_SpecTexture.renderImGui("specEditor");
+
+  // display and update specular map
+  m_SpecTexture.renderImGui("texture_specular1");
   if(m_SpecTexture.isDirty()){
-    LOG_INFO << "Specular Texture is dirty, regenerating";
-    // set texture
-    auto newTexture = m_SpecTexture.create();
-    if(newTexture)
+    if(auto newTexture = m_SpecTexture.create())
       renderComp->material->setTexture("texture_specular1", newTexture);
   }
-  DrawMesh(renderComp);
 
-  // draw mesh section
-  auto meshFiles = FileSystem::queryFiles(".obj");
-  auto texFiles = FileSystem::queryFiles(".png");
-  FileSystem::FileDescriptor selectedFile;
+  // display and update mesh
+  if(ImGui::CollapsingHeader("Mesh")){
+    DrawMesh(renderComp);
+  }
 }
 
 void RenderComponentEditor::trySetCompTexture(
