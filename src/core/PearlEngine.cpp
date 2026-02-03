@@ -352,39 +352,69 @@ void PearlEngine::QuadDebugRenderPass() {
   m_DisplayShader->use();
   m_DisplayShader->setInt("textureSampler", 0);
 
-  int halfWidth = m_ViewportSize.x / 2;
-  int halfHeight = m_ViewportSize.y / 2;
+  // default: show all 4 viewports
+  if(mDebugBufferIndex == 0){
+    int halfWidth = m_ViewportSize.x / 2;
+    int halfHeight = m_ViewportSize.y / 2;
 
-  // top left quadrant
-  glViewport(0, halfHeight, halfWidth, halfHeight);
-  m_DisplayShader->setInt("bufferType", 0);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetPositionTexture());
-  m_FullscreenQuad->Draw();
+    // top left quadrant
+    glViewport(0, halfHeight, halfWidth, halfHeight);
+    m_DisplayShader->setInt("bufferType", 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetPositionTexture());
+    m_FullscreenQuad->Draw();
 
-  // top right quadrant
-  glViewport(halfWidth, halfHeight, halfWidth, halfHeight);
-  m_DisplayShader->setInt("bufferType", 1);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetNormalTexture());
-  m_FullscreenQuad->Draw();
+    // top right quadrant
+    glViewport(halfWidth, halfHeight, halfWidth, halfHeight);
+    m_DisplayShader->setInt("bufferType", 1);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetNormalTexture());
+    m_FullscreenQuad->Draw();
 
-  // bottom left quadrant
-  glViewport(0, 0, halfWidth, halfHeight);
-  m_DisplayShader->setInt("bufferType", 2);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetAlbedoSpecTexture());
-  m_FullscreenQuad->Draw();
+    // bottom left quadrant
+    glViewport(0, 0, halfWidth, halfHeight);
+    m_DisplayShader->setInt("bufferType", 2);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetAlbedoSpecTexture());
+    m_FullscreenQuad->Draw();
 
-  // bottom rigth quadrant
-  glViewport(halfWidth, 0, halfWidth, halfHeight);
-  m_DisplayShader->setInt("bufferType", 3);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetDepthTexture());
-  m_FullscreenQuad->Draw();
+    // bottom rigth quadrant
+    glViewport(halfWidth, 0, halfWidth, halfHeight);
+    m_DisplayShader->setInt("bufferType", 3);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetDepthTexture());
+    m_FullscreenQuad->Draw();
 
-  // reset viewport
-  glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
+    // reset viewport
+    glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
+  }
+  else{
+    // Show single buffer framebuffer
+    glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
+    glActiveTexture(GL_TEXTURE0);
+
+    switch(mDebugBufferIndex){
+      case 1:
+        m_DisplayShader->setInt("bufferType", 0);
+        glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetPositionTexture());
+        break;
+      case 2:
+        m_DisplayShader->setInt("bufferType", 1);
+        glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetNormalTexture());
+        break;
+      case 3:
+        m_DisplayShader->setInt("bufferType", 2);
+        glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetAlbedoSpecTexture());
+        break;
+      case 4:
+        m_DisplayShader->setInt("bufferType", 3);
+        glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetDepthTexture());
+        break;
+    }
+
+    m_FullscreenQuad->Draw();
+  }
+
 
   m_ViewportFramebuffer->Unbind();
 }
@@ -407,12 +437,20 @@ void PearlEngine::RenderEditor() {
 }
 
 void PearlEngine::ProcessInput(GLFWwindow *window) {
+  static bool gWasPressed = false;
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
   } else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
     m_CameraController->Reset();
   } else if (glfwGetKey(window, GLFW_KEY_F5) == GLFW_PRESS) {
     m_ShaderManager->recompileAll();
+  } 
+  else if(bDebugGBuffer && glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && !gWasPressed){
+    mDebugBufferIndex = (mDebugBufferIndex + 1) % 5;
+    gWasPressed = true;
+  }
+  else if(glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE){
+    gWasPressed = false;
   }
 
   ImGuiIO io = ImGui::GetIO();

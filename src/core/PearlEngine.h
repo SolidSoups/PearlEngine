@@ -81,6 +81,7 @@ public:
 
 private:
   bool isInitialized = false;
-  bool bDebugGBuffer = false;
   bool bFlatShade = false;
+  bool bDebugGBuffer = false;
+  int mDebugBufferIndex = 0;
 };
