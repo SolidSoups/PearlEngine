@@ -175,11 +175,11 @@ void PearlEngine::Initialize() {
 
   // create the fullscreen quad
   std::vector<float> quadVertices = {
-      // positions        // uv       // normals
-      -1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // top-left
-      -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-left
-      1.0f,  -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-right
-      1.0f,  1.0f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  // top-right
+      // positions        // uv       // normals        // tangent
+      -1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,// top-left
+      -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,// bottom-left
+      1.0f,  -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,// bottom-right
+      1.0f,  1.0f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f// top-right
   };
 
   std::vector<unsigned int> quadIndices = {
@@ -334,8 +334,9 @@ void PearlEngine::LightingPass() {
   m_LightShader->setInt("gDepthStencil", 3);
 
   // send light uniforms
-  Renderer::SendAmbientLightUniforms(m_LightShader);
   m_Scene.mPointLightSystem->SendUniforms(m_LightShader);
+  m_LightShader->setFloat("ambientIntensity", m_Scene.ambientLight.intensity);
+  m_LightShader->setVec4("ambientColor", m_Scene.ambientLight.color);
   m_LightShader->setVec3("viewPos", m_Camera.GetCurrentTarget()->position);
 
   glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
@@ -426,6 +427,7 @@ void PearlEngine::AddMenuBarItems() {
 
   MenuRegistry::Get().Register("Tools/Reload Shaders", [this]() {
     m_ShaderManager->recompileAll();
+    LOG_INFO << "Recompiled all shaders";
   });
   
   MenuRegistry::Get().Register("Tools/Debug G-Buffer", &bDebugGBuffer);

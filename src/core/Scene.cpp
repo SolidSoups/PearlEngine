@@ -62,9 +62,7 @@ void Scene::Update(){
 void Scene::Render(Camera& camera){
 
   // pass 1, upload generic data
-  Renderer::BeginScene(camera, ambientLight);
-  Renderer::SubmitLights(*this);
-
+  Renderer::BeginScene(camera);
   mRenderSystem->RenderAll();
   Renderer::EndScene();
 }

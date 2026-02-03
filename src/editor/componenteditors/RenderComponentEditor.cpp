@@ -33,6 +33,13 @@ void RenderComponentEditor::OnDrawComponent(void *target, [[maybe_unused]] ecs::
       renderComp->material->setTexture("texture_specular1", newTexture);
   }
 
+  // display and update normal map
+  m_NormalTexture.renderImGui("texture_normal1");
+  if(m_NormalTexture.isDirty()){
+    if(auto newTexture = m_NormalTexture.create())
+      renderComp->material->setTexture("texture_normal1", newTexture);
+  }
+
   // display and update mesh
   if(ImGui::CollapsingHeader("Mesh")){
     DrawMesh(renderComp);

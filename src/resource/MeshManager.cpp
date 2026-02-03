@@ -122,7 +122,7 @@ bool MeshManager::loadAndParseObjFile(
 
         // construct triangles using Fan Triangulization method
         // (using first vertex as the center)
-        for (size_t i = 0; i < num_vertices - 1; i++) {
+        for (size_t i = 1; i < num_vertices - 1; i++) {
           // out: v[0], v[i], v[i+1]
           outObjIndices.push_back(face_vertices[0][0]);
           outObjIndices.push_back(face_vertices[0][1]);
@@ -147,46 +147,100 @@ bool MeshManager::loadAndParseObjFile(
   }
   return true;
 }
+
+glm::vec3 computeTangent(
+  const glm::vec3 &p0, const glm::vec3 &p1, const glm::vec3 &p2,
+  const glm::vec2 &uv0, const glm::vec2 &uv1, const glm::vec2 &uv2
+){
+  // Edge vectors (in 3d space) 
+  glm::vec3 e1 = p1 - p0;
+  glm::vec3 e2 = p2 - p0;
+
+  // uv deltas
+  float du1 = uv1.x - uv0.x;
+  float dv1 = uv1.y - uv0.y;
+  float du2 = uv2.x - uv0.x;
+  float dv2 = uv2.y - uv0.y;
+
+  // inverse determinant
+  float det = du1 * dv2 - du2 * dv1;
+  if(std::abs(det) < 1e-6f){
+    // degenerates
+    return glm::vec3(1.0f, 0.0f, 0.0);
+  }
+  float f = 1.0 / det;
+
+  // calc tangent
+  glm::vec3 tangent;
+  tangent.x = f * (dv2 * e1.x - dv1 * e2.x);
+  tangent.y = f * (dv2 * e1.y - dv1 * e2.y);
+  tangent.z = f * (dv2 * e1.z - dv1 * e2.z);
+
+  return glm::normalize(tangent);
+}
+
+
 void MeshManager::reformatObjToOpenGl(
     const std::vector<glm::vec3> &objVertices,
     const std::vector<glm::vec2> &objUvs,
     const std::vector<glm::vec3> &objNormals,
     const std::vector<unsigned int> &objIndices,
     std::vector<float> &outVertices, std::vector<unsigned int> &outIndices) {
-  // clear the output refernces
   outVertices.clear();
   outIndices.clear();
 
-  // we will keep track of the faces that have already been added
   std::map<std::array<unsigned int, 3>, unsigned int> faceToIndex;
   unsigned int nextIndex = 0;
 
-  // iterate over every 3 elements of a face vertex
-  for (size_t i = 0; i < objIndices.size(); i += 3) {
+  // Process triangles (every 9 indices = 3 vertices * 3 components each)
+  for (size_t i = 0; i < objIndices.size(); i += 9) {
     // generate the index for the vertex
     std::array<unsigned int, 3> key = {objIndices[i], objIndices[i + 1],
                                        objIndices[i + 2]};
+    glm::vec3 pos[3];
+    glm::vec2 uv[3];
+    glm::vec3 norm[3];
 
-    // generate a new index if new, otherwise reuse existing
-    if (faceToIndex.find(key) == faceToIndex.end()) {
-      faceToIndex[key] = nextIndex++;
-
-      const glm::vec3 &vertex = objVertices[objIndices[i] - 1];
-      const glm::vec2 &uv = objUvs[objIndices[i + 1] - 1];
-      const glm::vec3 &normal = objNormals[objIndices[i + 2] - 1];
-
-      // also create a vertex since this is a new index
-      // (also, remind yourself that OBJ uses 1-based indexing!!!!)
-      outVertices.push_back(vertex.x);
-      outVertices.push_back(vertex.y);
-      outVertices.push_back(vertex.z);
-      outVertices.push_back(uv.x);
-      outVertices.push_back(uv.y);
-      outVertices.push_back(normal.x);
-      outVertices.push_back(normal.y);
-      outVertices.push_back(normal.z);
+    for(int v = 0; v < 3; v++){
+      size_t base = i + v * 3;
+      pos[v] = objVertices[objIndices[base + 0] - 1];
+      uv[v] = objUvs[objIndices[base + 1] - 1];
+      norm[v] = objNormals[objIndices[base + 2] - 1];
     }
-    outIndices.push_back(faceToIndex[key]);
+
+    // compute tangent for this triangle
+    glm::vec3 tangent = computeTangent(pos[0], pos[1], pos[2],
+                                       uv[0], uv[1], uv[2]);
+
+    // add each vertex
+    for(int v = 0; v < 3; v++){
+      std::array<unsigned int, 3> key = {
+        objIndices[i + v*3 + 0],
+        objIndices[i + v*3 + 1],
+        objIndices[i + v*3 + 2]
+      };
+
+      if(faceToIndex.find(key) == faceToIndex.end()){
+        faceToIndex[key] = nextIndex++;
+
+        // position (3)
+        outVertices.push_back(pos[v].x);
+        outVertices.push_back(pos[v].y);
+        outVertices.push_back(pos[v].z);
+        // uv (2)
+        outVertices.push_back(uv[v].x);
+        outVertices.push_back(uv[v].y);
+        // normal (3)
+        outVertices.push_back(norm[v].x);
+        outVertices.push_back(norm[v].y);
+        outVertices.push_back(norm[v].z);
+        // tangent (3)
+        outVertices.push_back(tangent.x);
+        outVertices.push_back(tangent.y);
+        outVertices.push_back(tangent.z);
+      }
+      outIndices.push_back(faceToIndex[key]);
+    }
   }
 }
 

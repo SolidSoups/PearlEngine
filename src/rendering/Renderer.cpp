@@ -23,9 +23,8 @@ void Renderer::SetNextShader(std::shared_ptr<ShaderData> shader) {
   m_NextShader = shader;
 }
 
-void Renderer::BeginScene(Camera &camera, const AmbientLightData &ambientData) {
+void Renderer::BeginScene(Camera &camera){
   s_ActiveCamera = &camera;
-  m_AmbientData = ambientData;
 }
 
 void Renderer::SubmitLights(Scene& scene) {

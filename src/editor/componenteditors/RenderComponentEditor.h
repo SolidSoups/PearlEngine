@@ -20,6 +20,7 @@ private:
 
   TextureCreator m_AlbedoTexture;
   TextureCreator m_SpecTexture;
+  TextureCreator m_NormalTexture;
 };
 
 STATIC_REGISTER_COMPONENT_EDITOR(RenderComponent, RenderComponentEditor)

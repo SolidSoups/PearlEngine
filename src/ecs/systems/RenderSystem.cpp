@@ -7,6 +7,7 @@
 
 #include "Camera.h"
 #include "Scene.h"
+
 #include "AmbientLightData.h"
 
 void RenderSystem::Init(ecs::Coordinator* coordinator){

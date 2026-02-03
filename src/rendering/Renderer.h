@@ -13,7 +13,7 @@ class Scene;
 class Renderer {
 public:
   // Scene management
-  static void BeginScene(Camera &camera, const AmbientLightData &ambientData);
+  static void BeginScene(Camera &camera);
   static void SubmitLights(Scene& scene);
   static void EndScene();
 

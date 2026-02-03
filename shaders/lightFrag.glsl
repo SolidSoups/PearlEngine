@@ -59,7 +59,7 @@ vec3 CalculatePointLight(PointLight light, vec3 pos, vec3 normal, vec3 color, fl
 void main(){
   // retrieve data from G-buffer
   vec3 FragPos = texture(gPosition, TexCoords).rgb;
-  vec3 Normal = texture(gNormal, TexCoords).rgb;
+  vec3 Normal = texture(gNormal, TexCoords).rgb * 2.0 - 1.0; // normal needs to be -1 to 1 range
   vec3 Albedo = texture(gAlbedoSpec, TexCoords).rgb;
   float Specular = texture(gAlbedoSpec, TexCoords).a;
   float Depth = texture(gDepthStencil, TexCoords).r;
