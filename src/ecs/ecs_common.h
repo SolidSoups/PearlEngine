@@ -19,10 +19,12 @@ const ComponentType MAX_COMPONENTS = 32;
 using Signature = std::bitset<MAX_COMPONENTS>;
 }
 
-// Global aliases for backward compatibility
+// global definitions
 using Entity = ecs::Entity;
 using EntityID = ecs::Entity;
 constexpr Entity MAX_ENTITIES = ecs::MAX_ENTITIES;
 using ComponentType = ecs::ComponentType;
 constexpr ComponentType MAX_COMPONENTS = ecs::MAX_COMPONENTS;
 using Signature = ecs::Signature;
+
+// nhloan/json

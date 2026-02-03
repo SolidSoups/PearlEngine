@@ -53,11 +53,12 @@ public:
       }
       auto const &systemSignature = sig_it->second;
 
-      // Entity signature matches system signature - insert into set
+      // if entity signature matches, insert the entity into the systems map
       if ((entitySignature & systemSignature) == systemSignature) {
         system->mEntities.insert(entity);
       }
-      // Entity signature does not match system signature - erase from set
+      // if entity signature does not match, erase the entity from the systems map
+      // (if it exists)
       else {
         system->mEntities.erase(entity);
       }

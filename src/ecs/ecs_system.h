@@ -1,6 +1,6 @@
 #pragma once
 
-#include <set>
+#include <unordered_set>
 
 #include "ecs_common.h"
 
@@ -8,6 +8,6 @@ namespace ecs {
 
 class System{
 public:
-  std::set<Entity> mEntities;
+  std::unordered_set<Entity> mEntities;
 };
 };

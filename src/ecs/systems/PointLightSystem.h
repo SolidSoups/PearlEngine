@@ -14,6 +14,5 @@ public:
   void SendUniforms(std::shared_ptr<ShaderData> shader);
 
 private:
-  std::vector<ecs::Entity> mPointLightEntities;
   ecs::Coordinator* mCoordinator;
 };
