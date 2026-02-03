@@ -60,7 +60,7 @@ bool UserGUI::DrawFile(std::string &filePath) {
 
   static bool fileChanged = false;
   if (ImGui::Button("Browse..", ImVec2(-10, 0))) {
-    const std::vector<std::string> extensions = {".png", ".jpg"};
+    const std::vector<std::string> extensions = {".png", ".jpg", ".tga"};
     StartFilePopup(
         [&filePath](const std::string &newFilePath) { filePath = newFilePath; fileChanged = true; },
         extensions);
