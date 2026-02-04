@@ -53,12 +53,6 @@ target_link_libraries(imgui
     ${X11_LIBRARIES}
 )
 
-# rapidjson
-set(RAPIDJSON_BUILD_DOC OFF CACHE BOOL "" FORCE)
-set(RAPIDJSON_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(RAPIDJSON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-add_subdirectory(external/rapidjson)
-
 # target
 add_executable(game_engine)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
@@ -71,7 +65,6 @@ target_link_libraries(game_engine
     glfw 
     glad 
     imgui
-    RapidJSON
     ${GTK4_LIBRARIES}
 )
 target_include_directories(game_engine PRIVATE
@@ -107,7 +100,6 @@ target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs/systems
   external/stb
   external/glm
-  external/rapidjson/include
   ${GTK4_INCLUDE_DIRS}
 )
 target_compile_definitions(game_engine PRIVATE

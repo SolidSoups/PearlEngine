@@ -63,6 +63,10 @@ void SceneHierarchyEditorPanel::DrawSceneHierarchy() {
       ImGui::Text("%s", entityName.c_str());
       ImGui::Separator();
 
+      if(ImGui::MenuItem("Delete")){
+        r_Scene.DestroyEntity(entity);
+      }
+
       // Preview camera button (only if Entity has CameraComponent)
       if (coordinator.HasComponent<CameraComponent>(entity)) {
         if (ImGui::MenuItem("Preview Camera")) {

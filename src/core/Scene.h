@@ -47,6 +47,8 @@ public:
 
   // Scene-level lighting
   AmbientLightData ambientLight;
+public:
+  void SaveScene();
 
 private:
   ecs::Coordinator m_Coordinator;

@@ -10,6 +10,7 @@
 void PointLightSystem::Init(ecs::Coordinator* coordinator){
   mCoordinator = coordinator;
 }
+
 void PointLightSystem::SendUniforms(std::shared_ptr<ShaderData> shader){
   shader->setInt("numPointLights", mEntities.size());
   size_t point_light_id = 0;

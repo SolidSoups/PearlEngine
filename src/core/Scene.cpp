@@ -14,6 +14,8 @@
 #include "Mesh.h"
 #include "Cube.h"
 
+#include "FileSystem.h"
+
 Scene::Scene() {
   m_Coordinator.Init();
 
@@ -131,4 +133,15 @@ ecs::Entity Scene::CreateCube(const std::string& name){
   renderComp.mesh = std::make_shared<Mesh>(vertices, indices);
   m_Coordinator.AddComponent(entity, renderComp);
   return entity;
+}
+
+
+
+
+
+
+
+
+void Scene::SaveScene(){
+   
 }

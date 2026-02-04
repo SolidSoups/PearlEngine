@@ -94,16 +94,17 @@ TextureData::TextureData(unsigned char *data, uint32_t width, uint32_t height,
   // generate mip maps
   if (config.generateMipMaps) {
     glGenerateMipmap(GL_TEXTURE_2D);
+    
     // check if mipmap exists
     GLint maxLevel;
     glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, &maxLevel);
-    // LOG_INFO << "Generated mipmaps. Max level: " << maxLevel;
+    LOG_INFO << "Generated mipmaps. Max level: " << maxLevel;
     // verify each level has data
     for(int i=0; i<maxLevel; ++i){
       GLint width, height;
       glGetTexLevelParameteriv(GL_TEXTURE_2D, i, GL_TEXTURE_WIDTH, &width);
       glGetTexLevelParameteriv(GL_TEXTURE_2D, i, GL_TEXTURE_HEIGHT, &height);
-      // LOG_INFO << "Mipmap level " << i << ": width=" << width << ", height=" << height;
+      LOG_INFO << "Mipmap level " << i << ": width=" << width << ", height=" << height;
     } 
   }
 

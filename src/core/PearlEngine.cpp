@@ -84,13 +84,12 @@ PearlEngine::PearlEngine() {
   Defaults::Init();
 
   isInitialized = true;
-
 }
 
 PearlEngine::~PearlEngine() {
   ServiceLocator::Destroy();
   UserGUI::Destroy();
-  
+
   // causes issues
   m_FullscreenQuad.reset();
 }
@@ -109,10 +108,6 @@ void PearlEngine::Initialize() {
   if (!ServiceLocator::IsReady<TextureManager>()) {
     LOG_ERROR << "TextureManager is not ready!";
   }
-  auto sunshineTexture =
-      ServiceLocator::Get<TextureManager>().load("assets/sunshine.png");
-  auto pearlTexture =
-      ServiceLocator::Get<TextureManager>().load("assets/pearl.png");
 
   // Create shaders using new loaders
   auto shader = Defaults::getDefaultShader();
@@ -122,48 +117,19 @@ void PearlEngine::Initialize() {
                                            "shaders/geometryFrag.glsl");
   m_DisplayShader = m_ShaderManager->load("shaders/displayVert.glsl",
                                           "shaders/displayFrag.glsl");
-  m_LightShader =
-      m_ShaderManager->load("shaders/lightVert.glsl", "shaders/lightFrag.glsl");
-  m_FlatShader = 
-    m_ShaderManager->load("shaders/flatVert.glsl", "shaders/flatFrag.glsl");
-
-  // Create materials using new loaders
-  MaterialLoader matLoader;
-  auto sunMaterial = matLoader.create(shader);
-  if (sunMaterial && sunshineTexture) {
-    sunMaterial->setTexture("albedoMap", sunshineTexture);
-  }
-
-  auto pearlMaterial = matLoader.create(shader);
-  if (pearlMaterial && pearlTexture) {
-    pearlMaterial->setTexture("albedoMap", pearlTexture);
-  }
+  m_LightShader = m_ShaderManager->load("shaders/lightVert.glsl",
+                                        "shaders/lightFrag.glsl");
+  m_FlatShader = m_ShaderManager->load("shaders/flatVert.glsl",
+                                       "shaders/flatFrag.glsl");
 
   // create the main camera
   ecs::Entity cameraEntity = m_Scene.CreateEntity("Main Camera");
-  auto& coordinator = m_Scene.GetCoordinator();
+  auto &coordinator = m_Scene.GetCoordinator();
   coordinator.AddComponent(cameraEntity, CameraComponent{});
-  auto& camComp = coordinator.GetComponent<CameraComponent>(cameraEntity);
-  coordinator.GetComponent<TransformComponent>(cameraEntity).position = camComp.cameraData.position;
+  auto &camComp = coordinator.GetComponent<CameraComponent>(cameraEntity);
+  coordinator.GetComponent<TransformComponent>(cameraEntity).position =
+      camComp.cameraData.position;
   m_Scene.SetActiveCamera(cameraEntity);
-
-  // create house model
-  ecs::Entity houseEntity = m_Scene.CreateEntity("Test house");
-  RenderComponent houseRenderComp;
-  houseRenderComp.mesh = m_MeshManager->loadOBJ("assets/viking house/Viking_House.obj");
-  houseRenderComp.material = MaterialLoader::create(Defaults::getDefaultShader());
-  auto houseTex = m_TextureManager->load("assets/viking house/Viking_House.png");
-  houseRenderComp.material->setTexture("texture_diffuse1", houseTex);
-  coordinator.AddComponent(houseEntity, houseRenderComp);
-
-  // create some lights in the scene
-  for(int i=0; i<3; i++){
-    ecs::Entity newLight = m_Scene.CreatePointLight();
-    coordinator.GetComponent<TransformComponent>(newLight).position
-      = glm::vec3(-6.f + i*4.f, 8.f, -4.5f + i*3.f);
-    auto& lightComp = coordinator.GetComponent<PointLightComponent>(newLight);
-    lightComp.data.radius = 8.f;
-  }
 
   // Create viewport framebuffer
   m_ViewportFramebuffer =
@@ -175,13 +141,12 @@ void PearlEngine::Initialize() {
 
   // create the fullscreen quad
   std::vector<float> quadVertices = {
-      // positions        // uv       // normals        // tangent
-      -1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,// top-left
-      -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,// bottom-left
-      1.0f,  -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,// bottom-right
-      1.0f,  1.0f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f// top-right
+       // positions         // uv         // normals          // tangent
+      -1.0f,  1.0f, 0.0f,   0.0f, 1.0f,   0.0f, 0.0f,  1.0f,  1.0f, 0.0f, 0.0f, // top-left
+      -1.0f, -1.0f, 0.0f,   0.0f, 0.0f,   0.0f, 0.0f,  1.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+       1.0f, -1.0f, 0.0f,   1.0f, 0.0f,   0.0f, 0.0f,  1.0f,  1.0f, 0.0f, 0.0f, // bottom-right
+       1.0f,  1.0f, 0.0f,   1.0f, 1.0f,   0.0f, 0.0f,  1.0f,  1.0f, 0.0f, 0.0f // top-right
   };
-
   std::vector<unsigned int> quadIndices = {
       0, 1, 2, // first triangle
       0, 2, 3  // second triangle
@@ -269,16 +234,14 @@ void PearlEngine::Update() {
 void PearlEngine::Render() {
   GeometryRenderPass();
 
-  if(bDebugGBuffer){
+  if (bDebugGBuffer) {
     QuadDebugRenderPass();
+  } 
+  else if(bFlatShade){
+    FlatShadePass();
   }
-  else{
-    if(!bFlatShade){
-      LightingPass();
-    }
-    else{
-      FlatShadePass();
-    }
+  else {
+    LightingPass();
   }
 }
 
@@ -297,7 +260,7 @@ void PearlEngine::GeometryRenderPass() {
   m_GBuffer->unbind();
 }
 
-void PearlEngine::FlatShadePass(){
+void PearlEngine::FlatShadePass() {
   m_ViewportFramebuffer->Bind();
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -353,7 +316,7 @@ void PearlEngine::QuadDebugRenderPass() {
   m_DisplayShader->setInt("textureSampler", 0);
 
   // default: show all 4 viewports
-  if(mDebugBufferIndex == 0){
+  if (mDebugBufferIndex == 0) {
     int halfWidth = m_ViewportSize.x / 2;
     int halfHeight = m_ViewportSize.y / 2;
 
@@ -387,39 +350,35 @@ void PearlEngine::QuadDebugRenderPass() {
 
     // reset viewport
     glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
-  }
-  else{
+  } else {
     // Show single buffer framebuffer
     glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
     glActiveTexture(GL_TEXTURE0);
 
-    switch(mDebugBufferIndex){
-      case 1:
-        m_DisplayShader->setInt("bufferType", 0);
-        glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetPositionTexture());
-        break;
-      case 2:
-        m_DisplayShader->setInt("bufferType", 1);
-        glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetNormalTexture());
-        break;
-      case 3:
-        m_DisplayShader->setInt("bufferType", 2);
-        glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetAlbedoSpecTexture());
-        break;
-      case 4:
-        m_DisplayShader->setInt("bufferType", 3);
-        glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetDepthTexture());
-        break;
+    switch (mDebugBufferIndex) {
+    case 1:
+      m_DisplayShader->setInt("bufferType", 0);
+      glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetPositionTexture());
+      break;
+    case 2:
+      m_DisplayShader->setInt("bufferType", 1);
+      glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetNormalTexture());
+      break;
+    case 3:
+      m_DisplayShader->setInt("bufferType", 2);
+      glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetAlbedoSpecTexture());
+      break;
+    case 4:
+      m_DisplayShader->setInt("bufferType", 3);
+      glBindTexture(GL_TEXTURE_2D, m_GBuffer->GetDepthTexture());
+      break;
     }
 
     m_FullscreenQuad->Draw();
   }
 
-
   m_ViewportFramebuffer->Unbind();
 }
-
-
 
 void PearlEngine::RenderEditor() {
   m_GUIContext.BeginFrame();
@@ -438,18 +397,36 @@ void PearlEngine::RenderEditor() {
 
 void PearlEngine::ProcessInput(GLFWwindow *window) {
   static bool gWasPressed = false;
+  static bool f5WasPressed = false;
+  // quit engine
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
-  } else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-    m_CameraController->Reset();
-  } else if (glfwGetKey(window, GLFW_KEY_F5) == GLFW_PRESS) {
-    m_ShaderManager->recompileAll();
   } 
-  else if(bDebugGBuffer && glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && !gWasPressed){
-    mDebugBufferIndex = (mDebugBufferIndex + 1) % 5;
-    gWasPressed = true;
+
+  // reset camera controller
+  if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+    m_CameraController->Reset();
+  } 
+
+  // recompile all shaders
+  if (glfwGetKey(window, GLFW_KEY_F5) == GLFW_PRESS && !f5WasPressed) {
+    m_ShaderManager->recompileAll();
+    f5WasPressed = true;
+  } 
+  else if(glfwGetKey(window, GLFW_KEY_F5) == GLFW_RELEASE){
+    f5WasPressed = false; 
   }
-  else if(glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE){
+  
+  if (bDebugGBuffer && glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS &&
+             !gWasPressed) {
+    if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
+      mDebugBufferIndex = (mDebugBufferIndex + 4) % 5;
+    }
+    else{
+      mDebugBufferIndex = (mDebugBufferIndex + 1) % 5;
+    }
+    gWasPressed = true;
+  } else if (glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE) {
     gWasPressed = false;
   }
 
@@ -462,12 +439,15 @@ void PearlEngine::AddMenuBarItems() {
   MenuRegistry::Get().Register("File/Exit", [this]() {
     glfwSetWindowShouldClose(pwin.GetWindow(), true);
   });
+  MenuRegistry::Get().Register("File/Save Scene", [this]() {
+
+  });
 
   MenuRegistry::Get().Register("Tools/Reload Shaders", [this]() {
     m_ShaderManager->recompileAll();
     LOG_INFO << "Recompiled all shaders";
   });
-  
+
   MenuRegistry::Get().Register("Tools/Debug G-Buffer", &bDebugGBuffer);
   MenuRegistry::Get().Register("Tools/Flat Shade", &bFlatShade);
 }

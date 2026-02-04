@@ -2,7 +2,6 @@
 #include "Logger.h"
 
 #define VERTEX_SIZE 11
-
 Mesh::Mesh(const std::vector<float> &vertices,
            const std::vector<unsigned int> &indices) {
   // generate buffers
@@ -15,6 +14,7 @@ Mesh::Mesh(const std::vector<float> &vertices,
   // upload triangle indices
   m_EBO.GenerateElementBuffers(indices.data(), indices.size());
 
+
   // attribute 0: position (3 floats start at 0)
   m_VAO.DefineAttribute(m_VBO, 0, 3, GL_FLOAT, GL_FALSE, VERTEX_SIZE * sizeof(float),
                         (void *)0);
@@ -24,6 +24,7 @@ Mesh::Mesh(const std::vector<float> &vertices,
   // attribute 2: Normal (3 floats offset at 5)
   m_VAO.DefineAttribute(m_VBO, 2, 3, GL_FLOAT, GL_FALSE, VERTEX_SIZE * sizeof(float),
                         (void *)(5 * sizeof(float)));
+
   // attribute 3: Tangent (3 floats offset at 8)
   m_VAO.DefineAttribute(m_VBO, 3, 3, GL_FLOAT, GL_FALSE, VERTEX_SIZE * sizeof(float),
                         (void *)(8 * sizeof(float)));
