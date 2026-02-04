@@ -1,0 +1,136 @@
+{
+  "entities": {
+    "Entity": {
+      "render": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "textures": {
+            "texture_diffuse1": [
+              "",
+              {
+                "antisotropicLevel": 1,
+                "generateMipMaps": true,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              }
+            ],
+            "texture_normal1": [
+              "",
+              {
+                "antisotropicLevel": 1,
+                "generateMipMaps": true,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              }
+            ],
+            "texture_specular1": [
+              "",
+              {
+                "antisotropicLevel": 1,
+                "generateMipMaps": true,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              }
+            ]
+          },
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "assets/Globe.obj"
+      },
+      "transform": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Main Camera": {
+      "camera": {
+        "far_plane": 100.0,
+        "fov": 60.0,
+        "near_plane": 0.10000000149011612
+      },
+      "transform": {
+        "position": [
+          0.0,
+          0.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "PointLight69": {
+      "pointLight": {
+        "color": [
+          1.0,
+          0.949999988079071,
+          0.8999999761581421,
+          1.0
+        ],
+        "intensity": 0.6000000238418579,
+        "linear": 0.10000000149011612,
+        "quadratic": 0.0010000000474974513,
+        "radius": 420.0
+      },
+      "transform": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    }
+  },
+  "name": "Test Scene 1"
+}

@@ -52,7 +52,7 @@ public:
     mSignatures[entity] = signature;
   }
 
-  Signature GetSignature(Entity entity) {
+  const Signature& GetSignature(Entity entity) {
     assert(entity < MAX_ENTITIES && "Entity out of range");
 
     return mSignatures[entity];

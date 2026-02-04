@@ -3,7 +3,9 @@
 
 #define VERTEX_SIZE 11
 Mesh::Mesh(const std::vector<float> &vertices,
-           const std::vector<unsigned int> &indices) {
+           const std::vector<unsigned int> &indices, const char* filepath)
+  : mFilePath(filepath)
+{
   // generate buffers
   m_VAO.GenerateVertexArrays();
   m_VAO.Bind();

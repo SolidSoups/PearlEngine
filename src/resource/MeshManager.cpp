@@ -270,7 +270,7 @@ std::shared_ptr<Mesh> MeshManager::loadOBJ(const char *filePath) {
   reformatObjToOpenGl(objVertices, objUvs, objNormals, objIndices, vertices,
                       indices);
 
-  m_Cache[filePath] = std::make_shared<Mesh>(vertices, indices);
+  m_Cache[filePath] = std::make_shared<Mesh>(vertices, indices, filePath);
 
   return m_Cache[filePath];
 }

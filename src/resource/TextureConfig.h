@@ -2,6 +2,8 @@
 
 #include <glad/glad.h>
 #include <cstdint>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 struct TextureConfig {
   bool generateMipMaps = true;
@@ -34,3 +36,28 @@ struct TextureConfig {
     return !(*this == other);
   }
 };
+
+inline void to_json(json &j, const TextureConfig& c){
+	j["generateMipMaps"] = c.generateMipMaps;
+	j["maxMipMapLevel"] = c.maxMipMapLevel;
+	j["minFilter"] = c.minFilter;
+	j["magFilter"] = c.magFilter;
+	j["lodBias"] = c.lodBias;
+	j["minLod"] = c.minLod;
+	j["maxLod"] = c.maxLod;
+	j["antisotropicLevel"] = c.antisotropicLevel;
+	j["wrapS"] = c.wrapS;
+	j["wrapT"] = c.wrapT;
+}
+inline void from_json(const json &j, TextureConfig& c){
+	c.generateMipMaps = j["generateMipMaps"];
+	c.maxMipMapLevel = j["maxMipMapLevel"];
+	c.minFilter = j["minFilter"];
+	c.magFilter = j["magFilter"];
+	c.lodBias = j["lodBias"];
+	c.minLod = j["minLod"];
+	c.maxLod = j["maxLod"];
+	c.antisotropicLevel = j["antisotropicLevel"];
+	c.wrapS = j["wrapS"];
+	c.wrapT = j["wrapT"];
+}

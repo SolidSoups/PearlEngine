@@ -13,9 +13,10 @@
 #include "Logger.h"
 
 TextureData::TextureData(unsigned char *data, uint32_t width, uint32_t height,
-                         uint32_t channels, const TextureConfig& config) {
-  if (!data) {
-    LOG_ERROR << "data is nullptr";
+                         uint32_t channels, const TextureConfig& config, const std::string& filepath)
+  : mFilePath(filepath), mConfig(config)
+{ 
+  if (!data) { LOG_ERROR << "data is nullptr";
     return;
   }
 

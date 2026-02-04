@@ -18,6 +18,8 @@ public:
   ShaderData(const ShaderData &) = delete;
   ShaderData &operator=(const ShaderData &) = delete;
   size_t getMemorySize() const { return bytesSize; }
+  const std::string& getVertPath() const { return m_VertPath; }
+  const std::string& getFragPath() const { return m_FragPath; }
   bool reload();
 
 public:

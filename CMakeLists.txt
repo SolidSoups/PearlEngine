@@ -31,6 +31,10 @@ target_include_directories(glad PUBLIC external/glad/include)
 
 find_package(X11 REQUIRED)
 
+
+# nlohmann/json
+add_subdirectory(external/json)
+
 # imgui library
 add_library(imgui 
   external/imgui/imgui.cpp
@@ -50,6 +54,7 @@ target_link_libraries(imgui
   PUBLIC 
     glfw
     glad
+    nlohmann_json::nlohmann_json
     ${X11_LIBRARIES}
 )
 

@@ -440,7 +440,7 @@ void PearlEngine::AddMenuBarItems() {
     glfwSetWindowShouldClose(pwin.GetWindow(), true);
   });
   MenuRegistry::Get().Register("File/Save Scene", [this]() {
-
+    m_Scene.SaveScene();
   });
 
   MenuRegistry::Get().Register("Tools/Reload Shaders", [this]() {
