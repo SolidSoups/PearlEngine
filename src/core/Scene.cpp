@@ -144,7 +144,7 @@ ecs::Entity Scene::CreateCube(const std::string &name) {
 
 
 
-void Scene::SaveScene() {
+void Scene::SaveScene(const char* filepath) {
   json scene;
   scene["name"] = "Test Scene 1";
   json &entities = scene["entities"];
@@ -173,8 +173,8 @@ void Scene::SaveScene() {
   // copy to vector
   std::vector<char> bytes(json_str.begin(), json_str.end());
 
-  FileSystem::writeFile("assets/scene1.json", bytes);
-  LOG_INFO << "Succesfully wrote file";
+  FileSystem::writeFile(filepath, bytes);
+  LOG_INFO << "Saved scene to: " << filepath;
 }
 
 void Scene::LoadScene(const char *filepath) {
@@ -215,4 +215,5 @@ void Scene::LoadScene(const char *filepath) {
 
     m_Entities.push_back(entity);
   }
+  LOG_INFO << "Loaded scene from: " << filepath;
 }

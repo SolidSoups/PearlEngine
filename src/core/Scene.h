@@ -46,7 +46,7 @@ public:
   // Scene-level lighting
   AmbientLightData ambientLight;
 public:
-  void SaveScene();
+  void SaveScene(const char* filepath);
   void LoadScene(const char* filepath);
 
 private:

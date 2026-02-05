@@ -433,7 +433,7 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
   static bool cSWasPressed = false;
   if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS &&
      glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && !cSWasPressed){
-    m_Scene.SaveScene();
+    // m_Scene.SaveScene();
     cSWasPressed = true;
   }
   else if(glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE){
@@ -449,12 +449,16 @@ void PearlEngine::AddMenuBarItems() {
   MenuRegistry::Get().Register("File/Exit", [this]() {
     glfwSetWindowShouldClose(pwin.GetWindow(), true);
   });
-  MenuRegistry::Get().Register("File/Save Scene", [this]() {
-    m_Scene.SaveScene();
+  MenuRegistry::Get().Register("File/Save scene as...", [this]() {
+    // open a dialog to pick a name
+    UserGUI::StartInputPopup("Save scene as...", [this](const std::string& name){
+      const std::string assets_folder = "assets/";
+      std::string filepath = assets_folder + name + ".json";
+      m_Scene.SaveScene(filepath.c_str());
+    });
   });
-  MenuRegistry::Get().Register("File/Load Scene", [this](){
+  MenuRegistry::Get().Register("File/Load scene...", [this](){
     UserGUI::StartFilePopup([this](const std::string& file){
-      LOG_INFO << "Loading scene " << file;
       m_Scene.LoadScene(file.c_str());
     }, {".json"});
   });

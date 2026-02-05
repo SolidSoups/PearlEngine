@@ -56,7 +56,6 @@ inline bool SearchablePopup(const char *id, const char *title,
 
     // draw input box
     if (state.firstFrame) {
-      LOG_INFO << "Set keyboard focus";
       ImGui::SetKeyboardFocusHere();
       state.firstFrame = false;
     }
