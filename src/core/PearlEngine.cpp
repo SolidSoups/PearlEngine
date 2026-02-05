@@ -453,7 +453,10 @@ void PearlEngine::AddMenuBarItems() {
     m_Scene.SaveScene();
   });
   MenuRegistry::Get().Register("File/Load Scene", [this](){
-    m_Scene.LoadScene("assets/scene1.scene");
+    UserGUI::StartFilePopup([this](const std::string& file){
+      LOG_INFO << "Loading scene " << file;
+      m_Scene.LoadScene(file.c_str());
+    }, {".json"});
   });
 
   MenuRegistry::Get().Register("Tools/Reload Shaders", [this]() {

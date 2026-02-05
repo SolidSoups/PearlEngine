@@ -173,7 +173,7 @@ void Scene::SaveScene() {
   // copy to vector
   std::vector<char> bytes(json_str.begin(), json_str.end());
 
-  FileSystem::writeFile("assets/scene1.scene", bytes);
+  FileSystem::writeFile("assets/scene1.json", bytes);
   LOG_INFO << "Succesfully wrote file";
 }
 
