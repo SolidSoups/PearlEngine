@@ -4,11 +4,9 @@
 #include <algorithm>
 #include <string>
 
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-
 #include "PointLightComponent.h"
 #include "RenderComponent.h"
+#include "CameraComponent.h"
 #include "Renderer.h"
 #include "RenderSystem.h"
 #include "PointLightSystem.h"
@@ -17,7 +15,7 @@ using json = nlohmann::json;
 #include "NameComponent.h"
 #include "Mesh.h"
 #include "Cube.h"
-#include "to_json.h"
+#include "json_common.h"
 
 #include "FileSystem.h"
 
@@ -146,57 +144,28 @@ ecs::Entity Scene::CreateCube(const std::string &name) {
 
 
 
-
-void saveTransform(json& scene, const std::string& entityName, const TransformComponent& cmp){
-  auto &trans = scene[entityName]["transform"]; 
-  trans["position"] = cmp.position;
-  trans["rotation"] = cmp.rotation;
-  trans["scale"] = cmp.scale;
-}
-
-void saveRender(json& scene, const std::string& entityName, const RenderComponent& cmp){
-  auto& render = scene[entityName]["render"];
-  if(cmp.mesh)
-    render["mesh_filepath"] = cmp.mesh->getFilePath();
-  if(cmp.material)
-    render["material_asset"] = cmp.material->createConstruction();
-}
-
-void saveCamera(json& scene, const std::string& entityName, const CameraComponent& cmp){
-  auto& camera = scene[entityName]["camera"];
-  camera["fov"] = cmp.cameraData.fov;
-  camera["near_plane"] = cmp.cameraData.nearPlane;
-  camera["far_plane"] = cmp.cameraData.farPlane;
-} 
-
-void savePointLight(json& scene, const std::string& entityName, const PointLightComponent& cmp){
-  auto& pointLight = scene[entityName]["pointLight"];
-  pointLight["color"] = cmp.data.color;
-  pointLight["intensity"] = cmp.data.intensity;
-  pointLight["radius"] = cmp.data.radius;
-  pointLight["linear"] = cmp.data.linearAttenuation;
-  pointLight["quadratic"] = cmp.data.quadraticAttenuation;
-} 
-
 void Scene::SaveScene() {
   json scene;
   scene["name"] = "Test Scene 1";
-  json& entities = scene["entities"];
+  json &entities = scene["entities"];
 
+  size_t counter = 0;
   for (unsigned int entity : m_Entities) {
     std::string name = m_Coordinator.GetComponent<NameComponent>(entity).name;
-		if(m_Coordinator.HasComponent<TransformComponent>(entity)){
-	    saveTransform(entities, name, m_Coordinator.GetComponent<TransformComponent>(entity));	  	
-		}
-		if(m_Coordinator.HasComponent<RenderComponent>(entity)){
-	    saveRender(entities, name, m_Coordinator.GetComponent<RenderComponent>(entity));	  	
-		}
-		if(m_Coordinator.HasComponent<CameraComponent>(entity)){
-	    saveCamera(entities, name, m_Coordinator.GetComponent<CameraComponent>(entity));	  	
-		}
-		if(m_Coordinator.HasComponent<PointLightComponent>(entity)){
-	    savePointLight(entities, name, m_Coordinator.GetComponent<PointLightComponent>(entity));	  	
-		}
+    json& entity_object = entities[name + std::to_string(counter)];
+    entity_object["name"] = name;
+
+    // add components
+    if (m_Coordinator.HasComponent<TransformComponent>(entity))
+      entity_object["transform_component"] = m_Coordinator.GetComponent<TransformComponent>(entity);
+    if (m_Coordinator.HasComponent<RenderComponent>(entity))
+      entity_object["render_component"] = m_Coordinator.GetComponent<RenderComponent>(entity);
+    if (m_Coordinator.HasComponent<CameraComponent>(entity))
+      entity_object["camera_component"] = m_Coordinator.GetComponent<CameraComponent>(entity);
+    if (m_Coordinator.HasComponent<PointLightComponent>(entity))
+      entity_object["pointLight_component"] = m_Coordinator.GetComponent<PointLightComponent>(entity);
+
+    counter++;
   }
 
   std::string json_str = scene.dump(2);
@@ -204,6 +173,46 @@ void Scene::SaveScene() {
   // copy to vector
   std::vector<char> bytes(json_str.begin(), json_str.end());
 
-  FileSystem::writeFile("assets/scene.json", bytes);
+  FileSystem::writeFile("assets/scene1.scene", bytes);
   LOG_INFO << "Succesfully wrote file";
+}
+
+void Scene::LoadScene(const char *filepath) {
+  Clear();
+
+  std::vector<char> bytes;
+  if (!FileSystem::loadFile(filepath, bytes)) {
+    LOG_ERROR << "Could not load scene";
+    return;
+  }
+
+  json j;
+  try {
+    j = json::parse(bytes);
+  } catch (json::parse_error &e) {
+    LOG_ERROR << "nlohmann::json::parse_error: \n"
+              << e.byte << ": " << e.what();
+    return;
+  }
+
+  if(!j.contains("entities")){
+    LOG_ERROR << "Could not find entities field";
+    return;
+  }
+
+  for(const auto& [e, c] : j["entities"].items()){
+    ecs::Entity entity = m_Coordinator.CreateEntity();
+    m_Coordinator.AddComponent<NameComponent>(entity, NameComponent{c["name"]});
+    
+    if(c.contains("transform_component"))
+      m_Coordinator.AddComponent<TransformComponent>(entity, c["transform_component"]);
+    if(c.contains("render_component"))
+      m_Coordinator.AddComponent<RenderComponent>(entity, c["render_component"]);
+    if(c.contains("camera_component"))
+      m_Coordinator.AddComponent<CameraComponent>(entity, c["camera_component"]);
+    if(c.contains("pointLight_component"))
+      m_Coordinator.AddComponent<PointLightComponent>(entity, c["pointLight_component"]);
+
+    m_Entities.push_back(entity);
+  }
 }

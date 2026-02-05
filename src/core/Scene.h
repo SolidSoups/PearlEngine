@@ -4,9 +4,7 @@
 #include <memory>
 #include <strings.h>
 #include <vector>
-#include "CameraComponent.h"
 #include "AmbientLightData.h"
-#include "PointLightComponent.h"
 #include "ecs_coordinator.h"
 #include "ecs_common.h"
 
@@ -49,6 +47,7 @@ public:
   AmbientLightData ambientLight;
 public:
   void SaveScene();
+  void LoadScene(const char* filepath);
 
 private:
   ecs::Coordinator m_Coordinator;

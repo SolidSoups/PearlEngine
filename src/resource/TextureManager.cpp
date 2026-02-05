@@ -37,7 +37,7 @@ TextureManager::load(const char *path,
   }
 
   // cache texture
-  cache_entry newEntry{std::make_shared<TextureData>(data, width, height, channels, config), config};
+  cache_entry newEntry{std::make_shared<TextureData>(data, width, height, channels, config, path), config};
   m_Cache[path] = newEntry;
 
   // free image data (we don't need it anymore)

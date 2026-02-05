@@ -430,6 +430,16 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
     gWasPressed = false;
   }
 
+  static bool cSWasPressed = false;
+  if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS &&
+     glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && !cSWasPressed){
+    m_Scene.SaveScene();
+    cSWasPressed = true;
+  }
+  else if(glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE){
+    cSWasPressed = false;
+  }
+
   ImGuiIO io = ImGui::GetIO();
   if (io.WantCaptureMouse || io.WantCaptureKeyboard)
     return;
@@ -441,6 +451,9 @@ void PearlEngine::AddMenuBarItems() {
   });
   MenuRegistry::Get().Register("File/Save Scene", [this]() {
     m_Scene.SaveScene();
+  });
+  MenuRegistry::Get().Register("File/Load Scene", [this](){
+    m_Scene.LoadScene("assets/scene1.scene");
   });
 
   MenuRegistry::Get().Register("Tools/Reload Shaders", [this]() {

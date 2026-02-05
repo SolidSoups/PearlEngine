@@ -1,6 +1,6 @@
 {
   "entities": {
-    "Entity1": {
+    "Entity0": {
       "name": "Entity",
       "render_component": {
         "material_asset": {
@@ -77,7 +77,7 @@
         ]
       }
     },
-    "Main Camera0": {
+    "Main Camera1": {
       "camera_component": {
         "far_plane": 100.0,
         "fov": 60.0,
