@@ -1,8 +1,11 @@
 #include "ViewportEditorPanel.h"
 
+#include <string>
+
 #include <imgui.h>
 #include <ImGuizmo.h>
 #include <glm/glm.hpp>
+#include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "FrameBuffer.h"
@@ -24,14 +27,38 @@ ViewportEditorPanel::ViewportEditorPanel(Framebuffer *framebuffer)
 }
 
 void ViewportEditorPanel::OnImGuiRender() {
-  if (!m_IsOpen) return;
+  if (!m_IsOpen)
+    return;
 
-  ImGui::Begin(m_Name.c_str(), &m_IsOpen);
+  ImGui::Begin(m_Name.c_str(), &m_IsOpen, ImGuiWindowFlags_MenuBar);
 
-  // Get available content region
+  // draw menu bar
+  static int selectedItem = 0;
+  static const ImGuizmo::OPERATION operations[] = {
+      ImGuizmo::TRANSLATE, ImGuizmo::ROTATE, ImGuizmo::SCALE};
+  static const char *items[] = {"Translate", "Rotate", "Scale"};
+
+  if (ImGui::BeginMenuBar()) {
+    ImGui::SetNextItemWidth(90.0f);
+    ImGui::Combo("##GizmoMode", &selectedItem, items, IM_ARRAYSIZE(items));
+    ImGui::EndMenuBar();
+  }
+
+  // add mode keybinds for the viewport
+  if (m_IsHovered) {
+    if (ImGui::IsKeyPressed(ImGuiKey_T))
+      selectedItem = 0;
+    if (ImGui::IsKeyPressed(ImGuiKey_R))
+      selectedItem = 1;
+    if (ImGui::IsKeyPressed(ImGuiKey_S))
+      selectedItem = 2;
+  }
+
+  // set the selected operation
+  ImGuizmo::OPERATION selectedOperation = operations[selectedItem];
+
+  // Get available content region, check resize
   ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-
-  // Check if resized
   m_WasResized = false;
   if (viewportPanelSize.x > 0 && viewportPanelSize.y > 0) {
     if (viewportPanelSize.x != m_Size.x || viewportPanelSize.y != m_Size.y) {
@@ -42,58 +69,76 @@ void ViewportEditorPanel::OnImGuiRender() {
 
   // display the framebuffer
   ImVec2 viewportMin = ImGui::GetCursorScreenPos();
-  ImGui::Image(
-    (void*)(intptr_t)m_Framebuffer->GetTextureID(),
-    viewportPanelSize,
-    ImVec2(0, 1), ImVec2(1, 0)
-  );
+  ImGui::Image((void *)(intptr_t)m_Framebuffer->GetTextureID(),
+               viewportPanelSize, ImVec2(0, 1), ImVec2(1, 0));
 
-  // Gizmos
-  if(SelectionWizard::HasSelection()){
-    auto selectedEntity = SelectionWizard::Get(); 
+  // Render Gizmos
+  if (SelectionWizard::HasSelection()) {
+    auto selectedEntity = SelectionWizard::Get();
     ImGuizmo::SetOrthographic(false);
     ImGuizmo::SetDrawlist();
 
-    ImGuizmo::SetRect(viewportMin.x, viewportMin.y, viewportPanelSize.x, viewportPanelSize.y);
+    ImGuizmo::SetRect(viewportMin.x, viewportMin.y, viewportPanelSize.x,
+                      viewportPanelSize.y);
 
-    Scene& scene = ServiceLocator::Get<Scene>();
-    ecs::Coordinator& coordinator = scene.GetCoordinator();
+    Scene &scene = ServiceLocator::Get<Scene>();
+    ecs::Coordinator &coordinator = scene.GetCoordinator();
 
     // Camera
-    CameraData* camData = ServiceLocator::Get<Camera>().GetCurrentTarget();
+    CameraData *camData = ServiceLocator::Get<Camera>().GetCurrentTarget();
     glm::mat4 cameraView = camData->GetViewMatrix();
     glm::mat4 cameraProjection = camData->GetProjectionMatrix();
 
     // Entity transform
-    auto& entityTransform = coordinator.GetComponent<TransformComponent>(selectedEntity);
+    auto &entityTransform =
+        coordinator.GetComponent<TransformComponent>(selectedEntity);
     glm::mat4 transform = entityTransform.GetModelMatrix();
 
-    ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), 
-                         ImGuizmo::OPERATION::ROTATE, ImGuizmo::LOCAL, glm::value_ptr(transform));
+    ImGuizmo::Manipulate(glm::value_ptr(cameraView),
+                         glm::value_ptr(cameraProjection), selectedOperation,
+                         ImGuizmo::LOCAL, glm::value_ptr(transform));
 
-    if(ImGuizmo::IsUsing()){
-      glm::vec3 translation, rotation, scale;
-      ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
+    if (ImGuizmo::IsUsing()) {
+      if (selectedOperation == ImGuizmo::OPERATION::TRANSLATE) {
+        entityTransform.position = glm::vec3(transform[3]);
+      } else if (selectedOperation == ImGuizmo::OPERATION::ROTATE) {
+        // Normalize columns to remove scale
+        glm::vec3 c0 = glm::normalize(glm::vec3(transform[0]));
+        glm::vec3 c1 = glm::normalize(glm::vec3(transform[1]));
+        glm::vec3 c2 = glm::normalize(glm::vec3(transform[2]));
 
-      entityTransform.position = translation;
-      entityTransform.rotation = rotation;
-      entityTransform.scale = scale;
+        // Extract XYZ Euler angles matching GetModelMatrix (Rx * Ry * Rz)
+        float y = asinf(glm::clamp(c2.x, -1.0f, 1.0f));
+        float x, z;
+        if (c2.x < 0.9999f) {
+          x = atan2f(-c2.y, c2.z);
+          z = atan2f(-c1.x, c0.x);
+        } else {
+          // Gimbal lock (y = ±90°)
+          x = atan2f(c0.y, c1.y);
+          z = 0.0f;
+        }
+        entityTransform.rotation = glm::degrees(glm::vec3(x, y, z));
+      } else if (selectedOperation == ImGuizmo::OPERATION::SCALE) {
+        entityTransform.scale = glm::vec3(glm::length(glm::vec3(transform[0])),
+                                          glm::length(glm::vec3(transform[1])),
+                                          glm::length(glm::vec3(transform[2])));
+      }
     }
   }
-
 
   // Capture input state
   m_IsHovered = ImGui::IsItemHovered();
   m_IsFocused = ImGui::IsWindowFocused();
 
   // Get mouse delta when hovering and clicking
-  if(m_IsHovered){
-    ImGuiIO& io = ImGui::GetIO();
+  if (m_IsHovered) {
+    ImGuiIO &io = ImGui::GetIO();
     m_ScrollDelta = io.MouseWheel;
     m_MouseDelta = glm::vec2(io.MouseDelta.x, io.MouseDelta.y);
     m_RightMouseDown = ImGui::IsMouseDown(ImGuiMouseButton_Right);
     m_MiddleMouseDown = ImGui::IsMouseDown(ImGuiMouseButton_Middle);
-  } else{
+  } else {
     m_MouseDelta = glm::vec2(0.0f);
     m_ScrollDelta = 0.0f;
     m_RightMouseDown = false;
