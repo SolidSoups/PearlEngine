@@ -62,7 +62,7 @@ PearlEngine::PearlEngine() {
   }
 
   // Create owned services
-  m_SelectionWizard = std::make_unique<SelectionWizard>();
+  SelectionWizard::Init();
   m_MessageBus = std::make_unique<MessageBus>();
   m_MessageQueue = std::make_unique<MessageQueue>();
 
@@ -74,7 +74,6 @@ PearlEngine::PearlEngine() {
   // Register all services with static ServiceLocator
   ServiceLocator::Provide(&m_Scene);
   ServiceLocator::Provide(&m_Camera);
-  ServiceLocator::Provide(m_SelectionWizard.get());
   ServiceLocator::Provide(&pwin);
   ServiceLocator::Provide(m_MessageBus.get());
   ServiceLocator::Provide(m_MessageQueue.get());
@@ -247,7 +246,7 @@ void PearlEngine::Render() {
 
 void PearlEngine::GeometryRenderPass() {
   m_GBuffer->bind();
-  glClearColor(0, 0, 0, 1.0);
+  glClearColor(0.4, 0.4, 0.4, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   Renderer::SetGeometryPassEnabled(true);
@@ -262,7 +261,7 @@ void PearlEngine::GeometryRenderPass() {
 
 void PearlEngine::FlatShadePass() {
   m_ViewportFramebuffer->Bind();
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClearColor(0.1f, 0.1f, 0.1f, 2.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glActiveTexture(GL_TEXTURE0);
@@ -276,7 +275,7 @@ void PearlEngine::FlatShadePass() {
 
 void PearlEngine::LightingPass() {
   m_ViewportFramebuffer->Bind();
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glActiveTexture(GL_TEXTURE0);

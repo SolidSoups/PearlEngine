@@ -9,8 +9,7 @@
 #include "SelectionWizard.h"
 
 SceneHierarchyEditorPanel::SceneHierarchyEditorPanel()
-    : EditorPanel("Scene Hierarchy"), r_Scene(ServiceLocator::Get<Scene>()),
-      r_SelectionWizard() {
+    : EditorPanel("Scene Hierarchy"), r_Scene(ServiceLocator::Get<Scene>()) {
   MenuRegistry::Get().Register("Windows/Scene Hierarchy", &m_IsOpen);
 }
 
@@ -26,7 +25,7 @@ void SceneHierarchyEditorPanel::OnImGuiRender() {
   // deselect if clicking on empty scene
   if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0) &&
       !ImGui::IsAnyItemHovered()) {
-    r_SelectionWizard->ClearSelection();
+    SelectionWizard::Clear();
   }
 
   ImGui::End();
@@ -41,7 +40,7 @@ void SceneHierarchyEditorPanel::DrawSceneHierarchy() {
     ecs::Entity entity = entities[i];
 
     // is this entity selected?
-    ecs::Entity selectedEntity = r_SelectionWizard->GetSelectedEntity();
+    ecs::Entity selectedEntity = SelectionWizard::Get();
     bool isSelected = selectedEntity == entity;
 
     // get entity name
@@ -53,7 +52,7 @@ void SceneHierarchyEditorPanel::DrawSceneHierarchy() {
     // show selectable for entity
     if (ImGui::Selectable(nameid.c_str(), isSelected)) {
       // if pressed, set selection to this entity
-      r_SelectionWizard->SetSelection(entity);
+      SelectionWizard::Set(entity);
     }
 
     // context menu per entity

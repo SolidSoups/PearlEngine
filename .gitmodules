@@ -19,3 +19,6 @@
 [submodule "external/json"]
 	path = external/json
 	url = git@github.com:nlohmann/json.git
+[submodule "external/imguizmo"]
+	path = external/imguizmo
+	url = git@github.com:CedricGuillemet/ImGuizmo.git

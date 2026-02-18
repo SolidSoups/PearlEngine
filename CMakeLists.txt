@@ -44,11 +44,14 @@ add_library(imgui
   external/imgui/imgui_widgets.cpp
   external/imgui/backends/imgui_impl_glfw.cpp
   external/imgui/backends/imgui_impl_opengl3.cpp
+
+  external/imguizmo/ImGuizmo.cpp
 )
 target_include_directories(imgui 
   PUBLIC
     external/imgui
     external/imgui/backends
+    external/imguizmo
 )
 target_link_libraries(imgui
   PUBLIC 

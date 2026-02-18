@@ -6,7 +6,6 @@
 #include "ImGuiHelpers.h"
 #include "Material.h"
 #include "ComponentEditorRegistry.h"
-#include "MessageBus.h"
 #include "PointLightComponent.h"
 #include "TransformComponent.h"
 #include "CameraComponent.h"
@@ -19,20 +18,8 @@
 #include <iostream>
 
 InspectorEditorPanel::InspectorEditorPanel()
-    : EditorPanel("Inspector"), r_Scene(ServiceLocator::Get<Scene>()),
-      m_SelectedEntity(ecs::NULL_ENTITY) {
+    : EditorPanel("Inspector"), r_Scene(ServiceLocator::Get<Scene>()) {
   MenuRegistry::Get().Register("Windows/Inspector", &m_IsOpen);
-  ServiceLocator::Get<MessageBus>().Subscribe<SelectionMessage>(this);
-}
-
-void InspectorEditorPanel::HandleMessage(const Message &msg) {
-  if (auto *evt = msg.As<SelectionMessage>()) {
-    if (evt->type == Selection_Clear) {
-      m_SelectedEntity = ecs::NULL_ENTITY;
-    } else if (evt->type == Selection_Entity) {
-      m_SelectedEntity = evt->selectedEntity;
-    }
-  }
 }
 
 void InspectorEditorPanel::OnImGuiRender() {
@@ -41,9 +28,10 @@ void InspectorEditorPanel::OnImGuiRender() {
 
   ImGui::Begin(m_Name.c_str());
 
-  if (m_SelectedEntity != ecs::NULL_ENTITY) {
-    DrawHeader(m_SelectedEntity);
-    DrawComponents(m_SelectedEntity);
+  ecs::Entity selectedEntity = SelectionWizard::Get();
+  if (selectedEntity != ecs::NULL_ENTITY) {
+    DrawHeader(selectedEntity);
+    DrawComponents(selectedEntity);
   }
 
   ImGui::End();

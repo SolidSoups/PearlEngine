@@ -7,7 +7,6 @@
 #include "Camera.h"
 #include "ShaderData.h"
 #include "Scene.h"
-#include "SelectionWizard.h"
 #include "MessageBus.h"
 #include "MessageQueue.h"
 
@@ -53,7 +52,6 @@ public:
   std::unique_ptr<CameraController> m_CameraController;
 
 private:
-  std::unique_ptr<SelectionWizard> m_SelectionWizard;
   std::unique_ptr<MessageBus> m_MessageBus;
   std::unique_ptr<MessageQueue> m_MessageQueue;
 

@@ -1,17 +1,15 @@
 #pragma once
 
 #include "EditorPanel.h"
-#include "IMessageHandler.h"
 #include "Scene.h"
 #include "ServiceLocator.h"
 #include "ecs_common.h"
 
 class ComponentEditor;
 
-class InspectorEditorPanel : public EditorPanel, IMessageHandler{
+class InspectorEditorPanel : public EditorPanel {
 public:
   InspectorEditorPanel();
-  void HandleMessage(const Message& msg) override;
 
 public:
   void OnImGuiRender() override;
@@ -24,7 +22,4 @@ private:
 
 private:
   Scene& r_Scene;
-
-private:
-  ecs::Entity m_SelectedEntity = ecs::NULL_ENTITY;
 };

@@ -6,6 +6,7 @@
 
 // but i definitely need these
 #include "imgui.h"
+#include "ImGuizmo.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
@@ -48,6 +49,7 @@ void GUIContext::BeginFrame(){
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
+  ImGuizmo::BeginFrame();
 
   DrawToolbar();
 }
