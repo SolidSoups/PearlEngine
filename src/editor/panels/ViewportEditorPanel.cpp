@@ -54,6 +54,7 @@ void ViewportEditorPanel::OnImGuiRender() {
       selectedItem = 2;
   }
 
+
   // set the selected operation
   ImGuizmo::OPERATION selectedOperation = operations[selectedItem];
 
@@ -72,22 +73,25 @@ void ViewportEditorPanel::OnImGuiRender() {
   ImGui::Image((void *)(intptr_t)m_Framebuffer->GetTextureID(),
                viewportPanelSize, ImVec2(0, 1), ImVec2(1, 0));
 
+  // Render gizmo grid
+  Scene &scene = ServiceLocator::Get<Scene>();
+  ecs::Coordinator &coordinator = scene.GetCoordinator();
+
+  ImGuizmo::SetOrthographic(false);
+  ImGuizmo::SetDrawlist();
+  ImGuizmo::SetRect(viewportMin.x, viewportMin.y, viewportPanelSize.x,
+                    viewportPanelSize.y);
+
+  CameraData *camData = ServiceLocator::Get<Camera>().GetCurrentTarget();
+  glm::mat4 cameraView = camData->GetViewMatrix();
+  glm::mat4 cameraProjection = camData->GetProjectionMatrix();
+   
+  glm::mat4 identity(1.0f);
+  // ImGuizmo::DrawGrid(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), glm::value_ptr(identity), 100.0f);
+
   // Render Gizmos
   if (SelectionWizard::HasSelection()) {
     auto selectedEntity = SelectionWizard::Get();
-    ImGuizmo::SetOrthographic(false);
-    ImGuizmo::SetDrawlist();
-
-    ImGuizmo::SetRect(viewportMin.x, viewportMin.y, viewportPanelSize.x,
-                      viewportPanelSize.y);
-
-    Scene &scene = ServiceLocator::Get<Scene>();
-    ecs::Coordinator &coordinator = scene.GetCoordinator();
-
-    // Camera
-    CameraData *camData = ServiceLocator::Get<Camera>().GetCurrentTarget();
-    glm::mat4 cameraView = camData->GetViewMatrix();
-    glm::mat4 cameraProjection = camData->GetProjectionMatrix();
 
     // Entity transform
     auto &entityTransform =

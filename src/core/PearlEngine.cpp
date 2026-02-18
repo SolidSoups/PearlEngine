@@ -52,6 +52,7 @@
 #include "Logger.h"
 #include "Material.h"
 #include "TextureData.h"
+#include "ViewportGrid.h"
 
 // #define DEBUG_GBUFFER
 
@@ -120,6 +121,9 @@ void PearlEngine::Initialize() {
                                         "shaders/lightFrag.glsl");
   m_FlatShader = m_ShaderManager->load("shaders/flatVert.glsl",
                                        "shaders/flatFrag.glsl");
+  m_GridShader = m_ShaderManager->load("shaders/gridVert.glsl",
+                                       "shaders/gridFrag.glsl");
+  m_ViewportGrid = std::make_unique<ViewportGrid>(m_GridShader);
 
   // create the main camera
   ecs::Entity cameraEntity = m_Scene.CreateEntity("Main Camera");
@@ -303,6 +307,22 @@ void PearlEngine::LightingPass() {
 
   glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
   m_FullscreenQuad->Draw();
+
+  // Blit GBuffer depth into viewport framebuffer so grid depth-tests against scene
+  glBindFramebuffer(GL_READ_FRAMEBUFFER, m_GBuffer->GetFBOId());
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_ViewportFramebuffer->GetFBOId());
+  glBlitFramebuffer(0, 0, m_ViewportSize.x, m_ViewportSize.y,
+                    0, 0, m_ViewportSize.x, m_ViewportSize.y,
+                    GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+  // Re-bind viewport framebuffer as active draw target (without clearing)
+  glBindFramebuffer(GL_FRAMEBUFFER, m_ViewportFramebuffer->GetFBOId());
+  glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
+
+  // Draw grid
+  CameraData* cam = m_Camera.GetCurrentTarget();
+  m_ViewportGrid->Draw(cam->GetViewMatrix(), cam->GetProjectionMatrix());
+
   m_ViewportFramebuffer->Unbind();
 }
 

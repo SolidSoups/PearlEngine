@@ -12,6 +12,7 @@ public:
   void unbind();
   void resize(uint16_t width, uint16_t height);
 
+  GLuint GetFBOId() const { return m_GBuffer; }
   GLuint GetPositionTexture() const { return m_GPosition; }
   GLuint GetNormalTexture() const { return m_GNormal; }
   GLuint GetAlbedoSpecTexture() const { return m_GAlbedoSpec; }
