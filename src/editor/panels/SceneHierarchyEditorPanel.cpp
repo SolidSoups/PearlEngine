@@ -94,7 +94,7 @@ void SceneHierarchyEditorPanel::DrawContextMenu() {
     if(ImGui::BeginMenu("Primitives")){
       if(ImGui::MenuItem("Create Plane")) r_Scene.CreatePlane();
       if(ImGui::MenuItem("Create Cube"))  r_Scene.CreateCube();
-      if(ImGui::MenuItem("Create Spehere"));
+      if(ImGui::MenuItem("Create Sphere")) r_Scene.CreateSphere();
       if(ImGui::MenuItem("Create Cylinder"));
       ImGui::EndMenu();
     }

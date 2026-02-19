@@ -154,7 +154,7 @@ ecs::Entity Scene::CreateCube(const std::string &name) {
 }
 
 ecs::Entity Scene::CreatePlane(const std::string& name){
-  // create vectors
+  // load vertices into vectors
   std::vector<float> verts(
     Plane::vertices, 
     Plane::vertices + PLANE_VERTEX_SIZE);
@@ -162,10 +162,31 @@ ecs::Entity Scene::CreatePlane(const std::string& name){
     Plane::indices, 
     Plane::indices + PLANE_INDEX_SIZE);
   
-  ecs::Entity entity = CreateEntity(name);
+  // create rendercomp, attach mesh
   RenderComponent renderComp;
   renderComp.mesh = std::make_shared<Mesh>(verts, indcs);
 
+  // create entity, attach rendercomp
+  ecs::Entity entity = CreateEntity(name);
+  m_Coordinator.AddComponent(entity, renderComp);
+
+  return entity;
+}
+
+ecs::Entity Scene::CreateSphere(const std::string& name){
+  // generate mesh data
+  std::vector<float> verts;
+  std::vector<unsigned int> indices;
+  Sphere::generate_uvsphere(verts, indices, 8, 8);
+
+  // create render comp and make a mesh
+  LOG_INFO << "Creating mesh object";
+  RenderComponent renderComp;
+  renderComp.mesh = std::make_shared<Mesh>(verts, indices);
+  LOG_INFO << "Mesh object created!";
+
+  // create entity, attach rendercomp
+  ecs::Entity entity = CreateEntity(name);
   m_Coordinator.AddComponent(entity, renderComp);
 
   return entity;

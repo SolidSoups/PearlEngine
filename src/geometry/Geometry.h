@@ -10,4 +10,8 @@ struct Plane{
   static const unsigned int indices[PLANE_INDEX_SIZE];
 };
 
-
+struct Sphere{
+  static void generate_uvsphere(std::vector<float> &out_vertices, 
+                         std::vector<unsigned int> &out_indices,
+                         int n_slices, int n_stacks);
+};
