@@ -7,9 +7,7 @@
 #include <map>
 #include <iostream>
 
-#include "Mesh.h"
 #include "Logger.h"
-
 #include "Mesh.h"
 
 std::vector<std::string> splitWhiteSpace(const char *line) {
@@ -148,38 +146,6 @@ bool MeshManager::loadAndParseObjFile(
   return true;
 }
 
-glm::vec3 computeTangent(
-  const glm::vec3 &p0, const glm::vec3 &p1, const glm::vec3 &p2,
-  const glm::vec2 &uv0, const glm::vec2 &uv1, const glm::vec2 &uv2
-){
-  // Edge vectors (in 3d space) 
-  glm::vec3 e1 = p1 - p0;
-  glm::vec3 e2 = p2 - p0;
-
-  // uv deltas
-  float du1 = uv1.x - uv0.x;
-  float dv1 = uv1.y - uv0.y;
-  float du2 = uv2.x - uv0.x;
-  float dv2 = uv2.y - uv0.y;
-
-  // inverse determinant
-  float det = du1 * dv2 - du2 * dv1;
-  if(std::abs(det) < 1e-6f){
-    // degenerates
-    return glm::vec3(1.0f, 0.0f, 0.0);
-  }
-  float f = 1.0 / det;
-
-  // calc tangent
-  glm::vec3 tangent;
-  tangent.x = f * (dv2 * e1.x - dv1 * e2.x);
-  tangent.y = f * (dv2 * e1.y - dv1 * e2.y);
-  tangent.z = f * (dv2 * e1.z - dv1 * e2.z);
-
-  return glm::normalize(tangent);
-}
-
-
 void MeshManager::reformatObjToOpenGl(
     const std::vector<glm::vec3> &objVertices,
     const std::vector<glm::vec2> &objUvs,
@@ -195,8 +161,6 @@ void MeshManager::reformatObjToOpenGl(
   // Process triangles (every 9 indices = 3 vertices * 3 components each)
   for (size_t i = 0; i < objIndices.size(); i += 9) {
     // generate the index for the vertex
-    std::array<unsigned int, 3> key = {objIndices[i], objIndices[i + 1],
-                                       objIndices[i + 2]};
     glm::vec3 pos[3];
     glm::vec2 uv[3];
     glm::vec3 norm[3];
@@ -207,10 +171,6 @@ void MeshManager::reformatObjToOpenGl(
       uv[v] = objUvs[objIndices[base + 1] - 1];
       norm[v] = objNormals[objIndices[base + 2] - 1];
     }
-
-    // compute tangent for this triangle
-    glm::vec3 tangent = computeTangent(pos[0], pos[1], pos[2],
-                                       uv[0], uv[1], uv[2]);
 
     // add each vertex
     for(int v = 0; v < 3; v++){
@@ -234,10 +194,6 @@ void MeshManager::reformatObjToOpenGl(
         outVertices.push_back(norm[v].x);
         outVertices.push_back(norm[v].y);
         outVertices.push_back(norm[v].z);
-        // tangent (3)
-        outVertices.push_back(tangent.x);
-        outVertices.push_back(tangent.y);
-        outVertices.push_back(tangent.z);
       }
       outIndices.push_back(faceToIndex[key]);
     }

@@ -13,8 +13,9 @@ void ScriptSystem::OnUpdate(){
     if(sc.scriptPath.empty()) continue;
     
     if(!sc.loaded){
-      mEngine->RunOnCreate(entity, sc);
-      sc.loaded = true;
+      bool ok = mEngine->RunOnCreate(entity, sc);
+      if(ok) sc.loaded = true;
+      continue;
     }
     mEngine->RunOnUpdate(entity, sc);
   }

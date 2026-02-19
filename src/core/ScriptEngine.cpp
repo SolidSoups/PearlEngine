@@ -18,7 +18,7 @@ void ScriptEngine::Init(Scene *scene) {
 
 
 
-void ScriptEngine::RunOnCreate(ecs::Entity entity, ScriptComponent &sc) {
+bool ScriptEngine::RunOnCreate(ecs::Entity entity, ScriptComponent &sc) {
   sol::environment env = CreateEntityEnv(entity);
 
   auto result =
@@ -26,7 +26,7 @@ void ScriptEngine::RunOnCreate(ecs::Entity entity, ScriptComponent &sc) {
   if (!result.valid()) {
     sol::error err = result;
     LOG_ERROR << "[Lua] " << sc.scriptPath << ": " << err.what();
-    return;
+    return false;
   }
   sc.scriptEnv = env;
 
@@ -36,15 +36,17 @@ void ScriptEngine::RunOnCreate(ecs::Entity entity, ScriptComponent &sc) {
     if (!r.valid()) {
       sol::error e = r;
       LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnCreate: " << e.what();
+      return false;
     }
   }
+  return true;
 }
 
 void ScriptEngine::RunOnUpdate(ecs::Entity entity, ScriptComponent& sc){
   sol::protected_function fn = sc.scriptEnv["OnUpdate"];
   if(!fn.valid()) return;
 
-  sol::table time = m_Lua["time"];
+  sol::table time = m_Lua["Time"];
   time["deltaTime"] = Time::deltaTime;
   time["time"] = Time::time;
 

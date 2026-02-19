@@ -144,11 +144,11 @@ void PearlEngine::Initialize() {
 
   // create the fullscreen quad
   std::vector<float> quadVertices = {
-       // positions         // uv         // normals          // tangent
-      -1.0f,  1.0f, 0.0f,   0.0f, 1.0f,   0.0f, 0.0f,  1.0f,  1.0f, 0.0f, 0.0f, // top-left
-      -1.0f, -1.0f, 0.0f,   0.0f, 0.0f,   0.0f, 0.0f,  1.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-       1.0f, -1.0f, 0.0f,   1.0f, 0.0f,   0.0f, 0.0f,  1.0f,  1.0f, 0.0f, 0.0f, // bottom-right
-       1.0f,  1.0f, 0.0f,   1.0f, 1.0f,   0.0f, 0.0f,  1.0f,  1.0f, 0.0f, 0.0f // top-right
+       // positions         // uv         // normals          
+      -1.0f,  1.0f, 0.0f,   0.0f, 1.0f,   0.0f, 0.0f,  1.0f, 
+      -1.0f, -1.0f, 0.0f,   0.0f, 0.0f,   0.0f, 0.0f,  1.0f,
+       1.0f, -1.0f, 0.0f,   1.0f, 0.0f,   0.0f, 0.0f,  1.0f,
+       1.0f,  1.0f, 0.0f,   1.0f, 1.0f,   0.0f, 0.0f,  1.0f,
   };
   std::vector<unsigned int> quadIndices = {
       0, 1, 2, // first triangle

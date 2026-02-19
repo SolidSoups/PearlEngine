@@ -9,7 +9,7 @@ class Scene;
 class ScriptEngine{
 public:
   void Init(Scene* scene);
-  void RunOnCreate(ecs::Entity entity, ScriptComponent& cp);
+  bool RunOnCreate(ecs::Entity entity, ScriptComponent& cp);
   void RunOnUpdate(ecs::Entity entity, ScriptComponent& cp);
   void RunOnDestroy(ecs::Entity entity, ScriptComponent& cp);
   void ReloadScript(ecs::Entity entity, ScriptComponent& cp);

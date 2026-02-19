@@ -24,6 +24,7 @@ public:
   ecs::Entity CreateEntity(const std::string& name = "Entity");
   ecs::Entity CreatePointLight(const std::string& name = "PointLight");
   ecs::Entity CreateCube(const std::string& name = "Cube");
+  ecs::Entity CreatePlane(const std::string& name="Plane");
   void DestroyEntity(ecs::Entity entity);
   void Clear();
 

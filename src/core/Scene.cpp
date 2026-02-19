@@ -17,6 +17,7 @@
 #include "Mesh.h"
 #include "Cube.h"
 #include "json_common.h"
+#include "Geometry.h"
 
 #include "FileSystem.h"
 
@@ -144,7 +145,7 @@ ecs::Entity Scene::CreateCube(const std::string &name) {
   ecs::Entity entity = CreateEntity(name);
   RenderComponent renderComp;
   std::vector<float> vertices(Cube::s_Vertices,
-                              Cube::s_Vertices + Cube::s_VertexCount);
+                              Cube::s_Vertices + Cube::s_VertexCount * 8);
   std::vector<unsigned int> indices(Cube::s_Indices,
                                     Cube::s_Indices + Cube::s_IndexCount);
   renderComp.mesh = std::make_shared<Mesh>(vertices, indices);
@@ -152,6 +153,23 @@ ecs::Entity Scene::CreateCube(const std::string &name) {
   return entity;
 }
 
+ecs::Entity Scene::CreatePlane(const std::string& name){
+  // create vectors
+  std::vector<float> verts(
+    Plane::vertices, 
+    Plane::vertices + PLANE_VERTEX_SIZE);
+  std::vector<unsigned int> indcs(
+    Plane::indices, 
+    Plane::indices + PLANE_INDEX_SIZE);
+  
+  ecs::Entity entity = CreateEntity(name);
+  RenderComponent renderComp;
+  renderComp.mesh = std::make_shared<Mesh>(verts, indcs);
+
+  m_Coordinator.AddComponent(entity, renderComp);
+
+  return entity;
+}
 
 
 
