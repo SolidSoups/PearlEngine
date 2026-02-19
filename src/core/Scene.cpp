@@ -10,6 +10,7 @@
 #include "Renderer.h"
 #include "RenderSystem.h"
 #include "PointLightSystem.h"
+#include "ScriptComponent.h"
 
 #include "TransformComponent.h"
 #include "NameComponent.h"
@@ -28,6 +29,7 @@ Scene::Scene() {
   m_Coordinator.RegisterComponent<CameraComponent>();
   m_Coordinator.RegisterComponent<PointLightComponent>();
   m_Coordinator.RegisterComponent<NameComponent>();
+  m_Coordinator.RegisterComponent<ScriptComponent>();
 
   // Register render system
   mRenderSystem = m_Coordinator.RegisterSystem<RenderSystem>();
@@ -44,6 +46,16 @@ Scene::Scene() {
   lsSignature.set(m_Coordinator.GetComponentType<PointLightComponent>());
   m_Coordinator.SetSystemSignature<PointLightSystem>(lsSignature);
   mPointLightSystem->Init(&m_Coordinator);
+
+  // ScriptSystem
+  mScriptSystem = m_Coordinator.RegisterSystem<ScriptSystem>();
+  ecs::Signature ssSignature;
+  ssSignature.set(m_Coordinator.GetComponentType<ScriptComponent>());
+  m_Coordinator.SetSystemSignature<ScriptSystem>(ssSignature);
+
+  mScriptEngine = std::make_shared<ScriptEngine>();
+  mScriptEngine->Init(this);
+  mScriptSystem->Init(&m_Coordinator, mScriptEngine.get());
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {
@@ -53,6 +65,7 @@ void Scene::DestroyEntity(ecs::Entity entity) {
 }
 
 void Scene::Clear() {
+  mScriptSystem->OnDestroy();
   for (auto entity : m_Entities) {
     m_Coordinator.DestroyEntity(entity);
   }
@@ -61,7 +74,7 @@ void Scene::Clear() {
 }
 
 void Scene::Update() {
-  // in the future we update the objects here
+  mScriptSystem->OnUpdate();
 }
 
 void Scene::Render(Camera &camera) {

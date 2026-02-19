@@ -22,3 +22,6 @@
 [submodule "external/imguizmo"]
 	path = external/imguizmo
 	url = git@github.com:CedricGuillemet/ImGuizmo.git
+[submodule "external/sol2"]
+	path = external/sol2
+	url = git@github.com:ThePhD/sol2.git

@@ -4,9 +4,12 @@
 #include <memory>
 #include <strings.h>
 #include <vector>
+
 #include "AmbientLightData.h"
 #include "ecs_coordinator.h"
 #include "ecs_common.h"
+#include "ScriptEngine.h"
+#include "ScriptSystem.h"
 
 class RenderSystem;
 class PointLightSystem;
@@ -57,6 +60,9 @@ private:
   ecs::Entity m_ActiveCamera = ecs::NULL_ENTITY;
 
   std::shared_ptr<RenderSystem> mRenderSystem;
+
+  std::shared_ptr<ScriptEngine> mScriptEngine;
+  std::shared_ptr<ScriptSystem> mScriptSystem;
 public:
   std::shared_ptr<PointLightSystem> mPointLightSystem;
 

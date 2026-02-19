@@ -31,6 +31,15 @@ target_include_directories(glad PUBLIC external/glad/include)
 
 find_package(X11 REQUIRED)
 
+# Lua
+file(GLOB LUA_SOURCES "external/lua/*.c")
+list(REMOVE_ITEM LUA_SOURCES
+  "${CMAKE_CURRENT_SOURCE_DIR}/external/lua/lua.c"
+  "${CMAKE_CURRENT_SOURCE_DIR}/external/lua/luac.c"
+)
+
+add_library(lua STATIC ${LUA_SOURCES})
+target_include_directories(lua PUBLIC external/lua)
 
 # nlohmann/json
 add_subdirectory(external/json)
@@ -61,7 +70,7 @@ target_link_libraries(imgui
     ${X11_LIBRARIES}
 )
 
-# target
+# Sol2 (header-only)
 add_executable(game_engine)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 target_sources(game_engine PRIVATE 
@@ -72,6 +81,7 @@ target_link_libraries(game_engine
   PRIVATE 
     glfw 
     glad 
+    lua
     imgui
     ${GTK4_LIBRARIES}
 )
@@ -108,9 +118,14 @@ target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecs/systems
   external/stb
   external/glm
+  ${CMAKE_CURRENT_SOURCE_DIR}/external
+  external/lua
+  external/sol2/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/scripting
   ${GTK4_INCLUDE_DIRS}
 )
 target_compile_definitions(game_engine PRIVATE
-  DEBUG_ENABLED=1 
+  DEBUG_ENABLED=1
   LOG_TO_CONSOLE=1
+  SOL_NO_LUA_HPP=1   # Prevent sol2 from using /usr/local/include/lua.hpp (Lua 5.1)
 )
