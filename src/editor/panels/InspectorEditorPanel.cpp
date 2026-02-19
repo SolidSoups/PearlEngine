@@ -13,6 +13,7 @@
 #include "SelectionWizard.h"
 #include "RenderComponent.h"
 #include "TransformComponentEditor.h"
+#include "ScriptComponent.h"
 #include "imgui.h"
 
 #include <iostream>
@@ -102,6 +103,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
   DrawComponentIfPresent<CameraComponent>(entity);
   DrawComponentIfPresent<RenderComponent>(entity);
   DrawComponentIfPresent<PointLightComponent>(entity);
+  DrawComponentIfPresent<ScriptComponent>(entity);
 
   // draw add component
   ImGui::Separator();
@@ -110,7 +112,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
   }
 
   std::vector<std::string> compChoices = {"Render Component",
-                                          "Transform", "Point Light", "Camera"};
+                                          "Transform", "Point Light", "Camera", "Script"};
   std::string selected = "";
   if (SearchablePopup<std::string>(
           "Add_Component", "Add Component", compChoices,
@@ -123,6 +125,9 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
       coordinator.AddComponent(entity, PointLightComponent{});
     } else if (selected == "Camera" && !coordinator.HasComponent<CameraComponent>(entity)){
       coordinator.AddComponent(entity, CameraComponent{});
+    } else if(selected == "Script" && !coordinator.HasComponent<ScriptComponent>(entity)){
+      coordinator.AddComponent(entity, ScriptComponent{});
+      LOG_INFO << "entity has component script: " << (coordinator.HasComponent<ScriptComponent>(entity) ? "True" : "False");
     }
   }
 }

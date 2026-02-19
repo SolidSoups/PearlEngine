@@ -44,6 +44,10 @@ void ScriptEngine::RunOnUpdate(ecs::Entity entity, ScriptComponent& sc){
   sol::protected_function fn = sc.scriptEnv["OnUpdate"];
   if(!fn.valid()) return;
 
+  sol::table time = m_Lua["time"];
+  time["deltaTime"] = Time::deltaTime;
+  time["time"] = Time::time;
+
   auto r = fn(Time::deltaTime);
   if(!r.valid()){
     sol::error e = r;
@@ -118,6 +122,6 @@ void ScriptEngine::BindAPIs() {
 
   // time table
   sol::table time = m_Lua.create_named_table("Time");
-  time.set_function("deltaTime", [] { return Time::deltaTime; });
-  time.set_function("time", [] { return Time::time; });
+  time["deltaTime"] = 0.0f;
+  time["time"] = 0.0f;
 }
