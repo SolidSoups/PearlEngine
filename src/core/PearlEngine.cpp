@@ -15,6 +15,7 @@
 
 // src
 #include "PearlEngine.h"
+#include "InputManager.h"
 #include "AmbientLightEditorPanel.h"
 #include "CameraController.h"
 #include "PointLightSystem.h"
@@ -43,6 +44,7 @@
 // editor
 #include "MenuRegistry.h"
 #include "MemoryEditorPanel.h"
+#include "InputInspectorPanel.h"
 #include "InspectorEditorPanel.h"
 #include "LoggerEditorPanel.h"
 #include "SceneHierarchyEditorPanel.h"
@@ -67,6 +69,7 @@ PearlEngine::PearlEngine() {
   SelectionWizard::Init();
   m_MessageBus = std::make_unique<MessageBus>();
   m_MessageQueue = std::make_unique<MessageQueue>();
+  m_InputManager = std::make_unique<InputManager>(pwin.GetWindow());
 
   // Create resource managers
   m_MeshManager = std::make_unique<MeshManager>();
@@ -74,6 +77,7 @@ PearlEngine::PearlEngine() {
   m_ShaderManager = std::make_unique<ShaderManager>();
 
   // Register all services with static ServiceLocator
+  ServiceLocator::Provide<InputManager>(m_InputManager.get());
   ServiceLocator::Provide(&m_Scene);
   ServiceLocator::Provide(&m_Camera);
   ServiceLocator::Provide(&pwin);
@@ -99,6 +103,9 @@ void PearlEngine::Initialize() {
   LOG_INFO << "Initializing!";
   GLFWwindow *window = pwin.GetWindow();
   glfwMakeContextCurrent(window);
+
+  // auto spacem = [](){ LOG_INFO << "SPACE+M chord called"; };
+  // m_InputManager->RegisterChordCallback("SPACE+M", spacem);
 
   m_CameraController = std::make_unique<CameraController>(&m_Camera);
 
@@ -166,6 +173,7 @@ void PearlEngine::Initialize() {
   m_GUIContext.AddPanel<FileSystemEditorPanel>();
   m_GUIContext.AddPanel<MemoryEditorPanel>();
   m_GUIContext.AddPanel<AmbientLightEditorPanel>();
+  m_GUIContext.AddPanel<InputInspectorPanel>();
   AddMenuBarItems();
 
   // Setup camera aspect ratio
@@ -422,6 +430,9 @@ void PearlEngine::RenderEditor() {
 void PearlEngine::ProcessInput(GLFWwindow *window) {
   static bool gWasPressed = false;
   static bool f5WasPressed = false;
+
+  m_InputManager->PollCallbacks();
+
   // quit engine
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);

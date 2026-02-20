@@ -8,6 +8,7 @@
 #include "NameComponent.h"
 #include "Time.h"
 
+
 #include <glm/glm.hpp>
 
 void ScriptEngine::Init(Scene *scene) {
@@ -153,4 +154,19 @@ void ScriptEngine::BindAPIs() {
       std::cerr << "[LuaError] " << text << std::endl;
     });
 
+  // Input
+  sol::table input = m_Lua.create_named_table("Input");
+  input.set_function(
+    "BindChord", [this](const std::string &chord, sol::function fn){
+      // TODO: remove this shit
+      auto inputMan = ServiceLocator::Get<InputManager>();
+      inputMan.RegisterChordCallback(chord, [fn](){ fn(); });
+    }
+  );
+  input.set_function(
+    "IsKeyDown", [this](const std::string& chord) -> bool{
+      auto inputMan = ServiceLocator::Get<InputManager>();
+      return inputMan.IsStringKeyPressed(chord);
+    }
+  );
 }

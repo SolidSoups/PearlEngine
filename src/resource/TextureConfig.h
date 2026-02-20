@@ -1,9 +1,12 @@
 #pragma once
 
-#include <glad/glad.h>
 #include <cstdint>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
+
+typedef unsigned int GLenum;
+#define GL_LINEAR 0x2601
+#define GL_REPEAT 0x2901
 
 struct TextureConfig {
   bool generateMipMaps = true;

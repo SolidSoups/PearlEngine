@@ -9,6 +9,7 @@ public:
   virtual ~EditorPanel() = default;
 
 public:
+  virtual void OnInit(){}
   virtual void OnImGuiRender() = 0;
 
 public:

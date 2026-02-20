@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstddef>
-#include <glad/glad.h>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -27,5 +26,5 @@ struct TextureData {
   const TextureConfig& getConfig() const { return mConfig; }
 
   size_t getMemorySize() const { return width * height * channels; }
-  GLuint id = 0;
+  unsigned int id = 0;
 };

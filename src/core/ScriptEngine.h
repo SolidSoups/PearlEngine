@@ -2,6 +2,8 @@
 
 #include <sol/sol.hpp>
 #include "ecs_common.h"
+#include "InputManager.h"
+#include "ServiceLocator.h"
 
 class ScriptComponent;
 class Scene;
@@ -21,4 +23,5 @@ private:
   sol::environment CreateEntityEnv(ecs::Entity e); 
   sol::state m_Lua;
   Scene* m_Scene = nullptr;
+  InputManager* mInputManager;
 };

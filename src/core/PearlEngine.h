@@ -14,6 +14,7 @@ class Framebuffer;
 class ViewportEditorPanel;
 class CameraController;
 class ViewportGrid;
+class InputManager;
 
 class MeshManager;
 class TextureManager;
@@ -79,6 +80,7 @@ public:
   std::shared_ptr<ShaderData> m_FlatShader;
   std::shared_ptr<ShaderData> m_GridShader;
   std::unique_ptr<ViewportGrid> m_ViewportGrid;
+  std::unique_ptr<InputManager> m_InputManager;
 
 private:
   bool isInitialized = false;

@@ -73,7 +73,6 @@ void InspectorEditorPanel::DrawComponentIfPresent(ecs::Entity entity) {
     ImGui::Dummy(ImVec2(0, 10));
     ImGui::Indent(10.f);
 
-    // here we draw the components editor
     if (editor) {
       T &comp = coordinator.GetComponent<T>(entity);
 
@@ -82,23 +81,22 @@ void InspectorEditorPanel::DrawComponentIfPresent(ecs::Entity entity) {
         editor->SetInit();
       }
       editor->OnDrawComponent(&comp, entity);
+    } else {
+      ImGui::PushTextWrapPos(0.0f);
+      ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.7f, 0.2f, 1.0f));
+      ImGui::Text("WARNING: No component editor has been registered for %s "
+                  "with the Component Editor Registry.",
+                  name);
+      ImGui::PopStyleColor();
+      ImGui::PopTextWrapPos();
     }
-  } else {
-    ImGui::PushTextWrapPos(0.0f);
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.7f, 0.2f, 1.0f));
-    ImGui::Text("WARNING: No component editor has been registered for %s "
-                "with the Component Editor Registry.",
-                name);
+
+    ImGui::Unindent(10.0f);
+    ImGui::Dummy(ImVec2(0, 10));
+    ImGui::EndChild();
+    ImGui::PopStyleVar();
     ImGui::PopStyleColor();
-    ImGui::PopTextWrapPos();
   }
-
-  ImGui::Unindent(10.0f);
-  ImGui::Dummy(ImVec2(0, 10));
-  ImGui::EndChild();
-
-  ImGui::PopStyleVar();
-  ImGui::PopStyleColor();
 }
 
 
