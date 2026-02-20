@@ -99,6 +99,10 @@ void Scene::SetEntityName(ecs::Entity entity, const std::string &name) {
   }
 }
 
+void Scene::LateInit(InputManager* inputManager) {
+  mScriptEngine->LateInit(inputManager);
+}
+
 void Scene::SetActiveCamera(ecs::Entity cameraEntity) {
   // unmark previous camera
   if (m_ActiveCamera != ecs::NULL_ENTITY &&

@@ -11,6 +11,7 @@ class Scene;
 class ScriptEngine{
 public:
   void Init(Scene* scene);
+  void LateInit(InputManager* inputManager);
   bool RunOnCreate(ecs::Entity entity, ScriptComponent& cp);
   void RunOnUpdate(ecs::Entity entity, ScriptComponent& cp);
   void RunOnDestroy(ecs::Entity entity, ScriptComponent& cp);

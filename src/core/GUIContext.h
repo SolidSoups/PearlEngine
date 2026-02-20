@@ -29,7 +29,6 @@ public:
     auto panel = std::make_unique<PanelType>(std::forward<Args>(args)...);
     PanelType *ptr = panel.get();
     m_Panels.push_back(std::move(panel));
-    std::cout << "Getting panel" << std::endl;
     ptr->OnInit();
     return ptr;
   }

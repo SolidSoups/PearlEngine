@@ -8,37 +8,20 @@
 
 typedef struct GLFWwindow GLFWwindow;
 
-
 class InputManager {
 public:
-  struct Chord{
-    Chord(const std::vector<int>& _keys,
-          const std::function<void()>& _cb,
-          int _progress) : keys(_keys), callback(_cb), progress(_progress) {}
-    std::vector<int> keys;
-    std::function<void()> callback;
-    int progress = 0;
-  };
-public:
   InputManager(GLFWwindow *window);
-  bool IsKeyPressed(int key);
-  bool IsKeyReleased(int key);
+  void Update();
 
-  bool IsStringKeyPressed(const std::string& key);
-
-  void PollCallbacks();
-public: // for lua
-  void RegisterChordCallback(const std::string& chords, const std::function<void()>&callback);
-
-  const std::vector<Chord>& GetChords() const { return mChords; }
-private:
-  std::vector<int> ParseKeys(const std::string& input); 
-
+  bool GetKey(int key);
+  bool GetKeyString(const std::string& key_str);
+  bool GetKeyDown(int key);
+  bool GetKeyDownString(const std::string& key_str);
+  bool GetKeyUp(int key);
+  bool GetKeyUpString(const std::string& key_str);
 private:
   GLFWwindow *mWindow = nullptr;
 
-private:
-  std::vector<Chord> mChords;
-  std::unordered_set<int> mTrackedKeys;
-  std::unordered_map<int, bool> mPrevKeyState;
+  bool keyState[GLFW_KEY_LAST + 1];
+  bool prevKeyState[GLFW_KEY_LAST + 1];
 };

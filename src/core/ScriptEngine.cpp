@@ -18,6 +18,10 @@ void ScriptEngine::Init(Scene *scene) {
   BindAPIs();
 }
 
+void ScriptEngine::LateInit(InputManager* inputManager) {
+  mInputManager = inputManager;
+}
+
 bool ScriptEngine::RunOnCreate(ecs::Entity entity, ScriptComponent &sc) {
   sol::environment env = CreateEntityEnv(entity);
 
@@ -157,16 +161,21 @@ void ScriptEngine::BindAPIs() {
   // Input
   sol::table input = m_Lua.create_named_table("Input");
   input.set_function(
-    "BindChord", [this](const std::string &chord, sol::function fn){
-      // TODO: remove this shit
+    "GetKey", [this](const std::string& key) -> bool{
       auto inputMan = ServiceLocator::Get<InputManager>();
-      inputMan.RegisterChordCallback(chord, [fn](){ fn(); });
+      return inputMan.GetKeyString(key);
     }
   );
   input.set_function(
-    "IsKeyDown", [this](const std::string& chord) -> bool{
+    "GetKeyDown", [this](const std::string& key) -> bool{
       auto inputMan = ServiceLocator::Get<InputManager>();
-      return inputMan.IsStringKeyPressed(chord);
+      return inputMan.GetKeyDownString(key);
+    }
+  );
+  input.set_function(
+    "GetKeyUp", [this](const std::string& key) -> bool{
+      auto inputMan = ServiceLocator::Get<InputManager>();
+      return inputMan.GetKeyUpString(key);
     }
   );
 }

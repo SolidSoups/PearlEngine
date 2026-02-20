@@ -44,7 +44,6 @@
 // editor
 #include "MenuRegistry.h"
 #include "MemoryEditorPanel.h"
-#include "InputInspectorPanel.h"
 #include "InspectorEditorPanel.h"
 #include "LoggerEditorPanel.h"
 #include "SceneHierarchyEditorPanel.h"
@@ -78,6 +77,7 @@ PearlEngine::PearlEngine() {
 
   // Register all services with static ServiceLocator
   ServiceLocator::Provide<InputManager>(m_InputManager.get());
+  m_Scene.LateInit(m_InputManager.get());
   ServiceLocator::Provide(&m_Scene);
   ServiceLocator::Provide(&m_Camera);
   ServiceLocator::Provide(&pwin);
@@ -173,7 +173,6 @@ void PearlEngine::Initialize() {
   m_GUIContext.AddPanel<FileSystemEditorPanel>();
   m_GUIContext.AddPanel<MemoryEditorPanel>();
   m_GUIContext.AddPanel<AmbientLightEditorPanel>();
-  m_GUIContext.AddPanel<InputInspectorPanel>();
   AddMenuBarItems();
 
   // Setup camera aspect ratio
@@ -431,7 +430,7 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
   static bool gWasPressed = false;
   static bool f5WasPressed = false;
 
-  m_InputManager->PollCallbacks();
+  m_InputManager->Update();
 
   // quit engine
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {

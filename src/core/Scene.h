@@ -71,4 +71,5 @@ public:
 public:
   void SetActiveCamera(ecs::Entity cameraEntity);
   ecs::Entity GetActiveCamera() const { return m_ActiveCamera; }
+  void LateInit(InputManager* inputManager);
 };

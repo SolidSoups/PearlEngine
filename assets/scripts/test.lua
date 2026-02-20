@@ -1,17 +1,26 @@
 function OnCreate()
 	transform = Scene.GetTransform(entity)
+
+	cam_entity = Scene.FindEntityByName("Main Camera")
+	if cam_entity > -1 then
+		cam_transform = Scene.GetTransform(cam_entity)
+	end
 end
 
 local speed = 5
 
 function OnUpdate()
-	-- transform.rotation.y = transform.rotation.y + Time.deltaTime * 90.0
-	-- transform.position.y = Time.sin_time * 2
+	cam_transform.rotation.y = cam_transform.rotation.y + Time.deltaTime * 20.0
+	cam_transform.position.y = Time.sin_time * 1 + 1.8
 	move()
+
+	if Input.GetKeyDown("SPACE") then
+		Debug.Log("I AM JUMPING!")
+	end
 end
 
 function move()
-	if Input.IsKeyDown("LEFT_SHIFT") then
+	if Input.GetKey("LEFT_SHIFT") then
 		speed = 10
 	else
 		speed = 5
@@ -21,16 +30,16 @@ function move()
 	local y = 0
 
 	-- Get input
-	if Input.IsKeyDown("W") then
+	if Input.GetKey("W") then
 		x = x + speed
 	end
-	if Input.IsKeyDown("S") then
+	if Input.GetKey("S") then
 		x = x - speed
 	end
-	if Input.IsKeyDown("D") then
+	if Input.GetKey("D") then
 		y = y + speed
 	end
-	if Input.IsKeyDown("A") then
+	if Input.GetKey("A") then
 		y = y - speed
 	end
 
