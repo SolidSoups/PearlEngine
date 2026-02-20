@@ -9,7 +9,6 @@ public:
   sol::table scriptEnv;
   std::string scriptPath;
   bool loaded = false;
-  bool needsReload = false;
   bool failed = false;
-  std::string failure_reason;
+  bool needsReload = false;
 };

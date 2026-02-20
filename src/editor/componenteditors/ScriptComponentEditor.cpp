@@ -5,6 +5,16 @@
 #include "Logger.h"
 #include "UserGUI.h"
 
+#include "ServiceLocator.h"
+#include "TextureManager.h"
+
+void ScriptComponentEditor::OnInit(){
+  auto& texManager = ServiceLocator::Get<TextureManager>();
+  m_CheckTex = texManager.load("assets/checker.png");
+  m_CrossTex = texManager.load("assets/cross.png");
+  LOG_INFO << "Initialized icon textures";
+}
+
 void ScriptComponentEditor::OnDrawComponent(void* component, ecs::Entity entity) {
   ScriptComponent* scriptCmp = static_cast<ScriptComponent*>(component);
   if(!scriptCmp)
@@ -12,10 +22,20 @@ void ScriptComponentEditor::OnDrawComponent(void* component, ecs::Entity entity)
 
   const float labelWidth = 180.f; 
   const char* file_path = scriptCmp->scriptPath.empty() ? "none" : scriptCmp->scriptPath.c_str();
-  ImGui::Text("Script: %s", file_path);
+
+  ImGui::AlignTextToFramePadding();
+  ImGui::Text("Script");
   ImGui::SameLine();
-  ImGui::SetNextItemWidth(-10);
-  if(ImGui::Button("Set script")){
+
+  float buttonWidth = ImGui::CalcTextSize("...").x + ImGui::GetStyle().FramePadding.x * 2;
+  ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - buttonWidth - ImGui::GetStyle().ItemSpacing.x);
+
+  char buf[256];
+  strncpy(buf, file_path, sizeof(buf));
+  ImGui::InputText("##scriptpath", buf, sizeof(buf), ImGuiInputTextFlags_ReadOnly);
+  ImGui::SameLine();
+
+  if(ImGui::Button("...")){
     UserGUI::StartFilePopup([scriptCmp](const std::string& file){
       LOG_INFO << "Loading file " << file; 
       scriptCmp->scriptPath = file;
@@ -24,4 +44,19 @@ void ScriptComponentEditor::OnDrawComponent(void* component, ecs::Entity entity)
 
   std::string loaded = scriptCmp->loaded ? "Loaded" : "Unloaded";
   ImGui::Text("Is Loaded: %s", loaded.c_str());
+
+  if(ImGui::Button("Reload Script")){
+    scriptCmp->needsReload = true; 
+  }
+  if(scriptCmp->failed){
+    ImGui::SameLine();
+    ImGui::Image((ImTextureID)(uintptr_t)m_CrossTex->id, ImVec2(16, 16), ImVec2(0, 1), ImVec2(1, 0));
+  }
+  else if(scriptCmp->loaded){
+    ImGui::SameLine();
+    ImGui::Image((ImTextureID)(uintptr_t)m_CheckTex->id, ImVec2(16, 16), ImVec2(0, 1), ImVec2(1, 0));
+  }
+
+  if(ImGui::Button("Enable")){}
+  ImGui::Text("Failure\n%s", scriptCmp->failure_reason.c_str());
 }

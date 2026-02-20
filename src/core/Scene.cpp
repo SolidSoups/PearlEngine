@@ -177,7 +177,7 @@ ecs::Entity Scene::CreateSphere(const std::string& name){
   // generate mesh data
   std::vector<float> verts;
   std::vector<unsigned int> indices;
-  Sphere::generate_uvsphere(verts, indices, 8, 8);
+  Sphere::generate_uvsphere(verts, indices, 24, 16);
 
   // create render comp and make a mesh
   LOG_INFO << "Creating mesh object";

@@ -18,7 +18,7 @@ void Sphere::generate_uvsphere(std::vector<float> &out_vertices,
   out_vertices.push_back(1.0f);
   out_vertices.push_back(0.0f);
   out_vertices.push_back(0);
-  out_vertices.push_back(0);
+  out_vertices.push_back(1);
   out_vertices.push_back(0.0f);
   out_vertices.push_back(1.0f);
   out_vertices.push_back(0.0f);
@@ -42,8 +42,8 @@ void Sphere::generate_uvsphere(std::vector<float> &out_vertices,
       // calculate uv
       float u = theta / (2 * M_PI);  
       float v = phi / M_PI;
-      out_vertices.push_back(u);
-      out_vertices.push_back(v);
+      out_vertices.push_back(1-u);
+      out_vertices.push_back(1-v);
 
       // calcualte normals (which is just the pos for a unit circle)
       out_vertices.push_back(x);
@@ -57,7 +57,7 @@ void Sphere::generate_uvsphere(std::vector<float> &out_vertices,
   out_vertices.push_back(-1.0f);
   out_vertices.push_back(0.0f);
   out_vertices.push_back(0);
-  out_vertices.push_back(1);
+  out_vertices.push_back(0);
   out_vertices.push_back(0.0f);
   out_vertices.push_back(-1.0f);
   out_vertices.push_back(0.0f);

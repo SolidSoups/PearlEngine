@@ -32,6 +32,7 @@
 #include "TransformComponent.h"
 #include "RenderComponent.h"
 #include "ecs_common.h"
+#include "ScriptComponent.h"
 #include "Renderer.h"
 
 #include "MeshManager.h"
@@ -180,6 +181,10 @@ void PearlEngine::Initialize() {
   glEnable(GL_DEPTH_TEST);
 
   LOG_INFO << "Finished initialization";
+
+  auto sphere = m_Scene.CreateSphere("Script Tester");
+  auto& coord = m_Scene.GetCoordinator();
+  coord.AddComponent(sphere, ScriptComponent{});
 }
 
 // b@UPDATE

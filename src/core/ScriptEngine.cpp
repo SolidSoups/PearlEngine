@@ -1,4 +1,7 @@
 #include "ScriptEngine.h"
+
+#include <iostream>
+
 #include "ScriptComponent.h"
 #include "Scene.h"
 #include "TransformComponent.h"
@@ -14,10 +17,6 @@ void ScriptEngine::Init(Scene *scene) {
   BindAPIs();
 }
 
-
-
-
-
 bool ScriptEngine::RunOnCreate(ecs::Entity entity, ScriptComponent &sc) {
   sol::environment env = CreateEntityEnv(entity);
 
@@ -26,6 +25,8 @@ bool ScriptEngine::RunOnCreate(ecs::Entity entity, ScriptComponent &sc) {
   if (!result.valid()) {
     sol::error err = result;
     LOG_ERROR << "[Lua] " << sc.scriptPath << ": " << err.what();
+    sc.failed = true;
+    sc.failure_reason = err.what();
     return false;
   }
   sc.scriptEnv = env;
@@ -36,55 +37,64 @@ bool ScriptEngine::RunOnCreate(ecs::Entity entity, ScriptComponent &sc) {
     if (!r.valid()) {
       sol::error e = r;
       LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnCreate: " << e.what();
+      sc.failed = true;
+      sc.failure_reason += "\n";
+      sc.failure_reason += e.what();
       return false;
     }
   }
   return true;
 }
 
-void ScriptEngine::RunOnUpdate(ecs::Entity entity, ScriptComponent& sc){
+void ScriptEngine::RunOnUpdate(ecs::Entity entity, ScriptComponent &sc) {
   sol::protected_function fn = sc.scriptEnv["OnUpdate"];
-  if(!fn.valid()) return;
+  if (!fn.valid())
+    return;
 
   sol::table time = m_Lua["Time"];
   time["deltaTime"] = Time::deltaTime;
   time["time"] = Time::time;
+  time["sin_time"] = glm::sin(Time::time);
 
   auto r = fn(Time::deltaTime);
-  if(!r.valid()){
+  if (!r.valid()) {
     sol::error e = r;
     LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnUpdate: " << e.what();
+    sc.failed = true;
+    sc.failure_reason += "\n";
+    sc.failure_reason += e.what();
   }
 }
 
-void ScriptEngine::RunOnDestroy(ecs::Entity entity, ScriptComponent& sc){
+void ScriptEngine::RunOnDestroy(ecs::Entity entity, ScriptComponent &sc) {
   sol::protected_function fn = sc.scriptEnv["OnDestroy"];
-  if(!fn.valid()) return;
+  if (!fn.valid())
+    return;
 
   auto r = fn();
-  if(!r.valid()){
+  if (!r.valid()) {
     sol::error e = r;
     LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnDestroy: " << e.what();
   }
+  sc.scriptEnv = sol::environment{};
+  sc.loaded = false;
+  sc.failed = false;
+  sc.needsReload = false;
+  sc.failure_reason = "";
+  LOG_INFO << "Ran OnDestroy() on lua environment";
 }
 
-void ScriptEngine::ReloadScript(ecs::Entity entity, ScriptComponent& sc){
+void ScriptEngine::ReloadScript(ecs::Entity entity, ScriptComponent &sc) {
   RunOnDestroy(entity, sc);
   sc.scriptEnv = sol::table{};
   sc.loaded = false;
 }
 
-
-
-
-sol::environment ScriptEngine::CreateEntityEnv(ecs::Entity entity){
+sol::environment ScriptEngine::CreateEntityEnv(ecs::Entity entity) {
   sol::environment env(m_Lua, sol::create, m_Lua.globals());
   env["entity"] = entity;
   return env;
 }
-
-
-
 
 void ScriptEngine::BindAPIs() {
   // bind vec3 type
@@ -126,4 +136,21 @@ void ScriptEngine::BindAPIs() {
   sol::table time = m_Lua.create_named_table("Time");
   time["deltaTime"] = 0.0f;
   time["time"] = 0.0f;
+  time["sin_time"] = 0.0f;
+
+  // Logging
+  sol::table debug = m_Lua.create_named_table("Debug");
+  debug.set_function(
+      "Log", [this](const std::string &text) -> void {
+      std::cout << "[LuaLog] " << text << std::endl;
+    });
+  debug.set_function(
+      "Warn", [this](const std::string &text) -> void {
+      std::cout << "[LuaWarn] " << text << std::endl;
+    });
+  debug.set_function(
+    "Error", [this](const std::string &text) -> void {
+      std::cerr << "[LuaError] " << text << std::endl;
+    });
+
 }

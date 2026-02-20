@@ -14,38 +14,37 @@
 
 #include "Logger.h"
 
-GUIContext::GUIContext(GLFWwindow* window){
+GUIContext::GUIContext(GLFWwindow *window) {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
-  ImGuiIO& io = ImGui::GetIO();
+  ImGuiIO &io = ImGui::GetIO();
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // enable docking
+  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // enable docking
   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
   // Setup Dear ImGui style
   ImGui::StyleColorsDark();
 
-  // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-  ImGuiStyle& style = ImGui::GetStyle();
-  if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-  {
+  // When viewports are enabled we tweak WindowRounding/WindowBg so platform
+  // windows can look identical to regular ones.
+  ImGuiStyle &style = ImGui::GetStyle();
+  if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
     style.WindowRounding = 0.0f;
     style.Colors[ImGuiCol_WindowBg].w = 1.0f;
   }
 
   // Setup Platform/Renderer backends
-  ImGui_ImplGlfw_InitForOpenGL(window, true); // second arg installs GLFW callbacks and chain to existing ones
-  const char* glsl_version = "#version 330";
+  ImGui_ImplGlfw_InitForOpenGL(
+      window,
+      true); // second arg installs GLFW callbacks and chain to existing ones
+  const char *glsl_version = "#version 330";
   ImGui_ImplOpenGL3_Init(glsl_version);
-
 }
 
-GUIContext::~GUIContext(){
-  Shutdown();
-}
+GUIContext::~GUIContext() { Shutdown(); }
 
-void GUIContext::BeginFrame(){
+void GUIContext::BeginFrame() {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
@@ -53,19 +52,19 @@ void GUIContext::BeginFrame(){
 
   DrawToolbar();
 }
-void GUIContext::RenderEditorPanels(){
-    for (auto &panel : m_Panels) {
-        panel->OnImGuiRender();
-    }
+void GUIContext::RenderEditorPanels() {
+  for (auto &panel : m_Panels) {
+    panel->OnImGuiRender();
+  }
 }
-void GUIContext::Render(){
+void GUIContext::Render() {
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
   // Update and Render additional platform windows
-  ImGuiIO& io = ImGui::GetIO();
-  if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
-    GLFWwindow* backup_current_context = glfwGetCurrentContext();
+  ImGuiIO &io = ImGui::GetIO();
+  if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    GLFWwindow *backup_current_context = glfwGetCurrentContext();
     ImGui::UpdatePlatformWindows();
     ImGui::RenderPlatformWindowsDefault();
     glfwMakeContextCurrent(backup_current_context);
@@ -73,24 +72,25 @@ void GUIContext::Render(){
     // TODO for OpenGl: restore current GL context
   }
 }
-void GUIContext::Shutdown(){
+void GUIContext::Shutdown() {
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
   ImGui::DestroyContext();
-
 }
 
-void GUIContext::DrawToolbar(){
+void GUIContext::DrawToolbar() {
   // create the main fullscreen window with dockspace
-  ImGuiViewport* viewport = ImGui::GetWindowViewport();
+  ImGuiViewport *viewport = ImGui::GetWindowViewport();
   ImGui::SetNextWindowPos(viewport->WorkPos);
   ImGui::SetNextWindowSize(viewport->WorkSize);
   ImGui::SetNextWindowViewport(viewport->ID);
 
-  ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking; 
+  ImGuiWindowFlags window_flags =
+      ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
   window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
   window_flags |= ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+  window_flags |=
+      ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
   ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
   ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);

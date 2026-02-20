@@ -53,13 +53,14 @@ void InspectorEditorPanel::DrawHeader(ecs::Entity entity) {
   ImGui::EndChild();
 }
 
-template<typename T>
+template <typename T>
 void InspectorEditorPanel::DrawComponentIfPresent(ecs::Entity entity) {
-  auto& coordinator = r_Scene.GetCoordinator();
-  if (!coordinator.HasComponent<T>(entity)) return;
+  auto &coordinator = r_Scene.GetCoordinator();
+  if (!coordinator.HasComponent<T>(entity))
+    return;
 
-  ComponentEditor* editor = GET_COMPONENT_EDITOR(T);
-  const char* name = editor ? editor->GetComponentName() : typeid(T).name();
+  ComponentEditor *editor = GET_COMPONENT_EDITOR(T);
+  const char *name = editor ? editor->GetComponentName() : typeid(T).name();
 
   if (ImGui::CollapsingHeader(name, ImGuiTreeNodeFlags_DefaultOpen)) {
     ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
@@ -74,29 +75,35 @@ void InspectorEditorPanel::DrawComponentIfPresent(ecs::Entity entity) {
 
     // here we draw the components editor
     if (editor) {
-      T& comp = coordinator.GetComponent<T>(entity);
+      T &comp = coordinator.GetComponent<T>(entity);
+
+      if (!editor->HasInit()) {
+        editor->OnInit();
+        editor->SetInit();
+      }
       editor->OnDrawComponent(&comp, entity);
-    } else {
-      ImGui::PushTextWrapPos(0.0f);
-      ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.7f, 0.2f, 1.0f));
-      ImGui::Text("WARNING: No component editor has been registered for %s "
-                  "with the Component Editor Registry.",
-                  name);
-      ImGui::PopStyleColor();
-      ImGui::PopTextWrapPos();
     }
-
-    ImGui::Unindent(10.0f);
-    ImGui::Dummy(ImVec2(0, 10));
-    ImGui::EndChild();
-
-    ImGui::PopStyleVar();
+  } else {
+    ImGui::PushTextWrapPos(0.0f);
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.7f, 0.2f, 1.0f));
+    ImGui::Text("WARNING: No component editor has been registered for %s "
+                "with the Component Editor Registry.",
+                name);
     ImGui::PopStyleColor();
+    ImGui::PopTextWrapPos();
   }
+
+  ImGui::Unindent(10.0f);
+  ImGui::Dummy(ImVec2(0, 10));
+  ImGui::EndChild();
+
+  ImGui::PopStyleVar();
+  ImGui::PopStyleColor();
 }
 
+
 void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
-  auto& coordinator = r_Scene.GetCoordinator();
+  auto &coordinator = r_Scene.GetCoordinator();
 
   // Draw components in order (TransformComponent first as highest priority)
   DrawComponentIfPresent<TransformComponent>(entity);
@@ -111,23 +118,30 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
     ImGui::OpenPopup("##SearchablePopup_Add_Component");
   }
 
-  std::vector<std::string> compChoices = {"Render Component",
-                                          "Transform", "Point Light", "Camera", "Script"};
+  std::vector<std::string> compChoices = {"Render Component", "Transform",
+                                          "Point Light", "Camera", "Script"};
   std::string selected = "";
   if (SearchablePopup<std::string>(
           "Add_Component", "Add Component", compChoices,
           [](std::string choice) { return choice; }, selected)) {
-    if (selected == "Render Component" && !coordinator.HasComponent<RenderComponent>(entity)) {
+    if (selected == "Render Component" &&
+        !coordinator.HasComponent<RenderComponent>(entity)) {
       coordinator.AddComponent(entity, RenderComponent{});
-    } else if (selected == "Transform" && !coordinator.HasComponent<TransformComponent>(entity)){
+    } else if (selected == "Transform" &&
+               !coordinator.HasComponent<TransformComponent>(entity)) {
       coordinator.AddComponent(entity, TransformComponent{});
-    } else if (selected == "Point Light" && !coordinator.HasComponent<PointLightComponent>(entity)){
+    } else if (selected == "Point Light" &&
+               !coordinator.HasComponent<PointLightComponent>(entity)) {
       coordinator.AddComponent(entity, PointLightComponent{});
-    } else if (selected == "Camera" && !coordinator.HasComponent<CameraComponent>(entity)){
+    } else if (selected == "Camera" &&
+               !coordinator.HasComponent<CameraComponent>(entity)) {
       coordinator.AddComponent(entity, CameraComponent{});
-    } else if(selected == "Script" && !coordinator.HasComponent<ScriptComponent>(entity)){
+    } else if (selected == "Script" &&
+               !coordinator.HasComponent<ScriptComponent>(entity)) {
       coordinator.AddComponent(entity, ScriptComponent{});
-      LOG_INFO << "entity has component script: " << (coordinator.HasComponent<ScriptComponent>(entity) ? "True" : "False");
+      LOG_INFO << "entity has component script: "
+               << (coordinator.HasComponent<ScriptComponent>(entity) ? "True"
+                                                                     : "False");
     }
   }
 }
