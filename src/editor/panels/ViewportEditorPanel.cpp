@@ -93,40 +93,44 @@ void ViewportEditorPanel::OnImGuiRender() {
   if (SelectionWizard::HasSelection()) {
     auto selectedEntity = SelectionWizard::Get();
 
-    // Entity transform
-    auto &entityTransform =
-        coordinator.GetComponent<TransformComponent>(selectedEntity);
-    glm::mat4 transform = entityTransform.GetModelMatrix();
+    if (!coordinator.HasComponent<TransformComponent>(selectedEntity)) {
+      SelectionWizard::Clear();
+    } else {
+      // Entity transform
+      auto &entityTransform =
+          coordinator.GetComponent<TransformComponent>(selectedEntity);
+      glm::mat4 transform = entityTransform.GetModelMatrix();
 
-    ImGuizmo::Manipulate(glm::value_ptr(cameraView),
-                         glm::value_ptr(cameraProjection), selectedOperation,
-                         ImGuizmo::LOCAL, glm::value_ptr(transform));
+      ImGuizmo::Manipulate(glm::value_ptr(cameraView),
+                           glm::value_ptr(cameraProjection), selectedOperation,
+                           ImGuizmo::LOCAL, glm::value_ptr(transform));
 
-    if (ImGuizmo::IsUsing()) {
-      if (selectedOperation == ImGuizmo::OPERATION::TRANSLATE) {
-        entityTransform.position = glm::vec3(transform[3]);
-      } else if (selectedOperation == ImGuizmo::OPERATION::ROTATE) {
-        // Normalize columns to remove scale
-        glm::vec3 c0 = glm::normalize(glm::vec3(transform[0]));
-        glm::vec3 c1 = glm::normalize(glm::vec3(transform[1]));
-        glm::vec3 c2 = glm::normalize(glm::vec3(transform[2]));
+      if (ImGuizmo::IsUsing()) {
+        if (selectedOperation == ImGuizmo::OPERATION::TRANSLATE) {
+          entityTransform.position = glm::vec3(transform[3]);
+        } else if (selectedOperation == ImGuizmo::OPERATION::ROTATE) {
+          // Normalize columns to remove scale
+          glm::vec3 c0 = glm::normalize(glm::vec3(transform[0]));
+          glm::vec3 c1 = glm::normalize(glm::vec3(transform[1]));
+          glm::vec3 c2 = glm::normalize(glm::vec3(transform[2]));
 
-        // Extract XYZ Euler angles matching GetModelMatrix (Rx * Ry * Rz)
-        float y = asinf(glm::clamp(c2.x, -1.0f, 1.0f));
-        float x, z;
-        if (c2.x < 0.9999f) {
-          x = atan2f(-c2.y, c2.z);
-          z = atan2f(-c1.x, c0.x);
-        } else {
-          // Gimbal lock (y = ±90°)
-          x = atan2f(c0.y, c1.y);
-          z = 0.0f;
+          // Extract XYZ Euler angles matching GetModelMatrix (Rx * Ry * Rz)
+          float y = asinf(glm::clamp(c2.x, -1.0f, 1.0f));
+          float x, z;
+          if (c2.x < 0.9999f) {
+            x = atan2f(-c2.y, c2.z);
+            z = atan2f(-c1.x, c0.x);
+          } else {
+            // Gimbal lock (y = ±90°)
+            x = atan2f(c0.y, c1.y);
+            z = 0.0f;
+          }
+          entityTransform.rotation = glm::degrees(glm::vec3(x, y, z));
+        } else if (selectedOperation == ImGuizmo::OPERATION::SCALE) {
+          entityTransform.scale = glm::vec3(glm::length(glm::vec3(transform[0])),
+                                            glm::length(glm::vec3(transform[1])),
+                                            glm::length(glm::vec3(transform[2])));
         }
-        entityTransform.rotation = glm::degrees(glm::vec3(x, y, z));
-      } else if (selectedOperation == ImGuizmo::OPERATION::SCALE) {
-        entityTransform.scale = glm::vec3(glm::length(glm::vec3(transform[0])),
-                                          glm::length(glm::vec3(transform[1])),
-                                          glm::length(glm::vec3(transform[2])));
       }
     }
   }

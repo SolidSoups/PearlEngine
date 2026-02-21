@@ -108,9 +108,11 @@ inline void from_json(const json &j, Material::ConstructData &m) {
   m.vec4s = j["vec4s"];
   m.mat4s = j["mat4s"];
 
-  for (const auto &[key, value] : j["textures"].items()) {
-    std::string path = value[0];
-    TextureConfig config = value[1];
-    m.texturePath_config[key] = std::make_pair(path, config);
+  if (j.contains("textures")) {
+    for (const auto &[key, value] : j["textures"].items()) {
+      std::string path = value[0];
+      TextureConfig config = value[1];
+      m.texturePath_config[key] = std::make_pair(path, config);
+    }
   }
 }

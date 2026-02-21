@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "Main Camera0": {
+      "camera_component": {
+        "far_plane": 100.0,
+        "fov": 60.0,
+        "near_plane": 0.10000000149011612
+      },
+      "name": "Main Camera",
+      "transform_component": {
+        "position": [
+          0.0,
+          0.8359561562538147,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          919.1094970703125,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Script Tester1": {
+      "name": "Script Tester",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": ""
+      },
+      "script_component": {
+        "script_path": "assets/scripts/test.lua"
+      },
+      "transform_component": {
+        "position": [
+          -1.9540024995803833,
+          0.0,
+          -1.07820463180542
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    }
+  },
+  "name": "Test Scene 1"
+}

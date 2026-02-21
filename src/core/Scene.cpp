@@ -20,6 +20,7 @@
 #include "Geometry.h"
 
 #include "FileSystem.h"
+#include "SelectionWizard.h"
 
 Scene::Scene() {
   m_Coordinator.Init();
@@ -66,6 +67,7 @@ void Scene::DestroyEntity(ecs::Entity entity) {
 }
 
 void Scene::Clear() {
+  SelectionWizard::Clear();
   mScriptSystem->OnDestroy();
   for (auto entity : m_Entities) {
     m_Coordinator.DestroyEntity(entity);
@@ -220,6 +222,8 @@ void Scene::SaveScene(const char* filepath) {
       entity_object["camera_component"] = m_Coordinator.GetComponent<CameraComponent>(entity);
     if (m_Coordinator.HasComponent<PointLightComponent>(entity))
       entity_object["pointLight_component"] = m_Coordinator.GetComponent<PointLightComponent>(entity);
+    if (m_Coordinator.HasComponent<ScriptComponent>(entity))
+      entity_object["script_component"] = m_Coordinator.GetComponent<ScriptComponent>(entity);
 
     counter++;
   }
@@ -268,6 +272,8 @@ void Scene::LoadScene(const char *filepath) {
       m_Coordinator.AddComponent<CameraComponent>(entity, c["camera_component"]);
     if(c.contains("pointLight_component"))
       m_Coordinator.AddComponent<PointLightComponent>(entity, c["pointLight_component"]);
+    if(c.contains("script_component"))
+      m_Coordinator.AddComponent<ScriptComponent>(entity, c["script_component"]);
 
     m_Entities.push_back(entity);
   }
