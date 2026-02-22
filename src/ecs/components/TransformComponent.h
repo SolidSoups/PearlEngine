@@ -25,6 +25,11 @@ struct TransformComponent {
   void SetRotation(float angle, const glm::vec3& axis);
   void SetPosition(const glm::vec3& position);
   void SetScale(const glm::vec3& scale);
+
+  glm::vec3 GetForward() const;
+  glm::vec3 GetRight() const;
+  glm::vec3 GetUp() const;
+  glm::mat4 GetRotationMatrixYXZ() const;
 };
 
 inline void to_json(json& j, const TransformComponent& cmp){

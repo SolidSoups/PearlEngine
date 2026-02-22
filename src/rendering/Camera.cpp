@@ -16,13 +16,6 @@ void Camera::StartPreview(ecs::Entity cameraEntity) {
 
 void Camera::SetAspect(float aspect) {
   m_Aspect = aspect;
-  m_InternalCameraData.aspectRatio = aspect;
-  if (m_PreviewTarget != ecs::NULL_ENTITY && r_Scene.GetState() == Ready) {
-    auto& coordinator = r_Scene->GetCoordinator();
-    if (coordinator.HasComponent<CameraComponent>(m_PreviewTarget)) {
-      coordinator.GetComponent<CameraComponent>(m_PreviewTarget).cameraData.aspectRatio = aspect;
-    }
-  }
 }
 
 CameraData* Camera::GetPreview(){

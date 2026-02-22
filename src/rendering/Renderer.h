@@ -29,7 +29,6 @@ private:
   static Scene* m_Scene;
   static bool m_bGeometryPassEnabled;
   static std::shared_ptr<ShaderData> m_NextShader;
-
 public:
   static void SetGeometryPassEnabled(bool value);
   static void SetNextShader(std::shared_ptr<ShaderData> shader);

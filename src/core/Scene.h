@@ -10,6 +10,7 @@
 #include "ecs_common.h"
 #include "ScriptEngine.h"
 #include "ScriptSystem.h"
+#include "CameraSystem.h"
 
 class RenderSystem;
 class PointLightSystem;
@@ -54,6 +55,10 @@ public:
   void SaveScene(const char* filepath);
   void LoadScene(const char* filepath);
 
+  inline void SetActiveCamera(ecs::Entity entity){
+    mCameraSystem->SetActiveCamera(entity);
+  }
+
 private:
   ecs::Coordinator m_Coordinator;
   std::vector<ecs::Entity> m_Entities;
@@ -65,7 +70,7 @@ private:
 
   std::shared_ptr<ScriptEngine> mScriptEngine;
   std::shared_ptr<ScriptSystem> mScriptSystem;
-public:
+  std::shared_ptr<CameraSystem> mCameraSystem;
   std::shared_ptr<PointLightSystem> mPointLightSystem;
 
 public:

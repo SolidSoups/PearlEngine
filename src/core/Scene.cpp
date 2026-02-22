@@ -7,10 +7,11 @@
 #include "PointLightComponent.h"
 #include "RenderComponent.h"
 #include "CameraComponent.h"
+#include "ScriptComponent.h"
+#include "CameraComponent.h"
 #include "Renderer.h"
 #include "RenderSystem.h"
 #include "PointLightSystem.h"
-#include "ScriptComponent.h"
 
 #include "TransformComponent.h"
 #include "NameComponent.h"
@@ -58,6 +59,13 @@ Scene::Scene() {
   mScriptEngine = std::make_shared<ScriptEngine>();
   mScriptEngine->Init(this);
   mScriptSystem->Init(&m_Coordinator, mScriptEngine.get());
+
+  // Camera System
+  mCameraSystem = m_Coordinator.RegisterSystem<CameraSystem>();
+  ecs::Signature csSignature;
+  csSignature.set(m_Coordinator.GetComponentType<TransformComponent>());
+  csSignature.set(m_Coordinator.GetComponentType<CameraComponent>());
+  m_Coordinator.SetSystemSignature<CameraSystem>(csSignature);
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {
