@@ -1,5 +1,8 @@
 #pragma once
 
+#include <unordered_map>
+#include <unordered_set>
+
 #include "ecs_system.h"
 #include "ecs_coordinator.h"
 

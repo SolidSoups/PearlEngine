@@ -26,8 +26,8 @@ void ScriptComponentEditor::OnDrawComponent(void* component, ecs::Entity entity)
 
   // write out state string
   std::string scriptState = (scriptCmp->loaded ? "Loaded" : "Unloaded");
-  scriptState += "  -  Disabled";
-  scriptState += (scriptCmp->failed ? "  -  Failed" : "  -  Valid");
+  scriptState += (scriptCmp->enabled ? "  -  Enabled" : "  -  Disabled");
+  scriptState += (scriptCmp->hasError ? "  -  Failed" : "  -  Valid");
 
   // calculate spacing so text is centered
   float spacing = ImGui::GetStyle().ItemSpacing.x * 2;
@@ -58,7 +58,6 @@ void ScriptComponentEditor::OnDrawComponent(void* component, ecs::Entity entity)
   // Draw a button that let's the user pick the script to use
   if(ImGui::Button("...")){
     UserGUI::StartFilePopup([scriptCmp](const std::string& file){
-      LOG_INFO << "Loading file " << file; 
       scriptCmp->scriptPath = file;
     }, {".lua"});
   }
@@ -67,7 +66,10 @@ void ScriptComponentEditor::OnDrawComponent(void* component, ecs::Entity entity)
 
 
   // button to enable/disable component environment
-  if(ImGui::Button("Enable")){}
+  std::string triggerButtonText = (scriptCmp->enabled ? "Disable" : "Enable"); 
+  if(ImGui::Button(triggerButtonText.c_str())){
+    scriptCmp->enabled = !scriptCmp->enabled;
+  }
   ImGui::SameLine();
 
   // Button to reload the script
@@ -77,7 +79,7 @@ void ScriptComponentEditor::OnDrawComponent(void* component, ecs::Entity entity)
   ImGui::SameLine();
 
   // icon for failed/loaded state
-  if(scriptCmp->failed){
+  if(scriptCmp->hasError){
     ImGui::Image((ImTextureID)(uintptr_t)m_CrossTex->id, ImVec2(16, 16), ImVec2(0, 1), ImVec2(1, 0));
   }
   else if(scriptCmp->loaded){

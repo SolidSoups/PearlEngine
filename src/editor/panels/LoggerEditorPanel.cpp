@@ -66,6 +66,9 @@ void LoggerEditorPanel::DrawLogArea() {
     ImGui::Text("%s", log.message.c_str());
   }
 
+  if(ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+    ImGui::SetScrollHereY(1.0f);
+
   ImGui::EndChild();
   ImGui::PopStyleColor();
 }

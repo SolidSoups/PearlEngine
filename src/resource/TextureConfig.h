@@ -9,8 +9,8 @@ typedef unsigned int GLenum;
 #define GL_REPEAT 0x2901
 
 struct TextureConfig {
-  bool generateMipMaps = true;
-  uint8_t maxMipMapLevel = 4;
+  bool generateMipMaps = false;
+  uint8_t maxMipMapLevel = 1;
   GLenum minFilter = GL_LINEAR;
   GLenum magFilter = GL_LINEAR;
   float lodBias = 0.0f;

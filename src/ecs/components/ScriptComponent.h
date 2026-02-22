@@ -1,5 +1,4 @@
 #pragma once
-
 #include <string>
 
 #include <sol/sol.hpp>
@@ -8,12 +7,12 @@
 
 class ScriptComponent {
 public:
-  sol::table scriptEnv;
   std::string scriptPath;
+  sol::table scriptEnv;
   bool loaded = false;
+  bool enabled = false;
   bool needsReload = false;
-  bool failed = false;
-  std::string failure_reason;
+  bool hasError = false;
 };
 
 inline void to_json(json& j, const ScriptComponent& cmp) {

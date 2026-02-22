@@ -1,17 +1,17 @@
 function OnCreate()
-	transform = Scene.GetTransform(entity)
+	Transform = Scene.GetTransform(entity)
 
-	cam_entity = Scene.FindEntityByName("Main Camera")
+	local cam_entity = Scene.FindEntityByName("Main Camera")
 	if cam_entity > -1 then
-		cam_transform = Scene.GetTransform(cam_entity)
+		CameraTransform = Scene.GetTransform(cam_entity)
 	end
 end
 
 local speed = 5
 
 function OnUpdate()
-	cam_transform.rotation.y = cam_transform.rotation.y + Time.deltaTime * 20.0
-	cam_transform.position.y = Time.sin_time * 1 + 1.8
+	CameraTransform.rotation.y = CameraTransform.rotation.y + Time.deltaTime * 20.0
+	CameraTransform.position.y = Time.sin_time * 1 + 1.8
 	move()
 
 	if Input.GetKeyDown("SPACE") then
@@ -53,8 +53,8 @@ function move()
 	y = (y / len) * speed
 
 	-- move character
-	transform.position.x = transform.position.x + x * Time.deltaTime
-	transform.position.z = transform.position.z + y * Time.deltaTime
+	Transform.position.x = Transform.position.x + x * Time.deltaTime
+	Transform.position.z = Transform.position.z + y * Time.deltaTime
 end
 
 function OnDestroy()

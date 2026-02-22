@@ -23,31 +23,53 @@ void ScriptEngine::LateInit(InputManager* inputManager) {
 }
 
 bool ScriptEngine::RunOnCreate(ecs::Entity entity, ScriptComponent &sc) {
+  LOG_INFO << "Creating lua script";
   sol::environment env = CreateEntityEnv(entity);
 
+  // Safely load the script
+  if (!SafeCall_StartScript(env, sc)) {
+    return false;
+  }
+
+  // get OnCreate function, skip if it doesn't exist
+  sol::protected_function fn = env["OnCreate"];
+  if (!fn.valid()) {
+    return true;
+  }
+
+  // call function and validate
+  auto r = fn();
+  if (!r.valid()) {
+    sol::error e = r;
+    LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnCreate: " << e.what();
+    LogError(sc, e);
+    return false;
+  }
+
+  return true;
+}
+
+void ScriptEngine::LogError(ScriptComponent& sc, sol::error& error){
+  if(sc.scriptPath.empty()) return;
+  sc.hasError = true;
+  mScriptToFailureReason[sc.scriptPath] = error.what();
+}
+
+bool ScriptEngine::SafeCall_StartScript(sol::environment& env, ScriptComponent& sc){
+  // tell sol to load lua file
   auto result =
       m_Lua.safe_script_file(sc.scriptPath, env, sol::script_pass_on_error);
+
+  // validate file
   if (!result.valid()) {
     sol::error err = result;
     LOG_ERROR << "[Lua] " << sc.scriptPath << ": " << err.what();
-    sc.failed = true;
-    sc.failure_reason = err.what();
+    LogError(sc, err);
     return false;
   }
   sc.scriptEnv = env;
+  sc.loaded = true;
 
-  sol::protected_function fn = env["OnCreate"];
-  if (fn.valid()) {
-    auto r = fn();
-    if (!r.valid()) {
-      sol::error e = r;
-      LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnCreate: " << e.what();
-      sc.failed = true;
-      sc.failure_reason += "\n";
-      sc.failure_reason += e.what();
-      return false;
-    }
-  }
   return true;
 }
 
@@ -56,43 +78,55 @@ void ScriptEngine::RunOnUpdate(ecs::Entity entity, ScriptComponent &sc) {
   if (!fn.valid())
     return;
 
-  sol::table time = m_Lua["Time"];
-  time["deltaTime"] = Time::deltaTime;
-  time["time"] = Time::time;
-  time["sin_time"] = glm::sin(Time::time);
+  UpdateAPIs();
 
+  // try running OnUpdate function
   auto r = fn(Time::deltaTime);
   if (!r.valid()) {
     sol::error e = r;
     LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnUpdate: " << e.what();
-    sc.failed = true;
-    sc.failure_reason += "\n";
-    sc.failure_reason += e.what();
+    LogError(sc, e);
   }
 }
 
-void ScriptEngine::RunOnDestroy(ecs::Entity entity, ScriptComponent &sc) {
-  sol::protected_function fn = sc.scriptEnv["OnDestroy"];
-  if (!fn.valid())
-    return;
+void ScriptEngine::UpdateAPIs(){
+  // update time global
+  sol::table time = m_Lua["Time"];
+  time["deltaTime"] = Time::deltaTime;
+  time["time"] = Time::time;
+  time["sin_time"] = glm::sin(Time::time);
+}
 
-  auto r = fn();
-  if (!r.valid()) {
-    sol::error e = r;
-    LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnDestroy: " << e.what();
-  }
-  sc.scriptEnv = sol::environment{};
+void ScriptEngine::RunOnDestroy(ecs::Entity entity, ScriptComponent &sc) {
+  if(!sc.scriptEnv) return;
+
+  // try to find OnDestroy function
+  sol::protected_function fn = sc.scriptEnv["OnDestroy"];
+  if (!fn.valid()) return; 
+
+  // run OnDestroy and validate
+  sol::protected_function_result r = fn();
+  if (r.valid()) return;
+
+  // log error
+  sol::error e = r;
+  LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnDestroy: " << e.what();
+  LogError(sc, e);
+}
+
+void ScriptEngine::ResetScript(ScriptComponent& sc){
+  // reset properties, clear errors
+  ClearError(sc.scriptPath);
+  sc.scriptEnv = sol::table{};
+  sc.enabled = false;
   sc.loaded = false;
-  sc.failed = false;
   sc.needsReload = false;
-  sc.failure_reason = "";
-  LOG_INFO << "Ran OnDestroy() on lua environment";
+  sc.hasError = false;
 }
 
 void ScriptEngine::ReloadScript(ecs::Entity entity, ScriptComponent &sc) {
   RunOnDestroy(entity, sc);
-  sc.scriptEnv = sol::table{};
-  sc.loaded = false;
+  sc.enabled = true; // force engine to load script on next frame
 }
 
 sol::environment ScriptEngine::CreateEntityEnv(ecs::Entity entity) {
