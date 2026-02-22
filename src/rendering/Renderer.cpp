@@ -9,6 +9,8 @@
 #include <vector>
 
 Camera *Renderer::s_ActiveCamera = nullptr;
+glm::mat4 Renderer::s_View = glm::mat4(1.0f);
+glm::mat4 Renderer::s_Proj = glm::mat4(1.0f);
 AmbientLightData Renderer::m_AmbientData;
 std::vector<ecs::Entity> Renderer::m_PointLightEntities;
 Scene* Renderer::m_Scene = nullptr;
@@ -27,6 +29,12 @@ void Renderer::BeginScene(Camera &camera){
   s_ActiveCamera = &camera;
 }
 
+void Renderer::BeginScene(glm::mat4 view, glm::mat4 proj) {
+  s_ActiveCamera = nullptr;
+  s_View = view;
+  s_Proj = proj;
+}
+
 void Renderer::SubmitLights(Scene& scene) {
   m_Scene = &scene;
   m_PointLightEntities = scene.GetPointLightEntities();
@@ -39,9 +47,18 @@ void Renderer::EndScene() {
 
 void Renderer::Submit(const RenderComponent &renderComp,
                       const TransformComponent &transformComp) {
-  auto *cameraTarget = s_ActiveCamera->GetCurrentTarget();
-  if (!cameraTarget)
-    return;
+  // Resolve view/projection matrices from whichever BeginScene path was used
+  glm::mat4 view, proj;
+  if (s_ActiveCamera) {
+    auto *cameraTarget = s_ActiveCamera->GetCurrentTarget();
+    if (!cameraTarget)
+      return;
+    view = cameraTarget->GetViewMatrix();
+    proj = cameraTarget->GetProjectionMatrix();
+  } else {
+    view = s_View;
+    proj = s_Proj;
+  }
 
   // Bind material (uploads shader + uniforms + textures)
   std::shared_ptr<ShaderData> shader;
@@ -64,8 +81,8 @@ void Renderer::Submit(const RenderComponent &renderComp,
 
   // upload object
   shader->setMatrix4("transform", transformComp.GetModelMatrix());
-  shader->setMatrix4("view", cameraTarget->GetViewMatrix());
-  shader->setMatrix4("projection", cameraTarget->GetProjectionMatrix());
+  shader->setMatrix4("view", view);
+  shader->setMatrix4("projection", proj);
 
   // Render the mesh
   if (renderComp.mesh) {

@@ -9,6 +9,7 @@
 #include "CameraComponent.h"
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
+#include "Camera.h"
 #include "Renderer.h"
 #include "RenderSystem.h"
 #include "PointLightSystem.h"
@@ -66,6 +67,7 @@ Scene::Scene() {
   csSignature.set(m_Coordinator.GetComponentType<TransformComponent>());
   csSignature.set(m_Coordinator.GetComponentType<CameraComponent>());
   m_Coordinator.SetSystemSignature<CameraSystem>(csSignature);
+  mCameraSystem->Init(&m_Coordinator);
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {
@@ -88,10 +90,11 @@ void Scene::Update() {
   mScriptSystem->OnUpdate();
 }
 
-void Scene::Render(Camera &camera) {
-
-  // pass 1, upload generic data
-  Renderer::BeginScene(camera);
+void Scene::Render(Camera &camera, CameraSystem::CameraMode mode) {
+  mCameraSystem->SetEngineCamera(&camera.GetInternal());
+  glm::mat4 view, proj;
+  mCameraSystem->GetMatrices(mode, view, proj);
+  Renderer::BeginScene(view, proj);
   mRenderSystem->RenderAll();
   Renderer::EndScene();
 }
@@ -128,6 +131,12 @@ void Scene::SetActiveCamera(ecs::Entity cameraEntity) {
     m_Coordinator.GetComponent<CameraComponent>(m_ActiveCamera).isMainCamera =
         true;
   }
+
+  mCameraSystem->SetActiveCamera(cameraEntity);
+}
+
+void Scene::SetEngineCamera(CameraData* engineCamera) {
+  mCameraSystem->SetEngineCamera(engineCamera);
 }
 
 std::vector<ecs::Entity> Scene::GetPointLightEntities() const {

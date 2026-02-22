@@ -32,7 +32,7 @@ public:
 
   // Scene operations
   void Update();
-  void Render(Camera& camera);
+  void Render(Camera& camera, CameraSystem::CameraMode mode = CameraSystem::ENGINE);
 
   // Query
   inline size_t GetEntityCount() const { return m_Entities.size(); }
@@ -55,10 +55,7 @@ public:
   void SaveScene(const char* filepath);
   void LoadScene(const char* filepath);
 
-  inline void SetActiveCamera(ecs::Entity entity){
-    mCameraSystem->SetActiveCamera(entity);
-  }
-
+  std::shared_ptr<PointLightSystem> mPointLightSystem;
 private:
   ecs::Coordinator m_Coordinator;
   std::vector<ecs::Entity> m_Entities;
@@ -71,10 +68,10 @@ private:
   std::shared_ptr<ScriptEngine> mScriptEngine;
   std::shared_ptr<ScriptSystem> mScriptSystem;
   std::shared_ptr<CameraSystem> mCameraSystem;
-  std::shared_ptr<PointLightSystem> mPointLightSystem;
 
 public:
   void SetActiveCamera(ecs::Entity cameraEntity);
+  void SetEngineCamera(CameraData* engineCamera);
   ecs::Entity GetActiveCamera() const { return m_ActiveCamera; }
   void LateInit(InputManager* inputManager);
 };

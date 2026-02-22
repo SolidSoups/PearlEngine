@@ -8,6 +8,10 @@ struct CameraComponent {
   float aspectModifier = 1.0f;
   float nearPlane = 0.1f;
   float farPlane = 100.0f;
+
+  // Runtime state — not serialized
+  CameraData cameraData;
+  bool isMainCamera = false;
 };
 
 inline void to_json(json &j, const CameraComponent &cmp) {

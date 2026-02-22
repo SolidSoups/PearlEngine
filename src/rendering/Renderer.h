@@ -14,6 +14,7 @@ class Renderer {
 public:
   // Scene management
   static void BeginScene(Camera &camera);
+  static void BeginScene(glm::mat4 view, glm::mat4 proj);
   static void SubmitLights(Scene& scene);
   static void EndScene();
 
@@ -24,6 +25,8 @@ public:
 
 private:
   static Camera *s_ActiveCamera;
+  static glm::mat4 s_View;
+  static glm::mat4 s_Proj;
   static AmbientLightData m_AmbientData;
   static std::vector<ecs::Entity> m_PointLightEntities;
   static Scene* m_Scene;

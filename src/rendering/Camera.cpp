@@ -16,6 +16,7 @@ void Camera::StartPreview(ecs::Entity cameraEntity) {
 
 void Camera::SetAspect(float aspect) {
   m_Aspect = aspect;
+  m_InternalCameraData.aspectRatio = aspect;
 }
 
 CameraData* Camera::GetPreview(){
