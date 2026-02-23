@@ -10,7 +10,7 @@ struct CameraComponent {
   float farPlane = 100.0f;
 
   // Runtime state — not serialized
-  CameraData cameraData;
+  CameraData cameraData; // no no no
   bool isMainCamera = false;
 };
 
