@@ -48,12 +48,8 @@ private:
 private:
   void AddMenuBarItems();
 
-public:
-  Scene m_Scene;
-  Camera m_Camera{};
-  std::unique_ptr<CameraController> m_CameraController;
-
 private:
+  std::unique_ptr<Scene> mScene;
   std::unique_ptr<MessageBus> m_MessageBus;
   std::unique_ptr<MessageQueue> m_MessageQueue;
 
@@ -80,7 +76,8 @@ public:
   std::shared_ptr<ShaderData> m_FlatShader;
   std::shared_ptr<ShaderData> m_GridShader;
   std::unique_ptr<ViewportGrid> m_ViewportGrid;
-  std::unique_ptr<InputManager> m_InputManager;
+  std::shared_ptr<InputManager> m_InputManager;
+  std::shared_ptr<IEngineCamera> mEngineCamera;
 
 private:
   bool isInitialized = false;

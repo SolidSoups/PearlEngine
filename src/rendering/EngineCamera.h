@@ -10,9 +10,10 @@ public:
   virtual ~IEngineCamera() = default;
 
   virtual void MoveCamera() = 0;
-
+  virtual void Reset() = 0;
   virtual const glm::mat4 GetViewMatrix() = 0;
   virtual const glm::mat4 GetProjectionMatrix(float aspect) = 0;
+  virtual const glm::vec3& GetPosition() = 0;
 
 protected:
   InputManager &mInputMan;
@@ -32,14 +33,17 @@ public:
 
 public:
   void MoveCamera() override;
+  void Reset() override;
   const glm::mat4 GetViewMatrix() override;
   const glm::mat4 GetProjectionMatrix(float aspect) override;
+  const glm::vec3 &GetPosition() override;
 
 private:
   // movement api
   void Orbit(glm::vec2 delta);
   void Pan(glm::vec2 delta);
   void Zoom(float scrollDelta);
+  void UpdateData();
 
 public:
   // movement settings

@@ -82,9 +82,9 @@ void ViewportEditorPanel::OnImGuiRender() {
   ImGuizmo::SetRect(viewportMin.x, viewportMin.y, viewportPanelSize.x,
                     viewportPanelSize.y);
 
-  CameraData *camData = ServiceLocator::Get<Camera>().GetCurrentTarget();
-  glm::mat4 cameraView = camData->GetViewMatrix();
-  glm::mat4 cameraProjection = camData->GetProjectionMatrix();
+  auto camSystem = scene.GetCameraSystem();
+  glm::mat4 cameraView, cameraProjection;
+  camSystem->GetMatrices(CameraSystem::CameraMode::ENGINE, cameraView, cameraProjection);
    
   glm::mat4 identity(1.0f);
   // ImGuizmo::DrawGrid(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), glm::value_ptr(identity), 100.0f);

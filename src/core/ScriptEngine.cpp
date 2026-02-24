@@ -11,15 +11,12 @@
 
 #include <glm/glm.hpp>
 
-void ScriptEngine::Init(Scene *scene) {
-  m_Scene = scene;
+void ScriptEngine::Init(Scene* scene, const std::shared_ptr<InputManager>& inputMan) {
+  mScene = scene;
   m_Lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::string,
                        sol::lib::table);
+  mInputMan = inputMan;
   BindAPIs();
-}
-
-void ScriptEngine::LateInit(InputManager* inputManager) {
-  mInputManager = inputManager;
 }
 
 bool ScriptEngine::RunOnCreate(ecs::Entity entity, ScriptComponent &sc) {
@@ -154,8 +151,8 @@ void ScriptEngine::BindAPIs() {
   sol::table scene = m_Lua.create_named_table("Scene");
   scene.set_function(
       "FindEntityByName", [this](const std::string &name) -> ecs::Entity {
-        auto &coord = m_Scene->GetCoordinator();
-        for (auto e : m_Scene->GetEntities()) {
+        auto &coord = mScene->GetCoordinator();
+        for (auto e : mScene->GetEntities()) {
           if (coord.HasComponent<NameComponent>(e)) {
             if (coord.GetComponent<NameComponent>(e).name == name)
               return e;
@@ -165,7 +162,7 @@ void ScriptEngine::BindAPIs() {
       });
   scene.set_function("GetTransform",
                      [this](ecs::Entity e) -> TransformComponent * {
-                       auto &coord = m_Scene->GetCoordinator();
+                       auto &coord = mScene->GetCoordinator();
                        if (coord.HasComponent<TransformComponent>(e))
                          return &coord.GetComponent<TransformComponent>(e);
                        return nullptr;
@@ -196,20 +193,17 @@ void ScriptEngine::BindAPIs() {
   sol::table input = m_Lua.create_named_table("Input");
   input.set_function(
     "GetKey", [this](const std::string& key) -> bool{
-      auto inputMan = ServiceLocator::Get<InputManager>();
-      return inputMan.GetKeyString(key);
+      return mInputMan->GetKeyString(key);
     }
   );
   input.set_function(
     "GetKeyDown", [this](const std::string& key) -> bool{
-      auto inputMan = ServiceLocator::Get<InputManager>();
-      return inputMan.GetKeyDownString(key);
+      return mInputMan->GetKeyDownString(key);
     }
   );
   input.set_function(
     "GetKeyUp", [this](const std::string& key) -> bool{
-      auto inputMan = ServiceLocator::Get<InputManager>();
-      return inputMan.GetKeyUpString(key);
+      return mInputMan->GetKeyUpString(key);
     }
   );
 }

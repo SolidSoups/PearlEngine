@@ -75,11 +75,13 @@ PearlEngine::PearlEngine() {
   m_TextureManager = std::make_unique<TextureManager>();
   m_ShaderManager = std::make_unique<ShaderManager>();
 
+  mEngineCamera = std::make_unique<EngineCamera>(*m_InputManager);
+
+  mScene = std::make_unique<Scene>(mEngineCamera, m_InputManager);
+
   // Register all services with static ServiceLocator
   ServiceLocator::Provide<InputManager>(m_InputManager.get());
-  m_Scene.LateInit(m_InputManager.get());
-  ServiceLocator::Provide(&m_Scene);
-  ServiceLocator::Provide(&m_Camera);
+  ServiceLocator::Provide(mScene.get());
   ServiceLocator::Provide(&pwin);
   ServiceLocator::Provide(m_MessageBus.get());
   ServiceLocator::Provide(m_MessageQueue.get());
@@ -103,11 +105,6 @@ void PearlEngine::Initialize() {
   LOG_INFO << "Initializing!";
   GLFWwindow *window = pwin.GetWindow();
   glfwMakeContextCurrent(window);
-
-  // auto spacem = [](){ LOG_INFO << "SPACE+M chord called"; };
-  // m_InputManager->RegisterChordCallback("SPACE+M", spacem);
-
-  m_CameraController = std::make_unique<CameraController>(&m_Camera);
 
   // initialize the time
   Time::Initialize();
@@ -134,13 +131,13 @@ void PearlEngine::Initialize() {
   m_ViewportGrid = std::make_unique<ViewportGrid>(m_GridShader);
 
   // create the main camera
-  ecs::Entity cameraEntity = m_Scene.CreateEntity("Main Camera");
-  auto &coordinator = m_Scene.GetCoordinator();
+  ecs::Entity cameraEntity = mScene->CreateEntity("Main Camera");
+  auto &coordinator = mScene->GetCoordinator();
   coordinator.AddComponent(cameraEntity, CameraComponent{});
   auto &camComp = coordinator.GetComponent<CameraComponent>(cameraEntity);
   coordinator.GetComponent<TransformComponent>(cameraEntity).position =
       camComp.cameraData.position;
-  m_Scene.SetActiveCamera(cameraEntity);
+  mScene->SetActiveCamera(cameraEntity);
 
   // Create viewport framebuffer
   m_ViewportFramebuffer =
@@ -180,7 +177,7 @@ void PearlEngine::Initialize() {
   glfwGetFramebufferSize(pwin.GetWindow(), &framebufferWidth,
                          &frameBufferHeight);
   float aspectRatio = (float)framebufferWidth / (float)frameBufferHeight;
-  m_Camera.SetAspect(aspectRatio);
+  mScene->SetAspectRatio(aspectRatio);
 
   // OpenGL state configuration
   glFrontFace(GL_CW);
@@ -189,8 +186,8 @@ void PearlEngine::Initialize() {
 
   LOG_INFO << "Finished initialization";
 
-  auto sphere = m_Scene.CreateSphere("Script Tester");
-  auto& coord = m_Scene.GetCoordinator();
+  auto sphere = mScene->CreateSphere("Script Tester");
+  auto& coord = mScene->GetCoordinator();
   coord.AddComponent(sphere, ScriptComponent{});
 }
 
@@ -225,10 +222,11 @@ void PearlEngine::Update() {
   // handle viewport resize
   if (m_ViewportPanel->IsResized()) {
     glm::vec2 newSize = m_ViewportPanel->GetSize();
+    float aspect = newSize.x / newSize.y;
 
     m_ViewportFramebuffer->Resize(newSize.x, newSize.y);
-    m_Camera.SetAspect(newSize.x / newSize.y);
     m_GBuffer->resize(newSize.x, newSize.y);
+    mScene->SetAspectRatio(aspect);
 
     m_ViewportSize.x = newSize.x;
     m_ViewportSize.y = newSize.y;
@@ -236,14 +234,11 @@ void PearlEngine::Update() {
 
   // Handle camera controls
   if (m_ViewportPanel->IsHovered()) {
-    m_CameraController->OnUpdate(m_ViewportPanel->GetMouseDelta(),
-                                 m_ViewportPanel->GetScrollDelta(),
-                                 m_ViewportPanel->IsRightMouseDown(),
-                                 m_ViewportPanel->IsMiddleMouseDown());
+    mEngineCamera->MoveCamera();
   }
 
   // update objects (currently does nothing, but ready for future!  )
-  m_Scene.Update();
+  mScene->Update();
 }
 
 void PearlEngine::Render() {
@@ -269,7 +264,7 @@ void PearlEngine::GeometryRenderPass() {
   Renderer::SetNextShader(m_GeometryShader);
   m_GeometryShader->use();
 
-  m_Scene.Render(m_Camera);
+  mScene->Render(CameraSystem::CameraMode::ENGINE);
 
   Renderer::SetGeometryPassEnabled(false);
   m_GBuffer->unbind();
@@ -290,6 +285,8 @@ void PearlEngine::FlatShadePass() {
 }
 
 void PearlEngine::LightingPass() {
+  auto camSystem = mScene->GetCameraSystem();
+
   m_ViewportFramebuffer->Bind();
   glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -312,10 +309,10 @@ void PearlEngine::LightingPass() {
   m_LightShader->setInt("gDepthStencil", 3);
 
   // send light uniforms
-  m_Scene.mPointLightSystem->SendUniforms(m_LightShader);
-  m_LightShader->setFloat("ambientIntensity", m_Scene.ambientLight.intensity);
-  m_LightShader->setVec4("ambientColor", m_Scene.ambientLight.color);
-  m_LightShader->setVec3("viewPos", m_Camera.GetCurrentTarget()->position);
+  mScene->mPointLightSystem->SendUniforms(m_LightShader);
+  m_LightShader->setFloat("ambientIntensity", mScene->ambientLight.intensity);
+  m_LightShader->setVec4("ambientColor", mScene->ambientLight.color);
+  m_LightShader->setVec3("viewPos", camSystem->GetPosition(CameraSystem::CameraMode::ENGINE));
 
   glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
   m_FullscreenQuad->Draw();
@@ -332,8 +329,9 @@ void PearlEngine::LightingPass() {
   glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
 
   // Draw grid
-  CameraData* cam = m_Camera.GetCurrentTarget();
-  m_ViewportGrid->Draw(cam->GetViewMatrix(), cam->GetProjectionMatrix());
+  glm::mat4 view, projection;
+  camSystem->GetMatrices(CameraSystem::CameraMode::ENGINE, view, projection);
+  m_ViewportGrid->Draw(view, projection);
 
   m_ViewportFramebuffer->Unbind();
 }
@@ -439,7 +437,7 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
 
   // reset camera controller
   if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-    m_CameraController->Reset();
+    mEngineCamera->Reset();
   } 
 
   // recompile all shaders
@@ -467,7 +465,7 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
   static bool cSWasPressed = false;
   if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS &&
      glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && !cSWasPressed){
-    // m_Scene.SaveScene();
+    // mScene->SaveScene();
     cSWasPressed = true;
   }
   else if(glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE){
@@ -488,12 +486,12 @@ void PearlEngine::AddMenuBarItems() {
     UserGUI::StartInputPopup("Save scene as...", [this](const std::string& name){
       const std::string assets_folder = "assets/";
       std::string filepath = assets_folder + name + ".json";
-      m_Scene.SaveScene(filepath.c_str());
+      mScene->SaveScene(filepath.c_str());
     });
   });
   MenuRegistry::Get().Register("File/Load scene...", [this](){
     UserGUI::StartFilePopup([this](const std::string& file){
-      m_Scene.LoadScene(file.c_str());
+      mScene->LoadScene(file.c_str());
     }, {".json"});
   });
 

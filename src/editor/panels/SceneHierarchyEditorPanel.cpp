@@ -69,7 +69,8 @@ void SceneHierarchyEditorPanel::DrawSceneHierarchy() {
       // Preview camera button (only if Entity has CameraComponent)
       if (coordinator.HasComponent<CameraComponent>(entity)) {
         if (ImGui::MenuItem("Preview Camera")) {
-          ServiceLocator::Get<Camera>().StartPreview(entity);
+          // ServiceLocator::Get<Camera>().StartPreview(entity);
+          LOG_INFO << "Unimplemented";
         }
       }
 

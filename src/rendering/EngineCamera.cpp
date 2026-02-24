@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "Logger.h"
 
 void EngineCamera::MoveCamera() {
   const glm::vec2 &mouseDelta = mInputMan.GetMouseDelta();
@@ -15,15 +16,27 @@ void EngineCamera::MoveCamera() {
     Orbit(mouseDelta);
   }
 
-  if (scrollDelta != 0) {
+  if (scrollDelta != 0.0f) {
+    LOG_INFO << "Engine camera zooming!";
     Zoom(scrollDelta);
   }
+}
+void EngineCamera::Reset(){
+  mPosition = glm::vec3{0.0f, 0.0f, 0.0f};
+  mOrbitTarget = glm::vec3{0.0f, 0.0f, 1.0f};
+  mOrbitDistance = 1.0f;
+  mPitch = 0.0f;
+  mYaw = 0.0f;
 }
 const glm::mat4 EngineCamera::GetViewMatrix() {
   return glm::lookAt(mPosition, mOrbitTarget, getUp());
 }
 const glm::mat4 EngineCamera::GetProjectionMatrix(float aspect) {
   return glm::perspective(glm::radians(mFov), aspect, mNearPlane, mFarPlane);
+}
+
+const glm::vec3 &EngineCamera::GetPosition(){
+  return mPosition;
 }
 
 // movement api
@@ -48,15 +61,22 @@ void EngineCamera::Orbit(glm::vec2 delta) {
   // clamp pitch to avoid gimal lock
   mPitch = glm::clamp(mPitch, -89.f, 89.f);
 
-  // calculate new camera position using spherical coordinates
-  float yawRad = glm::radians(mYaw);
-  float pitchRad = glm::radians(mPitch);
-
-  mPosition.x = mOrbitTarget.x + mOrbitDistance * cos(pitchRad) * cos(yawRad);
-  mPosition.y = mOrbitTarget.y + mOrbitDistance * sin(pitchRad);
-  mPosition.z = mOrbitTarget.z + mOrbitDistance * cos(pitchRad) * sin(yawRad);
+  UpdateData();
 }
 void EngineCamera::Zoom(float scrollDelta) {
   mOrbitDistance -= scrollDelta * ZoomSpeed;
   mOrbitDistance = glm::clamp(mOrbitDistance, 0.5f, 50.f);
+
+  UpdateData();
+}
+
+void EngineCamera::UpdateData(){
+  // calculate new camera position using spherical coordinates
+  float yawRad = glm::radians(mYaw);
+  float pitchRad = glm::radians(mPitch);
+
+  // update position
+  mPosition.x = mOrbitTarget.x + mOrbitDistance * cos(pitchRad) * cos(yawRad);
+  mPosition.y = mOrbitTarget.y + mOrbitDistance * sin(pitchRad);
+  mPosition.z = mOrbitTarget.z + mOrbitDistance * cos(pitchRad) * sin(yawRad);
 }

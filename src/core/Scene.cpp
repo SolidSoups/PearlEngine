@@ -24,7 +24,7 @@
 #include "FileSystem.h"
 #include "SelectionWizard.h"
 
-Scene::Scene() {
+Scene::Scene(const std::shared_ptr<IEngineCamera>& engineCam,const std::shared_ptr<InputManager>& inputMan) {
   m_Coordinator.Init();
 
   // Register all component types
@@ -58,7 +58,7 @@ Scene::Scene() {
   m_Coordinator.SetSystemSignature<ScriptSystem>(ssSignature);
 
   mScriptEngine = std::make_shared<ScriptEngine>();
-  mScriptEngine->Init(this);
+  mScriptEngine->Init(this, inputMan);
   mScriptSystem->Init(&m_Coordinator, mScriptEngine.get());
 
   // Camera System
@@ -67,7 +67,7 @@ Scene::Scene() {
   csSignature.set(m_Coordinator.GetComponentType<TransformComponent>());
   csSignature.set(m_Coordinator.GetComponentType<CameraComponent>());
   m_Coordinator.SetSystemSignature<CameraSystem>(csSignature);
-  mCameraSystem->Init(&m_Coordinator);
+  mCameraSystem->Init(&m_Coordinator, engineCam);
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {
@@ -90,10 +90,12 @@ void Scene::Update() {
   mScriptSystem->OnUpdate();
 }
 
-void Scene::Render(Camera &camera, CameraSystem::CameraMode mode) {
-  mCameraSystem->SetEngineCamera(&camera.GetInternal());
+void Scene::Render(CameraSystem::CameraMode mode) {
+  // get matrices from camera system
   glm::mat4 view, proj;
   mCameraSystem->GetMatrices(mode, view, proj);
+
+  // render everything
   Renderer::BeginScene(view, proj);
   mRenderSystem->RenderAll();
   Renderer::EndScene();
@@ -110,10 +112,6 @@ void Scene::SetEntityName(ecs::Entity entity, const std::string &name) {
   if (m_Coordinator.HasComponent<NameComponent>(entity)) {
     m_Coordinator.GetComponent<NameComponent>(entity).name = name;
   }
-}
-
-void Scene::LateInit(InputManager* inputManager) {
-  mScriptEngine->LateInit(inputManager);
 }
 
 void Scene::SetActiveCamera(ecs::Entity cameraEntity) {
@@ -133,10 +131,6 @@ void Scene::SetActiveCamera(ecs::Entity cameraEntity) {
   }
 
   mCameraSystem->SetActiveCamera(cameraEntity);
-}
-
-void Scene::SetEngineCamera(CameraData* engineCamera) {
-  mCameraSystem->SetEngineCamera(engineCamera);
 }
 
 std::vector<ecs::Entity> Scene::GetPointLightEntities() const {
@@ -295,4 +289,9 @@ void Scene::LoadScene(const char *filepath) {
     m_Entities.push_back(entity);
   }
   LOG_INFO << "Loaded scene from: " << filepath;
+}
+
+
+void Scene::SetAspectRatio(float aspect){
+  mCameraSystem->SetAspect(aspect);
 }

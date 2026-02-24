@@ -10,8 +10,7 @@ class Scene;
 
 class ScriptEngine{
 public:
-  void Init(Scene* scene);
-  void LateInit(InputManager* inputManager);
+  void Init(Scene* scene, const std::shared_ptr<InputManager>& inputMan);
   bool RunOnCreate(ecs::Entity entity, ScriptComponent& sc);
   void RunOnUpdate(ecs::Entity entity, ScriptComponent& sc);
   void RunOnDestroy(ecs::Entity entity, ScriptComponent& sc);
@@ -34,11 +33,11 @@ private:
 private:
   // binds transform, Vec3, Scene table, Time, Input, Key constants
   void BindAPIs(); 
-  // entity injected as "entity"
+  // entity injected as "entity" 
   sol::environment CreateEntityEnv(ecs::Entity e); 
-  sol::state m_Lua;
-  Scene* m_Scene = nullptr;
-  InputManager* mInputManager;
+  sol::state m_Lua; 
+  Scene* mScene;
+  std::shared_ptr<InputManager> mInputMan;
 
 
 private:

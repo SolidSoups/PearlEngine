@@ -18,7 +18,7 @@ class Camera;
 
 class Scene{
 public:
-  Scene();
+  Scene(const std::shared_ptr<IEngineCamera>& engineCam, const std::shared_ptr<InputManager>& inputMan);
   ~Scene() = default;
 
   // Object management
@@ -32,7 +32,7 @@ public:
 
   // Scene operations
   void Update();
-  void Render(Camera& camera, CameraSystem::CameraMode mode = CameraSystem::ENGINE);
+  void Render(CameraSystem::CameraMode mode);
 
   // Query
   inline size_t GetEntityCount() const { return m_Entities.size(); }
@@ -71,7 +71,10 @@ private:
 
 public:
   void SetActiveCamera(ecs::Entity cameraEntity);
-  void SetEngineCamera(CameraData* engineCamera);
   ecs::Entity GetActiveCamera() const { return m_ActiveCamera; }
-  void LateInit(InputManager* inputManager);
+  void SetAspectRatio(float aspect);
+
+  inline CameraSystem* GetCameraSystem() const {
+    return mCameraSystem.get();
+  }
 };

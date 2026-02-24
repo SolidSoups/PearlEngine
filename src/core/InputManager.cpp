@@ -39,8 +39,8 @@ void InputManager::Update() {
   lastMousePos = {mouseX, mouseY};
 
   // track scroll delta
-  prevScrollDelta = scrollDelta;
   scrollDelta = sScrollDelta - prevScrollDelta;
+  prevScrollDelta = sScrollDelta;
 
   // track key state
   for(auto& it : KeyToString){
