@@ -157,6 +157,8 @@ target_precompile_headers(game_engine PRIVATE
   <unordered_map>
   <functional>
   <iostream>
+  # my library
+  src/utils/Logger.h
 )
 if(COMPILER_SUPPORTS_AVX2)
   target_compile_options(game_engine PRIVATE -mavx2)
