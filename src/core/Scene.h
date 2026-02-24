@@ -56,6 +56,11 @@ public:
   void LoadScene(const char* filepath);
 
   std::shared_ptr<PointLightSystem> mPointLightSystem;
+
+  inline void SetCameraPreview(ecs::Entity entity){
+    mCameraSystem->SetPreviewCamera(entity);
+    mCameraSystem->SetCameraMode(CameraSystem::CameraMode::PREVIEW);
+  }
 private:
   ecs::Coordinator m_Coordinator;
   std::vector<ecs::Entity> m_Entities;
@@ -68,6 +73,8 @@ private:
   std::shared_ptr<ScriptEngine> mScriptEngine;
   std::shared_ptr<ScriptSystem> mScriptSystem;
   std::shared_ptr<CameraSystem> mCameraSystem;
+
+  ecs::Entity mPreviewCameraEntity = ecs::NULL_ENTITY;
 
 public:
   void SetActiveCamera(ecs::Entity cameraEntity);

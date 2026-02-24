@@ -93,7 +93,7 @@ void Scene::Update() {
 void Scene::Render(CameraSystem::CameraMode mode) {
   // get matrices from camera system
   glm::mat4 view, proj;
-  mCameraSystem->GetMatrices(mode, view, proj);
+  mCameraSystem->GetMatrices(view, proj);
 
   // render everything
   Renderer::BeginScene(view, proj);

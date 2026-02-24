@@ -22,9 +22,9 @@ glm::mat4 TransformComponent::GetModelMatrix() const {
 }
 
 glm::mat4 TransformComponent::GetRotationMatrixYXZ() const {
-  return glm::rotate(glm::mat4(1.0f), rotation.y, {0, 1, 0}) *
-         glm::rotate(glm::mat4(1.0f), rotation.x, {1, 0, 0}) *
-         glm::rotate(glm::mat4(1.0f), rotation.z, {0, 0, 1});
+  return glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), {0, 1, 0}) *
+         glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), {1, 0, 0}) *
+         glm::rotate(glm::mat4(1.0f), glm::radians(rotation.z), {0, 0, 1});
 }
 glm::vec3 TransformComponent::GetForward() const {
   glm::mat4 rot = GetRotationMatrixYXZ();

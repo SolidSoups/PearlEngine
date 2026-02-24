@@ -77,6 +77,7 @@ public:
   std::shared_ptr<ShaderData> m_GridShader;
   std::unique_ptr<ViewportGrid> m_ViewportGrid;
   std::shared_ptr<InputManager> m_InputManager;
+
   std::shared_ptr<IEngineCamera> mEngineCamera;
 
 private:

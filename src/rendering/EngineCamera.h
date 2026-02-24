@@ -2,15 +2,21 @@
 
 #include <glm/glm.hpp>
 
+#include "ecs_coordinator.h"
+#include "ecs_common.h"
 #include "InputManager.h"
+
+#include "TransformComponent.h"
+#include "CameraComponent.h"
 
 class IEngineCamera {
 public:
   IEngineCamera(InputManager &input) : mInputMan(input) {}
   virtual ~IEngineCamera() = default;
 
-  virtual void MoveCamera() = 0;
+  virtual bool MoveCamera() = 0;
   virtual void Reset() = 0;
+  virtual void CopyEntity(TransformComponent& transform, CameraComponent& camera){}
   virtual const glm::mat4 GetViewMatrix() = 0;
   virtual const glm::mat4 GetProjectionMatrix(float aspect) = 0;
   virtual const glm::vec3& GetPosition() = 0;
@@ -21,7 +27,9 @@ protected:
 
 class EngineCamera : public IEngineCamera {
 public:
-  EngineCamera(InputManager &input) : IEngineCamera(input) {}
+  EngineCamera(InputManager &input) : IEngineCamera(input) {
+    Reset();
+  }
 
   // disables copy construct/operator
   EngineCamera(EngineCamera &) = delete;
@@ -32,8 +40,9 @@ public:
   EngineCamera &&operator=(EngineCamera &&) = delete;
 
 public:
-  void MoveCamera() override;
+  bool MoveCamera() override;
   void Reset() override;
+  void CopyEntity(TransformComponent& transform, CameraComponent& camera) override;
   const glm::mat4 GetViewMatrix() override;
   const glm::mat4 GetProjectionMatrix(float aspect) override;
   const glm::vec3 &GetPosition() override;
