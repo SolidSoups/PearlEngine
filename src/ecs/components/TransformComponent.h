@@ -20,6 +20,7 @@ struct TransformComponent {
   // modifiers
   void Translate(const glm::vec3& offset);
   void Rotate(float angle, const glm::vec3& axis);
+  void LookAt(const glm::vec3& target);
 
   // setters
   void SetRotation(float angle, const glm::vec3& axis);

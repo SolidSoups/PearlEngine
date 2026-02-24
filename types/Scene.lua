@@ -1,5 +1,7 @@
 ---@meta
 
+---@class Scene
+---@field NULL_ENTITY number
 Scene = {}
 
 ---@param name string
@@ -9,3 +11,11 @@ function Scene.FindEntityByName(name) end
 ---@param entity integer
 ---@return Transform|nil
 function Scene.GetTransform(entity) end
+
+---@param entity integer
+---@return Camera|nil
+function Scene.GetCamera(entity) end
+
+---@param entity integer
+---@return bool succesful
+function Scene.SetMainCamera(entity) end

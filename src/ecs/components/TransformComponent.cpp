@@ -21,6 +21,13 @@ glm::mat4 TransformComponent::GetModelMatrix() const {
   return model;
 }
 
+void TransformComponent::LookAt(const glm::vec3& target){
+  glm::vec3 dir = glm::normalize(target - position);  
+  float pitch = glm::degrees(atan2(dir.y, sqrt(dir.x*dir.x + dir.z*dir.z)));
+  float yaw = glm::degrees(atan2(-dir.x, -dir.z));
+  rotation = glm::vec3(pitch, yaw, 0);
+}
+
 glm::mat4 TransformComponent::GetRotationMatrixYXZ() const {
   return glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), {0, 1, 0}) *
          glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), {1, 0, 0}) *

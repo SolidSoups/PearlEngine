@@ -17,3 +17,7 @@ function Transform:SetRotation(v) end
 
 ---@param v Vec3
 function Transform:SetScale(v) end
+
+---Points the transform torwards a target
+---@param v Vec3 target
+function Transform:LookAt(v) end

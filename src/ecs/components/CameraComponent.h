@@ -12,6 +12,7 @@ struct CameraComponent {
   // Runtime state — not serialized
   CameraData cameraData; // no no no
   bool isMainCamera = false;
+  inline bool IsMainCamera() const { return isMainCamera; }
 };
 
 inline void to_json(json &j, const CameraComponent &cmp) {

@@ -8,10 +8,10 @@
 #include "NameComponent.h"
 #include "Time.h"
 
-
 #include <glm/glm.hpp>
 
-void ScriptEngine::Init(Scene* scene, const std::shared_ptr<InputManager>& inputMan) {
+void ScriptEngine::Init(Scene *scene,
+                        const std::shared_ptr<InputManager> &inputMan) {
   mScene = scene;
   m_Lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::string,
                        sol::lib::table);
@@ -46,13 +46,15 @@ bool ScriptEngine::RunOnCreate(ecs::Entity entity, ScriptComponent &sc) {
   return true;
 }
 
-void ScriptEngine::LogError(ScriptComponent& sc, sol::error& error){
-  if(sc.scriptPath.empty()) return;
+void ScriptEngine::LogError(ScriptComponent &sc, sol::error &error) {
+  if (sc.scriptPath.empty())
+    return;
   sc.hasError = true;
   mScriptToFailureReason[sc.scriptPath] = error.what();
 }
 
-bool ScriptEngine::SafeCall_StartScript(sol::environment& env, ScriptComponent& sc){
+bool ScriptEngine::SafeCall_StartScript(sol::environment &env,
+                                        ScriptComponent &sc) {
   // tell sol to load lua file
   auto result =
       m_Lua.safe_script_file(sc.scriptPath, env, sol::script_pass_on_error);
@@ -86,7 +88,7 @@ void ScriptEngine::RunOnUpdate(ecs::Entity entity, ScriptComponent &sc) {
   }
 }
 
-void ScriptEngine::UpdateAPIs(){
+void ScriptEngine::UpdateAPIs() {
   // update time global
   sol::table time = m_Lua["Time"];
   time["deltaTime"] = Time::deltaTime;
@@ -95,15 +97,18 @@ void ScriptEngine::UpdateAPIs(){
 }
 
 void ScriptEngine::RunOnDestroy(ecs::Entity entity, ScriptComponent &sc) {
-  if(!sc.scriptEnv) return;
+  if (!sc.scriptEnv)
+    return;
 
   // try to find OnDestroy function
   sol::protected_function fn = sc.scriptEnv["OnDestroy"];
-  if (!fn.valid()) return; 
+  if (!fn.valid())
+    return;
 
   // run OnDestroy and validate
   sol::protected_function_result r = fn();
-  if (r.valid()) return;
+  if (r.valid())
+    return;
 
   // log error
   sol::error e = r;
@@ -111,7 +116,7 @@ void ScriptEngine::RunOnDestroy(ecs::Entity entity, ScriptComponent &sc) {
   LogError(sc, e);
 }
 
-void ScriptEngine::ResetScript(ScriptComponent& sc){
+void ScriptEngine::ResetScript(ScriptComponent &sc) {
   // reset properties, clear errors
   ClearError(sc.scriptPath);
   sc.scriptEnv = sol::table{};
@@ -138,6 +143,8 @@ void ScriptEngine::BindAPIs() {
       "Vec3", sol::constructors<glm::vec3(), glm::vec3(float, float, float)>(),
       "x", &glm::vec3::x, "y", &glm::vec3::y, "z", &glm::vec3::z);
 
+  // bind entity type
+
   // transform comp
   m_Lua.new_usertype<TransformComponent>(
       "Transform", "position", &TransformComponent::position, "rotation",
@@ -145,7 +152,15 @@ void ScriptEngine::BindAPIs() {
       "Translate", &TransformComponent::Translate, "SetPosition",
       &TransformComponent::SetPosition, "SetRotation",
       &TransformComponent::SetRotation, "SetScale",
-      &TransformComponent::SetScale);
+      &TransformComponent::SetScale,
+  "LookAt", &TransformComponent::LookAt);
+
+  // camera comp
+  m_Lua.new_usertype<CameraComponent>(
+      "Camera", "fov", &CameraComponent::fov, "aspect_mod",
+      &CameraComponent::aspectModifier, "near_plane",
+      &CameraComponent::nearPlane, "far_plane", &CameraComponent::farPlane,
+      "IsMainCamera", &CameraComponent::IsMainCamera);
 
   // scene table
   sol::table scene = m_Lua.create_named_table("Scene");
@@ -167,6 +182,41 @@ void ScriptEngine::BindAPIs() {
                          return &coord.GetComponent<TransformComponent>(e);
                        return nullptr;
                      });
+  scene.set_function("GetCamera", [this](ecs::Entity e) -> CameraComponent * {
+    auto &coord = mScene->GetCoordinator();
+    if (coord.HasComponent<CameraComponent>(e))
+      return &coord.GetComponent<CameraComponent>(e);
+    return nullptr;
+  });
+  scene.set_function("SetMainCamera", [this](ecs::Entity e) -> bool {
+    LOG_INFO << "Setting main camera";
+    if (e == ecs::NULL_ENTITY) {
+      LOG_ERROR << "[LUA] SetMainCamera: cannot set main camera of null entity";
+      return false;
+    }
+    LOG_INFO << "Checked for null entity";
+    auto &coord = mScene->GetCoordinator();
+    if (!coord.HasComponent<TransformComponent>(e)) {
+      LOG_ERROR
+          << "[LUA] SetMainCamera: entity doesn't have transform component";
+      return false;
+    }
+    LOG_INFO << "Checked for Transform";
+    if (!coord.HasComponent<CameraComponent>(e)) {
+      LOG_ERROR
+          << "[LUA] SetMainCamera: entity doesn't have camera component";
+      return false;
+    }
+    LOG_INFO << "Checked for Camera";
+
+    // TODO: switch to set active camera
+    mScene->SetCameraPreview(e);
+    LOG_INFO << "Set camera preview";
+    return true;
+  });
+
+  // null entity in scene
+  scene["NULL_ENTITY"] = ecs::NULL_ENTITY;
 
   // time table
   sol::table time = m_Lua.create_named_table("Time");
@@ -176,34 +226,25 @@ void ScriptEngine::BindAPIs() {
 
   // Logging
   sol::table debug = m_Lua.create_named_table("Debug");
-  debug.set_function(
-      "Log", [this](const std::string &text) -> void {
-      std::cout << "[LuaLog] " << text << std::endl;
-    });
-  debug.set_function(
-      "Warn", [this](const std::string &text) -> void {
-      std::cout << "[LuaWarn] " << text << std::endl;
-    });
-  debug.set_function(
-    "Error", [this](const std::string &text) -> void {
-      std::cerr << "[LuaError] " << text << std::endl;
-    });
+  debug.set_function("Log", [this](const std::string &text) -> void {
+    std::cout << "[LuaLog] " << text << std::endl;
+  });
+  debug.set_function("Warn", [this](const std::string &text) -> void {
+    std::cout << "[LuaWarn] " << text << std::endl;
+  });
+  debug.set_function("Error", [this](const std::string &text) -> void {
+    std::cerr << "[LuaError] " << text << std::endl;
+  });
 
   // Input
   sol::table input = m_Lua.create_named_table("Input");
-  input.set_function(
-    "GetKey", [this](const std::string& key) -> bool{
-      return mInputMan->GetKeyString(key);
-    }
-  );
-  input.set_function(
-    "GetKeyDown", [this](const std::string& key) -> bool{
-      return mInputMan->GetKeyDownString(key);
-    }
-  );
-  input.set_function(
-    "GetKeyUp", [this](const std::string& key) -> bool{
-      return mInputMan->GetKeyUpString(key);
-    }
-  );
+  input.set_function("GetKey", [this](const std::string &key) -> bool {
+    return mInputMan->GetKeyString(key);
+  });
+  input.set_function("GetKeyDown", [this](const std::string &key) -> bool {
+    return mInputMan->GetKeyDownString(key);
+  });
+  input.set_function("GetKeyUp", [this](const std::string &key) -> bool {
+    return mInputMan->GetKeyUpString(key);
+  });
 }
