@@ -13,6 +13,13 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   add_compile_options(-fdiagnostics-color=always)
 endif()
 
+# enable ccache
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+  set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+  set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+endif()
+
 # Set default build type
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
@@ -132,6 +139,24 @@ target_compile_definitions(game_engine PRIVATE
   LOG_TO_CONSOLE=1
   SOL_NO_LUA_HPP=1   # Prevent sol2 from using /usr/local/include/lua.hpp (Lua 5.1)
   $<$<BOOL:${COMPILER_SUPPORTS_AVX2}>:PEARL_HAS_AVX2>
+)
+target_precompile_headers(game_engine PRIVATE
+  # Glad MUST preced GLFW - pch preservse this order!!:W
+  <glad/glad.h>
+  <GLFW/glfw3.h>
+  # imgui
+  <imgui.h>
+  # Math
+  <glm/glm.hpp>
+  <glm/gtc/matrix_transform.hpp>
+  <glm/gtc/type_ptr.hpp>
+  # standard libary
+  <string>
+  <vector>
+  <memory>
+  <unordered_map>
+  <functional>
+  <iostream>
 )
 if(COMPILER_SUPPORTS_AVX2)
   target_compile_options(game_engine PRIVATE -mavx2)
