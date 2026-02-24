@@ -53,7 +53,6 @@
 #include "Logger.h"
 #include "Material.h"
 #include "TextureData.h"
-#include "ViewportGrid.h"
 
 // #define DEBUG_GBUFFER
 
@@ -127,7 +126,6 @@ void PearlEngine::Initialize() {
       m_ShaderManager->load("shaders/flatVert.glsl", "shaders/flatFrag.glsl");
   m_GridShader =
       m_ShaderManager->load("shaders/gridVert.glsl", "shaders/gridFrag.glsl");
-  m_ViewportGrid = std::make_unique<ViewportGrid>(m_GridShader);
 
   // create the main camera
   ecs::Entity cameraEntity = mScene->CreateEntity("Main Camera");
@@ -158,6 +156,19 @@ void PearlEngine::Initialize() {
       0, 2, 3  // second triangle
   };
   m_FullscreenQuad = std::make_unique<Mesh>(quadVertices, quadIndices);
+
+  float plane_h = 1.0f * 1000;
+  std::vector<float> planeQuadVerts = {
+    -plane_h, 0, -plane_h,    0, 0,   0.0f, 1.0f, 0.0f, // bottom-left 
+     plane_h, 0, -plane_h,    1, 0,   0.0f, 1.0f, 0.0f, // bottom-left 
+    -plane_h, 0,  plane_h,    0, 1,   0.0f, 1.0f, 0.0f, // bottom-left 
+     plane_h, 0,  plane_h,    1, 1,   0.0f, 1.0f, 0.0f // bottom-left 
+  };
+  std::vector<unsigned int> planeQuadIndices = {
+    0, 1, 2,
+    2, 1, 3
+  };
+  m_WorldPlaneQuad = std::make_unique<Mesh>(planeQuadVerts, planeQuadIndices);
 
   // Create the viewport editor panel
   m_ViewportPanel =
@@ -264,11 +275,30 @@ void PearlEngine::Render() {
 
   if (bDebugGBuffer) {
     QuadDebugRenderPass();
-  } else if (bFlatShade) {
+    return;
+  }
+
+  if (bFlatShade) {
     FlatShadePass();
   } else {
     LightingPass();
   }
+
+  // Draw grid
+  auto* camSystem = mScene->GetCameraSystem();
+  glm::mat4 view, projection;
+  camSystem->GetMatrices(view, projection);
+
+  m_ViewportFramebuffer->Bind();
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  m_GridShader->use();
+  m_GridShader->setMatrix4("view", view);
+  m_GridShader->setMatrix4("projection", projection);
+  m_GridShader->setVec3("cameraPos", camSystem->GetPosition());
+  m_WorldPlaneQuad->Draw();
+  glDisable(GL_BLEND);
+  m_ViewportFramebuffer->Unbind();
 }
 
 void PearlEngine::GeometryRenderPass() {
@@ -345,12 +375,6 @@ void PearlEngine::LightingPass() {
   glBindFramebuffer(GL_FRAMEBUFFER, m_ViewportFramebuffer->GetFBOId());
   glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
 
-  // Draw grid
-  glm::mat4 view, projection;
-  camSystem->GetMatrices(view, projection);
-  m_ViewportGrid->Draw(view, projection);
-
-  m_ViewportFramebuffer->Unbind();
 }
 
 void PearlEngine::QuadDebugRenderPass() {

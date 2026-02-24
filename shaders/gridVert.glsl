@@ -1,13 +1,17 @@
 #version 330 core
 layout(location = 0) in vec3 aPos;
-layout(location = 1) in float aAxisType; // 0=grid, 1=X axis, 2=Z axis
+layout(location = 1) in vec2 aUV;
+layout(location = 2) in vec3 aNormal;
 
-out float vAxisType;
+out vec3 vWorldPos;
+out vec3 vCameraPos;
 
 uniform mat4 view;
 uniform mat4 projection;
+uniform vec3 cameraPos;
 
 void main() {
-    vAxisType = aAxisType;
-    gl_Position = projection * view * vec4(aPos, 1.0);
+  vWorldPos = aPos;
+  vCameraPos = cameraPos;
+  gl_Position = projection * view * vec4(aPos, 1.0);
 }

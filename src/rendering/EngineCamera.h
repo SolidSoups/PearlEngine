@@ -83,5 +83,5 @@ private:
   // camera data
   float mFov{60.f};
   float mNearPlane{0.1f};
-  float mFarPlane{100.f};
+  float mFarPlane{1000.f};
 };

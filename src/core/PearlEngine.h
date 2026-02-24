@@ -13,7 +13,6 @@
 class Framebuffer;
 class ViewportEditorPanel;
 class CameraController;
-class ViewportGrid;
 class InputManager;
 
 class MeshManager;
@@ -69,13 +68,13 @@ public:
   // Gbuffer stuff
   std::unique_ptr<GBuffer> m_GBuffer;
   std::unique_ptr<Mesh> m_FullscreenQuad;
+  std::unique_ptr<Mesh> m_WorldPlaneQuad;
 
   std::shared_ptr<ShaderData> m_GeometryShader;
   std::shared_ptr<ShaderData> m_DisplayShader;
   std::shared_ptr<ShaderData> m_LightShader;
   std::shared_ptr<ShaderData> m_FlatShader;
   std::shared_ptr<ShaderData> m_GridShader;
-  std::unique_ptr<ViewportGrid> m_ViewportGrid;
   std::shared_ptr<InputManager> m_InputManager;
 
   std::shared_ptr<IEngineCamera> mEngineCamera;
