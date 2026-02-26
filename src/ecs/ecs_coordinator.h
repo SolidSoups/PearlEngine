@@ -1,8 +1,8 @@
 #pragma once
 
 #include <memory>
-#include "ecs_componentManager.h"
 #include "ecs_entityManager.h"
+#include "ecs_componentManager.h"
 #include "ecs_systemManager.h"
 
 namespace ecs{
@@ -89,7 +89,9 @@ public:
 	template<typename T>
 	std::shared_ptr<T> RegisterSystem()
 	{
-		return mSystemManager->RegisterSystem<T>();
+		auto system = mSystemManager->RegisterSystem<T>();
+    system->InitializeSystem(this);
+    return system;
 	}
 
 	template<typename T>

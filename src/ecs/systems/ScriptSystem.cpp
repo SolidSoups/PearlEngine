@@ -2,26 +2,18 @@
 #include "ScriptComponent.h"
 #include "ScriptEngine.h"
 
+#include "ecs_system_impl.h"
+
 void ScriptSystem::Init(ecs::Coordinator* coord, ScriptEngine* engine){
   mCoordinator = coord;
   mEngine = engine;
 }
 
-// TOO MUCH FUCKING STATE!?
 void ScriptSystem::OnUpdate(){
   for(auto entity : mEntities){
     // get all components with a script path
-    ScriptComponent& sc = mCoordinator->GetComponent<ScriptComponent>(entity);
+    ScriptComponent& sc = Get<ScriptComponent>(entity);
     std::string& path = sc.scriptPath;
-
-    // log state
-    // LOG_INFO << "Script State:\n"
-    //   << "Path: " << path << "\n"
-    //   << "Env: " << sc.scriptEnv.valid() << "\n"
-    //   << "Enabled: " << sc.enabled << "\n"
-    //   << "Loaded: " << sc.loaded << "\n"
-    //   << "Reload requested: " << sc.needsReload << "\n"
-    //   << "Has Error: " << sc.hasError;
 
     if(path.empty()) continue;
 

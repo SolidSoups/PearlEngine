@@ -10,6 +10,7 @@ namespace ecs {
 
 class SystemManager {
 public:
+  // register a system
   template <typename T> std::shared_ptr<T> RegisterSystem() {
     const char *typeName = typeid(T).name();
 
@@ -22,6 +23,7 @@ public:
     return system;
   }
 
+  // Set the signature (what components it needs)
   template <typename T> void SetSignature(Signature signature) {
     const char *typeName = typeid(T).name();
 
@@ -32,6 +34,7 @@ public:
     mSignatures.insert({typeName, signature});
   }
 
+  // Erase an entity 
   void EntityDestroyed(Entity entity) {
     // erase a destroyed entity from all lists
     for (auto const &pair : mSystems) {
@@ -41,6 +44,7 @@ public:
     }
   }
 
+  // broadcast that a signature has changed
   void EntitySignatureChanged(Entity entity, Signature entitySignature) {
     // notify each system that an entity's signature changed
     for (auto const &pair : mSystems) {
