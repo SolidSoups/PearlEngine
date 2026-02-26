@@ -14,6 +14,7 @@
 #include <imgui.h>
 
 // src
+#include "LineRenderer.h"
 #include "PearlEngine.h"
 #include "InputManager.h"
 #include "AmbientLightEditorPanel.h"
@@ -92,6 +93,7 @@ PearlEngine::PearlEngine() {
 }
 
 PearlEngine::~PearlEngine() {
+  LineRenderer::Destroy();
   ServiceLocator::Destroy();
   UserGUI::Destroy();
 
@@ -126,6 +128,10 @@ void PearlEngine::Initialize() {
       m_ShaderManager->load("shaders/flatVert.glsl", "shaders/flatFrag.glsl");
   m_GridShader =
       m_ShaderManager->load("shaders/gridVert.glsl", "shaders/gridFrag.glsl");
+
+  auto lineShader = m_ShaderManager->load("shaders/lineVert.glsl", "shaders/lineFrag.glsl");
+  LineRenderer::Initialize(lineShader);
+
 
   // create the main camera
   ecs::Entity cameraEntity = mScene->CreateEntity("Main Camera");
@@ -298,6 +304,15 @@ void PearlEngine::Render() {
   m_GridShader->setVec3("cameraPos", camSystem->GetPosition());
   m_WorldPlaneQuad->Draw();
   glDisable(GL_BLEND);
+  m_ViewportFramebuffer->Unbind();
+
+
+  // draw test line
+  m_ViewportFramebuffer->Bind();
+  glDisable(GL_DEPTH_TEST);
+  LineRenderer::DrawLine({0, 0, 0}, {5, 5, 5}, {1, 0, 0});
+  LineRenderer::Flush(projection * view);
+  glEnable(GL_DEPTH_TEST);
   m_ViewportFramebuffer->Unbind();
 }
 
