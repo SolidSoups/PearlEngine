@@ -4,8 +4,8 @@ std::shared_ptr<ShaderData> LineRenderer::mShader = nullptr;
 std::vector<LineRenderer::Line> LineRenderer::mLines{};
 GLuint LineRenderer::mVAO = 0;
 GLuint LineRenderer::mVBO = 0;
-std::unordered_map<int, std::vector<glm::vec3>>
-    LineRenderer::mSegmentsToLines;
+std::unordered_map<int, std::vector<glm::vec3>> LineRenderer::mSegmentsToLines;
+std::vector<glm::vec3> LineRenderer::mLineBoxPoints;
 
 void LineRenderer::Initialize(const std::shared_ptr<ShaderData> shader) {
   mShader = shader;
@@ -24,10 +24,49 @@ void LineRenderer::Initialize(const std::shared_ptr<ShaderData> shader) {
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
                         (void *)(3 * sizeof(float)));
+
+  // calculate line box points.
+  auto& b = mLineBoxPoints;
+  const float h = 0.5f;
+  const glm::vec2 r_points[] = {{-h, h}, {-h, -h}, {h, -h}, {h, h}};
+  for (int i = 0; i < 4; i++) {
+    for (int r = 1; r < 4; r++) {
+      glm::vec2 p1 = r_points[r - 1];
+      glm::vec2 p2 = r_points[r];
+
+      // determine axis
+      switch (i) {
+      case 0:
+        b.push_back({-h, p1.y, p1.x});
+        b.push_back({-h, p2.y, p2.x});
+        break;
+      case 1:
+        b.push_back({p1.y, h, p1.x});
+        b.push_back({p2.y, h, p2.x});
+        break;
+      case 2:
+        b.push_back({h, -p1.y, p1.x});
+        b.push_back({h, -p2.y, p2.x});
+        break;
+      case 3:
+        b.push_back({-p1.y, -h, p1.x});
+        b.push_back({-p2.y, -h, p2.x});
+        break;
+      }
+    }
+  }
 }
 
 void LineRenderer::DrawLine(glm::vec3 a, glm::vec3 b, glm::vec3 color) {
   mLines.push_back({a, b, color});
+}
+
+void LineRenderer::DrawWireBox(glm::vec3 center, glm::vec3 size,
+                               glm::vec3 color) {
+  auto& b = mLineBoxPoints;
+  for(int i=0; i<b.size(); i+=2){
+    mLines.push_back({center + b[i+0] * size, center + b[i+1] * size, color});
+  }
 }
 
 // how am i supposed to cache this? radius + segments at center in world?
@@ -40,13 +79,10 @@ void LineRenderer::DrawWireSphere(glm::vec3 center, float radius,
   }
 
   // safe to index now...
-  auto& points = mSegmentsToLines[segments];
-  for(int i=0; i<points.size(); i+=2){
-    mLines.push_back({
-      center + points[i] * radius,
-      center + points[i+1] * radius,
-      color
-    });
+  auto &points = mSegmentsToLines[segments];
+  for (int i = 0; i < points.size(); i += 2) {
+    mLines.push_back(
+        {center + points[i] * radius, center + points[i + 1] * radius, color});
   }
 }
 

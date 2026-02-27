@@ -23,10 +23,12 @@ private:
   static GLuint mVAO, mVBO;
   static std::shared_ptr<ShaderData> mShader;
   static std::unordered_map<int, std::vector<glm::vec3>> mSegmentsToLines;
+  static std::vector<glm::vec3> mLineBoxPoints;
 
 public:
   static void DrawLine(glm::vec3 a, glm::vec3 b, glm::vec3 color = {0, 1, 0});
   static void DrawWireSphere(glm::vec3 center, float radius, glm::vec3 color = {0,1,0}, int segments=32);
+  static void DrawWireBox(glm::vec3 center, glm::vec3 size, glm::vec3 color = {0,1,0});
 
   static void Flush(const glm::mat4 viewProj);
 private:
