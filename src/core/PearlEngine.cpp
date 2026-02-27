@@ -307,10 +307,9 @@ void PearlEngine::Render() {
   m_ViewportFramebuffer->Unbind();
 
 
-  // draw test line
+  // draw gizmo lines
   m_ViewportFramebuffer->Bind();
   glDisable(GL_DEPTH_TEST);
-  LineRenderer::DrawWireSphere({2, 2, 2}, 3.f, {0, 1, 0});
   LineRenderer::Flush(projection * view);
   glEnable(GL_DEPTH_TEST);
   m_ViewportFramebuffer->Unbind();

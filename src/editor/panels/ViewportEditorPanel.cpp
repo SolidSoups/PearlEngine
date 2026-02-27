@@ -11,6 +11,7 @@
 #include "FrameBuffer.h"
 #include "MenuRegistry.h"
 #include "Renderer.h"
+#include "LineRenderer.h"
 
 #include "SelectionWizard.h"
 #include "ServiceLocator.h"
@@ -54,7 +55,6 @@ void ViewportEditorPanel::OnImGuiRender() {
       selectedItem = 2;
   }
 
-
   // set the selected operation
   ImGuizmo::OPERATION selectedOperation = operations[selectedItem];
 
@@ -84,14 +84,14 @@ void ViewportEditorPanel::OnImGuiRender() {
 
   glm::mat4 cameraView, cameraProjection;
   scene.GetCameraSystem()->GetMatrices(cameraView, cameraProjection);
-   
+
   glm::mat4 identity(1.0f);
-  // ImGuizmo::DrawGrid(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), glm::value_ptr(identity), 100.0f);
+  // ImGuizmo::DrawGrid(glm::value_ptr(cameraView),
+  // glm::value_ptr(cameraProjection), glm::value_ptr(identity), 100.0f);
 
   // Render Gizmos
   if (SelectionWizard::HasSelection()) {
     auto selectedEntity = SelectionWizard::Get();
-
     if (!coordinator.HasComponent<TransformComponent>(selectedEntity)) {
       SelectionWizard::Clear();
     } else {
@@ -126,10 +126,17 @@ void ViewportEditorPanel::OnImGuiRender() {
           }
           entityTransform.rotation = glm::degrees(glm::vec3(x, y, z));
         } else if (selectedOperation == ImGuizmo::OPERATION::SCALE) {
-          entityTransform.scale = glm::vec3(glm::length(glm::vec3(transform[0])),
-                                            glm::length(glm::vec3(transform[1])),
-                                            glm::length(glm::vec3(transform[2])));
+          entityTransform.scale =
+              glm::vec3(glm::length(glm::vec3(transform[0])),
+                        glm::length(glm::vec3(transform[1])),
+                        glm::length(glm::vec3(transform[2])));
         }
+      }
+
+      if (coordinator.HasComponent<PointLightComponent>(selectedEntity)) {
+        auto &pointLight =
+            coordinator.GetComponent<PointLightComponent>(selectedEntity);
+        LineRenderer::DrawWireSphere(entityTransform.position, pointLight.data.radius, {1, 1, 1});
       }
     }
   }
