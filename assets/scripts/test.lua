@@ -10,8 +10,8 @@ function OnCreate()
 
 		-- adjust location of camera transform
 		CameraTransform = Scene.GetTransform(CameraEntity)
-		CameraTransform.position.x = Transform.position.x - 5
-		CameraTransform.position.y = Transform.position.y + 5
+		CameraTransform.position.x = Transform.position.x - 10
+		CameraTransform.position.y = Transform.position.y + 10
 		CameraTransform.position.z = Transform.position.z
 		CameraTransform:LookAt(Transform.position)
 
@@ -25,13 +25,15 @@ function OnUpdate()
 	move()
 
 	-- copy camera transform
-	CameraTransform.position.x = Transform.position.x - 5
-	CameraTransform.position.y = Transform.position.y + 5
+	CameraTransform.position.x = Transform.position.x - 10
+	CameraTransform.position.y = Transform.position.y + 10
 	CameraTransform.position.z = Transform.position.z
 
 	if Input.GetKeyDown("SPACE") then
 		Debug.Log("I AM JUMPING!")
 	end
+
+	Gizmo.DrawWireBox(Transform.position, Vec3.new(2, 2, 2), Vec3.new(1, 0, 0))
 end
 
 function move()

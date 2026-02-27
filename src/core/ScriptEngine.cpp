@@ -2,13 +2,15 @@
 
 #include <iostream>
 
+#include <glm/glm.hpp>
+
 #include "ScriptComponent.h"
 #include "Scene.h"
 #include "TransformComponent.h"
 #include "NameComponent.h"
 #include "Time.h"
+#include "LineRenderer.h"
 
-#include <glm/glm.hpp>
 
 void ScriptEngine::Init(Scene *scene,
                         const std::shared_ptr<InputManager> &inputMan) {
@@ -246,5 +248,17 @@ void ScriptEngine::BindAPIs() {
   });
   input.set_function("GetKeyUp", [this](const std::string &key) -> bool {
     return mInputMan->GetKeyUpString(key);
+  });
+
+  // Gizmo
+  sol::table gizmo = m_Lua.create_named_table("Gizmo");
+  gizmo.set_function("DrawLine", [](glm::vec3 a, glm::vec3 b, glm::vec3 color){
+    LineRenderer::DrawLine(a, b, color);
+  });
+  gizmo.set_function("DrawWireBox", [](glm::vec3 center, glm::vec3 size, glm::vec3 color){
+    LineRenderer::DrawWireBox(center, size, color);
+  });
+  gizmo.set_function("DrawWireSphere", [](glm::vec3 center, float radius, glm::vec3 color){
+    LineRenderer::DrawWireSphere(center, radius, color);
   });
 }
