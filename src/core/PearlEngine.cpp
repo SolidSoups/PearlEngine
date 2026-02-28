@@ -312,7 +312,7 @@ void PearlEngine::Render() {
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_LINE_SMOOTH);
   glLineWidth(1.2f);
-  LineRenderer::DrawWireCapsule(glm::vec3{0, 1, 0}, glm::vec3{3, 3, 0}, 1.f,{1, 0, 0});
+  LineRenderer::DrawWireCapsule({3, 3, 0}, {6, 6, 0}, 1.0f);
   LineRenderer::Flush(projection * view);
   glLineWidth(1.0f);
   glEnable(GL_DEPTH_TEST);

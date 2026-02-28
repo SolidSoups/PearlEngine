@@ -8,6 +8,7 @@ GLuint LineRenderer::mVAO = 0;
 GLuint LineRenderer::mVBO = 0;
 std::unordered_map<int, std::vector<glm::vec3>> LineRenderer::mSegmentsToLines;
 std::vector<glm::vec3> LineRenderer::mLineBoxPoints;
+std::vector<glm::vec3> LineRenderer::mCachedUnitHemisphere;
 
 void LineRenderer::Initialize(const std::shared_ptr<ShaderData> shader) {
   mShader = shader;
@@ -55,6 +56,33 @@ void LineRenderer::Initialize(const std::shared_ptr<ShaderData> shader) {
         b.push_back({-p2.y, -h, p2.x});
         break;
       }
+    }
+  }
+
+  CacheUnitHemisphere();
+}
+
+void LineRenderer::CacheUnitHemisphere(int segments) {
+  // NOTE that this code is innefficient by design
+  // run only once at start up, it prioritizes readability rather than
+  // efficient computation.
+
+  auto &c = mCachedUnitHemisphere;
+  for (int i = 1; i <= segments; i++) {
+    float angleA = (float)(i - 1) / segments * glm::two_pi<float>();
+    float angleB = (float)(i % segments) / segments * glm::two_pi<float>();
+
+    // first add skirt circle
+    c.emplace_back(glm::cos(angleA), 0, glm::sin(angleA));
+    c.emplace_back(glm::cos(angleB), 0, glm::sin(angleB));
+
+    if (i <= segments / 2) {
+      // add XY half circle
+      c.emplace_back(glm::cos(angleA), glm::sin(angleA), 0);
+      c.emplace_back(glm::cos(angleB), glm::sin(angleB), 0);
+
+      c.emplace_back(0, glm::sin(angleA), glm::cos(angleA));
+      c.emplace_back(0, glm::sin(angleB), glm::cos(angleB));
     }
   }
 }
@@ -183,47 +211,24 @@ void LineRenderer::DrawWireCapsule(glm::vec3 a, glm::vec3 b, float radius,
   mLines.push_back({a + bitangent * radius, b + bitangent * radius, color});
   mLines.push_back({a - bitangent * radius, b - bitangent * radius, color});
 
-  // draw circles around points a, b using tangent and bitangent
-  // we need two points for a line, so the body calculates previous segment too
-  for (int i = 1; i <= Segments; i++) {
-    float a1 = (float)(i % Segments) / Segments * glm::two_pi<float>();
-    float a2 = (float)(i - 1) / Segments * glm::two_pi<float>();
-
-    float s1 = glm::sin(a1) * radius;
-    float c1 = glm::cos(a1) * radius;
-    float s2 = glm::sin(a2) * radius;
-    float c2 = glm::cos(a2) * radius;
-
-    glm::vec3 p1 = s1 * tangent + c1 * bitangent;
-    glm::vec3 p2 = s2 * tangent + c2 * bitangent;
-
-    mLines.push_back({a + p1, a + p2, color});
-    mLines.push_back({b + p1, b + p2, color});
-  }
-
-  DrawWireHalfCircle(a, radius, -axis, tangent, color);
-  DrawWireHalfCircle(a, radius, -axis, bitangent, color);
-  DrawWireHalfCircle(b, radius, axis, tangent, color);
-  DrawWireHalfCircle(b, radius, axis, bitangent, color);
+  DrawWireHemisphere(a, radius, -axis, tangent);
+  DrawWireHemisphere(b, radius, axis, bitangent);
 }
 
-void LineRenderer::DrawWireHalfCircle(glm::vec3 center, float radius,
+void LineRenderer::DrawWireHemisphere(glm::vec3 center, float radius,
                                       glm::vec3 up, glm::vec3 right,
                                       glm::vec3 color) {
-  constexpr int SEGMENTS = 24 / 2;
+  glm::vec3 forward = glm::cross(right, up);
+  size_t size = mCachedUnitHemisphere.size();
+  for (int i = 0; i < size; i += 2) {
+    glm::vec3 &pa = mCachedUnitHemisphere[i];
+    glm::vec3 &pb = mCachedUnitHemisphere[i + 1];
 
-  for (int i = 1; i <= SEGMENTS; i++) {
-    float angle1 = (float)(i) / SEGMENTS * glm::pi<float>();
-    float angle2 = (float)(i - 1) / SEGMENTS * glm::pi<float>();
+    glm::vec3 wa = center + right * (pa.x * radius) + up * (pa.y * radius) +
+                   forward * (pa.z * radius);
+    glm::vec3 wb = center + right * (pb.x * radius) + up * (pb.y * radius) +
+                   forward * (pb.z * radius);
 
-    float s1 = glm::sin(angle1) * radius;
-    float c1 = glm::cos(angle1) * radius;
-    float s2 = glm::sin(angle2) * radius;
-    float c2 = glm::cos(angle2) * radius;
-
-    glm::vec3 p1 = center + up * s1 + right * c1;
-    glm::vec3 p2 = center + up * s2 + right * c2;
-    
-    mLines.push_back({p1, p2, color});
+    mLines.push_back({wa, wb, color});
   }
 }
