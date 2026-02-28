@@ -106,3 +106,19 @@ void Sphere::generate_uvsphere(std::vector<float> &out_vertices,
   
 }
 
+void Capsule::generate_linecylinder(glm::vec3 a, glm::vec3 b, float radius, std::vector<glm::vec3>& outLineVerts, int curve_res){
+  glm::vec3 axis = glm::normalize(b - a); 
+
+  // generate orthonormal basis around axis
+  glm::vec3 up = glm::abs(glm::dot(axis, glm::vec3(0,1,0))) < 0.99 ? glm::vec3(0,1,0) : glm::vec3(1,0,0);
+  glm::vec3 tangent = glm::normalize(glm::cross(up, axis));
+  glm::vec3 bitangent = glm::cross(axis, tangent);
+
+  // create inner cylindrical body
+  outLineVerts.push_back(a);
+  outLineVerts.push_back(b);
+}
+
+
+
+

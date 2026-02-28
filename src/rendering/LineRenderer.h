@@ -29,6 +29,8 @@ public:
   static void DrawLine(glm::vec3 a, glm::vec3 b, glm::vec3 color = {0, 1, 0});
   static void DrawWireSphere(glm::vec3 center, float radius, glm::vec3 color = {0,1,0}, int segments=32);
   static void DrawWireBox(glm::vec3 center, glm::vec3 size, glm::vec3 color = {0,1,0});
+  static void DrawWireCapsule(glm::vec3 a, glm::vec3 b, float radius, glm::vec3 color = {0, 1, 0});
+  static void DrawWireHalfCircle(glm::vec3 center, float radius, glm::vec3 up, glm::vec3 right, glm::vec3 color = {0, 1, 0});
 
   static void Flush(const glm::mat4 viewProj);
 private:

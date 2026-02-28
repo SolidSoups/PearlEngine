@@ -310,10 +310,13 @@ void PearlEngine::Render() {
   // draw gizmo lines
   m_ViewportFramebuffer->Bind();
   glDisable(GL_DEPTH_TEST);
-  glLineWidth(2.0f);
+  glEnable(GL_LINE_SMOOTH);
+  glLineWidth(1.2f);
+  LineRenderer::DrawWireCapsule(glm::vec3{0, 1, 0}, glm::vec3{3, 3, 0}, 1.f,{1, 0, 0});
   LineRenderer::Flush(projection * view);
   glLineWidth(1.0f);
   glEnable(GL_DEPTH_TEST);
+  glDisable(GL_LINE_SMOOTH);
   m_ViewportFramebuffer->Unbind();
 }
 
