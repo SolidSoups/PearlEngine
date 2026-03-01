@@ -11,6 +11,7 @@
 #include "ScriptEngine.h"
 #include "ScriptSystem.h"
 #include "CameraSystem.h"
+#include "PhysicsSystem.h"
 
 class RenderSystem;
 class PointLightSystem;
@@ -73,6 +74,7 @@ private:
   std::shared_ptr<ScriptEngine> mScriptEngine;
   std::shared_ptr<ScriptSystem> mScriptSystem;
   std::shared_ptr<CameraSystem> mCameraSystem;
+  std::shared_ptr<PhysicsSystem> mPhysicsSystem;
 
   ecs::Entity mPreviewCameraEntity = ecs::NULL_ENTITY;
 

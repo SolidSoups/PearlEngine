@@ -14,7 +14,7 @@ class Coordinator;
 class System {
 public:
   // set is filled automatically with signed entities
-  std::unordered_set<Entity> mEntities;
+  std::unordered_set<Entity> Entities;
 
 public:
   // interface to set the coordinator on creation

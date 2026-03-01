@@ -10,7 +10,7 @@ void ScriptSystem::Init(ecs::Coordinator* coord, ScriptEngine* engine){
 }
 
 void ScriptSystem::OnUpdate(){
-  for(auto entity : mEntities){
+  for(auto entity : Entities){
     // get all components with a script path
     ScriptComponent& sc = Get<ScriptComponent>(entity);
     std::string& path = sc.scriptPath;
@@ -44,7 +44,7 @@ void ScriptSystem::OnUpdate(){
 }
 
 void ScriptSystem::OnDestroy(){
-  for(auto entity : mEntities){
+  for(auto entity : Entities){
     ScriptComponent& sc = mCoordinator->GetComponent<ScriptComponent>(entity);
     if(sc.loaded){
       mEngine->RunOnDestroy(entity, sc);

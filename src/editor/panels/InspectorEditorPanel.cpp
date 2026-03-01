@@ -6,6 +6,7 @@
 #include "ImGuiHelpers.h"
 #include "Material.h"
 #include "ComponentEditorRegistry.h"
+#include "SphereColliderComponent.h"
 #include "PointLightComponent.h"
 #include "TransformComponent.h"
 #include "CameraComponent.h"
@@ -99,7 +100,6 @@ void InspectorEditorPanel::DrawComponentIfPresent(ecs::Entity entity) {
   }
 }
 
-
 void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
   auto &coordinator = r_Scene.GetCoordinator();
 
@@ -109,6 +109,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
   DrawComponentIfPresent<RenderComponent>(entity);
   DrawComponentIfPresent<PointLightComponent>(entity);
   DrawComponentIfPresent<ScriptComponent>(entity);
+  DrawComponentIfPresent<SphereColliderComponent>(entity);
 
   // draw add component
   ImGui::Separator();
@@ -117,7 +118,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
   }
 
   std::vector<std::string> compChoices = {"Render Component", "Transform",
-                                          "Point Light", "Camera", "Script"};
+                                          "Point Light", "Camera", "Script", "Sphere Collider"};
   std::string selected = "";
   if (SearchablePopup<std::string>(
           "Add_Component", "Add Component", compChoices,
@@ -137,9 +138,9 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
     } else if (selected == "Script" &&
                !coordinator.HasComponent<ScriptComponent>(entity)) {
       coordinator.AddComponent(entity, ScriptComponent{});
-      LOG_INFO << "entity has component script: "
-               << (coordinator.HasComponent<ScriptComponent>(entity) ? "True"
-                                                                     : "False");
+    } else if (selected == "Sphere Collider" &&
+               !coordinator.HasComponent<SphereColliderComponent>(entity)){
+      coordinator.AddComponent(entity, SphereColliderComponent{});
     }
   }
 }

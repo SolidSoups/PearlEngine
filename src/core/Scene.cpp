@@ -11,8 +11,11 @@
 #include "CameraComponent.h"
 #include "Camera.h"
 #include "Renderer.h"
+
 #include "RenderSystem.h"
 #include "PointLightSystem.h"
+#include "SphereColliderComponent.h"
+#include "PhysicsSystem.h"
 
 #include "TransformComponent.h"
 #include "NameComponent.h"
@@ -34,6 +37,7 @@ Scene::Scene(const std::shared_ptr<IEngineCamera>& engineCam,const std::shared_p
   m_Coordinator.RegisterComponent<PointLightComponent>();
   m_Coordinator.RegisterComponent<NameComponent>();
   m_Coordinator.RegisterComponent<ScriptComponent>();
+  m_Coordinator.RegisterComponent<SphereColliderComponent>();
 
   // Register render system
   mRenderSystem = m_Coordinator.RegisterSystem<RenderSystem>();
@@ -68,6 +72,12 @@ Scene::Scene(const std::shared_ptr<IEngineCamera>& engineCam,const std::shared_p
   csSignature.set(m_Coordinator.GetComponentType<CameraComponent>());
   m_Coordinator.SetSystemSignature<CameraSystem>(csSignature);
   mCameraSystem->Init(&m_Coordinator, engineCam);
+
+  // PhysicsSystem
+  mPhysicsSystem = m_Coordinator.RegisterSystem<PhysicsSystem>();
+  ecs::Signature psSig;
+  psSig.set(m_Coordinator.GetComponentType<SphereColliderComponent>());
+  m_Coordinator.SetSystemSignature<PhysicsSystem>(psSig);
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {
@@ -99,6 +109,9 @@ void Scene::Render(CameraSystem::CameraMode mode) {
   Renderer::BeginScene(view, proj);
   mRenderSystem->RenderAll();
   Renderer::EndScene();
+
+  // render gizmos
+  mPhysicsSystem->DrawGizmos();
 }
 
 std::string Scene::GetEntityName(ecs::Entity entity) {

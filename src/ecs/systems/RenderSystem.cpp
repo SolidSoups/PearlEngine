@@ -14,7 +14,7 @@ void RenderSystem::Init(ecs::Coordinator* coordinator){
   mCoordinator = coordinator;
 }
 void RenderSystem::RenderAll(){
-  for(auto entity : mEntities){
+  for(auto entity : Entities){
     auto& transform = mCoordinator->GetComponent<TransformComponent>(entity);
     auto& render = mCoordinator->GetComponent<RenderComponent>(entity);
 

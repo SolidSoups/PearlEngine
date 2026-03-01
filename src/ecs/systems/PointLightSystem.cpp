@@ -12,9 +12,9 @@ void PointLightSystem::Init(ecs::Coordinator* coordinator){
 }
 
 void PointLightSystem::SendUniforms(std::shared_ptr<ShaderData> shader){
-  shader->setInt("numPointLights", mEntities.size());
+  shader->setInt("numPointLights", Entities.size());
   size_t point_light_id = 0;
-  for(auto entity : mEntities){
+  for(auto entity : Entities){
     auto& pointLight = mCoordinator->GetComponent<PointLightComponent>(entity);
     auto& transform = mCoordinator->GetComponent<TransformComponent>(entity);
 

@@ -40,7 +40,7 @@ public:
     for (auto const &pair : mSystems) {
       auto const &system = pair.second;
 
-      system->mEntities.erase(entity);
+      system->Entities.erase(entity);
     }
   }
 
@@ -59,12 +59,12 @@ public:
 
       // if entity signature matches, insert the entity into the systems map
       if ((entitySignature & systemSignature) == systemSignature) {
-        system->mEntities.insert(entity);
+        system->Entities.insert(entity);
       }
       // if entity signature does not match, erase the entity from the systems map
       // (if it exists)
       else {
-        system->mEntities.erase(entity);
+        system->Entities.erase(entity);
       }
     }
   }
