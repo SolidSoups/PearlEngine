@@ -4,6 +4,17 @@ This is the repository for the pearl engine. Currently unable to build the game 
 
 ## Installation
 
+**Dependencies** (pulled via git submodules):
+- [GLFW](https://github.com/glfw/glfw) - window and input
+- [GLM](https://github.com/g-truc/glm) - math
+- [ImGui](https://github.com/ocornut/imgui) - UI (docking branch)
+- [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo) - gizmos
+- [nlohmann/json](https://github.com/nlohmann/json) - JSON serialization
+- [sol2](https://github.com/ThePhD/sol2) - Lua bindings
+- glad - OpenGL loader (vendored)
+- Lua 5.4.7 - scripting (vendored)
+- stb_image - texture loading (vendored)
+
 **Requirements**:
 - CMake 3.16
 - C++17
