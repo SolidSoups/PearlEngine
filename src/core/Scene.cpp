@@ -11,6 +11,7 @@
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
 #include "CapsuleColliderComponent.h"
+#include "Time.h"
 #include "Camera.h"
 #include "Renderer.h"
 
@@ -110,6 +111,7 @@ void Scene::Clear() {
 
 void Scene::Update() {
   mScriptSystem->OnUpdate();
+  mPhysicsSystem->UpdatePhysics(Time::deltaTime);
 }
 
 void Scene::Render(CameraSystem::CameraMode mode) {

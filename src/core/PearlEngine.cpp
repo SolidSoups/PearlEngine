@@ -15,6 +15,8 @@
 
 // src
 #include "LineRenderer.h"
+#include "SphereColliderComponent.h"
+#include "RigidBodyComponent.h"
 #include "PearlEngine.h"
 #include "InputManager.h"
 #include "AmbientLightEditorPanel.h"
@@ -129,9 +131,9 @@ void PearlEngine::Initialize() {
   m_GridShader =
       m_ShaderManager->load("shaders/gridVert.glsl", "shaders/gridFrag.glsl");
 
-  auto lineShader = m_ShaderManager->load("shaders/lineVert.glsl", "shaders/lineFrag.glsl");
+  auto lineShader =
+      m_ShaderManager->load("shaders/lineVert.glsl", "shaders/lineFrag.glsl");
   LineRenderer::Initialize(lineShader);
-
 
   // create the main camera
   ecs::Entity cameraEntity = mScene->CreateEntity("Main Camera");
@@ -165,15 +167,12 @@ void PearlEngine::Initialize() {
 
   float plane_h = 1.0f * 1000;
   std::vector<float> planeQuadVerts = {
-    -plane_h, 0, -plane_h,    0, 0,   0.0f, 1.0f, 0.0f, // bottom-left 
-     plane_h, 0, -plane_h,    1, 0,   0.0f, 1.0f, 0.0f, // bottom-left 
-    -plane_h, 0,  plane_h,    0, 1,   0.0f, 1.0f, 0.0f, // bottom-left 
-     plane_h, 0,  plane_h,    1, 1,   0.0f, 1.0f, 0.0f // bottom-left 
+      -plane_h, 0, -plane_h, 0, 0, 0.0f, 1.0f, 0.0f, // bottom-left
+      plane_h,  0, -plane_h, 1, 0, 0.0f, 1.0f, 0.0f, // bottom-left
+      -plane_h, 0, plane_h,  0, 1, 0.0f, 1.0f, 0.0f, // bottom-left
+      plane_h,  0, plane_h,  1, 1, 0.0f, 1.0f, 0.0f  // bottom-left
   };
-  std::vector<unsigned int> planeQuadIndices = {
-    0, 1, 2,
-    2, 1, 3
-  };
+  std::vector<unsigned int> planeQuadIndices = {0, 1, 2, 2, 1, 3};
   m_WorldPlaneQuad = std::make_unique<Mesh>(planeQuadVerts, planeQuadIndices);
 
   // Create the viewport editor panel
@@ -201,9 +200,26 @@ void PearlEngine::Initialize() {
 
   LOG_INFO << "Finished initialization";
 
-  auto sphere = mScene->CreateSphere("Script Tester");
+  // create sphere comp
   auto &coord = mScene->GetCoordinator();
-  coord.AddComponent(sphere, ScriptComponent{});
+  auto sphere = mScene->CreateSphere("Script Tester");
+  coord.GetComponent<TransformComponent>(sphere).position = glm::vec3{0, 5, 0};
+  auto &renderC1 = coord.GetComponent<RenderComponent>(sphere);
+  renderC1.material->setTexture(
+      "texture_diffuse1",
+      m_TextureManager->load("assets/Textures/Globe._Albedo.png"));
+  coord.AddComponent(sphere, SphereColliderComponent{});
+  coord.AddComponent(sphere, RigidBodyComponent{1.0f, 2.f});
+
+  // create the plane comp
+  auto plane = mScene->CreatePlane("Collision test");
+  coord.GetComponent<TransformComponent>(plane).scale = {10.f, 1.f, 10.f};
+  auto &planeRender = coord.GetComponent<RenderComponent>(plane);
+  planeRender.material->setTexture(
+      "texture_diffuse1",
+      m_TextureManager->load("assets/hatchet/Hatchet_diffuse.png"));
+  coord.AddComponent(
+      plane, BoxColliderComponent{{0.0f, -0.05f, 0.0f}, {10.f, 0.1f, 10.f}});
 }
 
 // b@UPDATE
@@ -256,18 +272,19 @@ void PearlEngine::Update() {
 
     // have we moved?
     auto *camSystem = mScene->GetCameraSystem();
-    if (hasMoved && camSystem->GetCameraMode() == CameraSystem::CameraMode::PREVIEW) {
+    if (hasMoved &&
+        camSystem->GetCameraMode() == CameraSystem::CameraMode::PREVIEW) {
       // set camera mode to ENGINE
       mScene->GetCameraSystem()->SetCameraMode(
-        CameraSystem::CameraMode::ENGINE);
+          CameraSystem::CameraMode::ENGINE);
 
       // copy the preview camera view for seamless transition to engine cam
       auto previewCamEntity = mScene->GetCameraSystem()->GetPreviewEntity();
-      if (previewCamEntity != ecs::NULL_ENTITY){
+      if (previewCamEntity != ecs::NULL_ENTITY) {
         auto &coord = mScene->GetCoordinator();
         mEngineCamera->CopyEntity(
-          coord.GetComponent<TransformComponent>(previewCamEntity),
-          coord.GetComponent<CameraComponent>(previewCamEntity));
+            coord.GetComponent<TransformComponent>(previewCamEntity),
+            coord.GetComponent<CameraComponent>(previewCamEntity));
       }
     }
   }
@@ -291,7 +308,7 @@ void PearlEngine::Render() {
   }
 
   // Draw grid
-  auto* camSystem = mScene->GetCameraSystem();
+  auto *camSystem = mScene->GetCameraSystem();
   glm::mat4 view, projection;
   camSystem->GetMatrices(view, projection);
 
@@ -305,7 +322,6 @@ void PearlEngine::Render() {
   m_WorldPlaneQuad->Draw();
   glDisable(GL_BLEND);
   m_ViewportFramebuffer->Unbind();
-
 
   // draw gizmo lines
   m_ViewportFramebuffer->Bind();
@@ -392,7 +408,6 @@ void PearlEngine::LightingPass() {
   // Re-bind viewport framebuffer as active draw target (without clearing)
   glBindFramebuffer(GL_FRAMEBUFFER, m_ViewportFramebuffer->GetFBOId());
   glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
-
 }
 
 void PearlEngine::QuadDebugRenderPass() {

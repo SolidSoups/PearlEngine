@@ -5,6 +5,9 @@
 struct RigidBodyComponent {
   float mass{1.0f};
   float gravity{9.87f};
+
+  // runtime
+  glm::vec3 velocity{0.0f};
 };
 
 inline void to_json(json& j, const RigidBodyComponent& cmp){

@@ -117,6 +117,8 @@ target_include_directories(game_engine PRIVATE
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/project
 
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/physics
+
   ${CMAKE_CURRENT_SOURCE_DIR}/src/service
 
   ${CMAKE_CURRENT_SOURCE_DIR}/src/file
