@@ -49,6 +49,15 @@ public:
 		mSystemManager->EntitySignatureChanged(entity, signature);
 	}
 
+  template<typename T>
+  bool TryAddComponent(Entity entity, T component){
+    if(mComponentManager->HasComponent<T>(entity))
+      return false;
+
+    AddComponent(entity, component);
+    return true;
+  }
+
 	template<typename T>
 	void RemoveComponent(Entity entity)
 	{
@@ -98,6 +107,12 @@ public:
 	void SetSystemSignature(Signature signature)
 	{
 		mSystemManager->SetSignature<T>(signature);
+	}
+
+	template<typename T>
+	void SetSystemInterestSignature(Signature signature)
+	{
+		mSystemManager->SetInterestSignature<T>(signature);
 	}
 
 private:

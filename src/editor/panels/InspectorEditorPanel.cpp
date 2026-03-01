@@ -7,6 +7,7 @@
 #include "Material.h"
 #include "ComponentEditorRegistry.h"
 #include "SphereColliderComponent.h"
+#include "BoxColliderComponent.h"
 #include "PointLightComponent.h"
 #include "TransformComponent.h"
 #include "CameraComponent.h"
@@ -110,6 +111,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
   DrawComponentIfPresent<PointLightComponent>(entity);
   DrawComponentIfPresent<ScriptComponent>(entity);
   DrawComponentIfPresent<SphereColliderComponent>(entity);
+  DrawComponentIfPresent<BoxColliderComponent>(entity);
 
   // draw add component
   ImGui::Separator();
@@ -117,30 +119,27 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
     ImGui::OpenPopup("##SearchablePopup_Add_Component");
   }
 
-  std::vector<std::string> compChoices = {"Render Component", "Transform",
-                                          "Point Light", "Camera", "Script", "Sphere Collider"};
+  std::vector<std::string> compChoices = {
+      "Render Component", "Transform",       "Point Light", "Camera",
+      "Script",           "Sphere Collider", "Box Collider"};
   std::string selected = "";
   if (SearchablePopup<std::string>(
           "Add_Component", "Add Component", compChoices,
           [](std::string choice) { return choice; }, selected)) {
-    if (selected == "Render Component" &&
-        !coordinator.HasComponent<RenderComponent>(entity)) {
-      coordinator.AddComponent(entity, RenderComponent{});
-    } else if (selected == "Transform" &&
-               !coordinator.HasComponent<TransformComponent>(entity)) {
-      coordinator.AddComponent(entity, TransformComponent{});
-    } else if (selected == "Point Light" &&
-               !coordinator.HasComponent<PointLightComponent>(entity)) {
-      coordinator.AddComponent(entity, PointLightComponent{});
-    } else if (selected == "Camera" &&
-               !coordinator.HasComponent<CameraComponent>(entity)) {
-      coordinator.AddComponent(entity, CameraComponent{});
-    } else if (selected == "Script" &&
-               !coordinator.HasComponent<ScriptComponent>(entity)) {
-      coordinator.AddComponent(entity, ScriptComponent{});
-    } else if (selected == "Sphere Collider" &&
-               !coordinator.HasComponent<SphereColliderComponent>(entity)){
-      coordinator.AddComponent(entity, SphereColliderComponent{});
-    }
+
+    if (selected == "Render Component")
+      coordinator.TryAddComponent(entity, RenderComponent{});
+    else if (selected == "Transform")
+      coordinator.TryAddComponent(entity, TransformComponent{});
+    else if (selected == "Point Light")
+      coordinator.TryAddComponent(entity, PointLightComponent{});
+    else if (selected == "Camera")
+      coordinator.TryAddComponent(entity, CameraComponent{});
+    else if (selected == "Script")
+      coordinator.TryAddComponent(entity, ScriptComponent{});
+    else if (selected == "Sphere Collider")
+      coordinator.TryAddComponent(entity, SphereColliderComponent{});
+    else if (selected == "Box Collider")
+      coordinator.TryAddComponent(entity, BoxColliderComponent{});
   }
 }

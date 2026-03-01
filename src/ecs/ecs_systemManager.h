@@ -34,6 +34,14 @@ public:
     mSignatures.insert({typeName, signature});
   }
 
+  // Set interest (OR) signature — entity qualifies if it has ANY of these bits
+  template <typename T> void SetInterestSignature(Signature signature) {
+    const char *typeName = typeid(T).name();
+    assert(mSystems.find(typeName) != mSystems.end() &&
+           "System used before registered.");
+    mInterestSignatures.insert({typeName, signature});
+  }
+
   // Erase an entity 
   void EntityDestroyed(Entity entity) {
     // erase a destroyed entity from all lists
@@ -46,24 +54,26 @@ public:
 
   // broadcast that a signature has changed
   void EntitySignatureChanged(Entity entity, Signature entitySignature) {
-    // notify each system that an entity's signature changed
     for (auto const &pair : mSystems) {
-      auto const &type = pair.first;
+      auto const &type   = pair.first;
       auto const &system = pair.second;
 
-      auto sig_it = mSignatures.find(type);
-      if(sig_it == mSignatures.end()) {
+      auto req_it = mSignatures.find(type);
+      auto int_it = mInterestSignatures.find(type);
+
+      // system has no signatures registered — skip (no auto-population)
+      if (req_it == mSignatures.end() && int_it == mInterestSignatures.end()) {
         continue;
       }
-      auto const &systemSignature = sig_it->second;
 
-      // if entity signature matches, insert the entity into the systems map
-      if ((entitySignature & systemSignature) == systemSignature) {
+      bool passesRequired = (req_it == mSignatures.end()) ||
+                            ((entitySignature & req_it->second) == req_it->second);
+      bool passesInterest = (int_it == mInterestSignatures.end()) ||
+                            (entitySignature & int_it->second).any();
+
+      if (passesRequired && passesInterest) {
         system->Entities.insert(entity);
-      }
-      // if entity signature does not match, erase the entity from the systems map
-      // (if it exists)
-      else {
+      } else {
         system->Entities.erase(entity);
       }
     }
@@ -71,6 +81,7 @@ public:
 
 private:
   std::unordered_map<std::string, Signature> mSignatures{};
+  std::unordered_map<std::string, Signature> mInterestSignatures{};
   std::unordered_map<std::string, std::shared_ptr<System>> mSystems{};
 };
 } // namespace ecs

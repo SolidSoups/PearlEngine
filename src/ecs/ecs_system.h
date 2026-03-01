@@ -26,5 +26,11 @@ protected:
   // helper func, really unecessary and quite the luxury
   template<typename Component>
   Component& Get(ecs::Entity e);
+
+  template<typename Component>
+  bool Has(ecs::Entity e);
+
+  template<typename Component>
+  bool TryGet(ecs::Entity e, Component& cmp);
 };
 }; // namespace ecs
