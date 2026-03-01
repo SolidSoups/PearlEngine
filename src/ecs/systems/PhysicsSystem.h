@@ -7,9 +7,11 @@
 #include "CapsuleColliderComponent.h"
 #include "BoxColliderComponent.h"
 #include "RigidBodyComponent.h"
+#include "ScriptSystem.h"
 
 class PhysicsSystem : public ecs::System {
 public:
+  void Init(ScriptSystem* scriptSystem);
   void UpdatePhysics(float timestep);
   void DrawGizmos();
 

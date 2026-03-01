@@ -209,7 +209,7 @@ void PearlEngine::Initialize() {
       "texture_diffuse1",
       m_TextureManager->load("assets/Textures/Globe._Albedo.png"));
   coord.AddComponent(sphere, SphereColliderComponent{});
-  coord.AddComponent(sphere, RigidBodyComponent{1.0f, 2.f});
+  coord.AddComponent(sphere, RigidBodyComponent{});
 
   // create the plane comp
   auto plane = mScene->CreatePlane("Collision test");
