@@ -5,6 +5,7 @@
 #include <string>
 
 #include "PointLightComponent.h"
+#include "RigidBodyComponent.h"
 #include "RenderComponent.h"
 #include "CameraComponent.h"
 #include "ScriptComponent.h"
@@ -42,6 +43,7 @@ Scene::Scene(const std::shared_ptr<IEngineCamera>& engineCam,const std::shared_p
   m_Coordinator.RegisterComponent<SphereColliderComponent>();
   m_Coordinator.RegisterComponent<BoxColliderComponent>();
   m_Coordinator.RegisterComponent<CapsuleColliderComponent>();
+  m_Coordinator.RegisterComponent<RigidBodyComponent>();
 
   // Register render system
   mRenderSystem = m_Coordinator.RegisterSystem<RenderSystem>();
@@ -79,12 +81,15 @@ Scene::Scene(const std::shared_ptr<IEngineCamera>& engineCam,const std::shared_p
 
   // PhysicsSystem
   mPhysicsSystem = m_Coordinator.RegisterSystem<PhysicsSystem>();
+  ecs::Signature physicsRequirements;
+  physicsRequirements.set(m_Coordinator.GetComponentType<TransformComponent>());
   ecs::Signature physicsInterest;
   physicsInterest.set(m_Coordinator.GetComponentType<SphereColliderComponent>());
   physicsInterest.set(m_Coordinator.GetComponentType<BoxColliderComponent>());
   physicsInterest.set(m_Coordinator.GetComponentType<CapsuleColliderComponent>());
-  // physicsInterest.set(m_Coordinator.GetComponentType<RigidbodyComponent>());
+  physicsInterest.set(m_Coordinator.GetComponentType<RigidBodyComponent>());
   m_Coordinator.SetSystemInterestSignature<PhysicsSystem>(physicsInterest);
+  m_Coordinator.SetSystemSignature<PhysicsSystem>(physicsRequirements);
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {

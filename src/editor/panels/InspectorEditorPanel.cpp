@@ -6,6 +6,7 @@
 #include "ImGuiHelpers.h"
 #include "Material.h"
 #include "ComponentEditorRegistry.h"
+#include "RigidBodyComponent.h"
 #include "SphereColliderComponent.h"
 #include "CapsuleColliderComponent.h"
 #include "BoxColliderComponent.h"
@@ -111,6 +112,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
   DrawComponentIfPresent<RenderComponent>(entity);
   DrawComponentIfPresent<PointLightComponent>(entity);
   DrawComponentIfPresent<ScriptComponent>(entity);
+  DrawComponentIfPresent<RigidBodyComponent>(entity);
   DrawComponentIfPresent<SphereColliderComponent>(entity);
   DrawComponentIfPresent<BoxColliderComponent>(entity);
   DrawComponentIfPresent<CapsuleColliderComponent>(entity);
@@ -123,7 +125,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
 
   std::vector<std::string> compChoices = {
       "Render Component", "Transform",       "Point Light", "Camera",
-      "Script",           "Sphere Collider", "Box Collider", "Capsule Collider"};
+      "Script",           "Sphere Collider", "Box Collider", "Capsule Collider", "RigidBody"};
   std::string selected = "";
   if (SearchablePopup<std::string>(
           "Add_Component", "Add Component", compChoices,
@@ -145,5 +147,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
       coordinator.TryAddComponent(entity, BoxColliderComponent{});
     else if (selected == "Capsule Collider")
       coordinator.TryAddComponent(entity, CapsuleColliderComponent{});
+    else if(selected == "RigidBody")
+      coordinator.TryAddComponent(entity, RigidBodyComponent{});
   }
 }
