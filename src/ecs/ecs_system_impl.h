@@ -23,4 +23,13 @@ bool System::TryGet(ecs::Entity e, Component& cmp){
   }
   return false;
 }
+
+
+template<typename Component>
+Component* System::TryGet(ecs::Entity e){
+  if(!Has<Component>(e))
+    return nullptr;
+
+  return &Get<Component>(e);
+}
 } // namespace ecs

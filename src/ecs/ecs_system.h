@@ -32,5 +32,8 @@ protected:
 
   template<typename Component>
   bool TryGet(ecs::Entity e, Component& cmp);
+
+  template<typename Component>
+  Component* TryGet(ecs::Entity e);
 };
 }; // namespace ecs

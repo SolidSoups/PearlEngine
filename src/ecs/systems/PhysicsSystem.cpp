@@ -2,6 +2,7 @@
 
 #include "ecs_system_impl.h"
 #include "SphereColliderComponent.h"
+#include "CapsuleColliderComponent.h"
 #include "BoxColliderComponent.h"
 #include "LineRenderer.h"
 #include "SelectionWizard.h"
@@ -23,6 +24,9 @@ void PhysicsSystem::DrawGizmos(){
     }
     if(TryGet<BoxColliderComponent>(entity, boxComp)){
       LineRenderer::DrawWireBox(boxComp.center, boxComp.size);
+    }
+    if(auto* capsule = TryGet<CapsuleColliderComponent>(entity)){
+      LineRenderer::DrawWireCapsule(capsule->a, capsule->b, capsule->radius);
     }
   }
 }

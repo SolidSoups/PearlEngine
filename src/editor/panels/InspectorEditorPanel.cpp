@@ -7,6 +7,7 @@
 #include "Material.h"
 #include "ComponentEditorRegistry.h"
 #include "SphereColliderComponent.h"
+#include "CapsuleColliderComponent.h"
 #include "BoxColliderComponent.h"
 #include "PointLightComponent.h"
 #include "TransformComponent.h"
@@ -112,6 +113,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
   DrawComponentIfPresent<ScriptComponent>(entity);
   DrawComponentIfPresent<SphereColliderComponent>(entity);
   DrawComponentIfPresent<BoxColliderComponent>(entity);
+  DrawComponentIfPresent<CapsuleColliderComponent>(entity);
 
   // draw add component
   ImGui::Separator();
@@ -121,7 +123,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
 
   std::vector<std::string> compChoices = {
       "Render Component", "Transform",       "Point Light", "Camera",
-      "Script",           "Sphere Collider", "Box Collider"};
+      "Script",           "Sphere Collider", "Box Collider", "Capsule Collider"};
   std::string selected = "";
   if (SearchablePopup<std::string>(
           "Add_Component", "Add Component", compChoices,
@@ -141,5 +143,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
       coordinator.TryAddComponent(entity, SphereColliderComponent{});
     else if (selected == "Box Collider")
       coordinator.TryAddComponent(entity, BoxColliderComponent{});
+    else if (selected == "Capsule Collider")
+      coordinator.TryAddComponent(entity, CapsuleColliderComponent{});
   }
 }

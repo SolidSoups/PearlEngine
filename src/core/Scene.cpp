@@ -9,6 +9,7 @@
 #include "CameraComponent.h"
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
+#include "CapsuleColliderComponent.h"
 #include "Camera.h"
 #include "Renderer.h"
 
@@ -40,6 +41,7 @@ Scene::Scene(const std::shared_ptr<IEngineCamera>& engineCam,const std::shared_p
   m_Coordinator.RegisterComponent<ScriptComponent>();
   m_Coordinator.RegisterComponent<SphereColliderComponent>();
   m_Coordinator.RegisterComponent<BoxColliderComponent>();
+  m_Coordinator.RegisterComponent<CapsuleColliderComponent>();
 
   // Register render system
   mRenderSystem = m_Coordinator.RegisterSystem<RenderSystem>();
@@ -80,6 +82,7 @@ Scene::Scene(const std::shared_ptr<IEngineCamera>& engineCam,const std::shared_p
   ecs::Signature physicsInterest;
   physicsInterest.set(m_Coordinator.GetComponentType<SphereColliderComponent>());
   physicsInterest.set(m_Coordinator.GetComponentType<BoxColliderComponent>());
+  physicsInterest.set(m_Coordinator.GetComponentType<CapsuleColliderComponent>());
   // physicsInterest.set(m_Coordinator.GetComponentType<RigidbodyComponent>());
   m_Coordinator.SetSystemInterestSignature<PhysicsSystem>(physicsInterest);
 }
