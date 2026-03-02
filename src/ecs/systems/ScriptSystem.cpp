@@ -41,6 +41,14 @@ void ScriptSystem::OnUpdate(){
 
     mEngine->RunOnUpdate(entity, sc);
   }
+
+  // second pass
+  for(auto entity : Entities){
+    ScriptComponent& sc = Get<ScriptComponent>(entity);
+    if(!sc.loaded || !sc.enabled || sc.hasError) continue;
+
+    mEngine->RunOnLateUpdate(entity, sc);
+  }
 }
 
 void ScriptSystem::OnDestroy(){

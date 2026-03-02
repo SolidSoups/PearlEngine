@@ -261,7 +261,7 @@ ecs::Entity Scene::CreateSphere(const std::string& name){
 
 void Scene::SaveCurrentScene(){
   if(!SceneHasPath()){
-    LOG_ERROR << "Scene doesn't have a save path";
+    LOG_ERROR << "Scene doesn't have a save path, path is " << mCurrentScenePath;
     return;
   }
 
@@ -309,6 +309,7 @@ void Scene::SaveScene(const char* filepath) {
 
   FileSystem::writeFile(filepath, bytes);
   LOG_INFO << "Saved scene to: " << filepath;
+  mCurrentScenePath = filepath;
 }
 
 void Scene::LoadScene(const char *filepath) {

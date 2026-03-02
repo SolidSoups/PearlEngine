@@ -39,9 +39,6 @@ void PhysicsSystem::UpdatePhysics(float timestep) {
 }
 
 void PhysicsSystem::CheckCollision(ecs::Entity e1, ecs::Entity e2) {
-  mCE1 = e1;
-  mCE2 = e2;
-
   auto *rb1 = TryGet<RigidBodyComponent>(e1);
   auto *rb2 = TryGet<RigidBodyComponent>(e2);
   if (!rb1 and !rb2)
@@ -58,34 +55,35 @@ void PhysicsSystem::CheckCollision(ecs::Entity e1, ecs::Entity e2) {
   auto *c2 = TryGet<CapsuleColliderComponent>(e2);
 
   if (s1 and s2)
-    TestSphereSphere(t1, *s1, rb1, t2, *s2, rb2);
+    TestSphereSphere(t1, *s1, rb1, t2, *s2, rb2, e1, e2);
 
   if (s1 and b2)
-    TestSphereBox(t1, *s1, rb1, t2, *b2, rb2);
+    TestSphereBox(t1, *s1, rb1, t2, *b2, rb2, e1, e2);
   if (s2 and b1)
-    TestSphereBox(t2, *s2, rb2, t1, *b1, rb1);
+    TestSphereBox(t2, *s2, rb2, t1, *b1, rb1, e2, e1);
 
   if (s1 and c2)
-    TestSphereCapsule(t1, *s1, rb1, t2, *c2, rb2);
+    TestSphereCapsule(t1, *s1, rb1, t2, *c2, rb2, e1, e2);
   if (s2 and c1)
-    TestSphereCapsule(t2, *s2, rb2, t1, *c1, rb1);
+    TestSphereCapsule(t2, *s2, rb2, t1, *c1, rb1, e2, e1);
 
   if (b1 and b2)
-    TestBoxBox(t1, *b1, rb1, t2, *b2, rb2);
+    TestBoxBox(t1, *b1, rb1, t2, *b2, rb2, e1, e2);
 
   if (b1 and c2)
-    TestBoxCapsule(t1, *b1, rb1, t2, *c2, rb2);
+    TestBoxCapsule(t1, *b1, rb1, t2, *c2, rb2, e1, e2);
   if (b2 and c1)
-    TestBoxCapsule(t2, *b2, rb2, t1, *c1, rb1);
+    TestBoxCapsule(t2, *b2, rb2, t1, *c1, rb1, e2, e1);
 
   if (c1 and c2)
-    TestCapsuleCapsule(t1, *c1, rb1, t2, *c2, rb2);
+    TestCapsuleCapsule(t1, *c1, rb1, t2, *c2, rb2, e1, e2);
 }
 
 // Normal needs to point A->B
 void PhysicsSystem::Resolve(TransformComponent &tf1, RigidBodyComponent *rb1,
              TransformComponent &tf2, RigidBodyComponent *rb2,
-             const glm::vec3 &normal, float penetration) {
+             const glm::vec3 &normal, float penetration,
+             ecs::Entity a, ecs::Entity b) {
   // position correction
   if (rb1 and rb2) {
     tf1.position -= normal * (penetration * 0.5f);
@@ -113,7 +111,7 @@ void PhysicsSystem::Resolve(TransformComponent &tf1, RigidBodyComponent *rb1,
   if (rb2)
     rb2->velocity -= j * invM2 * normal;
 
-  RegisterCollision(mCE1, mCE2, normal, penetration);
+  RegisterCollision(a, b, normal, penetration);
 }
 
 void PhysicsSystem::TestSphereSphere(TransformComponent &tf1,
@@ -121,7 +119,8 @@ void PhysicsSystem::TestSphereSphere(TransformComponent &tf1,
                                      RigidBodyComponent *rb1,
                                      TransformComponent &tf2,
                                      SphereColliderComponent &s2,
-                                     RigidBodyComponent *rb2) {
+                                     RigidBodyComponent *rb2,
+                                     ecs::Entity a, ecs::Entity b) {
   glm::vec3 posA = tf1.position + s1.position;
   glm::vec3 posB = tf2.position + s2.position;
   glm::vec3 diff = posB - posA;
@@ -131,7 +130,7 @@ void PhysicsSystem::TestSphereSphere(TransformComponent &tf1,
     return; // no overlap
 
   glm::vec3 normal = dist > 0.0001f ? diff / dist : glm::vec3(0, 1, 0);
-  Resolve(tf1, rb1, tf2, rb2, normal, overlap);
+  Resolve(tf1, rb1, tf2, rb2, normal, overlap, a, b);
 }
 
 void PhysicsSystem::TestSphereBox(TransformComponent &tf1,
@@ -139,7 +138,8 @@ void PhysicsSystem::TestSphereBox(TransformComponent &tf1,
                                   RigidBodyComponent *rb1,
                                   TransformComponent &tf2,
                                   BoxColliderComponent &b2,
-                                  RigidBodyComponent *rb2) {
+                                  RigidBodyComponent *rb2,
+                                  ecs::Entity a, ecs::Entity b) {
   glm::vec3 spherePos = tf1.position + s1.position;
   glm::vec3 boxCenter = tf2.position + b2.center;
   glm::vec3 half = b2.size * 0.5f;
@@ -152,14 +152,15 @@ void PhysicsSystem::TestSphereBox(TransformComponent &tf1,
 
   float overlap = s1.radius - dist;
   glm::vec3 normal = dist > 0.0001f ? -diff / dist : glm::vec3(0, -1, 0);
-  Resolve(tf1, rb1, tf2, rb2, normal, overlap);
+  Resolve(tf1, rb1, tf2, rb2, normal, overlap, a, b);
 }
 void PhysicsSystem::TestSphereCapsule(TransformComponent &tf1,
                                       SphereColliderComponent &s1,
                                       RigidBodyComponent *rb1,
                                       TransformComponent &tf2,
                                       CapsuleColliderComponent &c2,
-                                      RigidBodyComponent *rb2) {
+                                      RigidBodyComponent *rb2,
+                                      ecs::Entity ea, ecs::Entity eb) {
   glm::vec3 spherePos = tf1.position + s1.position;
   glm::vec3 a = tf2.position + c2.a;
   glm::vec3 b = tf2.position + c2.b;
@@ -178,13 +179,14 @@ void PhysicsSystem::TestSphereCapsule(TransformComponent &tf1,
 
   float overlap = combinedR - dist;
   glm::vec3 normal = dist > 0.0001f ? -diff / dist : glm::vec3(0, -1, 0);
-  Resolve(tf1, rb1, tf2, rb2, normal, overlap);
+  Resolve(tf1, rb1, tf2, rb2, normal, overlap, ea, eb);
 }
 void PhysicsSystem::TestBoxBox(TransformComponent &tf1,
                                BoxColliderComponent &b1,
                                RigidBodyComponent *rb1, TransformComponent &tf2,
                                BoxColliderComponent &b2,
-                               RigidBodyComponent *rb2) {
+                               RigidBodyComponent *rb2,
+                               ecs::Entity a, ecs::Entity b) {
   glm::vec3 c1 = tf1.position + b1.center, h1 = b1.size * 0.5f;
   glm::vec3 c2 = tf2.position + b2.center, h2 = b2.size * 0.5f;
   glm::vec3 diff = c2 - c1;
@@ -205,20 +207,22 @@ void PhysicsSystem::TestBoxBox(TransformComponent &tf1,
     pen = overlap.z;
     normal = {0, 0, diff.z > 0 ? 1.0f : -1.0f};
   }
-  Resolve(tf1, rb1, tf2, rb2, normal, pen);
+  Resolve(tf1, rb1, tf2, rb2, normal, pen, a, b);
 }
 void PhysicsSystem::TestBoxCapsule(TransformComponent &t1,
                                    BoxColliderComponent &sp1,
                                    RigidBodyComponent *rb1,
                                    TransformComponent &t2,
                                    CapsuleColliderComponent &sp2,
-                                   RigidBodyComponent *rb2) {}
+                                   RigidBodyComponent *rb2,
+                                   ecs::Entity a, ecs::Entity b) {}
 void PhysicsSystem::TestCapsuleCapsule(TransformComponent &tf1,
                                        CapsuleColliderComponent &c1,
                                        RigidBodyComponent *rb1,
                                        TransformComponent &tf2,
                                        CapsuleColliderComponent &c2,
-                                       RigidBodyComponent *rb2) {
+                                       RigidBodyComponent *rb2,
+                                       ecs::Entity ea, ecs::Entity eb) {
   glm::vec3 a1 = tf1.position + c1.a, b1 = tf1.position + c1.b;
   glm::vec3 a2 = tf2.position + c2.a, b2 = tf2.position + c2.b;
 
@@ -251,7 +255,7 @@ void PhysicsSystem::TestCapsuleCapsule(TransformComponent &tf1,
 
   float overlap = combinedR - dist;
   glm::vec3 normal = dist > 0.0001f ? -diff / dist : glm::vec3(0, -1, 0);
-  Resolve(tf1, rb1, tf2, rb2, normal, overlap);
+  Resolve(tf1, rb1, tf2, rb2, normal, overlap, ea, eb);
 }
 
 void PhysicsSystem::DrawGizmos() {
@@ -284,20 +288,18 @@ void PhysicsSystem::DrawGizmos() {
 
 
 void PhysicsSystem::FlushCollisions(){
-  for(auto [key, pair] : mCurrentCollisionPairs){
+  for(auto [key, event] : mCurrentCollisionPairs){
     if(mPrevCollisions.count(key)){
       // OnCollisionStay
     }
     else{
       // OnCollisionEnter
-      const glm::vec3& normal = pair.first;
-      float penetration = pair.second;
-      mScriptSystem->DispatchOnCollisionEnter(mCE1, mCE2, normal, penetration);
+      mScriptSystem->DispatchOnCollisionEnter(event.me, event.other, event.normal, event.penetration);
     }
   }
-  for(auto [key, pair] : mPrevCollisions){
+  for(auto [key, event] : mPrevCollisions){
     if(!mCurrentCollisionPairs.count(key)){
-      // OnCollisionExit 
+      // OnCollisionExit
     }
   }
 
@@ -310,5 +312,5 @@ void PhysicsSystem::RegisterCollision(ecs::Entity a, ecs::Entity b, const glm::v
   // by always setting lowest entity id first
   uint64_t lo = std::min(a, b);
   uint64_t high = std::max(a, b);
-  mCurrentCollisionPairs[(high << 32) | lo] = std::make_pair(normal, pen);
+  mCurrentCollisionPairs[(high << 32) | lo] = CollisionEvent{a, b, normal, pen};
 }

@@ -90,7 +90,21 @@ void ScriptEngine::RunOnUpdate(ecs::Entity entity, ScriptComponent &sc) {
     LogError(sc, e);
   }
 }
+void ScriptEngine::RunOnLateUpdate(ecs::Entity entity, ScriptComponent &sc) {
+  sol::protected_function fn = sc.scriptEnv["OnLateUpdate"];
+  if (!fn.valid())
+    return;
 
+  UpdateAPIs();
+
+  // try running OnUpdate function
+  auto r = fn(Time::deltaTime);
+  if (!r.valid()) {
+    sol::error e = r;
+    LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnLateUpdate: " << e.what();
+    LogError(sc, e);
+  }
+}
 void ScriptEngine::RunOnCollisionEnter(ecs::Entity entity, ScriptComponent &sc,
                                        ecs::Entity other, glm::vec3 normal,
                                        float penetration) {

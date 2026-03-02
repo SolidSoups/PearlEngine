@@ -13,6 +13,7 @@ public:
   void Init(Scene* scene, const std::shared_ptr<InputManager>& inputMan);
   bool RunOnCreate(ecs::Entity entity, ScriptComponent& sc);
   void RunOnUpdate(ecs::Entity entity, ScriptComponent& sc);
+  void RunOnLateUpdate(ecs::Entity entity, ScriptComponent& sc);
   void RunOnDestroy(ecs::Entity entity, ScriptComponent& sc);
   void ResetScript(ScriptComponent& sc);
   void ReloadScript(ecs::Entity entity, ScriptComponent& sc);
