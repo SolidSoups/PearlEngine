@@ -16,6 +16,7 @@ public:
   void RunOnDestroy(ecs::Entity entity, ScriptComponent& sc);
   void ResetScript(ScriptComponent& sc);
   void ReloadScript(ecs::Entity entity, ScriptComponent& sc);
+  void RunOnCollisionEnter(ecs::Entity entity, ScriptComponent& sc, ecs::Entity other, glm::vec3 normal, float penetration);
 
   inline bool HasError(const std::string& luaFile) const{
     return mScriptToFailureReason.find(luaFile) != mScriptToFailureReason.end();

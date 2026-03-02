@@ -24,9 +24,14 @@ void PhysicsSystem::UpdatePhysics(float timestep) {
       CheckCollision(*it1, *it2);
     }
   }
+  
+  FlushCollisions();
 }
 
 void PhysicsSystem::CheckCollision(ecs::Entity e1, ecs::Entity e2) {
+  mCE1 = e1;
+  mCE2 = e2;
+
   auto *rb1 = TryGet<RigidBodyComponent>(e1);
   auto *rb2 = TryGet<RigidBodyComponent>(e2);
   if (!rb1 and !rb2)
@@ -97,6 +102,8 @@ void PhysicsSystem::Resolve(TransformComponent &tf1, RigidBodyComponent *rb1,
     rb1->velocity += j * invM1 * normal;
   if (rb2)
     rb2->velocity -= j * invM2 * normal;
+
+  RegisterCollision(mCE1, mCE2, normal, penetration);
 }
 
 void PhysicsSystem::TestSphereSphere(TransformComponent &tf1,
@@ -263,4 +270,35 @@ void PhysicsSystem::DrawGizmos() {
                                     capsule->radius);
     }
   }
+}
+
+
+void PhysicsSystem::FlushCollisions(){
+  for(auto [key, pair] : mCurrentCollisionPairs){
+    if(mPrevCollisions.count(key)){
+      // OnCollisionStay
+    }
+    else{
+      // OnCollisionEnter
+      const glm::vec3& normal = pair.first;
+      float penetration = pair.second;
+      mScriptSystem->DispatchOnCollisionEnter(mCE1, mCE2, normal, penetration);
+    }
+  }
+  for(auto [key, pair] : mPrevCollisions){
+    if(!mCurrentCollisionPairs.count(key)){
+      // OnCollisionExit 
+    }
+  }
+
+  mPrevCollisions = std::move(mCurrentCollisionPairs);
+  mCurrentCollisionPairs.clear();
+}
+
+void PhysicsSystem::RegisterCollision(ecs::Entity a, ecs::Entity b, const glm::vec3& normal, float pen){
+  // ensure collision pairs don't have any hash collisions in unorderd_map
+  // by always setting lowest entity id first
+  uint64_t lo = std::min(a, b);
+  uint64_t high = std::max(a, b);
+  mCurrentCollisionPairs[(high << 32) | lo] = std::make_pair(normal, pen);
 }

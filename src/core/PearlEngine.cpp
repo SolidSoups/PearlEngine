@@ -210,6 +210,7 @@ void PearlEngine::Initialize() {
       m_TextureManager->load("assets/Textures/Globe._Albedo.png"));
   coord.AddComponent(sphere, SphereColliderComponent{});
   coord.AddComponent(sphere, RigidBodyComponent{});
+  coord.AddComponent(sphere, ScriptComponent{.scriptPath = "assets/scripts/collision_test.lua", .enabled = true});
 
   // create the plane comp
   auto plane = mScene->CreatePlane("Collision test");

@@ -45,9 +45,19 @@ void ScriptSystem::OnUpdate(){
 
 void ScriptSystem::OnDestroy(){
   for(auto entity : Entities){
-    ScriptComponent& sc = mCoordinator->GetComponent<ScriptComponent>(entity);
+    ScriptComponent& sc = Get<ScriptComponent>(entity);
     if(sc.loaded){
       mEngine->RunOnDestroy(entity, sc);
     }
   }
 }
+
+void ScriptSystem::DispatchOnCollisionEnter(ecs::Entity a, ecs::Entity b, const glm::vec3& normal, float penetration){
+  if(auto* sc1 = TryGet<ScriptComponent>(a)){
+    mEngine->RunOnCollisionEnter(a, *sc1, b, normal, penetration);        
+  }
+  if(auto* sc2 = TryGet<ScriptComponent>(b)){
+    mEngine->RunOnCollisionEnter(b, *sc2, a, -normal, penetration);        
+  }
+}
+

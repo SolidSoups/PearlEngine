@@ -90,6 +90,20 @@ void ScriptEngine::RunOnUpdate(ecs::Entity entity, ScriptComponent &sc) {
   }
 }
 
+void ScriptEngine::RunOnCollisionEnter(ecs::Entity entity, ScriptComponent& sc, ecs::Entity other, glm::vec3 normal, float penetration){
+  if(!sc.loaded or !sc.enabled or sc.hasError) return;
+  sol::protected_function fn = sc.scriptEnv["OnCollisionEnter"];
+  if(!fn.valid())
+    return;
+
+  auto r = fn(other, normal, penetration);
+  if(!r.valid()){
+    sol::error e = r;
+    LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnCollisionEnter: " << e.what();
+    LogError(sc, e);
+  }
+}
+
 void ScriptEngine::UpdateAPIs() {
   // update time global
   sol::table time = m_Lua["Time"];
@@ -145,7 +159,7 @@ void ScriptEngine::BindAPIs() {
       "Vec3", sol::constructors<glm::vec3(), glm::vec3(float, float, float)>(),
       "x", &glm::vec3::x, "y", &glm::vec3::y, "z", &glm::vec3::z);
 
-  // bind entity type
+  // bind collision event
 
   // transform comp
   m_Lua.new_usertype<TransformComponent>(

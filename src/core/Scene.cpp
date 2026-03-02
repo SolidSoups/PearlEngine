@@ -91,6 +91,7 @@ Scene::Scene(const std::shared_ptr<IEngineCamera>& engineCam,const std::shared_p
   physicsInterest.set(m_Coordinator.GetComponentType<RigidBodyComponent>());
   m_Coordinator.SetSystemInterestSignature<PhysicsSystem>(physicsInterest);
   m_Coordinator.SetSystemSignature<PhysicsSystem>(physicsRequirements);
+  mPhysicsSystem->Init(mScriptSystem.get());
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {

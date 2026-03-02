@@ -9,9 +9,25 @@
 #include "RigidBodyComponent.h"
 #include "ScriptSystem.h"
 
+struct CollisionEvent {
+  ecs::Entity me, other;
+  glm::vec3 normal; //  me -> other
+  float penetration;
+};
+
 class PhysicsSystem : public ecs::System {
+private:
+  ScriptSystem* mScriptSystem;
+  // keep track of the last entities a collision check was made for
+  ecs::Entity mCE1 = ecs::NULL_ENTITY;
+  ecs::Entity mCE2 = ecs::NULL_ENTITY;
+
+  std::unordered_map<uint64_t, std::pair<glm::vec3, float>> mPrevCollisions;
+  std::unordered_map<uint64_t, std::pair<glm::vec3, float>> mCurrentCollisionPairs;
 public:
-  void Init(ScriptSystem* scriptSystem);
+  inline void Init(ScriptSystem* scriptSystem){
+    mScriptSystem = scriptSystem;
+  }
   void UpdatePhysics(float timestep);
   void DrawGizmos();
 
@@ -40,4 +56,7 @@ private:
   void Resolve(TransformComponent& tf1, RigidBodyComponent* rb1,
                TransformComponent& tf2, RigidBodyComponent* rb2,
                const glm::vec3& normal, float penetration);
+
+  void RegisterCollision(ecs::Entity a, ecs::Entity b, const glm::vec3& normal, float pen);
+  void FlushCollisions();
 };
