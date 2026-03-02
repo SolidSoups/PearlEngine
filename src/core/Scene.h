@@ -12,6 +12,7 @@
 #include "ScriptSystem.h"
 #include "CameraSystem.h"
 #include "PhysicsSystem.h"
+#include "json_common.h"
 
 class RenderSystem;
 class PointLightSystem;
@@ -28,6 +29,7 @@ public:
   ecs::Entity CreateCube(const std::string& name = "Cube");
   ecs::Entity CreatePlane(const std::string& name="Plane");
   ecs::Entity CreateSphere(const std::string& name="Sphere");
+  ecs::Entity DuplicateEntity(ecs::Entity entity);
   void DestroyEntity(ecs::Entity entity);
   void Clear();
 
@@ -56,6 +58,9 @@ public:
   void SaveScene(const char* filepath);
   void SaveCurrentScene();
   void LoadScene(const char* filepath);
+
+  ecs::Entity CreateEntityFromJSON(const json& j);
+  const json CreateJSONFromEntity(ecs::Entity entity);
 
   std::shared_ptr<PointLightSystem> mPointLightSystem;
 

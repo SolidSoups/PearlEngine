@@ -9,6 +9,8 @@
 #include "RigidBodyComponent.h"
 #include "ScriptSystem.h"
 
+#include <glm/gtc/quaternion.hpp>
+
 struct CollisionEvent {
   ecs::Entity me, other;
   glm::vec3 normal; //  me -> other
@@ -63,4 +65,12 @@ private:
 
   void RegisterCollision(ecs::Entity a, ecs::Entity b, const glm::vec3& normal, float pen);
   void FlushCollisions();
+
+  static glm::quat RotQuat(const TransformComponent& tf) {
+    glm::mat4 m(1.0f);
+    m = glm::rotate(m, glm::radians(tf.rotation.x), {1,0,0});
+    m = glm::rotate(m, glm::radians(tf.rotation.y), {0,1,0});
+    m = glm::rotate(m, glm::radians(tf.rotation.z), {0,0,1});
+    return glm::quat_cast(m);
+  }
 };

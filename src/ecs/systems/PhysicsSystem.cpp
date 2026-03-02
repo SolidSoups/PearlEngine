@@ -121,8 +121,8 @@ void PhysicsSystem::TestSphereSphere(TransformComponent &tf1,
                                      SphereColliderComponent &s2,
                                      RigidBodyComponent *rb2,
                                      ecs::Entity a, ecs::Entity b) {
-  glm::vec3 posA = tf1.position + s1.position;
-  glm::vec3 posB = tf2.position + s2.position;
+  glm::vec3 posA = tf1.position + RotQuat(tf1) * s1.position;
+  glm::vec3 posB = tf2.position + RotQuat(tf2) * s2.position;
   glm::vec3 diff = posB - posA;
   float dist = glm::length(diff);
   float overlap = s1.radius + s2.radius - dist;
@@ -140,19 +140,20 @@ void PhysicsSystem::TestSphereBox(TransformComponent &tf1,
                                   BoxColliderComponent &b2,
                                   RigidBodyComponent *rb2,
                                   ecs::Entity a, ecs::Entity b) {
-  glm::vec3 spherePos = tf1.position + s1.position;
-  glm::vec3 boxCenter = tf2.position + b2.center;
+  glm::quat boxRot = RotQuat(tf2);
+  glm::vec3 spherePos = tf1.position + RotQuat(tf1) * s1.position;
+  glm::vec3 boxCenter = tf2.position + boxRot * b2.center;
   glm::vec3 half = b2.size * 0.5f;
-
-  glm::vec3 closest = glm::clamp(spherePos, boxCenter - half, boxCenter + half);
-  glm::vec3 diff = spherePos - closest;
+  glm::vec3 localSphere = glm::inverse(boxRot) * (spherePos - boxCenter);
+  glm::vec3 closest = glm::clamp(localSphere, -half, half);
+  glm::vec3 diff = localSphere - closest;
   float dist = glm::length(diff);
   if (dist >= s1.radius)
     return;
 
   float overlap = s1.radius - dist;
-  glm::vec3 normal = dist > 0.0001f ? -diff / dist : glm::vec3(0, -1, 0);
-  Resolve(tf1, rb1, tf2, rb2, normal, overlap, a, b);
+  glm::vec3 localNormal = dist > 0.0001f ? -diff / dist : glm::vec3(0, -1, 0);
+  Resolve(tf1, rb1, tf2, rb2, boxRot * localNormal, overlap, a, b);
 }
 void PhysicsSystem::TestSphereCapsule(TransformComponent &tf1,
                                       SphereColliderComponent &s1,
@@ -161,9 +162,10 @@ void PhysicsSystem::TestSphereCapsule(TransformComponent &tf1,
                                       CapsuleColliderComponent &c2,
                                       RigidBodyComponent *rb2,
                                       ecs::Entity ea, ecs::Entity eb) {
-  glm::vec3 spherePos = tf1.position + s1.position;
-  glm::vec3 a = tf2.position + c2.a;
-  glm::vec3 b = tf2.position + c2.b;
+  glm::vec3 spherePos = tf1.position + RotQuat(tf1) * s1.position;
+  glm::quat rot2 = RotQuat(tf2);
+  glm::vec3 a = tf2.position + rot2 * c2.a;
+  glm::vec3 b = tf2.position + rot2 * c2.b;
 
   // closest point on capsule segment to sphere center
   glm::vec3 ab = b - a;
@@ -187,27 +189,39 @@ void PhysicsSystem::TestBoxBox(TransformComponent &tf1,
                                BoxColliderComponent &b2,
                                RigidBodyComponent *rb2,
                                ecs::Entity a, ecs::Entity b) {
-  glm::vec3 c1 = tf1.position + b1.center, h1 = b1.size * 0.5f;
-  glm::vec3 c2 = tf2.position + b2.center, h2 = b2.size * 0.5f;
-  glm::vec3 diff = c2 - c1;
-  glm::vec3 overlap = (h1 + h2) - glm::abs(diff);
-  if (overlap.x <= 0 || overlap.y <= 0 || overlap.z <= 0)
-    return;
+  glm::quat q1 = RotQuat(tf1), q2 = RotQuat(tf2);
+  glm::vec3 c1 = tf1.position + q1 * b1.center;
+  glm::vec3 c2 = tf2.position + q2 * b2.center;
+  glm::vec3 h1 = b1.size * 0.5f, h2 = b2.size * 0.5f;
+  glm::vec3 u[3] = { q1*glm::vec3{1,0,0}, q1*glm::vec3{0,1,0}, q1*glm::vec3{0,0,1} };
+  glm::vec3 v[3] = { q2*glm::vec3{1,0,0}, q2*glm::vec3{0,1,0}, q2*glm::vec3{0,0,1} };
+  glm::vec3 d = c2 - c1;
 
-  // pick axis with smallest overlap = contact normal
-  glm::vec3 normal;
-  float pen;
-  if (overlap.x < overlap.y && overlap.x < overlap.z) {
-    pen = overlap.x;
-    normal = {diff.x > 0 ? 1.0f : -1.0f, 0, 0};
-  } else if (overlap.y < overlap.z) {
-    pen = overlap.y;
-    normal = {0, diff.y > 0 ? 1.0f : -1.0f, 0};
-  } else {
-    pen = overlap.z;
-    normal = {0, 0, diff.z > 0 ? 1.0f : -1.0f};
-  }
-  Resolve(tf1, rb1, tf2, rb2, normal, pen, a, b);
+  float minOverlap = FLT_MAX;
+  glm::vec3 bestAxis;
+
+  auto testAxis = [&](glm::vec3 axis) -> bool {
+    float len = glm::length(axis);
+    if (len < 0.0001f) return true;
+    axis /= len;
+    float r1 = h1[0]*glm::abs(glm::dot(u[0],axis)) + h1[1]*glm::abs(glm::dot(u[1],axis)) + h1[2]*glm::abs(glm::dot(u[2],axis));
+    float r2 = h2[0]*glm::abs(glm::dot(v[0],axis)) + h2[1]*glm::abs(glm::dot(v[1],axis)) + h2[2]*glm::abs(glm::dot(v[2],axis));
+    float overlap = r1 + r2 - glm::abs(glm::dot(d, axis));
+    if (overlap < 0) return false;
+    if (overlap < minOverlap) {
+      minOverlap = overlap;
+      bestAxis = glm::dot(d, axis) < 0 ? -axis : axis;
+    }
+    return true;
+  };
+
+  for (int i = 0; i < 3; i++) if (!testAxis(u[i])) return;
+  for (int i = 0; i < 3; i++) if (!testAxis(v[i])) return;
+  for (int i = 0; i < 3; i++)
+    for (int j = 0; j < 3; j++)
+      if (!testAxis(glm::cross(u[i], v[j]))) return;
+
+  Resolve(tf1, rb1, tf2, rb2, bestAxis, minOverlap, a, b);
 }
 void PhysicsSystem::TestBoxCapsule(TransformComponent &t1,
                                    BoxColliderComponent &sp1,
@@ -215,7 +229,27 @@ void PhysicsSystem::TestBoxCapsule(TransformComponent &t1,
                                    TransformComponent &t2,
                                    CapsuleColliderComponent &sp2,
                                    RigidBodyComponent *rb2,
-                                   ecs::Entity a, ecs::Entity b) {}
+                                   ecs::Entity a, ecs::Entity b) {
+  glm::quat boxRot = RotQuat(t1);
+  glm::quat invRot = glm::inverse(boxRot);
+  glm::vec3 boxCenter = t1.position + boxRot * sp1.center;
+  glm::vec3 half = sp1.size * 0.5f;
+  glm::quat capRot = RotQuat(t2);
+  glm::vec3 localA = invRot * (t2.position + capRot * sp2.a - boxCenter);
+  glm::vec3 localB = invRot * (t2.position + capRot * sp2.b - boxCenter);
+  glm::vec3 seg = localB - localA;
+  float t = glm::clamp(glm::dot(-localA, seg) / glm::dot(seg, seg), 0.0f, 1.0f);
+  glm::vec3 closestOnSeg = localA + t * seg;
+  glm::vec3 closestOnBox = glm::clamp(closestOnSeg, -half, half);
+  glm::vec3 diff = closestOnSeg - closestOnBox;
+  float dist = glm::length(diff);
+  if (dist >= sp2.radius)
+    return;
+
+  float overlap = sp2.radius - dist;
+  glm::vec3 localNormal = dist > 0.0001f ? diff / dist : glm::vec3(0, 1, 0);
+  Resolve(t1, rb1, t2, rb2, -(boxRot * localNormal), overlap, a, b);
+}
 void PhysicsSystem::TestCapsuleCapsule(TransformComponent &tf1,
                                        CapsuleColliderComponent &c1,
                                        RigidBodyComponent *rb1,
@@ -223,8 +257,9 @@ void PhysicsSystem::TestCapsuleCapsule(TransformComponent &tf1,
                                        CapsuleColliderComponent &c2,
                                        RigidBodyComponent *rb2,
                                        ecs::Entity ea, ecs::Entity eb) {
-  glm::vec3 a1 = tf1.position + c1.a, b1 = tf1.position + c1.b;
-  glm::vec3 a2 = tf2.position + c2.a, b2 = tf2.position + c2.b;
+  glm::quat rot1 = RotQuat(tf1), rot2 = RotQuat(tf2);
+  glm::vec3 a1 = tf1.position + rot1 * c1.a, b1 = tf1.position + rot1 * c1.b;
+  glm::vec3 a2 = tf2.position + rot2 * c2.a, b2 = tf2.position + rot2 * c2.b;
 
   // closest point between two segments (Ericson, Real-Time Collision Detection
   // p.149)
@@ -269,18 +304,19 @@ void PhysicsSystem::DrawGizmos() {
     if (entity != selectedEntity)
       continue;
     auto &transform = Get<TransformComponent>(entity);
+    glm::quat rot = RotQuat(transform);
 
     if (TryGet<SphereColliderComponent>(entity, sphereCmp)) {
-      LineRenderer::DrawWireSphere(transform.position + sphereCmp.position,
+      LineRenderer::DrawWireSphere(transform.position + rot * sphereCmp.position,
                                    sphereCmp.radius);
     }
     if (TryGet<BoxColliderComponent>(entity, boxComp)) {
-      LineRenderer::DrawWireBox(transform.position + boxComp.center,
-                                boxComp.size);
+      LineRenderer::DrawWireBox(transform.position + rot *  boxComp.center,
+                                boxComp.size, glm::vec3(0,1,0), rot);
     }
     if (auto *capsule = TryGet<CapsuleColliderComponent>(entity)) {
-      LineRenderer::DrawWireCapsule(transform.position + capsule->a,
-                                    transform.position + capsule->b,
+      LineRenderer::DrawWireCapsule(transform.position + rot * capsule->a,
+                                    transform.position + rot * capsule->b,
                                     capsule->radius);
     }
   }

@@ -34,12 +34,14 @@
 Scene::~Scene() {
   for (auto entity : m_Entities) {
     if (m_Coordinator.HasComponent<ScriptComponent>(entity)) {
-      m_Coordinator.GetComponent<ScriptComponent>(entity).scriptEnv = sol::table{};
+      m_Coordinator.GetComponent<ScriptComponent>(entity).scriptEnv =
+          sol::table{};
     }
   }
 }
 
-Scene::Scene(const std::shared_ptr<IEngineCamera>& engineCam,const std::shared_ptr<InputManager>& inputMan) {
+Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
+             const std::shared_ptr<InputManager> &inputMan) {
   m_Coordinator.Init();
 
   // Register all component types
@@ -93,9 +95,11 @@ Scene::Scene(const std::shared_ptr<IEngineCamera>& engineCam,const std::shared_p
   ecs::Signature physicsRequirements;
   physicsRequirements.set(m_Coordinator.GetComponentType<TransformComponent>());
   ecs::Signature physicsInterest;
-  physicsInterest.set(m_Coordinator.GetComponentType<SphereColliderComponent>());
+  physicsInterest.set(
+      m_Coordinator.GetComponentType<SphereColliderComponent>());
   physicsInterest.set(m_Coordinator.GetComponentType<BoxColliderComponent>());
-  physicsInterest.set(m_Coordinator.GetComponentType<CapsuleColliderComponent>());
+  physicsInterest.set(
+      m_Coordinator.GetComponentType<CapsuleColliderComponent>());
   physicsInterest.set(m_Coordinator.GetComponentType<RigidBodyComponent>());
   m_Coordinator.SetSystemInterestSignature<PhysicsSystem>(physicsInterest);
   m_Coordinator.SetSystemSignature<PhysicsSystem>(physicsRequirements);
@@ -126,7 +130,7 @@ void Scene::Update() {
   constexpr float TIME_STEP = 1 / 60.f;
   static float accumulator = 0;
   accumulator += Time::deltaTime;
-  while(accumulator >= TIME_STEP){
+  while (accumulator >= TIME_STEP) {
     mPhysicsSystem->UpdatePhysics(TIME_STEP);
     accumulator -= TIME_STEP;
   }
@@ -216,15 +220,13 @@ ecs::Entity Scene::CreateCube(const std::string &name) {
   return entity;
 }
 
-ecs::Entity Scene::CreatePlane(const std::string& name){
+ecs::Entity Scene::CreatePlane(const std::string &name) {
   // load vertices into vectors
-  std::vector<float> verts(
-    Plane::vertices, 
-    Plane::vertices + PLANE_VERTEX_SIZE);
-  std::vector<unsigned int> indcs(
-    Plane::indices, 
-    Plane::indices + PLANE_INDEX_SIZE);
-  
+  std::vector<float> verts(Plane::vertices,
+                           Plane::vertices + PLANE_VERTEX_SIZE);
+  std::vector<unsigned int> indcs(Plane::indices,
+                                  Plane::indices + PLANE_INDEX_SIZE);
+
   // create rendercomp, attach mesh
   RenderComponent renderComp;
   renderComp.mesh = std::make_shared<Mesh>(verts, indcs);
@@ -237,7 +239,7 @@ ecs::Entity Scene::CreatePlane(const std::string& name){
   return entity;
 }
 
-ecs::Entity Scene::CreateSphere(const std::string& name){
+ecs::Entity Scene::CreateSphere(const std::string &name) {
   // generate mesh data
   std::vector<float> verts;
   std::vector<unsigned int> indices;
@@ -257,49 +259,31 @@ ecs::Entity Scene::CreateSphere(const std::string& name){
   return entity;
 }
 
+ecs::Entity Scene::DuplicateEntity(ecs::Entity entity) {
+  const json j = CreateJSONFromEntity(entity);
+  ecs::Entity newEntity = CreateEntityFromJSON(j);
+  return newEntity;
+}
 
-
-
-void Scene::SaveCurrentScene(){
-  if(!SceneHasPath()){
-    LOG_ERROR << "Scene doesn't have a save path, path is " << mCurrentScenePath;
+void Scene::SaveCurrentScene() {
+  if (!SceneHasPath()) {
+    LOG_ERROR << "Scene doesn't have a save path, path is "
+              << mCurrentScenePath;
     return;
   }
 
   SaveScene(mCurrentScenePath.c_str());
 }
 
-void Scene::SaveScene(const char* filepath) {
+void Scene::SaveScene(const char *filepath) {
   json scene;
   scene["name"] = "Test Scene 1";
   json &entities = scene["entities"];
 
   size_t counter = 0;
-  for (unsigned int entity : m_Entities) {
+  for (ecs::Entity entity : m_Entities) {
     std::string name = m_Coordinator.GetComponent<NameComponent>(entity).name;
-    json& entity_object = entities[name + std::to_string(counter)];
-    entity_object["name"] = name;
-
-    // add components
-    if (m_Coordinator.HasComponent<TransformComponent>(entity))
-      entity_object["transform_component"] = m_Coordinator.GetComponent<TransformComponent>(entity);
-    if (m_Coordinator.HasComponent<RenderComponent>(entity))
-      entity_object["render_component"] = m_Coordinator.GetComponent<RenderComponent>(entity);
-    if (m_Coordinator.HasComponent<CameraComponent>(entity))
-      entity_object["camera_component"] = m_Coordinator.GetComponent<CameraComponent>(entity);
-    if (m_Coordinator.HasComponent<PointLightComponent>(entity))
-      entity_object["pointLight_component"] = m_Coordinator.GetComponent<PointLightComponent>(entity);
-    if (m_Coordinator.HasComponent<ScriptComponent>(entity))
-      entity_object["script_component"] = m_Coordinator.GetComponent<ScriptComponent>(entity);
-    if (m_Coordinator.HasComponent<SphereColliderComponent>(entity))
-      entity_object["sphere_collider_component"] = m_Coordinator.GetComponent<SphereColliderComponent>(entity);
-    if (m_Coordinator.HasComponent<BoxColliderComponent>(entity))
-      entity_object["box_collider_component"] = m_Coordinator.GetComponent<BoxColliderComponent>(entity);
-    if (m_Coordinator.HasComponent<CapsuleColliderComponent>(entity))
-      entity_object["capsule_collider_component"] = m_Coordinator.GetComponent<CapsuleColliderComponent>(entity);
-    if (m_Coordinator.HasComponent<RigidBodyComponent>(entity))
-      entity_object["rigid_body_component"] = m_Coordinator.GetComponent<RigidBodyComponent>(entity);
-
+    entities[name + std::to_string(counter)] = CreateJSONFromEntity(entity);
     counter++;
   }
 
@@ -331,61 +315,110 @@ void Scene::LoadScene(const char *filepath) {
     return;
   }
 
-  if(!j.contains("entities")){
+  if (!j.contains("entities")) {
     LOG_ERROR << "Could not find entities field";
     return;
   }
 
-  for(const auto& [e, c] : j["entities"].items()){
-    ecs::Entity entity = m_Coordinator.CreateEntity();
-    m_Coordinator.AddComponent<NameComponent>(entity, NameComponent{c["name"]});
-    
-    if(c.contains("transform_component"))
-      m_Coordinator.AddComponent<TransformComponent>(entity, c["transform_component"]);
-    if(c.contains("render_component")) {
-      m_Coordinator.AddComponent<RenderComponent>(entity, c["render_component"]);
-      std::string meshType = c["render_component"].value("mesh_type", "");
-      if (!meshType.empty()) {
-        auto& rc = m_Coordinator.GetComponent<RenderComponent>(entity);
-        if (meshType == "sphere") {
-          std::vector<float> sv; std::vector<unsigned int> si;
-          Sphere::generate_uvsphere(sv, si, 24, 16);
-          rc.mesh = std::make_shared<Mesh>(sv, si);
-        } else if (meshType == "cube") {
-          std::vector<float> cv(Cube::s_Vertices, Cube::s_Vertices + Cube::s_VertexCount * 8);
-          std::vector<unsigned int> ci(Cube::s_Indices, Cube::s_Indices + Cube::s_IndexCount);
-          rc.mesh = std::make_shared<Mesh>(cv, ci);
-        } else if (meshType == "plane") {
-          std::vector<float> pv(Plane::vertices, Plane::vertices + PLANE_VERTEX_SIZE);
-          std::vector<unsigned int> pi(Plane::indices, Plane::indices + PLANE_INDEX_SIZE);
-          rc.mesh = std::make_shared<Mesh>(pv, pi);
-        }
-      }
-    }
-    if(c.contains("camera_component"))
-      m_Coordinator.AddComponent<CameraComponent>(entity, c["camera_component"]);
-    if(c.contains("pointLight_component"))
-      m_Coordinator.AddComponent<PointLightComponent>(entity, c["pointLight_component"]);
-    if(c.contains("script_component"))
-      m_Coordinator.AddComponent<ScriptComponent>(entity, c["script_component"]);
-    if(c.contains("sphere_collider_component"))
-      m_Coordinator.AddComponent<SphereColliderComponent>(entity, c["sphere_collider_component"]);
-    if(c.contains("box_collider_component"))
-      m_Coordinator.AddComponent<BoxColliderComponent>(entity, c["box_collider_component"]);
-    if(c.contains("capsule_collider_component"))
-      m_Coordinator.AddComponent<CapsuleColliderComponent>(entity, c["capsule_collider_component"]);
-    if(c.contains("rigid_body_component"))
-      m_Coordinator.AddComponent<RigidBodyComponent>(entity, c["rigid_body_component"]);
-
-    m_Entities.push_back(entity);
+  for (const auto &[e, c] : j["entities"].items()) {
+    ecs::Entity entity = CreateEntityFromJSON(c);
   }
-
 
   mCurrentScenePath = filepath;
   LOG_INFO << "Loaded scene from: " << filepath;
 }
 
+ecs::Entity Scene::CreateEntityFromJSON(const json &j) {
+  ecs::Entity entity = m_Coordinator.CreateEntity();
+  m_Coordinator.AddComponent<NameComponent>(entity, NameComponent{j["name"]});
 
-void Scene::SetAspectRatio(float aspect){
-  mCameraSystem->SetAspect(aspect);
+  if (j.contains("transform_component"))
+    m_Coordinator.AddComponent<TransformComponent>(entity,
+                                                   j["transform_component"]);
+  if (j.contains("render_component")) {
+    m_Coordinator.AddComponent<RenderComponent>(entity, j["render_component"]);
+    std::string meshType = j["render_component"].value("mesh_type", "");
+    if (!meshType.empty()) {
+      auto &rc = m_Coordinator.GetComponent<RenderComponent>(entity);
+      if (meshType == "sphere") {
+        std::vector<float> sv;
+        std::vector<unsigned int> si;
+        Sphere::generate_uvsphere(sv, si, 24, 16);
+        rc.mesh = std::make_shared<Mesh>(sv, si);
+      } else if (meshType == "cube") {
+        std::vector<float> cv(Cube::s_Vertices,
+                              Cube::s_Vertices + Cube::s_VertexCount * 8);
+        std::vector<unsigned int> ci(Cube::s_Indices,
+                                     Cube::s_Indices + Cube::s_IndexCount);
+        rc.mesh = std::make_shared<Mesh>(cv, ci);
+      } else if (meshType == "plane") {
+        std::vector<float> pv(Plane::vertices,
+                              Plane::vertices + PLANE_VERTEX_SIZE);
+        std::vector<unsigned int> pi(Plane::indices,
+                                     Plane::indices + PLANE_INDEX_SIZE);
+        rc.mesh = std::make_shared<Mesh>(pv, pi);
+      }
+    }
+  }
+  if (j.contains("camera_component"))
+    m_Coordinator.AddComponent<CameraComponent>(entity, j["camera_component"]);
+  if (j.contains("pointLight_component"))
+    m_Coordinator.AddComponent<PointLightComponent>(entity,
+                                                    j["pointLight_component"]);
+  if (j.contains("script_component"))
+    m_Coordinator.AddComponent<ScriptComponent>(entity, j["script_component"]);
+  if (j.contains("sphere_collider_component"))
+    m_Coordinator.AddComponent<SphereColliderComponent>(
+        entity, j["sphere_collider_component"]);
+  if (j.contains("box_collider_component"))
+    m_Coordinator.AddComponent<BoxColliderComponent>(
+        entity, j["box_collider_component"]);
+  if (j.contains("capsule_collider_component"))
+    m_Coordinator.AddComponent<CapsuleColliderComponent>(
+        entity, j["capsule_collider_component"]);
+  if (j.contains("rigid_body_component"))
+    m_Coordinator.AddComponent<RigidBodyComponent>(entity,
+                                                   j["rigid_body_component"]);
+
+  m_Entities.push_back(entity);
+  return entity;
 }
+
+const json Scene::CreateJSONFromEntity(ecs::Entity entity) {
+  json entity_object;
+  std::string name = m_Coordinator.GetComponent<NameComponent>(entity).name;
+  entity_object["name"] = name;
+
+  // add components
+  if (m_Coordinator.HasComponent<TransformComponent>(entity))
+    entity_object["transform_component"] =
+        m_Coordinator.GetComponent<TransformComponent>(entity);
+  if (m_Coordinator.HasComponent<RenderComponent>(entity))
+    entity_object["render_component"] =
+        m_Coordinator.GetComponent<RenderComponent>(entity);
+  if (m_Coordinator.HasComponent<CameraComponent>(entity))
+    entity_object["camera_component"] =
+        m_Coordinator.GetComponent<CameraComponent>(entity);
+  if (m_Coordinator.HasComponent<PointLightComponent>(entity))
+    entity_object["pointLight_component"] =
+        m_Coordinator.GetComponent<PointLightComponent>(entity);
+  if (m_Coordinator.HasComponent<ScriptComponent>(entity))
+    entity_object["script_component"] =
+        m_Coordinator.GetComponent<ScriptComponent>(entity);
+  if (m_Coordinator.HasComponent<SphereColliderComponent>(entity))
+    entity_object["sphere_collider_component"] =
+        m_Coordinator.GetComponent<SphereColliderComponent>(entity);
+  if (m_Coordinator.HasComponent<BoxColliderComponent>(entity))
+    entity_object["box_collider_component"] =
+        m_Coordinator.GetComponent<BoxColliderComponent>(entity);
+  if (m_Coordinator.HasComponent<CapsuleColliderComponent>(entity))
+    entity_object["capsule_collider_component"] =
+        m_Coordinator.GetComponent<CapsuleColliderComponent>(entity);
+  if (m_Coordinator.HasComponent<RigidBodyComponent>(entity))
+    entity_object["rigid_body_component"] =
+        m_Coordinator.GetComponent<RigidBodyComponent>(entity);
+  return entity_object;
+}
+
+
+void Scene::SetAspectRatio(float aspect) { mCameraSystem->SetAspect(aspect); }

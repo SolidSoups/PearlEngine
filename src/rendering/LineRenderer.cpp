@@ -92,11 +92,16 @@ void LineRenderer::DrawLine(glm::vec3 a, glm::vec3 b, glm::vec3 color) {
 }
 
 void LineRenderer::DrawWireBox(glm::vec3 center, glm::vec3 size,
-                               glm::vec3 color) {
+                               glm::vec3 color, glm::quat rotation) {
   auto &b = mLineBoxPoints;
   for (int i = 0; i < b.size(); i += 2) {
     mLines.push_back(
-        {center + b[i + 0] * size, center + b[i + 1] * size, color});
+        {
+        center + rotation * (b[i + 0] * size),
+        center + rotation * (b[i + 1] * size),
+        color
+      }
+    );
   }
 }
 

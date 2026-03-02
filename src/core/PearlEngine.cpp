@@ -500,6 +500,13 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
 
   // blocked when imgui has a text field focused
   if (!io.WantCaptureKeyboard) {
+    if (SelectionWizard::HasSelection() && input->GetKeyDown(GLFW_KEY_D) &&
+        input->GetKey(GLFW_KEY_LEFT_CONTROL)) {
+      // duplicate entity
+      auto newEntity = mScene->DuplicateEntity(SelectionWizard::Get());
+      SelectionWizard::Set(newEntity);
+    }
+
     if (input->GetKeyDown(GLFW_KEY_F)) {
       mEngineCamera->Reset();
     }

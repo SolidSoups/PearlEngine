@@ -62,6 +62,10 @@ void SceneHierarchyEditorPanel::DrawSceneHierarchy() {
       ImGui::Text("%s", entityName.c_str());
       ImGui::Separator();
 
+      if(ImGui::MenuItem("Duplicate")){
+        auto newEntity = r_Scene.DuplicateEntity(entity);
+        SelectionWizard::Set(newEntity);
+      }
       if(ImGui::MenuItem("Delete")){
         r_Scene.DestroyEntity(entity);
       }

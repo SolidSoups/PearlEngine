@@ -31,6 +31,7 @@ struct TransformComponent {
   glm::vec3 GetRight() const;
   glm::vec3 GetUp() const;
   glm::mat4 GetRotationMatrixYXZ() const;
+  glm::mat4 GetRotationMatrixXYZ() const;
 };
 
 inline void to_json(json& j, const TransformComponent& cmp){
