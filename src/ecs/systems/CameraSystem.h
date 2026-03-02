@@ -16,6 +16,11 @@ public:
 
 public:
   void Init(ecs::Coordinator* coord, const std::shared_ptr<IEngineCamera>& engineCamera);
+  inline void Reset() {
+    mActiveCamera = ecs::NULL_ENTITY;
+    mPreviewCamera = ecs::NULL_ENTITY;
+    mCameraMode = CameraMode::ENGINE;
+  }
   void SetActiveCamera(ecs::Entity entity);
   inline void SetPreviewCamera(ecs::Entity entity){
     if (!mCoord->HasComponent<CameraComponent>(entity) ||

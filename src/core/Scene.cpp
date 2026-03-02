@@ -116,6 +116,7 @@ void Scene::Clear() {
   }
   m_Entities.clear();
   m_ActiveCamera = ecs::NULL_ENTITY;
+  mCameraSystem->Reset();
   mCurrentScenePath = "";
 }
 

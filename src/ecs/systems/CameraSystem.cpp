@@ -28,63 +28,37 @@ void CameraSystem::SetActiveCamera(ecs::Entity entity) {
 void CameraSystem::SetAspect(float aspect) { mAspect = aspect; }
 
 void CameraSystem::GetMatrices(glm::mat4 &outView, glm::mat4 &outProj) const {
-  // fallback to engine camera otherwise
-  if (mCameraMode == ENGINE || mActiveCamera == ecs::NULL_ENTITY ||
-      mPreviewCamera == ecs::NULL_ENTITY) {
-    if (mEngineCamera) {
-      outView = mEngineCamera->GetViewMatrix();
-      outProj = mEngineCamera->GetProjectionMatrix(mAspect);
-    } else {
-      LOG_ERROR
-          << "Engine Camera unavailable, giving 1.0f matrices. \nEngineCamera("
-          << (mEngineCamera) << "), \n"
-          << "ActiveCamera(" << (mActiveCamera != ecs::NULL_ENTITY) << "), \n"
-          << "PreviewCamera(" << (mPreviewCamera != ecs::NULL_ENTITY) << ")";
-      outView = glm::mat4(1.0f);
-      outProj = glm::mat4(1.0f);
+  if (mCameraMode != ENGINE) {
+    ecs::Entity cameraEntity = mCameraMode == GAME ? mActiveCamera : mPreviewCamera;
+    if (cameraEntity != ecs::NULL_ENTITY &&
+        mCoord->HasComponent<TransformComponent>(cameraEntity) &&
+        mCoord->HasComponent<CameraComponent>(cameraEntity)) {
+      auto &tf = mCoord->GetComponent<TransformComponent>(cameraEntity);
+      auto &cam = mCoord->GetComponent<CameraComponent>(cameraEntity);
+      outView = glm::lookAt(tf.position, tf.position + tf.GetForward(), tf.GetUp());
+      outProj = glm::perspective(glm::radians(cam.fov), cam.aspectModifier * mAspect,
+                                 cam.nearPlane, cam.farPlane);
+      return;
     }
-    return;
   }
 
-  // view one of the active/selected cameras
-  ecs::Entity cameraEntity =
-      mCameraMode == GAME ? mActiveCamera : mPreviewCamera;
-  if (!mCoord->HasComponent<TransformComponent>(cameraEntity) ||
-      !mCoord->HasComponent<CameraComponent>(cameraEntity)) {
-    LOG_ERROR << "Entity (" << cameraEntity
-              << ") has no transform OR camera component";
-    outView = {1.0};
-    outProj = {1.0};
-    return;
+  // fallback to engine camera
+  if (mEngineCamera) {
+    outView = mEngineCamera->GetViewMatrix();
+    outProj = mEngineCamera->GetProjectionMatrix(mAspect);
+  } else {
+    outView = glm::mat4(1.0f);
+    outProj = glm::mat4(1.0f);
   }
-
-  // get matrices
-  auto &tf = mCoord->GetComponent<TransformComponent>(cameraEntity);
-  auto &cam = mCoord->GetComponent<CameraComponent>(cameraEntity);
-  outView = 
-    glm::lookAt(tf.position, tf.position + tf.GetForward(), tf.GetUp());
-  outProj =
-      glm::perspective(glm::radians(cam.fov), cam.aspectModifier * mAspect,
-                       cam.nearPlane, cam.farPlane);
 }
 
 glm::vec3 CameraSystem::GetPosition() const {
-  // get engine camera
-  if (mCameraMode == ENGINE || mActiveCamera == ecs::NULL_ENTITY || mPreviewCamera == ecs::NULL_ENTITY) {
-    if (mEngineCamera)
-      return mEngineCamera->GetPosition();
-    else {
-      LOG_ERROR
-          << "Engine Camera unavailable, giving 1.0f matrices. EngineCamera("
-          << (mEngineCamera) << "), ActiveCamera("
-          << (mActiveCamera != ecs::NULL_ENTITY) << ")";
-      return glm::vec3(0.0f);
-    }
+  if (mCameraMode != ENGINE) {
+    ecs::Entity cameraEntity = mCameraMode == GAME ? mActiveCamera : mPreviewCamera;
+    if (cameraEntity != ecs::NULL_ENTITY &&
+        mCoord->HasComponent<TransformComponent>(cameraEntity))
+      return mCoord->GetComponent<TransformComponent>(cameraEntity).position;
   }
 
-  // get active camera
-  auto activeTransform = mCameraMode == GAME ?
-      mCoord->GetComponent<TransformComponent>(mActiveCamera) 
-      : mCoord->GetComponent<TransformComponent>(mPreviewCamera);
-  return activeTransform.position;
+  return mEngineCamera ? mEngineCamera->GetPosition() : glm::vec3(0.0f);
 }
