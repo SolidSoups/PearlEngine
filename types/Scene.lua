@@ -9,6 +9,10 @@ Scene = {}
 function Scene.FindEntityByName(name) end
 
 ---@param entity integer
+---@return NameComponent|nil
+function Scene.GetNameComp(entity) end
+
+---@param entity integer
 ---@return Transform|nil
 function Scene.GetTransform(entity) end
 

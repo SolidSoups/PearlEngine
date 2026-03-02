@@ -114,6 +114,7 @@ void ScriptEngine::RunOnCollisionEnter(ecs::Entity entity, ScriptComponent &sc,
   if (!fn.valid())
     return;
 
+  LOG_INFO << "COLLIDING WITH ENTITY: " << other;
   auto r = fn(other, normal, penetration);
   if (!r.valid()) {
     sol::error e = r;
@@ -194,6 +195,10 @@ void ScriptEngine::BindAPIs() {
   // bind collision event
 
   // transform comp
+  m_Lua.new_usertype<NameComponent>(
+    "NameComponent", 
+    "name", &NameComponent::name
+  );
   m_Lua.new_usertype<TransformComponent>(
       "Transform", "position", &TransformComponent::position, "rotation",
       &TransformComponent::rotation, "scale", &TransformComponent::scale,
@@ -221,6 +226,7 @@ void ScriptEngine::BindAPIs() {
       &RigidBodyComponent::ClearForces);
 
   // scene table
+  auto &coord = mScene->GetCoordinator();
   sol::table scene = m_Lua.create_named_table("Scene");
   scene.set_function(
       "FindEntityByName", [this](const std::string &name) -> ecs::Entity {
@@ -247,12 +253,18 @@ void ScriptEngine::BindAPIs() {
                          return &coord.GetComponent<RigidBodyComponent>(e);
                        return nullptr;
                      });
-  scene.set_function("GetCamera", [this](ecs::Entity e) -> CameraComponent * {
-    auto &coord = mScene->GetCoordinator();
+  scene.set_function("GetCamera", [this, &coord](ecs::Entity e) -> CameraComponent * {
     if (coord.HasComponent<CameraComponent>(e))
       return &coord.GetComponent<CameraComponent>(e);
     return nullptr;
   });
+  scene.set_function("GetNameComp", [this, &coord](ecs::Entity e) -> NameComponent* {
+    if(coord.HasComponent<NameComponent>(e)){
+      return &coord.GetComponent<NameComponent>(e);
+    }
+    return nullptr;
+  });
+
   scene.set_function("SetMainCamera", [this](ecs::Entity e) -> bool {
     LOG_INFO << "Setting main camera";
     if (e == ecs::NULL_ENTITY) {
