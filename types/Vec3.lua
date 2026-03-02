@@ -11,3 +11,10 @@ Vec3 = {}
 ---@param z number
 ---@return Vec3
 function Vec3.new(x, y, z) end
+
+---Normalize self
+function Vec3:Normalize() end
+
+---Get length
+---@return number length
+function Vec3:Length() end

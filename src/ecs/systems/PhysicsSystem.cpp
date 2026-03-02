@@ -12,7 +12,17 @@ void PhysicsSystem::UpdatePhysics(float timestep) {
       continue;
     auto& tf = Get<TransformComponent>(entity);
 
-    rb->velocity.y -= rb->gravity * timestep;
+    // Apply gravity as a force
+    rb->force.y -= rb->mass * rb->gravity;
+
+    // Integrate forces: F = ma -> a = F/m
+    glm::vec3 acceleration = rb->force / rb->mass;
+    rb->velocity += acceleration * timestep;
+
+    // Clear forces for next frame
+    rb->ClearForces();
+
+    // Update position
     tf.position += rb->velocity * timestep;
   }
 

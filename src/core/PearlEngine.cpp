@@ -10,7 +10,7 @@
 #include <glm/common.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/mat4x4.hpp>
-#include <gtk-4.0/gtk/gtk.h>
+// #include <gtk-4.0/gtk/gtk.h>  // Not currently used
 #include <imgui.h>
 
 // src
@@ -221,6 +221,8 @@ void PearlEngine::Initialize() {
       m_TextureManager->load("assets/hatchet/Hatchet_diffuse.png"));
   coord.AddComponent(
       plane, BoxColliderComponent{{0.0f, -0.05f, 0.0f}, {10.f, 0.1f, 10.f}});
+
+  mScene->RequestLoadScene("assets/Level1.json");
 }
 
 // b@UPDATE

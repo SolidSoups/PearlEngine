@@ -31,6 +31,19 @@
 #include "FileSystem.h"
 #include "SelectionWizard.h"
 
+Scene::~Scene() {
+  // sol::table holds references into the Lua registry. mScriptEngine (which
+  // owns the sol::state) is declared after m_Coordinator, so it's destroyed
+  // BEFORE m_Coordinator in reverse-declaration-order destruction. Clear all
+  // scriptEnv fields here, while the Lua state is still alive, so the
+  // ComponentArray<ScriptComponent> destructor finds only null tables.
+  for (auto entity : m_Entities) {
+    if (m_Coordinator.HasComponent<ScriptComponent>(entity)) {
+      m_Coordinator.GetComponent<ScriptComponent>(entity).scriptEnv = sol::table{};
+    }
+  }
+}
+
 Scene::Scene(const std::shared_ptr<IEngineCamera>& engineCam,const std::shared_ptr<InputManager>& inputMan) {
   m_Coordinator.Init();
 

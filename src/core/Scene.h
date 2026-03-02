@@ -20,7 +20,7 @@ class Camera;
 class Scene{
 public:
   Scene(const std::shared_ptr<IEngineCamera>& engineCam, const std::shared_ptr<InputManager>& inputMan);
-  ~Scene() = default;
+  ~Scene();
 
   // Object management
   ecs::Entity CreateEntity(const std::string& name = "Entity");

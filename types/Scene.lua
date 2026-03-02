@@ -13,6 +13,10 @@ function Scene.FindEntityByName(name) end
 function Scene.GetTransform(entity) end
 
 ---@param entity integer
+---@return Rigidbody|nil
+function Scene.GetRigidbody(entity) end
+
+---@param entity integer
 ---@return Camera|nil
 function Scene.GetCamera(entity) end
 

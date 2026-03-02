@@ -8,6 +8,20 @@ struct RigidBodyComponent {
 
   // runtime
   glm::vec3 velocity{0.0f};
+  glm::vec3 force{0.0f};  // accumulated forces for this frame
+
+  // Methods
+  void AddForce(const glm::vec3& f) {
+    force += f;
+  }
+
+  void AddImpulse(const glm::vec3& impulse) {
+    velocity += impulse / mass;
+  }
+
+  void ClearForces() {
+    force = glm::vec3(0.0f);
+  }
 };
 
 inline void to_json(json& j, const RigidBodyComponent& cmp){

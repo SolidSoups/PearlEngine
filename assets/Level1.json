@@ -1,0 +1,154 @@
+{
+  "entities": {
+    "Main Camera0": {
+      "camera_component": {
+        "aspectRatio": 1.0,
+        "far_plane": 100.0,
+        "fov": 60.0,
+        "near_plane": 0.10000000149011612
+      },
+      "name": "Main Camera",
+      "transform_component": {
+        "position": [
+          0.0,
+          0.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Plane1": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          -0.5,
+          0.0
+        ],
+        "size": [
+          20.0,
+          1.0,
+          20.0
+        ]
+      },
+      "name": "Plane",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "textures": {
+            "texture_diffuse1": [
+              "assets/textures/stone.jpg",
+              {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              }
+            ]
+          },
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "plane"
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          0.34898948669433594,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          20.0,
+          1.0,
+          20.0
+        ]
+      }
+    },
+    "Player2": {
+      "name": "Player",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "textures": {
+            "texture_diffuse1": [
+              "assets/Textures/Globe._Albedo.png",
+              {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              }
+            ]
+          },
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "script_component": {
+        "script_path": "assets/scripts/Player.lua"
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -0.48604723811149597,
+          1.348989486694336,
+          -4.126295566558838
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    }
+  },
+  "name": "Test Scene 1"
+}

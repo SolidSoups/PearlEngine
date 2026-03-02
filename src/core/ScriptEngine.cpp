@@ -7,10 +7,11 @@
 #include "ScriptComponent.h"
 #include "Scene.h"
 #include "TransformComponent.h"
+#include "RigidBodyComponent.h"
 #include "NameComponent.h"
 #include "Time.h"
 #include "LineRenderer.h"
-
+#include "Logger.h"
 
 void ScriptEngine::Init(Scene *scene,
                         const std::shared_ptr<InputManager> &inputMan) {
@@ -90,16 +91,20 @@ void ScriptEngine::RunOnUpdate(ecs::Entity entity, ScriptComponent &sc) {
   }
 }
 
-void ScriptEngine::RunOnCollisionEnter(ecs::Entity entity, ScriptComponent& sc, ecs::Entity other, glm::vec3 normal, float penetration){
-  if(!sc.loaded or !sc.enabled or sc.hasError) return;
+void ScriptEngine::RunOnCollisionEnter(ecs::Entity entity, ScriptComponent &sc,
+                                       ecs::Entity other, glm::vec3 normal,
+                                       float penetration) {
+  if (!sc.loaded or !sc.enabled or sc.hasError)
+    return;
   sol::protected_function fn = sc.scriptEnv["OnCollisionEnter"];
-  if(!fn.valid())
+  if (!fn.valid())
     return;
 
   auto r = fn(other, normal, penetration);
-  if(!r.valid()){
+  if (!r.valid()) {
     sol::error e = r;
-    LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnCollisionEnter: " << e.what();
+    LOG_ERROR << "[Lua] " << sc.scriptPath
+              << "::OnCollisionEnter: " << e.what();
     LogError(sc, e);
   }
 }
@@ -157,7 +162,20 @@ void ScriptEngine::BindAPIs() {
   // bind vec3 type
   m_Lua.new_usertype<glm::vec3>(
       "Vec3", sol::constructors<glm::vec3(), glm::vec3(float, float, float)>(),
-      "x", &glm::vec3::x, "y", &glm::vec3::y, "z", &glm::vec3::z);
+      "x", &glm::vec3::x, "y", &glm::vec3::y, "z", &glm::vec3::z, "Normalize",
+      [](glm::vec3 &v) { v = glm::normalize(v); }, "Length",
+      [](const glm::vec3 &v) { return glm::length(v); },
+
+      // arithmetic
+      sol::meta_function::addition,
+      [](const glm::vec3 &a, const glm::vec3 &b) { return a + b; },
+      sol::meta_function::subtraction,
+      [](const glm::vec3 &a, const glm::vec3 &b) { return a - b; },
+      sol::meta_function::multiplication,
+      sol::overload([](const glm::vec3 &v, float s) { return v * s; },
+                    [](float s, const glm::vec3 &v) { return v * s; }),
+      sol::meta_function::division,
+      [](const glm::vec3 &v, float s) { return v / s; });
 
   // bind collision event
 
@@ -168,8 +186,7 @@ void ScriptEngine::BindAPIs() {
       "Translate", &TransformComponent::Translate, "SetPosition",
       &TransformComponent::SetPosition, "SetRotation",
       &TransformComponent::SetRotation, "SetScale",
-      &TransformComponent::SetScale,
-  "LookAt", &TransformComponent::LookAt);
+      &TransformComponent::SetScale, "LookAt", &TransformComponent::LookAt);
 
   // camera comp
   m_Lua.new_usertype<CameraComponent>(
@@ -177,6 +194,17 @@ void ScriptEngine::BindAPIs() {
       &CameraComponent::aspectModifier, "near_plane",
       &CameraComponent::nearPlane, "far_plane", &CameraComponent::farPlane,
       "IsMainCamera", &CameraComponent::IsMainCamera);
+
+  // RigidBody
+  m_Lua.new_usertype<RigidBodyComponent>(
+      "Rigidbody", "mass", &RigidBodyComponent::mass, "gravity",
+      &RigidBodyComponent::gravity, "velocity", &RigidBodyComponent::velocity,
+      "force", &RigidBodyComponent::force,
+
+      // methods
+      "AddForce", &RigidBodyComponent::AddForce, "AddImpulse",
+      &RigidBodyComponent::AddImpulse, "ClearForces",
+      &RigidBodyComponent::ClearForces);
 
   // scene table
   sol::table scene = m_Lua.create_named_table("Scene");
@@ -196,6 +224,13 @@ void ScriptEngine::BindAPIs() {
                        auto &coord = mScene->GetCoordinator();
                        if (coord.HasComponent<TransformComponent>(e))
                          return &coord.GetComponent<TransformComponent>(e);
+                       return nullptr;
+                     });
+  scene.set_function("GetRigidbody",
+                     [this](ecs::Entity e) -> RigidBodyComponent * {
+                       auto &coord = mScene->GetCoordinator();
+                       if (coord.HasComponent<RigidBodyComponent>(e))
+                         return &coord.GetComponent<RigidBodyComponent>(e);
                        return nullptr;
                      });
   scene.set_function("GetCamera", [this](ecs::Entity e) -> CameraComponent * {
@@ -219,8 +254,7 @@ void ScriptEngine::BindAPIs() {
     }
     LOG_INFO << "Checked for Transform";
     if (!coord.HasComponent<CameraComponent>(e)) {
-      LOG_ERROR
-          << "[LUA] SetMainCamera: entity doesn't have camera component";
+      LOG_ERROR << "[LUA] SetMainCamera: entity doesn't have camera component";
       return false;
     }
     LOG_INFO << "Checked for Camera";
@@ -231,7 +265,7 @@ void ScriptEngine::BindAPIs() {
     return true;
   });
 
-  scene.set_function("LoadScene", [this](const std::string& path) {
+  scene.set_function("LoadScene", [this](const std::string &path) {
     mScene->RequestLoadScene(path);
   });
 
@@ -246,13 +280,13 @@ void ScriptEngine::BindAPIs() {
   // Logging
   sol::table debug = m_Lua.create_named_table("Debug");
   debug.set_function("Log", [this](const std::string &text) -> void {
-    std::cout << "[LuaLog] " << text << std::endl;
+    Logger::Get().LogMessage(text, LogSeverity::INFO, "Lua", 0, "Debug.Log");
   });
   debug.set_function("Warn", [this](const std::string &text) -> void {
-    std::cout << "[LuaWarn] " << text << std::endl;
+    Logger::Get().LogMessage(text, LogSeverity::WARNING, "Lua", 0, "Debug.Warn");
   });
   debug.set_function("Error", [this](const std::string &text) -> void {
-    std::cerr << "[LuaError] " << text << std::endl;
+    Logger::Get().LogMessage(text, LogSeverity::ERROR, "Lua", 0, "Debug.Error");
   });
 
   // Input
@@ -269,13 +303,15 @@ void ScriptEngine::BindAPIs() {
 
   // Gizmo
   sol::table gizmo = m_Lua.create_named_table("Gizmo");
-  gizmo.set_function("DrawLine", [](glm::vec3 a, glm::vec3 b, glm::vec3 color){
+  gizmo.set_function("DrawLine", [](glm::vec3 a, glm::vec3 b, glm::vec3 color) {
     LineRenderer::DrawLine(a, b, color);
   });
-  gizmo.set_function("DrawWireBox", [](glm::vec3 center, glm::vec3 size, glm::vec3 color){
-    LineRenderer::DrawWireBox(center, size, color);
-  });
-  gizmo.set_function("DrawWireSphere", [](glm::vec3 center, float radius, glm::vec3 color){
-    LineRenderer::DrawWireSphere(center, radius, color);
-  });
+  gizmo.set_function("DrawWireBox",
+                     [](glm::vec3 center, glm::vec3 size, glm::vec3 color) {
+                       LineRenderer::DrawWireBox(center, size, color);
+                     });
+  gizmo.set_function("DrawWireSphere",
+                     [](glm::vec3 center, float radius, glm::vec3 color) {
+                       LineRenderer::DrawWireSphere(center, radius, color);
+                     });
 }
