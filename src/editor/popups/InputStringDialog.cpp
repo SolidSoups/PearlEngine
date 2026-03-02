@@ -28,7 +28,7 @@ void InputStringDialog::Draw() {
   if(ImGui::BeginPopupModal("##InputStringDialog", nullptr, ImGuiWindowFlags_AlwaysAutoResize)){
     // nice colored header
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.5f, 1.0f));
-    ImGui::Text("%s##popupTitle", mTitle.c_str());
+    ImGui::Text("%s", mTitle.c_str());
     ImGui::PopStyleColor();
 
     // draw input box

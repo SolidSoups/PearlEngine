@@ -40,6 +40,17 @@ void RenderComponentEditor::OnDrawComponent(void *target, [[maybe_unused]] ecs::
       renderComp->material->setTexture("texture_normal1", newTexture);
   }
 
+  // display the tiling and offset stuff
+  ImGui::Dummy(ImVec2(0, 5));
+  ImGui::AlignTextToFramePadding();
+  ImGui::Text("Tiling");
+  ImGui::DragFloat2("##Tiling", &renderComp->material->tiling.x, 0.01f);
+
+  ImGui::AlignTextToFramePadding();
+  ImGui::Text("Offset");
+  ImGui::DragFloat2("##Offset", &renderComp->material->offset.x, 0.01f);
+  ImGui::Dummy(ImVec2(0, 5));
+
   // display and update mesh
   if(ImGui::CollapsingHeader("Mesh")){
     DrawMesh(renderComp);

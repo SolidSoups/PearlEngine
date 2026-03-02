@@ -22,7 +22,7 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 PearlWindow::PearlWindow(int width, int height, const char* title)
-  : window_width(width), window_height(height), r_Camera()
+  : window_width(width), window_height(height), r_Camera(), mSceneTitle("")
 {
   // initialize and give hints
   glfwInit();  
@@ -56,6 +56,22 @@ PearlWindow::PearlWindow(int width, int height, const char* title)
 
   glfwMakeContextCurrent(window);
   isInitialized = true;
+}
+
+
+void PearlWindow::SetSceneTitle(const std::string& sceneTitle){
+
+  std::string fullTitle;
+  if(sceneTitle.empty())
+    fullTitle = "PearlEngine";
+  else
+    fullTitle = "PearlEngine - " + sceneTitle;
+  glfwSetWindowTitle(window, fullTitle.c_str());
+  mSceneTitle = sceneTitle;
+}
+
+const std::string& PearlWindow::GetSceneTitle() const{
+  return mSceneTitle; 
 }
 
 PearlWindow::~PearlWindow(){

@@ -11,6 +11,7 @@ struct RenderComponent {
   std::shared_ptr<Mesh> mesh;                    // what to render
   std::shared_ptr<Material> material;        // how to render it
   std::string meshType = "";                     // "sphere" | "cube" | "plane" | "" (OBJ)
+  glm::vec2 tiling, offset;
 
   RenderComponent(
     std::shared_ptr<Mesh> _mesh,

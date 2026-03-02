@@ -107,6 +107,9 @@ void ShaderData::reset() {
   glUseProgram(0);
 }
 
+void ShaderData::setVec2(const char *name, const glm::vec2 &value){
+  glUniform2fv(glGetUniformLocation(id, name), 1, glm::value_ptr(value));
+}
 void ShaderData::setVec3(const char* name, const glm::vec3& value) {
   glUniform3fv(glGetUniformLocation(id, name), 1, glm::value_ptr(value));
 }

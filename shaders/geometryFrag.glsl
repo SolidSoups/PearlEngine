@@ -12,16 +12,18 @@ in mat3 TBN;
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 uniform sampler2D texture_normal1;
+uniform vec2 tiling = vec2(1.0);
+uniform vec2 offset = vec2(0.0);
 
 void main(){
   gPosition = FragPos;
-  gAlbedoSpec.rgb = texture(texture_diffuse1, TexCoords).rgb;
+  gAlbedoSpec.rgb = texture(texture_diffuse1, TexCoords * tiling + offset).rgb;
   // gAlbedoSpec.rgb = vec3(1.0, 0.0, 0.0);
-  gAlbedoSpec.a = texture(texture_specular1, TexCoords).r;
+  gAlbedoSpec.a = texture(texture_specular1, TexCoords * tiling + offset).r;
 
 
   // sample map (stored as 0-1, converted to -1 to 1)
-  vec3 normal = texture(texture_normal1, TexCoords).rgb * 2.0 - 1;
+  vec3 normal = texture(texture_normal1, TexCoords * tiling + offset).rgb * 2.0 - 1;
   // transform from tangent space to world space
   normal = normalize(TBN * normal);
   // pack back to 0-1 range in G-Buffer

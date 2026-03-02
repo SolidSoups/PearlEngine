@@ -1,5 +1,37 @@
 {
   "entities": {
+    "Cube2": {
+      "name": "Cube",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          52.16606903076172,
+          1.0,
+          48.355201721191406
+        ]
+      }
+    },
     "Main Camera0": {
       "camera_component": {
         "aspectRatio": 1.0,
@@ -26,8 +58,8 @@
         ]
       }
     },
-    "Plane1": {
-      "name": "Plane",
+    "Sphere1": {
+      "name": "Sphere",
       "render_component": {
         "material_asset": {
           "floats": {},
@@ -35,7 +67,7 @@
           "mat4s": {},
           "textures": {
             "texture_diffuse1": [
-              "assets/Textures/Globe_AOmap.png",
+              "assets/Textures/Globe._Albedo.png",
               {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
@@ -50,11 +82,12 @@
               }
             ]
           },
+          "vec2s": {},
           "vec3s": {},
           "vec4s": {}
         },
         "mesh_filepath": "",
-        "mesh_type": "plane"
+        "mesh_type": "sphere"
       },
       "transform_component": {
         "position": [
@@ -63,14 +96,14 @@
           0.0
         ],
         "rotation": [
-          42.31336212158203,
           0.0,
-          -0.0
+          0.0,
+          0.0
         ],
         "scale": [
-          11.59999942779541,
-          1.0,
-          5.069748878479004
+          20.0,
+          20.0,
+          20.0
         ]
       }
     }

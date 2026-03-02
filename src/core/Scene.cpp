@@ -32,11 +32,6 @@
 #include "SelectionWizard.h"
 
 Scene::~Scene() {
-  // sol::table holds references into the Lua registry. mScriptEngine (which
-  // owns the sol::state) is declared after m_Coordinator, so it's destroyed
-  // BEFORE m_Coordinator in reverse-declaration-order destruction. Clear all
-  // scriptEnv fields here, while the Lua state is still alive, so the
-  // ComponentArray<ScriptComponent> destructor finds only null tables.
   for (auto entity : m_Entities) {
     if (m_Coordinator.HasComponent<ScriptComponent>(entity)) {
       m_Coordinator.GetComponent<ScriptComponent>(entity).scriptEnv = sol::table{};
@@ -121,6 +116,7 @@ void Scene::Clear() {
   }
   m_Entities.clear();
   m_ActiveCamera = ecs::NULL_ENTITY;
+  mCurrentScenePath = "";
 }
 
 void Scene::Update() {
@@ -263,6 +259,14 @@ ecs::Entity Scene::CreateSphere(const std::string& name){
 
 
 
+void Scene::SaveCurrentScene(){
+  if(!SceneHasPath()){
+    LOG_ERROR << "Scene doesn't have a save path";
+    return;
+  }
+
+  SaveScene(mCurrentScenePath.c_str());
+}
 
 void Scene::SaveScene(const char* filepath) {
   json scene;
@@ -373,6 +377,9 @@ void Scene::LoadScene(const char *filepath) {
 
     m_Entities.push_back(entity);
   }
+
+
+  mCurrentScenePath = filepath;
   LOG_INFO << "Loaded scene from: " << filepath;
 }
 

@@ -54,6 +54,7 @@ public:
   AmbientLightData ambientLight;
 public:
   void SaveScene(const char* filepath);
+  void SaveCurrentScene();
   void LoadScene(const char* filepath);
 
   std::shared_ptr<PointLightSystem> mPointLightSystem;
@@ -79,6 +80,7 @@ private:
   ecs::Entity mPreviewCameraEntity = ecs::NULL_ENTITY;
   std::string m_PendingSceneLoad;
 
+  std::string mCurrentScenePath;
 public:
   void SetActiveCamera(ecs::Entity cameraEntity);
   ecs::Entity GetActiveCamera() const { return m_ActiveCamera; }
@@ -87,6 +89,9 @@ public:
   void RequestLoadScene(const std::string& path) { m_PendingSceneLoad = path; }
   bool HasPendingLoad() const { return !m_PendingSceneLoad.empty(); }
   std::string ConsumePendingLoad() { auto p = m_PendingSceneLoad; m_PendingSceneLoad.clear(); return p; }
+
+  const std::string& GetScenePath() const { return mCurrentScenePath; }
+  bool SceneHasPath() const { return !mCurrentScenePath.empty();}
 
   inline CameraSystem* GetCameraSystem() const {
     return mCameraSystem.get();

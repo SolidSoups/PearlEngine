@@ -20,6 +20,7 @@ class Material {
 public:
   struct ConstructData {
     std::unordered_map<std::string, float> floats;
+    std::unordered_map<std::string, glm::vec2> vec2s;
     std::unordered_map<std::string, glm::vec3> vec3s;
     std::unordered_map<std::string, glm::vec4> vec4s;
     std::unordered_map<std::string, int> ints;
@@ -42,6 +43,7 @@ public:
   void bind(std::shared_ptr<ShaderData> overrideShader = nullptr);
   void setFloat(const std::string &name, float value);
   void setInt(const std::string &name, int value);
+  void setVec2(const std::string &name, const glm::vec2 &value);
   void setVec3(const std::string &name, const glm::vec3 &value);
   void setVec4(const std::string &name, const glm::vec4 &value);
   void setTexture(const std::string &name,
@@ -54,6 +56,7 @@ public:
   inline const ConstructData createConstruction() const {
     ConstructData data;
     data.floats = floats;
+    data.vec2s = vec2s;
     data.vec3s = vec3s;
     data.vec4s = vec4s;
     data.ints = ints;
@@ -66,6 +69,7 @@ public:
   }
   inline const void fromConstruction(ConstructData data) {
     floats = data.floats;
+    vec2s = data.vec2s;
     vec3s = data.vec3s;
     vec4s = data.vec4s;
     ints = data.ints;
@@ -80,18 +84,22 @@ public:
 
 private:
   std::shared_ptr<ShaderData> shader;
-
   std::unordered_map<std::string, float> floats;
+  std::unordered_map<std::string, glm::vec2> vec2s;
   std::unordered_map<std::string, glm::vec3> vec3s;
   std::unordered_map<std::string, glm::vec4> vec4s;
   std::unordered_map<std::string, int> ints;
   std::unordered_map<std::string, std::shared_ptr<TextureData>> textures;
   std::unordered_map<std::string, glm::mat4> mat4s;
+
+public:
+  glm::vec2 tiling{1.0}, offset{0.0};
 };
 
 inline void to_json(json &j, const Material::ConstructData &m) {
   j["floats"] = m.floats;
   j["ints"] = m.ints;
+  j["vec2s"] = m.vec2s;
   j["vec3s"] = m.vec3s;
   j["vec4s"] = m.vec4s;
   j["mat4s"] = m.mat4s;
@@ -104,6 +112,7 @@ inline void to_json(json &j, const Material::ConstructData &m) {
 inline void from_json(const json &j, Material::ConstructData &m) {
   m.floats = j["floats"];
   m.ints = j["ints"];
+  m.vec2s = j["vec2s"];
   m.vec3s = j["vec3s"];
   m.vec4s = j["vec4s"];
   m.mat4s = j["mat4s"];

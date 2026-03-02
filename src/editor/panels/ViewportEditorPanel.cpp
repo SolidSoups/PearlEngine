@@ -47,11 +47,11 @@ void ViewportEditorPanel::OnImGuiRender() {
 
   // add mode keybinds for the viewport
   if (m_IsHovered) {
-    if (ImGui::IsKeyPressed(ImGuiKey_T))
+    if (ImGui::IsKeyPressed(ImGuiKey_W))
       selectedItem = 0;
     if (ImGui::IsKeyPressed(ImGuiKey_R))
       selectedItem = 1;
-    if (ImGui::IsKeyPressed(ImGuiKey_S))
+    if (ImGui::IsKeyPressed(ImGuiKey_E))
       selectedItem = 2;
   }
 

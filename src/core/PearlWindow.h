@@ -17,6 +17,9 @@ public:
   PearlWindow& operator=(const PearlWindow&) = delete;  // delete copy-assignment
   PearlWindow(PearlWindow&&) = default;                  // delete move-constructor
   PearlWindow& operator=(PearlWindow&&) = delete;       // delete move-assignment
+  
+  void SetSceneTitle(const std::string& windowTitle);
+  const std::string& GetSceneTitle() const;
 
   inline bool IsInitialized() { return isInitialized; }
   inline GLFWwindow* GetWindow() { return window; }
@@ -27,4 +30,6 @@ private:
   bool isInitialized = false;
   ServiceHandle<Camera> r_Camera;
   GLFWwindow* window = nullptr;
+  std::string mSceneTitle;
 };
+

@@ -199,30 +199,6 @@ void PearlEngine::Initialize() {
   glEnable(GL_DEPTH_TEST);
 
   LOG_INFO << "Finished initialization";
-
-  // create sphere comp
-  auto &coord = mScene->GetCoordinator();
-  auto sphere = mScene->CreateSphere("Script Tester");
-  coord.GetComponent<TransformComponent>(sphere).position = glm::vec3{0, 5, 0};
-  auto &renderC1 = coord.GetComponent<RenderComponent>(sphere);
-  renderC1.material->setTexture(
-      "texture_diffuse1",
-      m_TextureManager->load("assets/Textures/Globe._Albedo.png"));
-  coord.AddComponent(sphere, SphereColliderComponent{});
-  coord.AddComponent(sphere, RigidBodyComponent{});
-  coord.AddComponent(sphere, ScriptComponent{.scriptPath = "assets/scripts/collision_test.lua", .enabled = true});
-
-  // create the plane comp
-  auto plane = mScene->CreatePlane("Collision test");
-  coord.GetComponent<TransformComponent>(plane).scale = {10.f, 1.f, 10.f};
-  auto &planeRender = coord.GetComponent<RenderComponent>(plane);
-  planeRender.material->setTexture(
-      "texture_diffuse1",
-      m_TextureManager->load("assets/hatchet/Hatchet_diffuse.png"));
-  coord.AddComponent(
-      plane, BoxColliderComponent{{0.0f, -0.05f, 0.0f}, {10.f, 0.1f, 10.f}});
-
-  mScene->RequestLoadScene("assets/Level1.json");
 }
 
 // b@UPDATE
@@ -295,8 +271,11 @@ void PearlEngine::Update() {
   mScene->Update();
 
   if (mScene->HasPendingLoad()) {
+    LOG_INFO << "Scene has pending load";
     std::string path = mScene->ConsumePendingLoad();
     mScene->LoadScene(path.c_str());
+    if (mScene->SceneHasPath())
+      pwin.SetSceneTitle(path);
   }
 }
 
@@ -506,54 +485,64 @@ void PearlEngine::RenderEditor() {
 }
 
 void PearlEngine::ProcessInput(GLFWwindow *window) {
-  static bool gWasPressed = false;
-  static bool f5WasPressed = false;
-
-  m_InputManager->Update();
-
-  // quit engine
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, true);
-  }
-
-  // reset camera controller
-  if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-    mEngineCamera->Reset();
-  }
-
-  // recompile all shaders
-  if (glfwGetKey(window, GLFW_KEY_F5) == GLFW_PRESS && !f5WasPressed) {
-    m_ShaderManager->recompileAll();
-    f5WasPressed = true;
-  } else if (glfwGetKey(window, GLFW_KEY_F5) == GLFW_RELEASE) {
-    f5WasPressed = false;
-  }
-
-  if (bDebugGBuffer && glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS &&
-      !gWasPressed) {
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-      mDebugBufferIndex = (mDebugBufferIndex + 4) % 5;
-    } else {
-      mDebugBufferIndex = (mDebugBufferIndex + 1) % 5;
-    }
-    gWasPressed = true;
-  } else if (glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE) {
-    gWasPressed = false;
-  }
-
-  static bool cSWasPressed = false;
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS &&
-      glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS &&
-      !cSWasPressed) {
-    // mScene->SaveScene();
-    cSWasPressed = true;
-  } else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE) {
-    cSWasPressed = false;
-  }
-
+  // block all engine keybinds when imgui focuses
   ImGuiIO io = ImGui::GetIO();
-  if (io.WantCaptureMouse || io.WantCaptureKeyboard)
-    return;
+
+  auto &input = m_InputManager;
+  input->Update();
+
+  // always on shortcuts
+  if (input->GetKeyDown(GLFW_KEY_HOME) && input->GetKey(GLFW_KEY_LEFT_SHIFT))
+    glfwSetWindowShouldClose(window, true);
+
+  if (input->GetKeyDown(GLFW_KEY_F5))
+    m_ShaderManager->recompileAll();
+
+  // blocked when imgui has a text field focused
+  if (!io.WantCaptureKeyboard) {
+    if (input->GetKeyDown(GLFW_KEY_F)) {
+      mEngineCamera->Reset();
+    }
+
+    if (bDebugGBuffer) {
+      if (input->GetKeyDown(GLFW_KEY_G)) {
+        if (input->GetKey(GLFW_KEY_LEFT_SHIFT))
+          mDebugBufferIndex = (mDebugBufferIndex + 4) % 5;
+        else
+          mDebugBufferIndex = (mDebugBufferIndex + 1) % 5;
+      }
+    }
+
+    // open scene
+    if (input->GetKeyDown(GLFW_KEY_O)) {
+      if (input->GetKey(GLFW_KEY_LEFT_CONTROL)) {
+        UserGUI::StartFilePopup(
+            [this](const std::string &file) {
+              // load da scene
+              mScene->RequestLoadScene(file.c_str());
+            },
+            {".json"});
+      }
+    }
+
+    // save and save as scene
+    if (input->GetKeyDown(GLFW_KEY_S)) {
+      if (input->GetKey(GLFW_KEY_LEFT_CONTROL) and
+          input->GetKey(GLFW_KEY_LEFT_SHIFT)) {
+        // save scene as
+        UserGUI::StartInputPopup(
+            "Save scene as...", [this](const std::string &name) {
+              const std::string assets_folder = "assets/";
+              std::string filepath = assets_folder + name + ".json";
+              mScene->SaveScene(filepath.c_str());
+              // if we were succesfule but bruh
+              pwin.SetSceneTitle(filepath);
+            });
+      } else if (input->GetKey(GLFW_KEY_LEFT_CONTROL)) {
+        mScene->SaveCurrentScene();
+      }
+    }
+  }
 }
 
 void PearlEngine::AddMenuBarItems() {
@@ -567,11 +556,16 @@ void PearlEngine::AddMenuBarItems() {
           const std::string assets_folder = "assets/";
           std::string filepath = assets_folder + name + ".json";
           mScene->SaveScene(filepath.c_str());
+          // if we were succesfule but bruh
+          pwin.SetSceneTitle(filepath);
         });
   });
-  MenuRegistry::Get().Register("File/Load scene...", [this]() {
+  MenuRegistry::Get().Register("File/Open scene...", [this]() {
     UserGUI::StartFilePopup(
-        [this](const std::string &file) { mScene->LoadScene(file.c_str()); },
+        [this](const std::string &file) {
+          // load da scene
+          mScene->RequestLoadScene(file.c_str());
+        },
         {".json"});
   });
 

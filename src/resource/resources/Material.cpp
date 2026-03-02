@@ -28,6 +28,15 @@ void Material::bind(std::shared_ptr<ShaderData> overrideShader) {
     activeShader->setFloat(name.c_str(), value);
   }
 
+  // upload all vec2s
+  // set tiling uniform if it doesnt exist
+  activeShader->setVec2("tiling", tiling);
+  activeShader->setVec2("offset", offset);
+  for(const auto &[name, value] : vec2s) {
+    activeShader->setVec2(name.c_str(), value);
+  }
+
+
   // Upload all vec3s
   for (const auto &[name, value] : vec3s) {
     activeShader->setVec3(name.c_str(), value);
@@ -77,6 +86,10 @@ void Material::setFloat(const std::string &name, float value) {
 
 void Material::setInt(const std::string &name, int value) {
   ints[name] = value;
+}
+
+void Material::setVec2(const std::string &name, const glm::vec2 &value){
+  vec2s[name] = value;
 }
 
 void Material::setVec3(const std::string &name, const glm::vec3 &value) {
