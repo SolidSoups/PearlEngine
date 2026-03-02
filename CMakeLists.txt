@@ -31,9 +31,9 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/glfw)
 
-# gtk4 (for file-explorer)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTK4 REQUIRED gtk4)
+# gtk4 (for file-explorer) - DISABLED: not currently used
+# find_package(PkgConfig REQUIRED)
+# pkg_check_modules(GTK4 REQUIRED gtk4)
 
 # glad library
 add_library(glad external/glad/src/glad.c)
@@ -87,13 +87,13 @@ target_sources(game_engine PRIVATE
   external/stb/stb_image.cpp
   ${SOURCES}
 )
-target_link_libraries(game_engine 
-  PRIVATE 
-    glfw 
-    glad 
+target_link_libraries(game_engine
+  PRIVATE
+    glfw
+    glad
     lua
     imgui
-    ${GTK4_LIBRARIES}
+    # ${GTK4_LIBRARIES}
 )
 target_include_directories(game_engine PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -134,7 +134,7 @@ target_include_directories(game_engine PRIVATE
   external/lua
   external/sol2/include
   ${CMAKE_CURRENT_SOURCE_DIR}/src/scripting
-  ${GTK4_INCLUDE_DIRS}
+  # ${GTK4_INCLUDE_DIRS}
 )
 target_compile_definitions(game_engine PRIVATE
   DEBUG_ENABLED=1
