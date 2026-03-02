@@ -77,11 +77,16 @@ private:
   std::shared_ptr<PhysicsSystem> mPhysicsSystem;
 
   ecs::Entity mPreviewCameraEntity = ecs::NULL_ENTITY;
+  std::string m_PendingSceneLoad;
 
 public:
   void SetActiveCamera(ecs::Entity cameraEntity);
   ecs::Entity GetActiveCamera() const { return m_ActiveCamera; }
   void SetAspectRatio(float aspect);
+
+  void RequestLoadScene(const std::string& path) { m_PendingSceneLoad = path; }
+  bool HasPendingLoad() const { return !m_PendingSceneLoad.empty(); }
+  std::string ConsumePendingLoad() { auto p = m_PendingSceneLoad; m_PendingSceneLoad.clear(); return p; }
 
   inline CameraSystem* GetCameraSystem() const {
     return mCameraSystem.get();

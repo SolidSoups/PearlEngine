@@ -290,8 +290,12 @@ void PearlEngine::Update() {
     }
   }
 
-  // update objects (currently does nothing, but ready for future!  )
   mScene->Update();
+
+  if (mScene->HasPendingLoad()) {
+    std::string path = mScene->ConsumePendingLoad();
+    mScene->LoadScene(path.c_str());
+  }
 }
 
 void PearlEngine::Render() {

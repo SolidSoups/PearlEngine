@@ -19,3 +19,6 @@ function Scene.GetCamera(entity) end
 ---@param entity integer
 ---@return bool succesful
 function Scene.SetMainCamera(entity) end
+
+---@param path string path to the scene JSON file
+function Scene.LoadScene(path) end

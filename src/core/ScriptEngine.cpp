@@ -231,7 +231,10 @@ void ScriptEngine::BindAPIs() {
     return true;
   });
 
-  // null entity in scene
+  scene.set_function("LoadScene", [this](const std::string& path) {
+    mScene->RequestLoadScene(path);
+  });
+
   scene["NULL_ENTITY"] = ecs::NULL_ENTITY;
 
   // time table
