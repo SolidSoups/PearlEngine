@@ -1,70 +1,6 @@
 {
   "entities": {
-    "CollideTest0": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "size": [
-          2.0999999046325684,
-          2.0999999046325684,
-          2.0999999046325684
-        ]
-      },
-      "name": "CollideTest",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "textures": {
-            "texture_diffuse1": [
-              "assets/checker.png",
-              {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              }
-            ]
-          },
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "script_component": {
-        "script_path": "assets/scripts/LoadScene2.lua"
-      },
-      "transform_component": {
-        "position": [
-          3.9322826862335205,
-          2.603991746902466,
-          12.216363906860352
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          2.0,
-          2.0,
-          2.0
-        ]
-      }
-    },
-    "Main Camera1": {
+    "Main Camera0": {
       "camera_component": {
         "aspectRatio": 1.0,
         "far_plane": 100.0,
@@ -93,7 +29,7 @@
         ]
       }
     },
-    "Plane2": {
+    "Plane1": {
       "box_collider_component": {
         "center": [
           0.0,
@@ -114,7 +50,7 @@
           "mat4s": {},
           "textures": {
             "texture_diffuse1": [
-              "assets/textures/stone.jpg",
+              "assets/hatchet/Hatchet_diffuse.png",
               {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
@@ -154,7 +90,7 @@
         ]
       }
     },
-    "Player3": {
+    "Player2": {
       "name": "Player",
       "render_component": {
         "material_asset": {
@@ -202,9 +138,9 @@
       },
       "transform_component": {
         "position": [
-          10.590093612670898,
+          -1.108285665512085,
           1.58982253074646,
-          -16.038175582885742
+          -3.9903883934020996
         ],
         "rotation": [
           0.0,
@@ -218,7 +154,7 @@
         ]
       }
     },
-    "PointLight4": {
+    "PointLight3": {
       "name": "PointLight",
       "pointLight_component": {
         "color": [

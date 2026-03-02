@@ -2,6 +2,7 @@ local cameraAngle = 30
 local pivotLength = 10
 
 function OnCreate()
+	Scene.SetMainCamera(entity)
 	Transform = Scene.GetTransform(entity)
 
 	local playerEntity = Scene.FindEntityByName("Player")
