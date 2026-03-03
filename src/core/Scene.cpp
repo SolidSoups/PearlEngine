@@ -121,7 +121,6 @@ void Scene::ClearAllEntities() {
   m_Entities.clear();
   m_ActiveCamera = ecs::NULL_ENTITY;
   mCameraSystem->Reset();
-  mCurrentScenePath = "";
 }
 
 void Scene::OnRuntimeStart(){

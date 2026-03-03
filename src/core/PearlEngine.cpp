@@ -160,9 +160,8 @@ void PearlEngine::Initialize() {
   ecs::Entity cameraEntity = mScene->CreateEntity("Main Camera");
   auto &coordinator = mScene->GetCoordinator();
   coordinator.AddComponent(cameraEntity, CameraComponent{});
-  auto &camComp = coordinator.GetComponent<CameraComponent>(cameraEntity);
   coordinator.GetComponent<TransformComponent>(cameraEntity).position =
-      camComp.cameraData.position;
+      glm::vec3(0.0f, 0.0f, 5.0f);
   mScene->SetActiveCamera(cameraEntity);
 
   // Create viewport framebuffer

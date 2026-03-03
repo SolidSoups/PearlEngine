@@ -57,7 +57,7 @@ private:
 public:
   // movement settings
   float OrbitSensitivity{0.3f};
-  float PanSensitivity{0.001f};
+  float PanSensitivity{0.05f};
   float ZoomSpeed{0.1f};
 
 private:

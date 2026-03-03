@@ -29,7 +29,7 @@ CameraData* Camera::GetPreview(){
     auto& transform = coordinator.GetComponent<TransformComponent>(m_PreviewTarget);
 
     // update position
-    camComp.cameraData.position = transform.position;
+    m_PreviewData.position = transform.position;
 
     // build rotation matrix from euler angles
     glm::quat orientation = glm::quat(glm::vec3(
@@ -43,12 +43,15 @@ CameraData* Camera::GetPreview(){
     glm::vec3 up = orientation * glm::vec3(0, 1, 0); // Local y
 
     // update camera vectors to match
-    camComp.cameraData.target = transform.position + forward;
-    camComp.cameraData.worldUp = up;
-    camComp.cameraData.UpdateCameraVectors();
+    m_PreviewData.target = transform.position + forward;
+    m_PreviewData.worldUp = up;
+    m_PreviewData.UpdateCameraVectors();
 
-    camComp.cameraData.aspectRatio = m_Aspect;
-    return &camComp.cameraData;
+    m_PreviewData.fov        = camComp.fov;
+    m_PreviewData.nearPlane  = camComp.nearPlane;
+    m_PreviewData.farPlane   = camComp.farPlane;
+    m_PreviewData.aspectRatio = m_Aspect;
+    return &m_PreviewData;
   }
   return nullptr;
 }
@@ -62,8 +65,15 @@ void Camera::StopPreview() {
   // update internal camera data to match preview
   if(m_IsPreviewingSceneCamera && m_PreviewTarget != ecs::NULL_ENTITY && r_Scene.GetState() == Ready){
     auto& coordinator = r_Scene->GetCoordinator();
-    if (coordinator.HasComponent<CameraComponent>(m_PreviewTarget)) {
-      m_InternalCameraData = coordinator.GetComponent<CameraComponent>(m_PreviewTarget).cameraData;
+    if (coordinator.HasComponent<CameraComponent>(m_PreviewTarget) &&
+        coordinator.HasComponent<TransformComponent>(m_PreviewTarget)) {
+      auto& camComp   = coordinator.GetComponent<CameraComponent>(m_PreviewTarget);
+      auto& transform = coordinator.GetComponent<TransformComponent>(m_PreviewTarget);
+      m_InternalCameraData.position    = transform.position;
+      m_InternalCameraData.fov         = camComp.fov;
+      m_InternalCameraData.nearPlane   = camComp.nearPlane;
+      m_InternalCameraData.farPlane    = camComp.farPlane;
+      m_InternalCameraData.aspectRatio = m_Aspect;
     }
   }
 

@@ -26,20 +26,20 @@ void CameraComponentEditor::OnDrawComponent(void* target, ecs::Entity entity){
     ImGui::AlignTextToFramePadding();
     ImGui::Text("Fov");
     ImGui::SameLine(labelWidth);
-    ImGui::SliderFloat("##Fov", &cmp->cameraData.fov, 0.0f, 179.f,  "%.1f");
+    ImGui::SliderFloat("##Fov", &cmp->fov, 0.0f, 179.f,  "%.1f");
 
     // draw nearplane
     ImGui::AlignTextToFramePadding();
     ImGui::Text("Near Plane");
     ImGui::SameLine(labelWidth);
-    ImGui::InputFloat("##Near Plane", &cmp->cameraData.nearPlane);
+    ImGui::InputFloat("##Near Plane", &cmp->nearPlane);
 
 
     // draw nearplane
     ImGui::AlignTextToFramePadding();
     ImGui::Text("Far Plane");
     ImGui::SameLine(labelWidth);
-    ImGui::InputFloat("##Far Plane", &cmp->cameraData.farPlane);
+    ImGui::InputFloat("##Far Plane", &cmp->farPlane);
   }
 
 }

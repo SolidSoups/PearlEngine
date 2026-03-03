@@ -21,6 +21,7 @@ public:
 private:
   ServiceHandle<Scene> r_Scene;
   CameraData m_InternalCameraData;
+  CameraData m_PreviewData;
   float m_Aspect = 60.f;
 
 private:

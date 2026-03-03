@@ -1,7 +1,6 @@
 #pragma once
 
 #include "json_common.h"
-#include "CameraData.h"
 
 struct CameraComponent {
   float fov = 60.0f;
@@ -10,7 +9,6 @@ struct CameraComponent {
   float farPlane = 100.0f;
 
   // Runtime state — not serialized
-  CameraData cameraData; // no no no
   bool isMainCamera = false;
   inline bool IsMainCamera() const { return isMainCamera; }
 };

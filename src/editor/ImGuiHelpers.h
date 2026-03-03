@@ -31,8 +31,10 @@ inline bool SearchablePopup(const char *id, const char *title,
                             T& outSelectedItem, bool caseInsensitive = true){
   struct PopupState {
     char searchBuffer[256] = "";
+    char lastSearchBuffer[256] = "";
     bool firstFrame = true;
     int tempSelection = -1;
+    bool scrollToSelection = false;
   };
   static std::map<std::string, PopupState> states;
 
@@ -55,6 +57,7 @@ inline bool SearchablePopup(const char *id, const char *title,
     ImGui::Separator();
 
     // draw input box
+    bool wasFirstFrame = state.firstFrame;
     if (state.firstFrame) {
       ImGui::SetKeyboardFocusHere();
       state.firstFrame = false;
@@ -64,28 +67,60 @@ inline bool SearchablePopup(const char *id, const char *title,
 
     ImGui::Separator();
 
+    // build filtered index list
+    std::string searchLower = toLower(std::string(state.searchBuffer));
+    std::vector<int> visibleIndices;
+    for (int i = 0; i < (int)items.size(); i++) {
+      if (!validateItem(items[i])) continue;
+      if (caseInsensitive && !searchLower.empty()) {
+        if (toLower(getName(items[i])).find(searchLower) == std::string::npos)
+          continue;
+      }
+      visibleIndices.push_back(i);
+    }
+
+    // auto-select first item on open
+    if (wasFirstFrame && !visibleIndices.empty()) {
+      state.tempSelection = visibleIndices[0];
+      state.scrollToSelection = true;
+      memcpy(state.lastSearchBuffer, state.searchBuffer, sizeof(state.searchBuffer));
+    }
+
+    // reset selection when search changes
+    if (strcmp(state.searchBuffer, state.lastSearchBuffer) != 0) {
+      state.tempSelection = visibleIndices.empty() ? -1 : visibleIndices[0];
+      state.scrollToSelection = true;
+      memcpy(state.lastSearchBuffer, state.searchBuffer, sizeof(state.searchBuffer));
+    }
+
+    // arrow key navigation
+    int visPos = -1;
+    for (int i = 0; i < (int)visibleIndices.size(); i++) {
+      if (visibleIndices[i] == state.tempSelection) { visPos = i; break; }
+    }
+    if (ImGui::IsKeyPressed(ImGuiKey_DownArrow) && !visibleIndices.empty()) {
+      visPos = (visPos + 1) % (int)visibleIndices.size();
+      state.tempSelection = visibleIndices[visPos];
+      state.scrollToSelection = true;
+    }
+    if (ImGui::IsKeyPressed(ImGuiKey_UpArrow) && !visibleIndices.empty()) {
+      visPos = (visPos <= 0) ? (int)visibleIndices.size() - 1 : visPos - 1;
+      state.tempSelection = visibleIndices[visPos];
+      state.scrollToSelection = true;
+    }
+
     // draw items...
     ImGui::BeginChild("##ItemList", ImVec2(400, 300), true, ImGuiWindowFlags_AlwaysVerticalScrollbar);
-    for (size_t i = 0; i < items.size(); i++) {
-      const T &item = items[i];
+    for (int idx : visibleIndices) {
+      std::string name = getName(items[idx]) + "##" + std::to_string(idx);
 
-      if(!validateItem(item)) continue;
-
-      std::string name = getName(item) + "##" + std::to_string(i);
-
-      // skip if it doesn't match search, case insensitive
-      if (caseInsensitive) {
-        std::string searchLower = toLower(std::string(state.searchBuffer));
-        if (!searchLower.empty()) {
-          std::string itemLower = toLower(name);
-          if (itemLower.find(searchLower) == std::string::npos)
-            continue;
-        }
+      bool selected = (state.tempSelection == idx);
+      if (ImGui::Selectable(name.c_str(), selected)) {
+        state.tempSelection = idx;
       }
-
-      // draw selectable
-      if (ImGui::Selectable(name.c_str(), state.tempSelection == (int)i)) {
-        state.tempSelection = i;
+      if (selected && state.scrollToSelection) {
+        ImGui::SetScrollHereY(0.5f);
+        state.scrollToSelection = false;
       }
     }
 
@@ -103,6 +138,13 @@ inline bool SearchablePopup(const char *id, const char *title,
       ImGui::Text("Selected: None");
     }
     ImGui::PopStyleColor();
+
+    // confirm with Enter key
+    if (ImGui::IsKeyPressed(ImGuiKey_Enter) && state.tempSelection >= 0 && state.tempSelection < (int)items.size()) {
+      shouldClose = true;
+      outSelectedItem = items[state.tempSelection];
+      result = true;
+    }
 
     // add a cancel button
     if (ImGui::Button("Ok")) {
@@ -125,7 +167,9 @@ inline bool SearchablePopup(const char *id, const char *title,
 
     if (shouldClose) {
       state.searchBuffer[0] = '\0';
+      state.lastSearchBuffer[0] = '\0';
       state.tempSelection = -1;
+      state.scrollToSelection = false;
       state.firstFrame = true;
       ImGui::CloseCurrentPopup();
     }

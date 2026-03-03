@@ -64,7 +64,7 @@ void EngineCamera::Pan(glm::vec2 delta) {
 
   // calculate offset
   glm::vec3 offset =
-      (-right * delta.x + up * delta.y) * PanSensitivity * mOrbitDistance;
+      (-right * delta.x + up * delta.y) * PanSensitivity;
 
   // translate by offset
   mPosition += offset;

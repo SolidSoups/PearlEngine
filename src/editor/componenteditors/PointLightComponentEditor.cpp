@@ -21,7 +21,7 @@ void PointLightComponentEditor::OnDrawComponent(void* component, [[maybe_unused]
   ImGui::AlignTextToFramePadding();
   ImGui::Text("Intensity");
   ImGui::SameLine(labelWidth);
-  ImGui::SliderFloat("##Intensity", &pointLightComp->data.intensity, 0.0f, 10.0f);
+  ImGui::DragFloat("##Intensity", &pointLightComp->data.intensity, 0.2f);
 
   ImGui::SeparatorText("Attenuation");
 
