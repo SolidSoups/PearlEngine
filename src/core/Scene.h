@@ -13,6 +13,7 @@
 #include "CameraSystem.h"
 #include "PhysicsSystem.h"
 #include "json_common.h"
+#include "RuntimeState.h"
 
 class RenderSystem;
 class PointLightSystem;
@@ -31,9 +32,12 @@ public:
   ecs::Entity CreateSphere(const std::string& name="Sphere");
   ecs::Entity DuplicateEntity(ecs::Entity entity);
   void DestroyEntity(ecs::Entity entity);
-  void Clear();
+  void ClearAllEntities();
 
   // Scene operations
+  void OnRuntimeStart();
+  void OnRuntimeStop();
+  void OnSceneReload();
   void Update();
   void Render(CameraSystem::CameraMode mode);
 
@@ -57,7 +61,9 @@ public:
 public:
   void SaveScene(const char* filepath);
   void SaveCurrentScene();
+  json CreateSceneJSON();
   void LoadScene(const char* filepath);
+  void LoadSceneJSON(const json& j);
 
   ecs::Entity CreateEntityFromJSON(const json& j);
   const json CreateJSONFromEntity(ecs::Entity entity);
@@ -102,4 +108,6 @@ public:
   inline CameraSystem* GetCameraSystem() const {
     return mCameraSystem.get();
   }
+
+  json mSceneSnapshot;
 };

@@ -112,7 +112,7 @@ void Scene::DestroyEntity(ecs::Entity entity) {
                    m_Entities.end());
 }
 
-void Scene::Clear() {
+void Scene::ClearAllEntities() {
   SelectionWizard::Clear();
   mScriptSystem->OnDestroy();
   for (auto entity : m_Entities) {
@@ -124,6 +124,18 @@ void Scene::Clear() {
   mCurrentScenePath = "";
 }
 
+void Scene::OnRuntimeStart(){
+  mSceneSnapshot = CreateSceneJSON();
+  mScriptSystem->OnCreateScene();
+}
+void Scene::OnRuntimeStop(){
+  // mScriptSystem->OnDestroyScene();
+  LoadSceneJSON(mSceneSnapshot);
+  mSceneSnapshot = {};
+}
+void Scene::OnSceneReload(){
+  LoadSceneJSON(mSceneSnapshot);
+}
 void Scene::Update() {
   mScriptSystem->OnUpdate();
 
@@ -276,17 +288,7 @@ void Scene::SaveCurrentScene() {
 }
 
 void Scene::SaveScene(const char *filepath) {
-  json scene;
-  scene["name"] = "Test Scene 1";
-  json &entities = scene["entities"];
-
-  size_t counter = 0;
-  for (ecs::Entity entity : m_Entities) {
-    std::string name = m_Coordinator.GetComponent<NameComponent>(entity).name;
-    entities[name + std::to_string(counter)] = CreateJSONFromEntity(entity);
-    counter++;
-  }
-
+  json scene = CreateSceneJSON();
   std::string json_str = scene.dump(2);
 
   // copy to vector
@@ -297,15 +299,28 @@ void Scene::SaveScene(const char *filepath) {
   mCurrentScenePath = filepath;
 }
 
-void Scene::LoadScene(const char *filepath) {
-  Clear();
+json Scene::CreateSceneJSON(){
+  json scene;
+  json &entities = scene["entities"];
 
+  size_t counter = 0;
+  for (ecs::Entity entity : m_Entities) {
+    std::string name = m_Coordinator.GetComponent<NameComponent>(entity).name;
+    entities[name + std::to_string(counter)] = CreateJSONFromEntity(entity);
+    counter++;
+  }
+  return scene;
+}
+
+void Scene::LoadScene(const char *filepath) {
+  // load bytes
   std::vector<char> bytes;
   if (!FileSystem::loadFile(filepath, bytes)) {
     LOG_ERROR << "Could not load scene";
     return;
   }
 
+  // parse json
   json j;
   try {
     j = json::parse(bytes);
@@ -314,18 +329,27 @@ void Scene::LoadScene(const char *filepath) {
               << e.byte << ": " << e.what();
     return;
   }
+  
+  LoadSceneJSON(j);
 
+  // set current scene path
+  mCurrentScenePath = filepath;
+  LOG_INFO << "Loaded scene from: " << filepath;
+}
+
+void Scene::LoadSceneJSON(const json& j){
+  ClearAllEntities();
+
+  // error check
   if (!j.contains("entities")) {
     LOG_ERROR << "Could not find entities field";
     return;
   }
 
+  // load all entities in json
   for (const auto &[e, c] : j["entities"].items()) {
     ecs::Entity entity = CreateEntityFromJSON(c);
   }
-
-  mCurrentScenePath = filepath;
-  LOG_INFO << "Loaded scene from: " << filepath;
 }
 
 ecs::Entity Scene::CreateEntityFromJSON(const json &j) {

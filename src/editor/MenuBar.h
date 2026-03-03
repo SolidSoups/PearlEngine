@@ -2,10 +2,11 @@
 
 #include <memory>
 #include "TextureData.h"
+#include "RuntimeState.h"
 
 class MenuBar{
 public:
-  void RenderMenuBar(uint8_t runtimeState);
+  void RenderMenuBar(RuntimeState runtimeState);
 
   void SetButtonCallbacks(
     std::function<void()>& onPlayClicked,

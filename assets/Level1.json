@@ -44,6 +44,7 @@
         "mesh_type": "cube"
       },
       "script_component": {
+        "enabled": true,
         "script_path": "assets/scripts/LoadScene2.lua"
       },
       "transform_component": {
@@ -73,6 +74,7 @@
       },
       "name": "Main Camera",
       "script_component": {
+        "enabled": true,
         "script_path": "assets/scripts/Camera.lua"
       },
       "transform_component": {
@@ -190,6 +192,7 @@
         "mass": 1.0
       },
       "script_component": {
+        "enabled": true,
         "script_path": "assets/scripts/Player.lua"
       },
       "sphere_collider_component": {
@@ -250,6 +253,5 @@
         ]
       }
     }
-  },
-  "name": "Test Scene 1"
+  }
 }

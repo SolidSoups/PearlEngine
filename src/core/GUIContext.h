@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 
+#include "RuntimeState.h"
 #include "EditorPanel.h"
 #include "MenuBar.h"
 #include "TextureData.h"
@@ -19,7 +20,7 @@ public:
   ~GUIContext();
 
 public:
-  void BeginFrame(uint8_t runtimeState);
+  void BeginFrame(RuntimeState runtimeState);
   void Render();
   void Shutdown();
 
@@ -48,7 +49,7 @@ public:
 
 private:
   MenuBar m_MenuBar;
-  void DrawToolbar(uint8_t runtimeState);
+  void DrawToolbar(RuntimeState runtimeState);
 
 private:
   std::vector<std::unique_ptr<EditorPanel>> m_Panels;

@@ -124,14 +124,22 @@ void PearlEngine::Initialize() {
       [this]() {
         LOG_INFO << "Play clicked!";
         mRuntimeState = RUNTIME;
+        mScene->OnRuntimeStart();
       },
-      []() { LOG_INFO << "Pause clicked on callback!"; },
+      [this]() {
+        LOG_INFO << "Pause clicked on callback!";
+        mRuntimeState = mRuntimeState != PAUSED ? PAUSED : RUNTIME;
+      },
       [this]() {
         LOG_INFO << "Stop clicked!";
         mRuntimeState = EDITOR;
+        mScene->OnRuntimeStop();
       },
-      []() { LOG_INFO << "Replay clicked on callback!"; }, playTexture,
-      pauseTexture, stopTexture, reloadTexture);
+      [this]() {
+        LOG_INFO << "Replay clicked on callback!";
+        mScene->OnSceneReload();
+      },
+      playTexture, pauseTexture, stopTexture, reloadTexture);
 
   // Create shaders using new loaders
   auto shader = Defaults::getDefaultShader();
@@ -285,7 +293,9 @@ void PearlEngine::Update() {
     }
   }
 
-  mScene->Update();
+  // run scene if the game is running
+  if (mRuntimeState == RUNTIME)
+    mScene->Update();
 
   if (mScene->HasPendingLoad()) {
     LOG_INFO << "Scene has pending load";

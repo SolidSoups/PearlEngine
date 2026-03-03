@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+#include "RuntimeState.h"
 #include "GUIContext.h"
 #include "PearlWindow.h"
 #include "GBuffer.h"
@@ -19,17 +21,10 @@ class MeshManager;
 class TextureManager;
 class ShaderManager;
 
-#include <memory>
 
 struct GLFWwindow;
 
 class PearlEngine {
-public:
-  enum RuntimeState : uint8_t {
-    EDITOR = 0,
-    RUNTIME = 1
-  };
-
 private:
   RuntimeState mRuntimeState = EDITOR;
 public:

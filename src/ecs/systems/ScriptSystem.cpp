@@ -9,13 +9,25 @@ void ScriptSystem::Init(ecs::Coordinator* coord, ScriptEngine* engine){
   mEngine = engine;
 }
 
+void ScriptSystem::OnCreateScene(){
+  for(auto entity : Entities){
+    auto& sc = Get<ScriptComponent>(entity);
+
+    // skip all invalid or disabled script components
+    if(sc.scriptPath.empty() or !sc.enabled) continue;
+
+    // load component
+    sc.loaded = mEngine->RunOnCreate(entity, sc);
+  }
+}
+
 void ScriptSystem::OnUpdate(){
   for(auto entity : Entities){
     // get all components with a script path
     ScriptComponent& sc = Get<ScriptComponent>(entity);
-    std::string& path = sc.scriptPath;
 
-    if(path.empty()) continue;
+    // skip invalid scriptcomponents
+    if(sc.scriptPath.empty()) continue;
 
     // reload script. destroy current state, re-initialize next frame
     if(sc.needsReload){

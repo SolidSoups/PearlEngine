@@ -67,7 +67,7 @@ void GUIContext::SetToolbarCallbacks(
     );
 }
 
-void GUIContext::BeginFrame(uint8_t runtimeState) {
+void GUIContext::BeginFrame(RuntimeState runtimeState) {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
@@ -101,7 +101,7 @@ void GUIContext::Shutdown() {
   ImGui::DestroyContext();
 }
 
-void GUIContext::DrawToolbar(uint8_t runtimeState) {
+void GUIContext::DrawToolbar(RuntimeState runtimeState) {
   // create the main fullscreen window with dockspace
   ImGuiViewport *viewport = ImGui::GetWindowViewport();
   ImGui::SetNextWindowPos(viewport->WorkPos);

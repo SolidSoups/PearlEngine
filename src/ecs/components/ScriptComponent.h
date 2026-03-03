@@ -17,8 +17,10 @@ public:
 
 inline void to_json(json& j, const ScriptComponent& cmp) {
   j["script_path"] = cmp.scriptPath;
+  j["enabled"] = cmp.enabled;
 }
 
 inline void from_json(const json& j, ScriptComponent& cmp) {
   cmp.scriptPath = j["script_path"];
+  cmp.enabled = j["enabled"];
 }
