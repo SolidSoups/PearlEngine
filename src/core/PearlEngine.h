@@ -25,6 +25,14 @@ struct GLFWwindow;
 
 class PearlEngine {
 public:
+  enum RuntimeState : uint8_t {
+    EDITOR = 0,
+    RUNTIME = 1
+  };
+
+private:
+  RuntimeState mRuntimeState = EDITOR;
+public:
   PearlEngine();
   ~PearlEngine();
 

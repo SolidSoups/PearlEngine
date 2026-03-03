@@ -21,6 +21,9 @@
 #include "CameraData.h"
 #include "TransformComponent.h"
 
+#include "TextureManager.h"
+#include "ServiceLocator.h"
+
 ViewportEditorPanel::ViewportEditorPanel(Framebuffer *framebuffer)
     : EditorPanel("Viewport"), m_Framebuffer(framebuffer), m_Size(0.0f, 0.0f),
       m_WasResized(false) {
@@ -136,7 +139,8 @@ void ViewportEditorPanel::OnImGuiRender() {
       if (coordinator.HasComponent<PointLightComponent>(selectedEntity)) {
         auto &pointLight =
             coordinator.GetComponent<PointLightComponent>(selectedEntity);
-        LineRenderer::DrawWireSphere(entityTransform.position, pointLight.data.radius, {1, 1, 1});
+        LineRenderer::DrawWireSphere(entityTransform.position,
+                                     pointLight.data.radius, {1, 1, 1});
       }
     }
   }

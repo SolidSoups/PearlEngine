@@ -44,13 +44,36 @@ GUIContext::GUIContext(GLFWwindow *window) {
 
 GUIContext::~GUIContext() { Shutdown(); }
 
-void GUIContext::BeginFrame() {
+
+void GUIContext::SetToolbarCallbacks(
+  std::function<void()> onPlayClicked,
+  std::function<void()> onPauseClicked,
+  std::function<void()> onStopClicked,
+  std::function<void()> onReloadClicked,
+  std::shared_ptr<TextureData>& playTex,
+  std::shared_ptr<TextureData>& pauseTex,
+  std::shared_ptr<TextureData>& stopTex,
+  std::shared_ptr<TextureData>& reloadTex
+){
+  m_MenuBar.SetButtonCallbacks(
+      onPlayClicked,
+      onPauseClicked,
+      onStopClicked,
+      onReloadClicked,
+      playTex,
+      pauseTex,
+      stopTex,
+      reloadTex
+    );
+}
+
+void GUIContext::BeginFrame(uint8_t runtimeState) {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
   ImGuizmo::BeginFrame();
 
-  DrawToolbar();
+  DrawToolbar(runtimeState);
 }
 void GUIContext::RenderEditorPanels() {
   for (auto &panel : m_Panels) {
@@ -78,7 +101,7 @@ void GUIContext::Shutdown() {
   ImGui::DestroyContext();
 }
 
-void GUIContext::DrawToolbar() {
+void GUIContext::DrawToolbar(uint8_t runtimeState) {
   // create the main fullscreen window with dockspace
   ImGuiViewport *viewport = ImGui::GetWindowViewport();
   ImGui::SetNextWindowPos(viewport->WorkPos);
@@ -103,7 +126,7 @@ void GUIContext::DrawToolbar() {
   ImGuiID dockspace_id = ImGui::GetID("MainDockspace");
   ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
-  m_MenuBar.RenderMenuBar();
+  m_MenuBar.RenderMenuBar(runtimeState);
 
   ImGui::End();
 }

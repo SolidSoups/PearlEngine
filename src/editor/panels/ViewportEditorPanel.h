@@ -1,7 +1,11 @@
 #pragma once
+#include <memory>
+
+#include <glm/glm.hpp>
+
 #include "EditorPanel.h"
 #include "FrameBuffer.h"
-#include <glm/glm.hpp>
+#include "TextureData.h"
 
 class ViewportEditorPanel : public EditorPanel{
 public:
@@ -30,4 +34,9 @@ private:
   float m_ScrollDelta = 0.0f;
   bool m_RightMouseDown = false;
   bool m_MiddleMouseDown = false;
+
+  std::shared_ptr<TextureData> mPlayTexture;
+  std::shared_ptr<TextureData> mPauseTexture;
+  std::shared_ptr<TextureData> mReloadTexture;
+  std::shared_ptr<TextureData> mStopTexture;
 };
