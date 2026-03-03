@@ -81,8 +81,20 @@ void EngineCamera::Orbit(glm::vec2 delta) {
   UpdateData();
 }
 void EngineCamera::Zoom(float scrollDelta) {
-  mOrbitDistance -= scrollDelta * ZoomSpeed;
-  mOrbitDistance = glm::clamp(mOrbitDistance, 0.5f, 50.f);
+  // proportional zoom: step scales with distance
+  float zoomAmount = scrollDelta * ZoomSpeed * mOrbitDistance;
+  float newDist = mOrbitDistance - zoomAmount;
+
+  // dolly-through: when zooming past the minimum, push the orbit target
+  // forward instead of stopping, letting the camera fly through the pivot
+  const float minDist = 0.1f;
+  if (newDist < minDist) {
+    float overshoot = minDist - newDist;
+    mOrbitTarget += getForward() * overshoot;
+    mOrbitDistance = minDist;
+  } else {
+    mOrbitDistance = newDist;
+  }
 
   UpdateData();
 }
