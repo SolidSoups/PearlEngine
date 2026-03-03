@@ -504,7 +504,8 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
         input->GetKey(GLFW_KEY_LEFT_CONTROL)) {
       // duplicate entity
       auto newEntity = mScene->DuplicateEntity(SelectionWizard::Get());
-      SelectionWizard::Set(newEntity);
+      // let's not select the new entity, and instead keep the current entity selected
+      // SelectionWizard::Set(newEntity);
     }
 
     if (input->GetKeyDown(GLFW_KEY_F)) {

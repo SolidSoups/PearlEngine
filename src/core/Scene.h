@@ -18,6 +18,11 @@ class RenderSystem;
 class PointLightSystem;
 class Camera;
 
+enum RuntimeState : uint8_t{
+  EDITOR,
+  RUNTIME
+};
+
 class Scene{
 public:
   Scene(const std::shared_ptr<IEngineCamera>& engineCam, const std::shared_ptr<InputManager>& inputMan);
@@ -86,7 +91,11 @@ private:
   std::string m_PendingSceneLoad;
 
   std::string mCurrentScenePath;
+
+  RuntimeState mRuntimeState = EDITOR;
 public:
+  RuntimeState GetRuntimeState;
+
   void SetActiveCamera(ecs::Entity cameraEntity);
   ecs::Entity GetActiveCamera() const { return m_ActiveCamera; }
   void SetAspectRatio(float aspect);
