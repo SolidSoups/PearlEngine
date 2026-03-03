@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "Logger.h"
+#include "UserGUI.h"
 
 GUIContext::GUIContext(GLFWwindow *window) {
   IMGUI_CHECKVERSION();
@@ -127,6 +128,7 @@ void GUIContext::DrawToolbar(RuntimeState runtimeState) {
   ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
   m_MenuBar.RenderMenuBar(runtimeState);
+  UserGUI::Render();
 
   ImGui::End();
 }

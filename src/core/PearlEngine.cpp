@@ -122,21 +122,17 @@ void PearlEngine::Initialize() {
   auto stopTexture = m_TextureManager->load("assets/ui/stop_button.png");
   m_GUIContext.SetToolbarCallbacks(
       [this]() {
-        LOG_INFO << "Play clicked!";
         mRuntimeState = RUNTIME;
         mScene->OnRuntimeStart();
       },
       [this]() {
-        LOG_INFO << "Pause clicked on callback!";
         mRuntimeState = mRuntimeState != PAUSED ? PAUSED : RUNTIME;
       },
       [this]() {
-        LOG_INFO << "Stop clicked!";
         mRuntimeState = EDITOR;
         mScene->OnRuntimeStop();
       },
       [this]() {
-        LOG_INFO << "Replay clicked on callback!";
         mScene->OnSceneReload();
       },
       playTexture, pauseTexture, stopTexture, reloadTexture);
@@ -499,7 +495,6 @@ void PearlEngine::QuadDebugRenderPass() {
 void PearlEngine::RenderEditor() {
   m_GUIContext.BeginFrame(mRuntimeState);
   m_GUIContext.RenderEditorPanels();
-  UserGUI::Render();
 
   // render imgui to the screen
   int displayW, displayH;
