@@ -1,13 +1,31 @@
 MovementSpeed = 10
 MovementForce = 10
-JumpForce = 10
+JumpForce = 7
+JumpTimes = 0
 
 function OnCreate()
 	Transform = Scene.GetTransform(entity)
 	Rigidbody = Scene.GetRigidbody(entity)
-	Transform.position = Vec3.new(0, 4, 0)
-	Rigidbody:ClearForces()
-	Rigidbody.velocity = Vec3.new(0, 0, 0)
+	local spawnEntity = Scene.FindEntityByName("SpawnPoint")
+	SpawnTransform = Scene.GetTransform(spawnEntity)
+
+	Transform.position = SpawnTransform.position
+end
+
+function OnCollisionEnter(other, normal, pen)
+	local name = Scene.GetNameComp(other).name
+	if name == "Floor" then
+		if JumpTimes >= 2 then
+			JumpTimes = 1
+		else
+			JumpTimes = 0
+		end
+	elseif name == "Lava" then
+		Debug.Log("You died")
+		Rigidbody:ClearForces()
+		Rigidbody.velocity = Vec3.new(0, 0, 0)
+		Transform.position = SpawnTransform.position
+	end
 end
 
 function OnUpdate()
@@ -26,7 +44,11 @@ function OnUpdate()
 	vel.z = vel.z + (targetZ - vel.z) * t
 	Rigidbody.velocity = vel
 
-	if Input.GetKeyDown("SPACE") then
+	if Input.GetKeyDown("SPACE") and JumpTimes < 2 then
+		JumpTimes = JumpTimes + 1
+		local vel = Rigidbody.velocity
+		vel.y = 0
+		Rigidbody.velocity = vel
 		Rigidbody:AddImpulse(Vec3.new(0, 1, 0) * JumpForce)
 	end
 end
