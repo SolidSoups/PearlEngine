@@ -531,8 +531,8 @@
           "vec3s": {},
           "vec4s": {}
         },
-        "mesh_filepath": "",
-        "mesh_type": "sphere"
+        "mesh_filepath": "assets/Globe.obj",
+        "mesh_type": ""
       },
       "rigid_body_component": {
         "gravity": 9.869999885559082,
