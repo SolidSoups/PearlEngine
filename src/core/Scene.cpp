@@ -147,6 +147,7 @@ void Scene::ReloadCurrentScene(){
 void Scene::Update() {
   mScriptSystem->OnUpdate();
 
+  // physics steps
   constexpr float TIME_STEP = 1 / 60.f;
   static float accumulator = 0;
   accumulator += Time::deltaTime;
@@ -155,10 +156,13 @@ void Scene::Update() {
     accumulator -= TIME_STEP;
   }
 
+  mScriptSystem->OnLateUpdate();
+
   // destroy entities at end of frame
-  for(auto& entity : mDestroyQueue){
-    DestroyEntity(entity);
-  }
+  // DOESNT WORK!
+  // for(auto& entity : mDestroyQueue){
+  //   DestroyEntity(entity);
+  // }
 }
 
 void Scene::Render(CameraSystem::CameraMode mode) {

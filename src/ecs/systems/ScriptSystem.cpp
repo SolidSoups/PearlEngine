@@ -54,6 +54,9 @@ void ScriptSystem::OnUpdate(){
     mEngine->RunOnUpdate(entity, sc);
   }
 
+}
+
+void ScriptSystem::OnLateUpdate(){
   // second pass
   for(auto entity : Entities){
     ScriptComponent& sc = Get<ScriptComponent>(entity);

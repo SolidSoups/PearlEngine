@@ -13,6 +13,7 @@ public:
   void Init(ecs::Coordinator* coordinator, ScriptEngine* engine);
   void OnCreateScene();
   void OnUpdate();
+  void OnLateUpdate();
   void OnDestroy();
   void DispatchOnCollisionEnter(ecs::Entity a, ecs::Entity b, const glm::vec3& normal, float penetration);
 
