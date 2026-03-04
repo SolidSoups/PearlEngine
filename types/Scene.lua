@@ -30,3 +30,10 @@ function Scene.SetMainCamera(entity) end
 
 ---@param path string path to the scene JSON file
 function Scene.LoadScene(path) end
+
+--- Reload the current scene
+function Scene.ReloadCurrentScene() end
+
+--- Destroys an entity
+---@param entity integer Entity ID
+function Scene.DestroyEntity(entity) end

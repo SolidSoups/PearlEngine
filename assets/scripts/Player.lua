@@ -20,11 +20,8 @@ function OnCollisionEnter(other, normal, pen)
 		else
 			JumpTimes = 0
 		end
-	elseif name == "Lava" then
-		Debug.Log("You died")
-		Rigidbody:ClearForces()
-		Rigidbody.velocity = Vec3.new(0, 0, 0)
-		Transform.position = SpawnTransform.position
+	elseif name == "Lava" or name == "Enemy" then
+		Scene.ReloadCurrentScene()
 	end
 end
 

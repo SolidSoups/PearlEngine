@@ -114,7 +114,6 @@ void ScriptEngine::RunOnCollisionEnter(ecs::Entity entity, ScriptComponent &sc,
   if (!fn.valid())
     return;
 
-  LOG_INFO << "COLLIDING WITH ENTITY: " << other;
   auto r = fn(other, normal, penetration);
   if (!r.valid()) {
     sol::error e = r;
@@ -263,6 +262,12 @@ void ScriptEngine::BindAPIs() {
       return &coord.GetComponent<NameComponent>(e);
     }
     return nullptr;
+  });
+  scene.set_function("ReloadCurrentScene", [this](){
+    mScene->ReloadCurrentScene();
+  });
+  scene.set_function("DestroyEntity", [this](ecs::Entity entity){
+    mScene->DestroyEntityDelayed(entity);
   });
 
   scene.set_function("SetMainCamera", [this](ecs::Entity e) -> bool {

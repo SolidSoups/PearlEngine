@@ -4,6 +4,7 @@
 #include <memory>
 #include <strings.h>
 #include <vector>
+#include <deque>
 
 #include "AmbientLightData.h"
 #include "ecs_coordinator.h"
@@ -32,12 +33,17 @@ public:
   ecs::Entity CreateSphere(const std::string& name="Sphere");
   ecs::Entity DuplicateEntity(ecs::Entity entity);
   void DestroyEntity(ecs::Entity entity);
+  void DestroyEntityDelayed(ecs::Entity entity);
   void ClearAllEntities();
 
   // Scene operations
   void OnRuntimeStart();
   void OnRuntimeStop();
+  // reload to the snapshot editor scene
   void OnSceneReload();
+  // reload the CURRENT scene
+  void ReloadCurrentScene();
+  /// Update the scene world. SHOULD ONLY BE RUN IN EDITOR MODE AS CAN DESTROY ENTITIES
   void Update();
   void Render(CameraSystem::CameraMode mode);
 
@@ -60,7 +66,6 @@ public:
   AmbientLightData ambientLight;
 public:
   void SaveScene(const char* filepath);
-  void SaveCurrentScene();
   json CreateSceneJSON();
   void LoadScene(const char* filepath);
   void LoadSceneJSON(const json& j);
@@ -91,8 +96,6 @@ private:
   ecs::Entity mPreviewCameraEntity = ecs::NULL_ENTITY;
   std::string m_PendingSceneLoad;
 
-  std::string mCurrentScenePath;
-
 public:
   void SetActiveCamera(ecs::Entity cameraEntity);
   ecs::Entity GetActiveCamera() const { return m_ActiveCamera; }
@@ -102,12 +105,11 @@ public:
   bool HasPendingLoad() const { return !m_PendingSceneLoad.empty(); }
   std::string ConsumePendingLoad() { auto p = m_PendingSceneLoad; m_PendingSceneLoad.clear(); return p; }
 
-  const std::string& GetScenePath() const { return mCurrentScenePath; }
-  bool SceneHasPath() const { return !mCurrentScenePath.empty();}
-
   inline CameraSystem* GetCameraSystem() const {
     return mCameraSystem.get();
   }
 
   json mSceneSnapshot;
+  json mCurrentSceneSnapshot;
+  std::deque<ecs::Entity> mDestroyQueue;
 };

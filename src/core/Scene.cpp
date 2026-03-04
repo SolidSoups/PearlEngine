@@ -112,6 +112,10 @@ void Scene::DestroyEntity(ecs::Entity entity) {
                    m_Entities.end());
 }
 
+void Scene::DestroyEntityDelayed(ecs::Entity entity) {
+  mDestroyQueue.push_back(entity);
+}
+
 void Scene::ClearAllEntities() {
   SelectionWizard::Clear();
   mScriptSystem->OnDestroy();
@@ -135,6 +139,11 @@ void Scene::OnRuntimeStop(){
 void Scene::OnSceneReload(){
   LoadSceneJSON(mSceneSnapshot);
 }
+void Scene::ReloadCurrentScene(){
+  LoadSceneJSON(mCurrentSceneSnapshot);
+}
+
+
 void Scene::Update() {
   mScriptSystem->OnUpdate();
 
@@ -144,6 +153,11 @@ void Scene::Update() {
   while (accumulator >= TIME_STEP) {
     mPhysicsSystem->UpdatePhysics(TIME_STEP);
     accumulator -= TIME_STEP;
+  }
+
+  // destroy entities at end of frame
+  for(auto& entity : mDestroyQueue){
+    DestroyEntity(entity);
   }
 }
 
@@ -276,26 +290,16 @@ ecs::Entity Scene::DuplicateEntity(ecs::Entity entity) {
   return newEntity;
 }
 
-void Scene::SaveCurrentScene() {
-  if (!SceneHasPath()) {
-    LOG_ERROR << "Scene doesn't have a save path, path is "
-              << mCurrentScenePath;
-    return;
-  }
-
-  SaveScene(mCurrentScenePath.c_str());
-}
-
 void Scene::SaveScene(const char *filepath) {
   json scene = CreateSceneJSON();
   std::string json_str = scene.dump(2);
+  mCurrentSceneSnapshot = scene;
 
   // copy to vector
   std::vector<char> bytes(json_str.begin(), json_str.end());
 
   FileSystem::writeFile(filepath, bytes);
   LOG_INFO << "Saved scene to: " << filepath;
-  mCurrentScenePath = filepath;
 }
 
 json Scene::CreateSceneJSON(){
@@ -330,9 +334,8 @@ void Scene::LoadScene(const char *filepath) {
   }
   
   LoadSceneJSON(j);
+  mCurrentSceneSnapshot = CreateSceneJSON();
 
-  // set current scene path
-  mCurrentScenePath = filepath;
   LOG_INFO << "Loaded scene from: " << filepath;
 }
 

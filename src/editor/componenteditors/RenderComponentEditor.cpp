@@ -123,6 +123,7 @@ void RenderComponentEditor::DrawMesh(RenderComponent *comp) {
     UserGUI::StartMeshPopup([comp](std::shared_ptr<Mesh> meshPtr) {
       // set loaded mesh
       comp->mesh = meshPtr;
+      comp->meshType = "";
     });
   }
 }

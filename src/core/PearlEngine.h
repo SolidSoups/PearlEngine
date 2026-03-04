@@ -87,4 +87,5 @@ private:
   bool bFlatShade = false;
   bool bDebugGBuffer = false;
   int mDebugBufferIndex = 0;
+  std::string m_CurrentScenePath;
 };

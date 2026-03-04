@@ -296,8 +296,10 @@ void PearlEngine::Update() {
     LOG_INFO << "Scene has pending load";
     std::string path = mScene->ConsumePendingLoad();
     mScene->LoadScene(path.c_str());
-    if (mScene->SceneHasPath())
+    if(mRuntimeState == EDITOR){
+      m_CurrentScenePath = path;
       pwin.SetSceneTitle(path);
+    }
   }
 }
 
@@ -564,11 +566,12 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
               const std::string assets_folder = "assets/";
               std::string filepath = assets_folder + name + ".json";
               mScene->SaveScene(filepath.c_str());
-              // if we were succesfule but bruh
+              m_CurrentScenePath = filepath;
               pwin.SetSceneTitle(filepath);
             });
       } else if (input->GetKey(GLFW_KEY_LEFT_CONTROL)) {
-        mScene->SaveCurrentScene();
+        if (!m_CurrentScenePath.empty())
+          mScene->SaveScene(m_CurrentScenePath.c_str());
       }
     }
   }
@@ -585,7 +588,7 @@ void PearlEngine::AddMenuBarItems() {
           const std::string assets_folder = "assets/";
           std::string filepath = assets_folder + name + ".json";
           mScene->SaveScene(filepath.c_str());
-          // if we were succesfule but bruh
+          m_CurrentScenePath = filepath;
           pwin.SetSceneTitle(filepath);
         });
   });
