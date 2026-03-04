@@ -10,7 +10,6 @@
 #include <glm/common.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/mat4x4.hpp>
-// #include <gtk-4.0/gtk/gtk.h>  // Not currently used
 #include <imgui.h>
 
 // src
@@ -216,7 +215,7 @@ void PearlEngine::Initialize() {
 
   // OpenGL state configuration
   glFrontFace(GL_CW);
-  glDisable(GL_CULL_FACE);
+  glDisable(GL_CULL_FACE); // THIS IS SO WRONG
   glEnable(GL_DEPTH_TEST);
 
   LOG_INFO << "Finished initialization";
