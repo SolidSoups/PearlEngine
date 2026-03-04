@@ -24,6 +24,11 @@ public:
   bool IsRightMouseDown() const { return m_RightMouseDown; }
   bool IsMiddleMouseDown() const { return m_MiddleMouseDown; }
 
+  inline bool DidLeftMouseClick() const { return m_LeftMouseClicked; }
+  inline glm::vec2 ConsumeLeftMouseClick() {
+    m_LeftMouseClicked = false;
+    return m_MouseClickPos;
+  }
 private:
   Framebuffer* m_Framebuffer;
   glm::vec2 m_Size;
@@ -34,6 +39,10 @@ private:
   float m_ScrollDelta = 0.0f;
   bool m_RightMouseDown = false;
   bool m_MiddleMouseDown = false;
+
+  bool m_LeftMouseClicked = false;
+  glm::vec2 m_MouseClickPos{0.0f};
+
 
   std::shared_ptr<TextureData> mPlayTexture;
   std::shared_ptr<TextureData> mPauseTexture;

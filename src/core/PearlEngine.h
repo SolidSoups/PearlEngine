@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "RuntimeState.h"
+#include "PickingFramebuffer.h"
 #include "GUIContext.h"
 #include "PearlWindow.h"
 #include "GBuffer.h"
@@ -42,6 +43,10 @@ public:
   void LightingPass();
   void FlatShadePass();
 
+  // specialized render passes
+  void PickingRenderPass();
+  uint32_t ReadPickedVal(unsigned int x, unsigned int y);
+
   inline bool IsInitialized() { return isInitialized; }
 
 private:
@@ -67,6 +72,7 @@ public:
   std::unique_ptr<Framebuffer> m_ViewportFramebuffer;
   glm::vec2 m_ViewportSize{1280, 70};
   ViewportEditorPanel *m_ViewportPanel = nullptr; // needed here
+  std::unique_ptr<PickingFramebuffer> mPickFramebuf;
 
   // Gbuffer stuff
   std::unique_ptr<GBuffer> m_GBuffer;
@@ -77,6 +83,7 @@ public:
   std::shared_ptr<ShaderData> m_DisplayShader;
   std::shared_ptr<ShaderData> m_LightShader;
   std::shared_ptr<ShaderData> m_FlatShader;
+  std::shared_ptr<ShaderData> mPickShader;
   std::shared_ptr<ShaderData> m_GridShader;
   std::shared_ptr<InputManager> m_InputManager;
 

@@ -125,22 +125,19 @@ void PearlEngine::Initialize() {
         mRuntimeState = RUNTIME;
         mScene->OnRuntimeStart();
       },
-      [this]() {
-        mRuntimeState = mRuntimeState != PAUSED ? PAUSED : RUNTIME;
-      },
+      [this]() { mRuntimeState = mRuntimeState != PAUSED ? PAUSED : RUNTIME; },
       [this]() {
         mRuntimeState = EDITOR;
         mScene->OnRuntimeStop();
       },
-      [this]() {
-        mScene->OnSceneReload();
-      },
-      playTexture, pauseTexture, stopTexture, reloadTexture);
+      [this]() { mScene->OnSceneReload(); }, playTexture, pauseTexture,
+      stopTexture, reloadTexture);
 
   // Create shaders using new loaders
   auto shader = Defaults::getDefaultShader();
 
   // create shaders
+  mPickShader = m_ShaderManager->load("shaders/pickVert.glsl", "shaders/pickFrag.glsl");
   m_GeometryShader = m_ShaderManager->load("shaders/geometryVert.glsl",
                                            "shaders/geometryFrag.glsl");
   m_DisplayShader = m_ShaderManager->load("shaders/displayVert.glsl",
@@ -167,6 +164,10 @@ void PearlEngine::Initialize() {
   // Create viewport framebuffer
   m_ViewportFramebuffer =
       std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
+
+  // create the picking framebuffer
+  mPickFramebuf = 
+    std::make_unique<PickingFramebuffer>(m_ViewportSize.x, m_ViewportSize.y);
 
   // initialize g buffer
   m_GBuffer = std::make_unique<GBuffer>(m_ViewportSize.x, m_ViewportSize.y);
@@ -257,6 +258,7 @@ void PearlEngine::Update() {
 
     // resize core systems
     m_ViewportFramebuffer->Resize(newSize.x, newSize.y);
+    mPickFramebuf->Resize(newSize.x, newSize.y);
     m_GBuffer->resize(newSize.x, newSize.y);
     mScene->SetAspectRatio(aspect);
 
@@ -296,7 +298,7 @@ void PearlEngine::Update() {
     LOG_INFO << "Scene has pending load";
     std::string path = mScene->ConsumePendingLoad();
     mScene->LoadScene(path.c_str());
-    if(mRuntimeState == EDITOR){
+    if (mRuntimeState == EDITOR) {
       m_CurrentScenePath = path;
       pwin.SetSceneTitle(path);
     }
@@ -343,6 +345,64 @@ void PearlEngine::Render() {
   glEnable(GL_DEPTH_TEST);
   glDisable(GL_LINE_SMOOTH);
   m_ViewportFramebuffer->Unbind();
+
+  // set selection through viewport
+  if(m_ViewportPanel->DidLeftMouseClick() and mRuntimeState == EDITOR){
+    glm::vec2 clickPos = m_ViewportPanel->ConsumeLeftMouseClick();
+    int px = (int)clickPos.x;
+    int py = (int)clickPos.y;
+    if(px < 0 or py < 0 or px >= (int)m_ViewportSize.x or py >= (int)m_ViewportSize.y)
+      return; // out of bounds
+
+    PickingRenderPass();
+    ecs::Entity clickedEntity = (ecs::Entity)ReadPickedVal(px, py);
+    if (clickedEntity != ecs::NULL_ENTITY){
+      SelectionWizard::Set(clickedEntity);
+    }
+    else
+      SelectionWizard::Clear();
+  }  
+ 
+}
+
+void PearlEngine::PickingRenderPass() {
+  mPickFramebuf->Bind();
+  GLuint clearVal = 0xFFFFFFFF; // ecs::Entity = -1, which wraps to max val
+  glClearBufferuiv(GL_COLOR, 0, &clearVal);
+  glClear(GL_DEPTH_BUFFER_BIT);
+
+  mPickShader->use();
+
+  // upload camera matrices
+  glm::mat4 view, proj;
+  mScene->GetCameraSystem()->GetMatrices(view, proj);
+  mPickShader->setMatrix4("view", view);
+  mPickShader->setMatrix4("projection", proj);
+
+  // upload all entities
+  auto& entities = mScene->GetRenderEntities(); 
+  auto& coord = mScene->GetCoordinator();
+  for(ecs::Entity entity : entities){
+    auto& tf = coord.GetComponent<TransformComponent>(entity);
+    auto& render = coord.GetComponent<RenderComponent>(entity);
+
+    mPickShader->setMatrix4("transform", tf.GetModelMatrix());
+    mPickShader->setUInt("entityID", entity);
+    render.mesh->Draw();
+  }
+
+  mPickFramebuf->Unbind();
+}
+uint32_t PearlEngine::ReadPickedVal(unsigned int x, unsigned int y) {
+  unsigned int flippedY = (unsigned int)m_ViewportSize.y - y; 
+
+  mPickFramebuf->Bind();
+  glReadBuffer(GL_COLOR_ATTACHMENT0);
+  uint32_t id = ecs::NULL_ENTITY;
+  glReadPixels(x, flippedY, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &id);
+  mPickFramebuf->Unbind();
+
+  return id;
 }
 
 void PearlEngine::GeometryRenderPass() {

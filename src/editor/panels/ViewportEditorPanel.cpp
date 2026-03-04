@@ -163,5 +163,12 @@ void ViewportEditorPanel::OnImGuiRender() {
     m_MiddleMouseDown = false;
   }
 
+  // try to capture left mouse clicks
+  if(m_IsHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGuizmo::IsOver()){
+    ImGuiIO &io = ImGui::GetIO();
+    m_LeftMouseClicked = true;
+    m_MouseClickPos = glm::vec2(io.MousePos.x - viewportMin.x, io.MousePos.y - viewportMin.y);
+  }
+
   ImGui::End();
 }

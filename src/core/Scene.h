@@ -7,6 +7,7 @@
 #include <deque>
 
 #include "AmbientLightData.h"
+#include "RenderSystem.h"
 #include "ecs_coordinator.h"
 #include "ecs_common.h"
 #include "ScriptEngine.h"
@@ -16,7 +17,6 @@
 #include "json_common.h"
 #include "RuntimeState.h"
 
-class RenderSystem;
 class PointLightSystem;
 class Camera;
 
@@ -35,6 +35,10 @@ public:
   void DestroyEntity(ecs::Entity entity);
   void DestroyEntityDelayed(ecs::Entity entity);
   void ClearAllEntities();
+
+  inline const std::unordered_set<ecs::Entity>& GetRenderEntities() const {
+    return mRenderSystem->GetRenderEntities();
+  }
 
   // Scene operations
   void OnRuntimeStart();

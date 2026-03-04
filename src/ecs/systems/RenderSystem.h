@@ -16,6 +16,10 @@ public:
   void Init(ecs::Coordinator* coordinator);
   void RenderAll();
 
+  inline const std::unordered_set<ecs::Entity>& GetRenderEntities() const {
+    return Entities;
+  }
+
 private:
   ecs::Coordinator* mCoordinator;
 };
