@@ -113,7 +113,7 @@ inline void to_json(json &j, const Material::ConstructData &m) {
 
   // textures
   for (const auto &[key, pair] : m.texturePath_config) {
-    j["textures"][key] = {pair.first, pair.second};
+    j["textures"][key] = {{"path", pair.first}, {"config", pair.second}};
   }
 }
 inline void from_json(const json &j, Material::ConstructData &m) {

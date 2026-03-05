@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "TextureConfig.h"
+#include "json_common.h"
 
 struct TextureData {
   TextureData(unsigned char *data, uint32_t width, uint32_t height,
@@ -19,12 +20,17 @@ struct TextureData {
   uint32_t width;
   uint32_t height;
   uint32_t channels;
-  std::string mFilePath;
-  TextureConfig mConfig;
+  std::string filePath;
+  TextureConfig config;
 
-  const std::string& getFilePath() const { return mFilePath; }
-  const TextureConfig& getConfig() const { return mConfig; }
+  const std::string& getFilePath() const { return filePath; }
+  const TextureConfig& getConfig() const { return config; }
 
   size_t getMemorySize() const { return width * height * channels; }
   unsigned int id = 0;
 };
+
+inline void to_json(json& j, const TextureData& data){
+  j["filePath"] = data.filePath;
+  j["config"] = data.config;
+}
