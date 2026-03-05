@@ -4,6 +4,7 @@ JumpForce = 7
 JumpTimes = 0
 
 function OnCreate()
+	-- Get transform and rigidbody
 	Transform = Scene.GetTransform(entity)
 	Rigidbody = Scene.GetRigidbody(entity)
 	local spawnEntity = Scene.FindEntityByName("SpawnPoint")
