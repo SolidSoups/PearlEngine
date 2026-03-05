@@ -600,6 +600,13 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
       // selected SelectionWizard::Set(newEntity);
     }
 
+    // destroy entity with delete key
+    if(SelectionWizard::HasSelection() && input->GetKeyDown(GLFW_KEY_DELETE) 
+    && mRuntimeState == EDITOR){
+      ecs::Entity selectedEntity = SelectionWizard::Get();
+      mScene->DestroyEntity(selectedEntity);
+    }
+
     if (input->GetKeyDown(GLFW_KEY_F)) {
       mEngineCamera->Reset();
     }
