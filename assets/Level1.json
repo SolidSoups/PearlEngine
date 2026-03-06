@@ -24,9 +24,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/checker.png",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -37,8 +36,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/checker.png"
+            }
           },
           "tiling": [
             1.0,
@@ -97,9 +97,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -110,8 +109,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             1.0,
@@ -166,9 +166,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -179,8 +178,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             1.0,
@@ -235,9 +235,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -248,8 +247,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             1.0,
@@ -304,9 +304,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -317,8 +316,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             2.0,
@@ -373,9 +373,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -386,8 +385,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             2.0,
@@ -442,9 +442,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -455,8 +454,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             1.0,
@@ -511,9 +511,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -524,8 +523,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             1.0,
@@ -580,9 +580,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/lava.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -593,8 +592,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/lava.jpg"
+            }
           },
           "tiling": [
             100.0,
@@ -667,9 +667,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -680,8 +679,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             100.0,
@@ -724,9 +724,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -737,8 +736,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             100.0,
@@ -781,9 +781,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -794,8 +793,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             100.0,
@@ -838,9 +838,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -851,8 +850,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             100.0,
@@ -895,9 +895,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/Textures/Globe._Albedo.png",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -908,8 +907,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/Textures/Globe._Albedo.png"
+            }
           },
           "tiling": [
             1.0,

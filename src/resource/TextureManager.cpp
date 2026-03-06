@@ -2,8 +2,6 @@
 
 #include <memory>
 
-#include <stb_image.h>
-
 #include "TextureData.h"
 #include "Logger.h"
 
@@ -11,37 +9,28 @@ std::shared_ptr<TextureData>
 TextureManager::load(const char *path,
                      const TextureConfig &config) {
   auto it = m_Cache.find(path);
-  if (it != m_Cache.end()) {
-    if(it->second.config == config) 
+  if (it != m_Cache.end() && it->second.config == config) 
       return it->second.texture;
-     
-    // config has changed, delete entry and regenerate
-    // probably very inefficient
-    m_Cache.erase(it); 
-  }
 
-  // set flip flag (global, uses OpenGL coordinates)
-  stbi_set_flip_vertically_on_load(true);
-
-  // load image using stbi
-  int width = -1;
-  int height = -1;
-  int channels = -1;
-  unsigned char *data = stbi_load(path, &width, &height, &channels, 0);
-
-  // check if data couldn't be loaded
-  if (!data) {
-    LOG_ERROR << "stbi_load return NULL:\n"
-              << "Reason: " << stbi_failure_reason();
-    return {};
-  }
+  // create texture
+  TextureData tex;
+  tex.setConfig(config);
+  tex.loadFile(path);
 
   // cache texture
-  cache_entry newEntry{std::make_shared<TextureData>(data, width, height, channels, config, path), config};
+  cache_entry newEntry{std::make_shared<TextureData>(std::move(tex)), config};
   m_Cache[path] = newEntry;
 
-  // free image data (we don't need it anymore)
-  stbi_image_free(data);
-
   return m_Cache[path].texture;
+}
+
+std::shared_ptr<TextureData> TextureManager::cache(std::shared_ptr<TextureData> tex){
+  // check cache for entry
+  auto it = m_Cache.find(tex->filePath);
+  if(it != m_Cache.end() && it->second.config == tex->config)
+    return it->second.texture; // return existing
+     
+  // make new cache
+  m_Cache[tex->filePath] = cache_entry{tex, tex->config};
+  return tex;
 }

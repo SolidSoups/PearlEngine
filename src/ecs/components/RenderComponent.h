@@ -25,7 +25,7 @@ inline void to_json(json& j, const RenderComponent& cmp){
   if(cmp.mesh)
     j["mesh_filepath"] = cmp.mesh->getFilePath();
   if(cmp.material)
-    j["material_asset"] = cmp.material->createConstruction();
+    j["material_asset"] = *cmp.material;
 }
 
 inline void from_json(const json& j, RenderComponent& cmp){
@@ -37,7 +37,6 @@ inline void from_json(const json& j, RenderComponent& cmp){
   }
   if(j.contains("material_asset")){
     cmp.material = Material::createDefault();
-    Material::ConstructData data = j["material_asset"];
-    cmp.material->fromConstruction(data);
+    from_json(j["material_asset"], *cmp.material);
   }
 }

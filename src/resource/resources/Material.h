@@ -17,19 +17,6 @@
 #include "TextureManager.h"
 
 class Material {
-public:
-  struct ConstructData {
-    std::unordered_map<std::string, float> floats;
-    std::unordered_map<std::string, glm::vec2> vec2s;
-    std::unordered_map<std::string, glm::vec3> vec3s;
-    std::unordered_map<std::string, glm::vec4> vec4s;
-    std::unordered_map<std::string, int> ints;
-    std::unordered_map<std::string, glm::mat4> mat4s;
-    std::unordered_map<std::string, std::pair<std::string, TextureConfig>>
-        texturePath_config;
-    glm::vec2 tiling, offset;
-  };
-
 private:
   // Prevent copying
   Material(const Material &) = delete;
@@ -54,38 +41,8 @@ public:
 
   bool textureExists(const std::string &name);
 
-  inline const ConstructData createConstruction() const {
-    ConstructData data;
-    data.floats = floats;
-    data.vec2s = vec2s;
-    data.vec3s = vec3s;
-    data.vec4s = vec4s;
-    data.ints = ints;
-    data.mat4s = mat4s;
-    data.tiling = tiling;
-    data.offset = offset;
-    for (auto [key, texture] : textures) {
-      data.texturePath_config[key] =
-          std::make_pair(texture->getFilePath(), texture->getConfig());
-    }
-    return data;
-  }
-  inline const void fromConstruction(ConstructData data) {
-    floats = data.floats;
-    vec2s = data.vec2s;
-    vec3s = data.vec3s;
-    vec4s = data.vec4s;
-    ints = data.ints;
-    mat4s = data.mat4s;
-    tiling = data.tiling;
-    offset = data.offset;
-    for (auto &[key, pair] : data.texturePath_config) {
-      std::string path = pair.first;
-      TextureConfig config = pair.second;
-      textures[key] =
-          ServiceLocator::Get<TextureManager>().load(path.c_str(), config);
-    }
-  }
+  friend void to_json(json& j, const Material& m);
+  friend void from_json(const json& j, Material& m);
 
 private:
   std::shared_ptr<ShaderData> shader;
@@ -100,37 +57,3 @@ private:
 public:
   glm::vec2 tiling{1.0}, offset{0.0};
 };
-
-inline void to_json(json &j, const Material::ConstructData &m) {
-  j["floats"] = m.floats;
-  j["ints"] = m.ints;
-  j["vec2s"] = m.vec2s;
-  j["vec3s"] = m.vec3s;
-  j["vec4s"] = m.vec4s;
-  j["mat4s"] = m.mat4s;
-  j["tiling"] = m.tiling;
-  j["offset"] = m.offset;
-
-  // textures
-  for (const auto &[key, pair] : m.texturePath_config) {
-    j["textures"][key] = {{"path", pair.first}, {"config", pair.second}};
-  }
-}
-inline void from_json(const json &j, Material::ConstructData &m) {
-  m.floats = j["floats"];
-  m.ints = j["ints"];
-  m.vec2s = j["vec2s"];
-  m.vec3s = j["vec3s"];
-  m.vec4s = j["vec4s"];
-  m.mat4s = j["mat4s"];
-  m.tiling = j["tiling"];
-  m.offset = j["offset"];
-
-  if (j.contains("textures")) {
-    for (const auto &[key, value] : j["textures"].items()) {
-      std::string path = value[0];
-      TextureConfig config = value[1];
-      m.texturePath_config[key] = std::make_pair(path, config);
-    }
-  }
-}

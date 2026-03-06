@@ -1,7 +1,10 @@
 #include "Material.h"
 #include "Defaults.h"
 #include "Logger.h"
+
 #include "ServiceLocator.h"
+#include "TextureManager.h"
+
 
 Material::Material(std::shared_ptr<ShaderData> _shader) : shader(_shader) {}
 
@@ -112,4 +115,52 @@ void Material::setMat4(const std::string &name, const glm::mat4 &value) {
 bool Material::textureExists(const std::string &name) {
   auto it = textures.find(name);
   return it != textures.end() && it->second.get();
+}
+
+// serialization
+
+void to_json(json& j, const Material& m){
+  // serialize uniforms
+  j["floats"] = m.floats;
+  j["ints"] = m.ints;
+  j["vec2s"] = m.vec2s;
+  j["vec3s"] = m.vec3s;
+  j["vec4s"] = m.vec4s;
+  j["mat4s"] = m.mat4s;
+
+  // serialize tiling and offset
+  j["tiling"] = m.tiling;
+  j["offset"] = m.offset;
+
+  // serialize textures
+  for(const auto& [name, tex] : m.textures){
+    j["textures"][name] = *tex;
+  }
+}
+void from_json(const json& j, Material& m){
+  // deserialize uniforms
+  m.floats = j["floats"];
+  m.ints = j["ints"];
+  m.vec2s = j["vec2s"];
+  m.vec3s = j["vec3s"];
+  m.vec4s = j["vec4s"];
+  m.mat4s = j["mat4s"];
+
+  // deserialize tiling and offset
+  m.tiling = j["tiling"];
+  m.offset = j["offset"];
+
+  if(j.contains("textures")){
+    auto items = j["textures"].items();
+    for(const auto&[key, value] : items){
+    }
+  }
+  if (j.contains("textures")) {
+    auto& texManager = ServiceLocator::Get<TextureManager>();
+    for(const auto& [key, value] : j["textures"].items()) {
+      std::string path = value["filePath"];
+      TextureConfig config = value["config"];
+      m.textures[key] = texManager.load(path.c_str(), config);
+    }
+  }
 }

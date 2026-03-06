@@ -14,9 +14,6 @@ private:
   struct cache_entry{
     std::shared_ptr<TextureData> texture;
     TextureConfig config;
-    bool operator==(const cache_entry& other) const{
-      return texture == other.texture;
-    }
   };
   std::unordered_map<std::string, cache_entry> m_Cache;
 
@@ -33,5 +30,10 @@ public:
   }
 
 public:
+  // create a texture and cache it
+  // if texture already cached, returns it
   std::shared_ptr<TextureData> load(const char* path, const TextureConfig& config = TextureConfig());
+  // cache a texture, return the shared pointer to it
+  // if the texture already is cached, return a shared pointer to that.
+  std::shared_ptr<TextureData> cache(std::shared_ptr<TextureData> tex);
 };

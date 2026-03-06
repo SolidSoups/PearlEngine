@@ -152,6 +152,8 @@ target_precompile_headers(game_engine PRIVATE
   <glm/glm.hpp>
   <glm/gtc/matrix_transform.hpp>
   <glm/gtc/type_ptr.hpp>
+  # libarries
+  <stb_image.h>
   # standard libary
   <string>
   <vector>

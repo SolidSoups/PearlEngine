@@ -24,9 +24,8 @@
             0.15000000596046448
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/enemySmile.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -37,8 +36,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/enemySmile.jpg"
+            }
           },
           "tiling": [
             0.699999988079071,
@@ -101,9 +101,8 @@
             0.15000000596046448
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/enemySmile.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -114,8 +113,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/enemySmile.jpg"
+            }
           },
           "tiling": [
             0.699999988079071,
@@ -178,9 +178,8 @@
             0.15000000596046448
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/enemySmile.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -191,8 +190,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/enemySmile.jpg"
+            }
           },
           "tiling": [
             0.699999988079071,
@@ -255,9 +255,8 @@
             0.15000000596046448
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/enemySmile.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -268,8 +267,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/enemySmile.jpg"
+            }
           },
           "tiling": [
             0.699999988079071,
@@ -316,9 +316,9 @@
           0.0
         ],
         "size": [
-          60.0,
+          20.0,
           1.0,
-          60.0
+          20.0
         ]
       },
       "name": "Floor",
@@ -332,9 +332,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -345,12 +344,13 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
-            6.0,
-            6.0
+            2.0,
+            2.0
           ],
           "vec2s": {},
           "vec3s": {},
@@ -363,7 +363,7 @@
         "position": [
           0.0,
           -2.4884657859802246,
-          46.12755584716797
+          0.0
         ],
         "rotation": [
           0.0,
@@ -371,427 +371,13 @@
           0.0
         ],
         "scale": [
-          60.0,
           20.0,
-          60.0
+          20.0,
+          20.0
         ]
       }
     },
     "Floor11": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "size": [
-          10.0,
-          20.0,
-          2.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              }
-            ]
-          },
-          "tiling": [
-            1.0,
-            2.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          -25.027633666992188,
-          17.706619262695313,
-          46.12755584716797
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          10.0,
-          20.0,
-          2.0
-        ]
-      }
-    },
-    "Floor4": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "size": [
-          20.0,
-          20.0,
-          2.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              }
-            ]
-          },
-          "tiling": [
-            2.0,
-            2.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          -19.92424774169922,
-          17.706619262695313,
-          83.5582504272461
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          20.0,
-          20.0,
-          2.0
-        ]
-      }
-    },
-    "Floor5": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          9.5,
-          0.0
-        ],
-        "size": [
-          60.0,
-          1.0,
-          20.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              }
-            ]
-          },
-          "tiling": [
-            6.0,
-            2.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          0.0,
-          -2.4884657859802246,
-          92.69011688232422
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          60.0,
-          20.0,
-          20.0
-        ]
-      }
-    },
-    "Floor6": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "size": [
-          10.0,
-          20.0,
-          2.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              }
-            ]
-          },
-          "tiling": [
-            1.0,
-            2.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          25.077537536621094,
-          17.706619262695313,
-          46.12755584716797
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          10.0,
-          20.0,
-          2.0
-        ]
-      }
-    },
-    "Floor7": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          9.5,
-          0.0
-        ],
-        "size": [
-          20.0,
-          1.0,
-          20.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              }
-            ]
-          },
-          "tiling": [
-            2.0,
-            2.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          29.157991409301758,
-          -2.4884657859802246,
-          117.4878921508789
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          20.0,
-          20.0,
-          20.0
-        ]
-      }
-    },
-    "Floor8": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          9.5,
-          0.0
-        ],
-        "size": [
-          20.0,
-          1.0,
-          20.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              }
-            ]
-          },
-          "tiling": [
-            2.0,
-            2.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          0.0,
-          -2.4884657859802246,
-          0.0
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          20.0,
-          20.0,
-          20.0
-        ]
-      }
-    },
-    "Floor9": {
       "box_collider_component": {
         "center": [
           0.0,
@@ -815,9 +401,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/wood.png",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -828,8 +413,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/wood.png"
+            }
           },
           "tiling": [
             6.0,
@@ -860,6 +446,420 @@
         ]
       }
     },
+    "Floor4": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          9.5,
+          0.0
+        ],
+        "size": [
+          60.0,
+          1.0,
+          60.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "path": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            6.0,
+            6.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          -2.4884657859802246,
+          46.12755584716797
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          60.0,
+          20.0,
+          60.0
+        ]
+      }
+    },
+    "Floor5": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
+          10.0,
+          20.0,
+          2.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "path": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            1.0,
+            2.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          -25.027633666992188,
+          17.706619262695313,
+          46.12755584716797
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          20.0,
+          2.0
+        ]
+      }
+    },
+    "Floor6": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
+          20.0,
+          20.0,
+          2.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "path": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            2.0,
+            2.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          -19.92424774169922,
+          17.706619262695313,
+          83.5582504272461
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          20.0,
+          20.0,
+          2.0
+        ]
+      }
+    },
+    "Floor7": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          9.5,
+          0.0
+        ],
+        "size": [
+          60.0,
+          1.0,
+          20.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "path": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            6.0,
+            2.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          -2.4884657859802246,
+          92.69011688232422
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          60.0,
+          20.0,
+          20.0
+        ]
+      }
+    },
+    "Floor8": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
+          10.0,
+          20.0,
+          2.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "path": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            1.0,
+            2.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          25.077537536621094,
+          17.706619262695313,
+          46.12755584716797
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          20.0,
+          2.0
+        ]
+      }
+    },
+    "Floor9": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          9.5,
+          0.0
+        ],
+        "size": [
+          20.0,
+          1.0,
+          20.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "path": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            2.0,
+            2.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          29.157991409301758,
+          -2.4884657859802246,
+          117.4878921508789
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          20.0,
+          20.0,
+          20.0
+        ]
+      }
+    },
     "Lava12": {
       "box_collider_component": {
         "center": [
@@ -884,9 +884,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/lava.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -897,8 +896,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/lava.jpg"
+            }
           },
           "tiling": [
             100.0,
@@ -983,9 +983,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/checker.png",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -996,8 +995,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/checker.png"
+            }
           },
           "tiling": [
             1.0,
@@ -1048,9 +1048,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -1061,8 +1060,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             100.0,
@@ -1105,9 +1105,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -1118,8 +1117,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             100.0,
@@ -1162,9 +1162,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -1175,8 +1174,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             100.0,
@@ -1219,9 +1219,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/textures/stone.jpg",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -1232,8 +1231,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/textures/stone.jpg"
+            }
           },
           "tiling": [
             100.0,
@@ -1276,9 +1276,8 @@
             0.0
           ],
           "textures": {
-            "texture_diffuse1": [
-              "assets/Textures/Globe._Albedo.png",
-              {
+            "texture_diffuse1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -1289,11 +1288,11 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ],
-            "texture_normal1": [
-              "assets/Textures/Globe_Nmap.png",
-              {
+              },
+              "path": "assets/Textures/Globe._Albedo.png"
+            },
+            "texture_normal1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -1304,11 +1303,11 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ],
-            "texture_specular1": [
-              "assets/Textures/Globe_Secular+Gloss.tga",
-              {
+              },
+              "path": "assets/Textures/Globe_Nmap.png"
+            },
+            "texture_specular1": {
+              "config": {
                 "antisotropicLevel": 1,
                 "generateMipMaps": false,
                 "lodBias": 0.0,
@@ -1319,8 +1318,9 @@
                 "minLod": 0.0,
                 "wrapS": 10497,
                 "wrapT": 10497
-              }
-            ]
+              },
+              "path": "assets/Textures/Globe_Secular+Gloss.tga"
+            }
           },
           "tiling": [
             1.0,

@@ -1,33 +1,83 @@
 #include "TextureData.h"
 
+// std
+#include <iostream>
 // lib
 #include <algorithm>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
-
-// std
-#include <iostream>
-
 // src
 #include "Logger.h"
 
-TextureData::TextureData(unsigned char *data, uint32_t width, uint32_t height,
-                         uint32_t channels, const TextureConfig& config, const std::string& filepath)
-  : mFilePath(filepath), mConfig(config)
-{ 
-  if (!data) { LOG_ERROR << "data is nullptr";
-    return;
+TextureData::~TextureData(){
+  if(id != 0) glDeleteTextures(1, &id); 
+}
+
+TextureData::TextureData(TextureData && other){
+  id = other.id;
+  other.id = 0;
+  filePath = other.filePath;
+  config = other.config;
+  width = other.width;
+  height = other.height;
+  channels = other.channels;
+}
+TextureData& TextureData::operator=(TextureData && other){
+  if(this == &other) return *this;
+  if(id != 0) glDeleteTextures(1, &id);
+  id = other.GetTextureID();
+  other.id = 0;
+  filePath = std::move(other.filePath);
+  config = other.config;
+  width = other.width;
+  height = other.height;
+  channels = other.channels;
+  return *this;
+}
+
+void TextureData::setConfig(const TextureConfig &aConfig){
+  config = aConfig;
+}
+
+bool TextureData::loadFile(const char* path){
+  // set flip flag (global, uses OpenGL coordinates)
+  stbi_set_flip_vertically_on_load(true);
+
+  // load image using stbi
+  int width = -1;
+  int height = -1;
+  int channels = -1;
+  unsigned char *data = stbi_load(path, &width, &height, &channels, 0);
+
+  // check if data couldn't be loaded
+  if (!data) {
+    LOG_ERROR << "stbi_load return NULL:\n"
+              << "Reason: " << stbi_failure_reason();
+    return false;
   }
 
-  // check size
+  // store result for later (we need to delete the image data before we do anything after)
+  bool ok = loadData(data, width, height, channels);
+
+  // free image data (we don't need it anymore)
+  stbi_image_free(data);
+  
+  return ok;
+}
+bool TextureData::loadData(unsigned char* data, uint32_t width, uint32_t height, uint32_t channels){
+  if(!data){
+    LOG_ERROR << "Data is null";
+    return false;
+  }
+
+  // check size and log warning
   int maxSize;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
   if (width > maxSize || height > maxSize) {
     LOG_WARNING << "Image size " << width << "x" << height << " is exceeding of"
                 << maxSize
-                << ". OpenGL may not be able to handle such "
-                   "large textures";
+                << ". OpenGL may not be able to handle such large textures";
   }
 
   // warning threshold
@@ -53,7 +103,7 @@ TextureData::TextureData(unsigned char *data, uint32_t width, uint32_t height,
     break;
   default:
     LOG_ERROR << "Unsupported channel count: " << channels;
-    return;
+    return false;
   }
 
   // create OpenGL texture object
@@ -109,12 +159,14 @@ TextureData::TextureData(unsigned char *data, uint32_t width, uint32_t height,
     } 
   }
 
+
   // unbind
   glBindTexture(GL_TEXTURE_2D, 0);
-
+  
   this->width = width;
   this->height = height;
   this->channels = channels;
+  return true;
 }
 
 // New method-based API implementation
