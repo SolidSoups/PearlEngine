@@ -150,16 +150,22 @@ void from_json(const json& j, Material& m){
   m.tiling = j["tiling"];
   m.offset = j["offset"];
 
-  if(j.contains("textures")){
-    auto items = j["textures"].items();
-    for(const auto&[key, value] : items){
-    }
-  }
+  // deserialize textures
   if (j.contains("textures")) {
     auto& texManager = ServiceLocator::Get<TextureManager>();
     for(const auto& [key, value] : j["textures"].items()) {
       std::string path = value["filePath"];
       TextureConfig config = value["config"];
+      // if (value.is_array()) {
+      //   path = value[0];
+      //   config = value[1];
+      // } else if (value.contains("path")) {
+      //   path = value["path"];
+      //   config = value["config"];
+      // } else {
+      //   path = value["filePath"];
+      //   config = value["config"];
+      // }
       m.textures[key] = texManager.load(path.c_str(), config);
     }
   }

@@ -59,6 +59,7 @@ bool TextureData::loadFile(const char* path){
 
   // store result for later (we need to delete the image data before we do anything after)
   bool ok = loadData(data, width, height, channels);
+  if(ok) filePath = path;
 
   // free image data (we don't need it anymore)
   stbi_image_free(data);
