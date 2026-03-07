@@ -420,6 +420,8 @@ ecs::Entity Scene::CreateEntityFromJSON(const json &j) {
   if (j.contains("rigid_body_component"))
     m_Coordinator.AddComponent<RigidBodyComponent>(entity,
                                                    j["rigid_body_component"]);
+  if(j.contains("terrain_component"))
+    m_Coordinator.AddComponent<TerrainComponent>(entity, j["terrain_component"]);
 
   m_Entities.push_back(entity);
   return entity;
@@ -458,6 +460,8 @@ const json Scene::CreateJSONFromEntity(ecs::Entity entity) {
   if (m_Coordinator.HasComponent<RigidBodyComponent>(entity))
     entity_object["rigid_body_component"] =
         m_Coordinator.GetComponent<RigidBodyComponent>(entity);
+  if(m_Coordinator.HasComponent<TerrainComponent>(entity))
+    entity_object["terrain_component"] = m_Coordinator.GetComponent<TerrainComponent>(entity);
   return entity_object;
 }
 

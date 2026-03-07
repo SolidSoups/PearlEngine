@@ -1,0 +1,133 @@
+{
+  "entities": {
+    "Entity0": {
+      "name": "Entity",
+      "terrain_component": {
+        "heightMap": {
+          "config": {
+            "antisotropicLevel": 1,
+            "generateMipMaps": false,
+            "lodBias": 0.0,
+            "magFilter": 9729,
+            "maxLod": 1000.0,
+            "maxMipMapLevel": 1,
+            "minFilter": 9729,
+            "minLod": 0.0,
+            "wrapS": 10497,
+            "wrapT": 10497
+          },
+          "filePath": "assets/terrainMapTest.png"
+        },
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "uHeightMap": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/terrainMapTest.png"
+            }
+          },
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "resolution": 20
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          40.0,
+          11.0,
+          40.0
+        ]
+      }
+    },
+    "Main Camera1": {
+      "camera_component": {
+        "aspectRatio": 1.0,
+        "far_plane": 100.0,
+        "fov": 60.0,
+        "near_plane": 0.10000000149011612
+      },
+      "name": "Main Camera",
+      "transform_component": {
+        "position": [
+          0.0,
+          0.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "PointLight2": {
+      "name": "PointLight",
+      "pointLight_component": {
+        "color": [
+          1.0,
+          0.949999988079071,
+          0.8999999761581421,
+          1.0
+        ],
+        "intensity": 1.2000000476837158,
+        "linear": 0.0,
+        "quadratic": 0.0,
+        "radius": 219.0
+      },
+      "transform_component": {
+        "position": [
+          25.167522430419922,
+          25.96735954284668,
+          11.09789752960205
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    }
+  }
+}

@@ -9,6 +9,7 @@
 #include "TerrainComponent.h"
 #include "ServiceLocator.h"
 #include "ShaderManager.h"
+#include "MaterialLoader.h"
 
 #include "Renderer.h"
 
@@ -29,12 +30,20 @@ void TerrainSystem::render(){
   for(auto entity : Entities){
     auto& transform = Get<TransformComponent>(entity);
     auto& terrain = Get<TerrainComponent>(entity);
+    if(!terrain.myMesh){
+      if(!terrain.heightMap || !terrain.material)
+        continue;
+
+      // generate the terrain
+      terrain.material->setShader(myTerrainShader);
+      generateTerrain(entity);
+      terrain.material->setTexture("uHeightMap", terrain.heightMap);
+    }
 
     // do we need this?
-    Renderer::Submit(transform, terrain.myMesh, myTerrainShader);   
+    Renderer::Submit(transform, terrain.myMesh, terrain.material);   
   }
 }
-
 
 void TerrainSystem::generateTerrain(ecs::Entity entity) {
   if (!Has<TerrainComponent>(entity))
@@ -56,11 +65,12 @@ void TerrainSystem::generateTerrain(ecs::Entity entity) {
 
   std::vector<float> vertices;
   std::vector<unsigned int> indices;
-  generateVertices(*img, vertices, terrain.size, terrain.resolution); 
+  generateVertices(*img, vertices, terrain.resolution); 
   generateIndices(indices, terrain.resolution, terrain.resolution);
 
   // create mesh
   terrain.myMesh = std::make_shared<Mesh>(vertices, indices);
+
   LOG_INFO << "Terrain generated";
 }
 
@@ -80,12 +90,12 @@ glm::vec3 calculateHeightMapNormal(const StbiImage& heightMap, glm::ivec2 coord,
   return glm::normalize(glm::vec3(left - right, normalStrength, up - down));
 }
 
-void TerrainSystem::generateVertices(const StbiImage &heightMap, std::vector<float> &outVertices, const glm::vec3& size, size_t resolution){
+void TerrainSystem::generateVertices(const StbiImage &heightMap, std::vector<float> &outVertices, size_t resolution){
   outVertices.clear();
   outVertices.reserve(resolution * resolution * 8); // 9 floats (pos3, uv2, normal3) per cell
 
   // create the vertices. We iterate over a grid
-  glm::vec3 startPos = -size / 2.f;
+  glm::vec3 startPos(-0.5f);
   int widthStep = heightMap.width / resolution;
   int heightStep = heightMap.height / resolution;
   for (int y = 0; y < resolution; y++) {
@@ -97,9 +107,9 @@ void TerrainSystem::generateVertices(const StbiImage &heightMap, std::vector<flo
 
       // create vertex attributes
       glm::vec2 vertexUV((float)px / heightMap.width, (float)py / heightMap.height);
-      glm::vec3 vertexPos(size.x * vertexUV.x + startPos.x,
-                          size.y * heightSample,
-                          size.z * vertexUV.y + startPos.z);
+      glm::vec3 vertexPos(vertexUV.x + startPos.x,
+                          heightSample,
+                          vertexUV.y + startPos.z);
       glm::vec3 vertexNormal = calculateHeightMapNormal(heightMap, glm::ivec2(px, py), glm::ivec2(widthStep, heightStep));
 
       // add vertex to list

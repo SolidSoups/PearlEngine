@@ -37,12 +37,17 @@ public:
   void setTexture(const std::string &name,
                   std::shared_ptr<TextureData> texture);
   void setMat4(const std::string &name, const glm::mat4 &value);
-  std::shared_ptr<ShaderData> getShader() const { return shader; }
+  std::shared_ptr<ShaderData> getShader() const {
+    if (!shader)
+      return nullptr;
+    return shader;
+  }
+  void setShader(std::shared_ptr<ShaderData> s) { shader = s; }
 
   bool textureExists(const std::string &name);
 
-  friend void to_json(json& j, const Material& m);
-  friend void from_json(const json& j, Material& m);
+  friend void to_json(json &j, const Material &m);
+  friend void from_json(const json &j, Material &m);
 
 private:
   std::shared_ptr<ShaderData> shader;

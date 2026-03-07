@@ -1,12 +1,14 @@
 #pragma once
 
 #include "TextureData.h"
-#include "Mesh.h"
 #include "json_common.h"
 
+#include "Mesh.h"
+#include "Material.h"
+
 struct TerrainComponent {
+  std::shared_ptr<Material> material;
   std::shared_ptr<TextureData> heightMap;
-  glm::vec3 size{1.0f};
   int resolution = 20;
 
 public: // runtime, not serialized

@@ -77,6 +77,14 @@ void Material::bind(std::shared_ptr<ShaderData> overrideShader) {
   normalTex->bind(textureSlot);
   activeShader->setInt("texture_normal1", textureSlot++);
 
+  // upload all other textures
+  for(auto& [key, tex] : textures){
+    if(key == "texture_diffuse1" or key == "texture_specular1" or key == "texture_normal1")
+      continue;
+    tex->bind(textureSlot);    
+    activeShader->setInt(key.c_str(), textureSlot++);
+  }
+
   // Upload all matrixes
   for (const auto &[name, matrix4] : mat4s) {
     activeShader->setMatrix4(name.c_str(), matrix4);

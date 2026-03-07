@@ -88,31 +88,42 @@ void Renderer::Submit(const RenderComponent &renderComp,
   if(renderComp.mesh) renderComp.mesh->Draw();
 }
 
-void Renderer::Submit(const TransformComponent& aTransform, const std::shared_ptr<Mesh>& aMesh, const std::shared_ptr<ShaderData> aShader){
 
+bool Renderer::ResolveCamera(glm::mat4& view, glm::mat4& proj){
   // Resolve view/projection matrices from whichever BeginScene path was used
-  glm::mat4 view, proj;
   if (s_ActiveCamera) {
     auto *cameraTarget = s_ActiveCamera->GetCurrentTarget();
-    if (!cameraTarget)
-      return;
+    if (!cameraTarget){
+      LOG_ERROR << "No camera target available";
+      return false; }
     view = cameraTarget->GetViewMatrix();
     proj = cameraTarget->GetProjectionMatrix();
   } else {
     view = s_View;
     proj = s_Proj;
   }
+  return true;
+}
+void Renderer::Submit(const TransformComponent& aTransform, const std::shared_ptr<Mesh>& aMesh, const std::shared_ptr<Material>& aMaterial){
+  glm::mat4 view, proj;
+  if(!ResolveCamera(view, proj))
+    return;
   
   // Set matrices
-  if (!aShader)
+  std::shared_ptr<ShaderData> matShader = aMaterial->getShader();
+  if (!matShader){
+    LOG_ERROR << "NO MAT SHADER";
     return;
+  }
 
-  aShader->use();
+  // bind material and shader
+  matShader->use();
+  aMaterial->bind();
 
-  // upload object
-  aShader->setMatrix4("transform", aTransform.GetModelMatrix());
-  aShader->setMatrix4("view", view);
-  aShader->setMatrix4("projection", proj);
+  // upload object, and camera props
+  matShader->setMatrix4("transform", aTransform.GetModelMatrix());
+  matShader->setMatrix4("view", view);
+  matShader->setMatrix4("projection", proj);
 
   // draw the mesh to the screen
   if(aMesh) aMesh->Draw();

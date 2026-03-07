@@ -12,8 +12,10 @@ public:
   void generateTerrain(ecs::Entity entity);
   void render();
 
+  auto getShader() const { return myTerrainShader; }
+
 private:
-  void generateVertices(const StbiImage &heightMap, std::vector<float> &outVertices, const glm::vec3& size, size_t resolution);
+  void generateVertices(const StbiImage &heightMap, std::vector<float> &outVertices, size_t resolution);
   void generateIndices(std::vector<unsigned int>& outIndices, size_t columns, size_t rows);
 
 private:
