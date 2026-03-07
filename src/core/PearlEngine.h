@@ -94,5 +94,7 @@ private:
   bool bFlatShade = false;
   bool bDebugGBuffer = false;
   int mDebugBufferIndex = 0;
+  bool bDrawWireFrameMode = false;
+  bool bDrawGrid = true;
   std::string m_CurrentScenePath;
 };

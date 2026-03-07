@@ -6,15 +6,17 @@
 #include <algorithm>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 #include <stb_image.h>
 // src
 #include "Logger.h"
 
-TextureData::~TextureData(){
-  if(id != 0) glDeleteTextures(1, &id); 
+TextureData::~TextureData() {
+  if (id != 0)
+    glDeleteTextures(1, &id);
 }
 
-TextureData::TextureData(TextureData && other){
+TextureData::TextureData(TextureData &&other) {
   id = other.id;
   other.id = 0;
   filePath = other.filePath;
@@ -23,9 +25,11 @@ TextureData::TextureData(TextureData && other){
   height = other.height;
   channels = other.channels;
 }
-TextureData& TextureData::operator=(TextureData && other){
-  if(this == &other) return *this;
-  if(id != 0) glDeleteTextures(1, &id);
+TextureData &TextureData::operator=(TextureData &&other) {
+  if (this == &other)
+    return *this;
+  if (id != 0)
+    glDeleteTextures(1, &id);
   id = other.GetTextureID();
   other.id = 0;
   filePath = std::move(other.filePath);
@@ -36,11 +40,9 @@ TextureData& TextureData::operator=(TextureData && other){
   return *this;
 }
 
-void TextureData::setConfig(const TextureConfig &aConfig){
-  config = aConfig;
-}
+void TextureData::setConfig(const TextureConfig &aConfig) { config = aConfig; }
 
-bool TextureData::loadFile(const char* path){
+bool TextureData::loadFile(const char *path) {
   // set flip flag (global, uses OpenGL coordinates)
   stbi_set_flip_vertically_on_load(true);
 
@@ -57,17 +59,20 @@ bool TextureData::loadFile(const char* path){
     return false;
   }
 
-  // store result for later (we need to delete the image data before we do anything after)
+  // store result for later (we need to delete the image data before we do
+  // anything after)
   bool ok = loadData(data, width, height, channels);
-  if(ok) filePath = path;
+  if (ok)
+    filePath = path;
 
   // free image data (we don't need it anymore)
   stbi_image_free(data);
-  
+
   return ok;
 }
-bool TextureData::loadData(unsigned char* data, uint32_t width, uint32_t height, uint32_t channels){
-  if(!data){
+bool TextureData::loadData(unsigned char *data, uint32_t width, uint32_t height,
+                           uint32_t channels) {
+  if (!data) {
     LOG_ERROR << "Data is null";
     return false;
   }
@@ -124,7 +129,7 @@ bool TextureData::loadData(unsigned char* data, uint32_t width, uint32_t height,
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, config.maxMipMapLevel);
 
   // antisotropic filtering (if supported)
-  if(config.antisotropicLevel > 1){
+  if (config.antisotropicLevel > 1) {
     GLfloat maxAnisotropy;
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &maxAnisotropy);
     GLfloat aniso = std::min((float)config.antisotropicLevel, maxAnisotropy);
@@ -146,28 +151,39 @@ bool TextureData::loadData(unsigned char* data, uint32_t width, uint32_t height,
   // generate mip maps
   if (config.generateMipMaps) {
     glGenerateMipmap(GL_TEXTURE_2D);
-    
+
     // check if mipmap exists
     GLint maxLevel;
     glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, &maxLevel);
     LOG_INFO << "Generated mipmaps. Max level: " << maxLevel;
     // verify each level has data
-    for(int i=0; i<maxLevel; ++i){
+    for (int i = 0; i < maxLevel; ++i) {
       GLint width, height;
       glGetTexLevelParameteriv(GL_TEXTURE_2D, i, GL_TEXTURE_WIDTH, &width);
       glGetTexLevelParameteriv(GL_TEXTURE_2D, i, GL_TEXTURE_HEIGHT, &height);
-      LOG_INFO << "Mipmap level " << i << ": width=" << width << ", height=" << height;
-    } 
+      LOG_INFO << "Mipmap level " << i << ": width=" << width
+               << ", height=" << height;
+    }
   }
-
 
   // unbind
   glBindTexture(GL_TEXTURE_2D, 0);
-  
+
   this->width = width;
   this->height = height;
   this->channels = channels;
   return true;
+}
+
+std::optional<StbiImage> TextureData::getPixelData(int desiredChannels) const{
+  if(filePath.empty())
+    return std::nullopt;
+
+  StbiImage pixelData(filePath.c_str(), desiredChannels);
+  if(!pixelData.data)
+    return std::nullopt;
+
+  return std::move(pixelData);
 }
 
 // New method-based API implementation

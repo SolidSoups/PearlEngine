@@ -8,6 +8,7 @@
 #include "RigidBodyComponent.h"
 #include "RenderComponent.h"
 #include "CameraComponent.h"
+#include "TerrainComponent.h"
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
 #include "CapsuleColliderComponent.h"
@@ -55,6 +56,7 @@ Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
   m_Coordinator.RegisterComponent<BoxColliderComponent>();
   m_Coordinator.RegisterComponent<CapsuleColliderComponent>();
   m_Coordinator.RegisterComponent<RigidBodyComponent>();
+  m_Coordinator.RegisterComponent<TerrainComponent>();
 
   // Register render system
   mRenderSystem = m_Coordinator.RegisterSystem<RenderSystem>();
@@ -104,6 +106,13 @@ Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
   m_Coordinator.SetSystemInterestSignature<PhysicsSystem>(physicsInterest);
   m_Coordinator.SetSystemSignature<PhysicsSystem>(physicsRequirements);
   mPhysicsSystem->Init(mScriptSystem.get());
+
+  // Terrain system
+  mTerrainSystem = m_Coordinator.RegisterSystem<TerrainSystem>();
+  ecs::Signature requiredComps;
+  requiredComps.set(m_Coordinator.GetComponentType<TransformComponent>());
+  requiredComps.set(m_Coordinator.GetComponentType<TerrainComponent>());
+  m_Coordinator.SetSystemSignature<TerrainSystem>(requiredComps);
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {
@@ -173,7 +182,9 @@ void Scene::Render(CameraSystem::CameraMode mode) {
   // render everything
   Renderer::BeginScene(view, proj);
   mRenderSystem->RenderAll();
+  mTerrainSystem->render();
   Renderer::EndScene();
+
 
   // render gizmos
   mPhysicsSystem->DrawGizmos();

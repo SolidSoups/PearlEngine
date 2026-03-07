@@ -136,7 +136,8 @@ void PearlEngine::Initialize() {
   auto shader = Defaults::getDefaultShader();
 
   // create shaders
-  mPickShader = m_ShaderManager->load("shaders/pickVert.glsl", "shaders/pickFrag.glsl");
+  mPickShader =
+      m_ShaderManager->load("shaders/pickVert.glsl", "shaders/pickFrag.glsl");
   m_GeometryShader = m_ShaderManager->load("shaders/geometryVert.glsl",
                                            "shaders/geometryFrag.glsl");
   m_DisplayShader = m_ShaderManager->load("shaders/displayVert.glsl",
@@ -165,8 +166,8 @@ void PearlEngine::Initialize() {
       std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
 
   // create the picking framebuffer
-  mPickFramebuf = 
-    std::make_unique<PickingFramebuffer>(m_ViewportSize.x, m_ViewportSize.y);
+  mPickFramebuf =
+      std::make_unique<PickingFramebuffer>(m_ViewportSize.x, m_ViewportSize.y);
 
   // initialize g buffer
   m_GBuffer = std::make_unique<GBuffer>(m_ViewportSize.x, m_ViewportSize.y);
@@ -305,7 +306,14 @@ void PearlEngine::Update() {
 }
 
 void PearlEngine::Render() {
+  if (bDrawWireFrameMode)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  else
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
   GeometryRenderPass();
+
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
   if (bDebugGBuffer) {
     QuadDebugRenderPass();
@@ -318,21 +326,23 @@ void PearlEngine::Render() {
     LightingPass();
   }
 
-  // Draw grid
   auto *camSystem = mScene->GetCameraSystem();
   glm::mat4 view, projection;
   camSystem->GetMatrices(view, projection);
 
-  m_ViewportFramebuffer->Bind();
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  m_GridShader->use();
-  m_GridShader->setMatrix4("view", view);
-  m_GridShader->setMatrix4("projection", projection);
-  m_GridShader->setVec3("cameraPos", camSystem->GetPosition());
-  m_WorldPlaneQuad->Draw();
-  glDisable(GL_BLEND);
-  m_ViewportFramebuffer->Unbind();
+  // Draw grid
+  if (bDrawGrid) {
+    m_ViewportFramebuffer->Bind();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    m_GridShader->use();
+    m_GridShader->setMatrix4("view", view);
+    m_GridShader->setMatrix4("projection", projection);
+    m_GridShader->setVec3("cameraPos", camSystem->GetPosition());
+    m_WorldPlaneQuad->Draw();
+    glDisable(GL_BLEND);
+    m_ViewportFramebuffer->Unbind();
+  }
 
   // draw gizmo lines
   m_ViewportFramebuffer->Bind();
@@ -346,22 +356,21 @@ void PearlEngine::Render() {
   m_ViewportFramebuffer->Unbind();
 
   // set selection through viewport
-  if(m_ViewportPanel->DidLeftMouseClick() and mRuntimeState == EDITOR){
+  if (m_ViewportPanel->DidLeftMouseClick() and mRuntimeState == EDITOR) {
     glm::vec2 clickPos = m_ViewportPanel->ConsumeLeftMouseClick();
     int px = (int)clickPos.x;
     int py = (int)clickPos.y;
-    if(px < 0 or py < 0 or px >= (int)m_ViewportSize.x or py >= (int)m_ViewportSize.y)
+    if (px < 0 or py < 0 or px >= (int)m_ViewportSize.x or
+        py >= (int)m_ViewportSize.y)
       return; // out of bounds
 
     PickingRenderPass();
     ecs::Entity clickedEntity = (ecs::Entity)ReadPickedVal(px, py);
-    if (clickedEntity != ecs::NULL_ENTITY){
+    if (clickedEntity != ecs::NULL_ENTITY) {
       SelectionWizard::Set(clickedEntity);
-    }
-    else
+    } else
       SelectionWizard::Clear();
-  }  
- 
+  }
 }
 
 void PearlEngine::PickingRenderPass() {
@@ -379,11 +388,11 @@ void PearlEngine::PickingRenderPass() {
   mPickShader->setMatrix4("projection", proj);
 
   // upload all entities
-  auto& entities = mScene->GetRenderEntities(); 
-  auto& coord = mScene->GetCoordinator();
-  for(ecs::Entity entity : entities){
-    auto& tf = coord.GetComponent<TransformComponent>(entity);
-    auto& render = coord.GetComponent<RenderComponent>(entity);
+  auto &entities = mScene->GetRenderEntities();
+  auto &coord = mScene->GetCoordinator();
+  for (ecs::Entity entity : entities) {
+    auto &tf = coord.GetComponent<TransformComponent>(entity);
+    auto &render = coord.GetComponent<RenderComponent>(entity);
 
     mPickShader->setMatrix4("transform", tf.GetModelMatrix());
     mPickShader->setUInt("entityID", entity);
@@ -393,7 +402,7 @@ void PearlEngine::PickingRenderPass() {
   mPickFramebuf->Unbind();
 }
 uint32_t PearlEngine::ReadPickedVal(unsigned int x, unsigned int y) {
-  unsigned int flippedY = (unsigned int)m_ViewportSize.y - y; 
+  unsigned int flippedY = (unsigned int)m_ViewportSize.y - y;
 
   mPickFramebuf->Bind();
   glReadBuffer(GL_COLOR_ATTACHMENT0);
@@ -603,7 +612,7 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
       }
     }
 
-    // open scene
+    // open scen
     if (input->GetKeyDown(GLFW_KEY_O)) {
       if (input->GetKey(GLFW_KEY_LEFT_CONTROL)) {
         UserGUI::StartFilePopup(
@@ -613,6 +622,15 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
             },
             {".json"});
       }
+    }
+
+    // toggle wireframe mode
+    if (input->GetKeyDown(GLFW_KEY_B)) {
+      bDrawWireFrameMode = !bDrawWireFrameMode;
+    }
+
+    if(input->GetKeyDown(GLFW_KEY_G)){
+      bDrawGrid = !bDrawGrid;
     }
 
     // save and save as scene

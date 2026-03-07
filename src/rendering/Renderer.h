@@ -15,11 +15,12 @@ public:
   // Scene management
   static void BeginScene(Camera &camera);
   static void BeginScene(glm::mat4 view, glm::mat4 proj);
-  static void SubmitLights(Scene& scene);
+  static void SubmitLights(Scene &scene);
   static void EndScene();
 
   static void Submit(const RenderComponent &renderComp,
                      const TransformComponent &transformComp);
+  static void Submit( const TransformComponent& transformComp, const std::shared_ptr<Mesh>& mesh, const std::shared_ptr<ShaderData> shader);
   static void SendLightUniforms(std::shared_ptr<ShaderData> shader);
   static void SendAmbientLightUniforms(std::shared_ptr<ShaderData> shader);
 
@@ -29,9 +30,10 @@ private:
   static glm::mat4 s_Proj;
   static AmbientLightData m_AmbientData;
   static std::vector<ecs::Entity> m_PointLightEntities;
-  static Scene* m_Scene;
+  static Scene *m_Scene;
   static bool m_bGeometryPassEnabled;
   static std::shared_ptr<ShaderData> m_NextShader;
+
 public:
   static void SetGeometryPassEnabled(bool value);
   static void SetNextShader(std::shared_ptr<ShaderData> shader);

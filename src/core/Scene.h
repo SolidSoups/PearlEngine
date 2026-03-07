@@ -16,6 +16,7 @@
 #include "PhysicsSystem.h"
 #include "json_common.h"
 #include "RuntimeState.h"
+#include "TerrainSystem.h"
 
 class PointLightSystem;
 class Camera;
@@ -78,6 +79,7 @@ public:
   const json CreateJSONFromEntity(ecs::Entity entity);
 
   std::shared_ptr<PointLightSystem> mPointLightSystem;
+  std::shared_ptr<TerrainSystem> mTerrainSystem;
 
   inline void SetCameraPreview(ecs::Entity entity){
     mCameraSystem->SetPreviewCamera(entity);

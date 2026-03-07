@@ -3,15 +3,17 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <optional>
 #include <vector>
 
 #include "TextureConfig.h"
 #include "json_common.h"
+#include "StbiImage.h"
 
 struct TextureData {
-  uint32_t width;
-  uint32_t height;
-  uint32_t channels;
+  uint32_t width = -1;
+  uint32_t height = -1;
+  uint32_t channels = -1;
   std::string filePath;
   TextureConfig config{};
   // anything could set this id
@@ -27,8 +29,8 @@ public:
   TextureData &operator=(TextureData && other);
 
   // delete copy construct and assignment
-  TextureData(TextureData&) = delete;
-  TextureData &operator=(TextureData&) = delete;
+  TextureData(const TextureData&) = delete;
+  TextureData &operator=(const TextureData&) = delete;
 
   // set texture configuration for this texture
   void setConfig(const TextureConfig &config);
@@ -36,6 +38,8 @@ public:
   bool loadFile(const char* path);
   // load raw image data for this texture
   bool loadData(unsigned char* data, uint32_t width, uint32_t height, uint32_t channels);
+  // get the raw stbi image data from a texture
+  std::optional<StbiImage> getPixelData(int desiredChannels = 0) const;
 
 public:
   void bind(unsigned int slot);

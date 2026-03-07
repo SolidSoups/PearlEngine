@@ -74,7 +74,7 @@ void Renderer::Submit(const RenderComponent &renderComp,
     shader->use();
     renderComp.material->bind(shader);
   }
-
+  
   // Set matrices
   if (!shader)
     return;
@@ -84,11 +84,40 @@ void Renderer::Submit(const RenderComponent &renderComp,
   shader->setMatrix4("view", view);
   shader->setMatrix4("projection", proj);
 
-  // Render the mesh
-  if (renderComp.mesh) {
-    renderComp.mesh->Draw();
-  }
+  // draw the mesh to the screen
+  if(renderComp.mesh) renderComp.mesh->Draw();
 }
+
+void Renderer::Submit(const TransformComponent& aTransform, const std::shared_ptr<Mesh>& aMesh, const std::shared_ptr<ShaderData> aShader){
+
+  // Resolve view/projection matrices from whichever BeginScene path was used
+  glm::mat4 view, proj;
+  if (s_ActiveCamera) {
+    auto *cameraTarget = s_ActiveCamera->GetCurrentTarget();
+    if (!cameraTarget)
+      return;
+    view = cameraTarget->GetViewMatrix();
+    proj = cameraTarget->GetProjectionMatrix();
+  } else {
+    view = s_View;
+    proj = s_Proj;
+  }
+  
+  // Set matrices
+  if (!aShader)
+    return;
+
+  aShader->use();
+
+  // upload object
+  aShader->setMatrix4("transform", aTransform.GetModelMatrix());
+  aShader->setMatrix4("view", view);
+  aShader->setMatrix4("projection", proj);
+
+  // draw the mesh to the screen
+  if(aMesh) aMesh->Draw();
+}
+
 
 void Renderer::SendAmbientLightUniforms(std::shared_ptr<ShaderData> shader){
   shader->setVec4("ambientColor", m_AmbientData.color);
