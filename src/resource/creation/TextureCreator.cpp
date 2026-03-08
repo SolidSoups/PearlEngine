@@ -27,6 +27,12 @@ void TextureCreator::renderImGui(const char *id) {
   std::string header_name = "Texture_" + std::string(id);
   if (ImGui::CollapsingHeader(header_name.c_str())) {
     ImGui::PushID(id);
+
+    if(latestTexture){
+      ImVec2 size(100, 100);
+      ImGui::Image((ImTextureRef)(intptr_t)latestTexture->id, size);
+    }
+
     ImGui::SeparatorText("Source File");
     if (UserGUI::DrawFile(filePath))
       b_isDirty = true;
@@ -34,6 +40,8 @@ void TextureCreator::renderImGui(const char *id) {
     ImGui::Dummy(ImVec2(0, 20.f));
     ImGui::SeparatorText("Mipmap settings");
 
+
+    // Draw Mipmap section
     if (ImGui::Checkbox("Enable Mipmaps", &config.generateMipMaps))
       b_isDirty = true;
 
@@ -85,5 +93,6 @@ std::shared_ptr<TextureData> TextureCreator::create() {
   // TODO: make this better
   if (filePath.empty()) // just a precaution
     return nullptr;
-  return ServiceLocator::Get<TextureManager>().load(filePath.c_str(), config);
+  latestTexture = ServiceLocator::Get<TextureManager>().load(filePath.c_str(), config);
+  return latestTexture;
 }

@@ -30,34 +30,54 @@ void TerrainSystem::render(){
   for(auto entity : Entities){
     auto& transform = Get<TransformComponent>(entity);
     auto& terrain = Get<TerrainComponent>(entity);
-    if(!terrain.myMesh){
-      if(!terrain.heightMap || !terrain.material)
-        continue;
-
-      // generate the terrain
-      terrain.material->setShader(myTerrainShader);
-      generateTerrain(entity);
-      terrain.material->setTexture("uHeightMap", terrain.heightMap);
-    }
+    if(!terrain.mesh or !terrain.heightMap or !terrain.material or !terrain.material->getShader())
+      continue;
 
     // do we need this?
-    Renderer::Submit(transform, terrain.myMesh, terrain.material);   
+    Renderer::Submit(transform, terrain.mesh, terrain.material);   
   }
 }
 
-void TerrainSystem::generateTerrain(ecs::Entity entity) {
-  if (!Has<TerrainComponent>(entity))
-    return;
+void TerrainSystem::generateValidTerrains(){
+  for(ecs::Entity e : Entities){
+    // get terrain and transform components
+    auto& transform = Get<TransformComponent>(e);
+    auto& terrain = Get<TerrainComponent>(e);
 
-  // get the terrain component
-  auto &terrain = Get<TerrainComponent>(entity);
-  if (!terrain.heightMap) {
-    LOG_ERROR << "Cannot generate a terrain without a height map.";
+    // can't generate without heightmap
+    if(!terrain.heightMap) continue;
+    // skip valid meshes, but regenerate if terrain is dirty
+    if(terrain.mesh && !terrain.isDirty) continue;
+  
+    generateTerrain(transform, terrain);
+    configureTerrainMaterial(terrain);  
+
+    terrain.isDirty = false;
+  } 
+}
+
+void TerrainSystem::configureTerrainMaterial(TerrainComponent& aTerrain){
+  // create a material if it doesn't exist
+  // otherwise, ensure correct shader
+  if(!aTerrain.material)
+    aTerrain.material = std::make_shared<Material>(myTerrainShader);
+  else
+    aTerrain.material->setShader(myTerrainShader);
+
+  // link terrain heightMap texture to material uniform
+  aTerrain.material->setTexture("uHeightMap", aTerrain.heightMap);
+}
+
+void TerrainSystem::generateTerrain(const TransformComponent& aTransform, 
+                     TerrainComponent& aTerrain){
+  // no height map, no generation
+  if(!aTerrain.heightMap){
+    LOG_ERROR << "Cannot generate terrain without a height map";
     return;
   }
 
-  // try to load the pixel data from the height map
-  auto img = terrain.heightMap->getPixelData(1);
+  // try load height map data (red channel only)
+  auto img = aTerrain.heightMap->getPixelData(1);
   if (!img) {
     LOG_ERROR << "Failed to load pixels for height map";
     return;
@@ -65,11 +85,10 @@ void TerrainSystem::generateTerrain(ecs::Entity entity) {
 
   std::vector<float> vertices;
   std::vector<unsigned int> indices;
-  generateVertices(*img, vertices, terrain.resolution); 
-  generateIndices(indices, terrain.resolution, terrain.resolution);
-
+  generateVertices(*img, vertices, aTerrain.resolution); 
+  generateIndices(indices, aTerrain.resolution, aTerrain.resolution);
   // create mesh
-  terrain.myMesh = std::make_shared<Mesh>(vertices, indices);
+  aTerrain.mesh = std::make_shared<Mesh>(vertices, indices);
 
   LOG_INFO << "Terrain generated";
 }

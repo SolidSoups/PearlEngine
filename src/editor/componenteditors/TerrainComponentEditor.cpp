@@ -16,11 +16,6 @@ void TerrainComponentEditor::OnInit() {
 void TerrainComponentEditor::OnDrawComponent(void* target, ecs::Entity entity){
   TerrainComponent* terrain = static_cast<TerrainComponent*>(target);
   if(!terrain) return;
-
-  // ensure material exists
-  if(!terrain->material && myTerrainSystem->getShader()){
-    terrain->material = std::make_shared<Material>(myTerrainSystem->getShader());
-  }
   
   // height map texture
   myHeightMap.renderImGui("Height Map");  
@@ -29,8 +24,8 @@ void TerrainComponentEditor::OnDrawComponent(void* target, ecs::Entity entity){
       terrain->heightMap = newTex;
       terrain->material->setTexture("uHeightMap", newTex);
 
-      // regenerate the terrain
-      myTerrainSystem->generateTerrain(entity);
+      // force terrain system to regenerate this
+      terrain->isDirty = true;
     }
   }
 
@@ -38,5 +33,8 @@ void TerrainComponentEditor::OnDrawComponent(void* target, ecs::Entity entity){
   ImGui::AlignTextToFramePadding();
   ImGui::Text("Resolution");
   ImGui::SameLine();
-  ImGui::DragInt("##Resolution", &terrain->resolution);
+  if(ImGui::DragInt("##Resolution", &terrain->resolution)){
+    // force terrain system to regenerate this
+    terrain->isDirty = true;
+  }
 }

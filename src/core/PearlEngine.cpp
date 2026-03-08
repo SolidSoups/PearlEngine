@@ -23,6 +23,7 @@
 #include "Project.h"
 #include "UserGUI.h"
 #include "Renderer.h"
+#include "TerrainComponent.h"
 #include "Time.h"
 #include "ServiceLocator.h"
 #include "SelectionWizard.h"
@@ -220,6 +221,14 @@ void PearlEngine::Initialize() {
   glEnable(GL_DEPTH_TEST);
 
   LOG_INFO << "Finished initialization";
+
+  // DUMMY SCENE
+  ecs::Entity terrainEntity = mScene->CreateEntity();
+  coordinator.AddComponent<TerrainComponent>(terrainEntity, TerrainComponent{});  
+  auto& terrain = coordinator.GetComponent<TerrainComponent>(terrainEntity);
+  terrain.heightMap = m_TextureManager->load("assets/terrainMapTest.png");
+  auto& transform = coordinator.GetComponent<TransformComponent>(terrainEntity);
+  transform.scale = glm::vec3{20.f, 5.f, 20.f};
 }
 
 // b@UPDATE

@@ -11,8 +11,10 @@ struct TerrainComponent {
   std::shared_ptr<TextureData> heightMap;
   int resolution = 20;
 
-public: // runtime, not serialized
-  std::shared_ptr<Mesh> myMesh;
+public: 
+  // runtime, not serialized
+  std::shared_ptr<Mesh> mesh;
+  bool isDirty = true;
 
 public: // serialization
   friend void to_json(json& j, const TerrainComponent&t);

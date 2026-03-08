@@ -175,6 +175,10 @@ void Scene::Update() {
 }
 
 void Scene::Render(CameraSystem::CameraMode mode) {
+  // This should really be somewhere else, 
+  // but its fine for a project like this
+  mTerrainSystem->generateValidTerrains();
+
   // get matrices from camera system
   glm::mat4 view, proj;
   mCameraSystem->GetMatrices(view, proj);

@@ -27,6 +27,8 @@ public:
   ~Scene();
 
   // Object management
+  
+  // Create an empty entity, with a name component 
   ecs::Entity CreateEntity(const std::string& name = "Entity");
   ecs::Entity CreatePointLight(const std::string& name = "PointLight");
   ecs::Entity CreateCube(const std::string& name = "Cube");
