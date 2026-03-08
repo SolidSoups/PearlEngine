@@ -11,10 +11,23 @@
 #include "ServiceLocator.h"
 #include "ImGuiHelpers.h"
 
-void RenderComponentEditor::OnDrawComponent(void *target, [[maybe_unused]] ecs::Entity entity) {
+void RenderComponentEditor::OnDrawComponent(void *target, ecs::Entity entity) {
   RenderComponent *renderComp = static_cast<RenderComponent *>(target);
   if (!renderComp)
     return;
+
+  if (entity != m_LastEntity) {
+    m_LastEntity = entity;
+    if (renderComp->material) {
+      m_AlbedoTexture.syncFrom(renderComp->material->getTexture("texture_diffuse1"));
+      m_SpecTexture.syncFrom(renderComp->material->getTexture("texture_specular1"));
+      m_NormalTexture.syncFrom(renderComp->material->getTexture("texture_normal1"));
+    } else {
+      m_AlbedoTexture.reset();
+      m_SpecTexture.reset();
+      m_NormalTexture.reset();
+    }
+  }
 
   bool openMeshPopup = false, openMatPopup = false;
   float labelWidth = 180.f;

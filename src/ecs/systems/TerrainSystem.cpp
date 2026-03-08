@@ -30,8 +30,12 @@ void TerrainSystem::render(){
   for(auto entity : Entities){
     auto& transform = Get<TransformComponent>(entity);
     auto& terrain = Get<TerrainComponent>(entity);
-    if(!terrain.mesh or !terrain.heightMap or !terrain.material or !terrain.material->getShader())
+    if(!terrain.mesh or !terrain.heightMap or !terrain.material)
       continue;
+
+    if(!terrain.material->getShader()){
+        terrain.material->setShader(myTerrainShader);
+    }
 
     // do we need this?
     Renderer::Submit(transform, terrain.mesh, terrain.material);   

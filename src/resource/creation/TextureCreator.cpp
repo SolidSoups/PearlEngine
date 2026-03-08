@@ -23,25 +23,45 @@ GLenum convertWrapMode(int index) {
   return wraps[index];
 }
 
-void TextureCreator::renderImGui(const char *id) {
+void TextureCreator::renderImGui(const char* id, bool showMipmap , bool showWrapModes) {
+  // filthy lazy way to do this
+  if (!ServiceLocator::IsReady<TextureManager>())
+    return;
+
+  if (!mUnknownTexture)
+    mUnknownTexture = ServiceLocator::Get<TextureManager>().load(
+        "assets/ui/unknown_texture.jpeg");
+
   std::string header_name = "Texture_" + std::string(id);
-  if (ImGui::CollapsingHeader(header_name.c_str())) {
-    ImGui::PushID(id);
+  ImGui::PushID(id);
 
-    if(latestTexture){
-      ImVec2 size(100, 100);
-      ImGui::Image((ImTextureRef)(intptr_t)latestTexture->id, size);
-    }
+  // draw either default no texture,
+  // or the chosen texture
+  intptr_t texImg = mUnknownTexture->id;
+  if (latestTexture)
+    texImg = latestTexture->id;
 
-    ImGui::SeparatorText("Source File");
-    if (UserGUI::DrawFile(filePath))
-      b_isDirty = true;
+  static float boxHeight = 100.f;
+  ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+  ImGui::BeginChild("TextureBox", ImVec2(0, boxHeight), true);
+  float startY = ImGui::GetCursorPosY();
+  ImVec2 size(100, 100);
 
-    ImGui::Dummy(ImVec2(0, 20.f));
-    ImGui::SeparatorText("Mipmap settings");
+  float imageWidth = size.x + ImGui::GetStyle().ItemSpacing.x;
+  ImGui::BeginChild(
+      "##right", ImVec2(ImGui::GetContentRegionAvail().x - imageWidth, size.y),
+      false, ImGuiWindowFlags_NoScrollbar);
+  ImGui::SeparatorText(id);
+  if (UserGUI::DrawFile(filePath, b_fileChanged))
+    b_isDirty = true;
+  ImGui::EndChild();
 
+  // Right, image
+  ImGui::SameLine();
+  ImGui::Image((ImTextureRef)texImg, size, ImVec2(0, 1), ImVec2(1, 0));
 
-    // Draw Mipmap section
+  // draw mipmap settings
+  if (showMipmap and ImGui::CollapsingHeader("MipMap Settings")) {
     if (ImGui::Checkbox("Enable Mipmaps", &config.generateMipMaps))
       b_isDirty = true;
 
@@ -69,10 +89,9 @@ void TextureCreator::renderImGui(const char *id) {
       config.magFilter = convertFilterMode(magFilterIndex);
       config.maxMipMapLevel = maxMipLevel;
     }
+  }
 
-    ImGui::Dummy(ImVec2(0, 20));
-    ImGui::SeparatorText("Wrap Modes");
-
+  if (showWrapModes and ImGui::CollapsingHeader("Wrap Modes")) {
     const char *wrapModes[] = {"Repeat", "Mirrored Repeat", "Clamp to Edge",
                                "Clamp to Border"};
     static int wrapSIndex = 0;
@@ -84,8 +103,15 @@ void TextureCreator::renderImGui(const char *id) {
       b_isDirty = true;
     config.wrapS = convertWrapMode(wrapSIndex);
     config.wrapT = convertWrapMode(wrapTIndex);
-    ImGui::PopID();
   }
+
+  // calculate new box height (adjustable to content)
+  boxHeight =
+      ImGui::GetCursorPosY() - startY + ImGui::GetStyle().WindowPadding.y * 1.5;
+  ImGui::EndChild();
+  ImGui::PopStyleColor();
+
+  ImGui::PopID();
 }
 
 std::shared_ptr<TextureData> TextureCreator::create() {
@@ -93,6 +119,7 @@ std::shared_ptr<TextureData> TextureCreator::create() {
   // TODO: make this better
   if (filePath.empty()) // just a precaution
     return nullptr;
-  latestTexture = ServiceLocator::Get<TextureManager>().load(filePath.c_str(), config);
+  latestTexture =
+      ServiceLocator::Get<TextureManager>().load(filePath.c_str(), config);
   return latestTexture;
 }

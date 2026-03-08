@@ -16,9 +16,14 @@ void TerrainComponentEditor::OnInit() {
 void TerrainComponentEditor::OnDrawComponent(void* target, ecs::Entity entity){
   TerrainComponent* terrain = static_cast<TerrainComponent*>(target);
   if(!terrain) return;
+
+  if (entity != m_LastEntity) {
+    m_LastEntity = entity;
+    myHeightMap.syncFrom(terrain->heightMap);
+  }
   
   // height map texture
-  myHeightMap.renderImGui("Height Map");  
+  myHeightMap.renderImGui("Height Map", false, false);  
   if(myHeightMap.isDirty()){
     if(auto newTex = myHeightMap.create()){
       terrain->heightMap = newTex;

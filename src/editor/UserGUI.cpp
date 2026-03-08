@@ -52,40 +52,39 @@ void UserGUI::StartFilePopup(std::function<void(const std::string &)> callback,
 void UserGUI::StartInputPopup(
     const std::string &title,
     std::function<void(const std::string &)> callback) {
-  if(!m_CurrentDialog)
+  if (!m_CurrentDialog)
     m_CurrentDialog = new InputStringDialog(title, callback);
   else
     LOG_WARNING << "Cannot start more than one dialog at a time";
 }
 
-  bool UserGUI::DrawFile(std::string & filePath) {
-    ImGui::BeginDisabled();
-    static char displayBuf[256];
-    strncpy(displayBuf, filePath.c_str(), sizeof(displayBuf) - 1);
-    displayBuf[sizeof(displayBuf) - 1] = '\0';
-    ImGui::SetNextItemWidth(-10);
-    ImGui::InputText("##filepath", displayBuf, sizeof(displayBuf),
-                     ImGuiInputTextFlags_ReadOnly);
-    ImGui::EndDisabled();
+bool UserGUI::DrawFile(std::string &filePath, bool &changed) {
+  ImGui::BeginDisabled();
+  static char displayBuf[256];
+  strncpy(displayBuf, filePath.c_str(), sizeof(displayBuf) - 1);
+  displayBuf[sizeof(displayBuf) - 1] = '\0';
+  ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+  ImGui::InputText("##filepath", displayBuf, sizeof(displayBuf),
+                   ImGuiInputTextFlags_ReadOnly);
+  ImGui::EndDisabled();
 
-    static bool fileChanged = false;
-    if (ImGui::Button("Browse..", ImVec2(-10, 0))) {
-      const std::vector<std::string> extensions = {".png", ".jpg", ".tga"};
-      StartFilePopup(
-          [&filePath](const std::string &newFilePath) {
-            filePath = newFilePath;
-            fileChanged = true;
-          },
-          extensions);
-    }
-    if (fileChanged) {
-      fileChanged = false;
-      return true;
-    }
-    return false;
+  if (ImGui::Button("Browse..", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
+    const std::vector<std::string> extensions = {".png", ".jpg", ".tga"};
+    StartFilePopup(
+        [&filePath, &changed](const std::string &newFilePath) {
+          filePath = newFilePath;
+          changed = true;
+        },
+        extensions);
   }
+  if (changed) {
+    changed = false;
+    return true;
+  }
+  return false;
+}
 
-  void UserGUI::Destroy() {
-    if (m_CurrentDialog)
-      delete m_CurrentDialog;
-  }
+void UserGUI::Destroy() {
+  if (m_CurrentDialog)
+    delete m_CurrentDialog;
+}

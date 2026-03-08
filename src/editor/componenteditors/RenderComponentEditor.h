@@ -21,6 +21,7 @@ private:
   TextureCreator m_AlbedoTexture;
   TextureCreator m_SpecTexture;
   TextureCreator m_NormalTexture;
+  ecs::Entity m_LastEntity = ecs::NULL_ENTITY;
 };
 
 STATIC_REGISTER_COMPONENT_EDITOR(RenderComponent, RenderComponentEditor)

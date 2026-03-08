@@ -45,6 +45,10 @@ public:
   void setShader(std::shared_ptr<ShaderData> s) { shader = s; }
 
   bool textureExists(const std::string &name);
+  std::shared_ptr<TextureData> getTexture(const std::string& name) const {
+    auto it = textures.find(name);
+    return it != textures.end() ? it->second : nullptr;
+  }
 
   friend void to_json(json &j, const Material &m);
   friend void from_json(const json &j, Material &m);

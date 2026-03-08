@@ -23,7 +23,7 @@ public:
     const std::vector<std::string>& extensions
   );
   static void StartInputPopup(const std::string& title, std::function<void(const std::string&)> callback);
-  static bool DrawFile(std::string& filepath);
+  static bool DrawFile(std::string& filepath, bool& changed);
   static void Render();
   static void Destroy();
 };
