@@ -18,13 +18,6 @@ private:
 public:
   std::shared_ptr<Mesh> loadOBJ(const char *filePath);
 
-  void Debug(){
-    std::string debug;
-    for(auto& [key, weak] : m_Cache){
-      debug += key + (weak.lock() ? " - Locked" : " - Unlocked") + "\n";
-    }
-    LOG_INFO << debug;
-  }
   const size_t getCacheSize() const { 
     int count = 0;
     for(auto& [key, weak] : m_Cache){

@@ -38,8 +38,6 @@ void MemoryEditorPanel::OnImGuiRender() {
   ImGui::Text("Memory checking");
   ImGui::Separator();
 
-  meshMng.Debug();
-
   size_t meshMemSize = meshMng.calcMemorySize();
   std::string formMeshBytes = formatBytes((float)meshMemSize);
   ImGui::Text("Mesh Size: %s", formMeshBytes.c_str());
