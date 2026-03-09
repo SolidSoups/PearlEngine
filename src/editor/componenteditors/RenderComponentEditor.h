@@ -14,7 +14,7 @@ public:
 
 private:
   void DrawTexture(RenderComponent* comp);
-  void DrawMesh(RenderComponent* comp);
+  void DrawMesh(RenderComponent* comp, ecs::Entity entity);
 
   void trySetCompTexture(RenderComponent* comp, const std::string& slot, std::shared_ptr<TextureData> texture);
 

@@ -13,6 +13,7 @@
 #include <imgui.h>
 
 // src
+#include "CreateMeshMessageHandler.h"
 #include "LineRenderer.h"
 #include "SphereColliderComponent.h"
 #include "RigidBodyComponent.h"
@@ -219,6 +220,10 @@ void PearlEngine::Initialize() {
   glFrontFace(GL_CW);
   glDisable(GL_CULL_FACE); // THIS IS SO WRONG
   glEnable(GL_DEPTH_TEST);
+
+  // enable mesh loading through message bus
+  IMessageHandler* meshHandler = new CreateMeshMessageHandler(); 
+  m_MessageBus->Subscribe<CreateMeshMessage>(meshHandler);
 
   LOG_INFO << "Finished initialization";
 }

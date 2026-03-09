@@ -6,6 +6,8 @@
 #include "imgui.h"
 
 #include "FileSystem.h"
+#include "MessageQueue.h"
+#include "CreateMeshMessage.h"
 #include "MeshManager.h"
 #include "MaterialLoader.h"
 #include "ServiceLocator.h"
@@ -66,7 +68,7 @@ void RenderComponentEditor::OnDrawComponent(void *target, ecs::Entity entity) {
 
   // display and update mesh
   if(ImGui::CollapsingHeader("Mesh")){
-    DrawMesh(renderComp);
+    DrawMesh(renderComp, entity);
   }
 }
 
@@ -123,7 +125,7 @@ void RenderComponentEditor::DrawTexture(RenderComponent *comp) {
   }
 }
 
-void RenderComponentEditor::DrawMesh(RenderComponent *comp) {
+void RenderComponentEditor::DrawMesh(RenderComponent *comp, ecs::Entity entity) {
   float labelWidth = 180.f;
   ImGui::Text("Mesh:");
   ImGui::SameLine(labelWidth);
@@ -133,10 +135,14 @@ void RenderComponentEditor::DrawMesh(RenderComponent *comp) {
   ImGui::SetNextItemWidth(-10);
   if (ImGui::Button("Set Mesh...")) {
     // start mesh dialog
-    UserGUI::StartMeshPopup([comp](std::shared_ptr<Mesh> meshPtr) {
-      // set loaded mesh
-      comp->mesh = meshPtr;
-      comp->meshType = "";
-    });
+    UserGUI::StartFilePopup([entity](const std::string& filePath){
+      auto& msgQueue = ServiceLocator::Get<MessageQueue>();
+
+      // create new "create mesh message"
+      CreateMeshMessage msg;
+      msg.filePath = filePath;
+      msg.renderCompEntity = entity;
+      msgQueue.Dispatch(msg);
+    }, {".obj"});
   }
 }
