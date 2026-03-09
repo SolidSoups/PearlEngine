@@ -20,6 +20,7 @@ void TerrainComponentEditor::OnDrawComponent(void* target, ecs::Entity entity){
   if (entity != m_LastEntity) {
     m_LastEntity = entity;
     myHeightMap.syncFrom(terrain->heightMap);
+    myDiffuseMap.syncFrom(terrain->material ? terrain->material->getTexture("uDiffuseMap") : nullptr);
   }
   
   // height map texture
@@ -27,10 +28,20 @@ void TerrainComponentEditor::OnDrawComponent(void* target, ecs::Entity entity){
   if(myHeightMap.isDirty()){
     if(auto newTex = myHeightMap.create()){
       terrain->heightMap = newTex;
-      terrain->material->setTexture("uHeightMap", newTex);
+      if (terrain->material)
+        terrain->material->setTexture("uHeightMap", newTex);
 
       // force terrain system to regenerate this
       terrain->isDirty = true;
+    }
+  }
+
+  // diffuse map texture
+  myDiffuseMap.renderImGui("Diffuse Map");  
+  if(myDiffuseMap.isDirty()){
+    if(auto newTex = myDiffuseMap.create()){
+      if (terrain->material)
+        terrain->material->setTexture("uDiffuseMap", newTex);
     }
   }
 

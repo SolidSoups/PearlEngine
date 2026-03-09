@@ -8,11 +8,12 @@ in vec2 TexCoord;
 in vec3 Normal;
 
 uniform sampler2D uHeightMap;
+uniform sampler2D uDiffuseMap;
 
 void main(){
   gPosition = FragPos;
-  vec3 color = texture(uHeightMap, TexCoord).rgb;
-  gAlbedoSpec.rgb = vec3(color.r, color.r, color.r);
+  vec3 color = texture(uDiffuseMap, TexCoord).rgb;
+  gAlbedoSpec.rgb = color;
   gAlbedoSpec.a = 0.0;
   gNormal = Normal * 0.5 + 0.5;
 }

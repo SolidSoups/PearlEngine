@@ -221,14 +221,6 @@ void PearlEngine::Initialize() {
   glEnable(GL_DEPTH_TEST);
 
   LOG_INFO << "Finished initialization";
-
-  // DUMMY SCENE
-  ecs::Entity terrainEntity = mScene->CreateEntity();
-  coordinator.AddComponent<TerrainComponent>(terrainEntity, TerrainComponent{});  
-  auto& terrain = coordinator.GetComponent<TerrainComponent>(terrainEntity);
-  terrain.heightMap = m_TextureManager->load("assets/terrainMapTest.png");
-  auto& transform = coordinator.GetComponent<TransformComponent>(terrainEntity);
-  transform.scale = glm::vec3{20.f, 5.f, 20.f};
 }
 
 // b@UPDATE
@@ -610,6 +602,12 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
 
     if (input->GetKeyDown(GLFW_KEY_F)) {
       mEngineCamera->Reset();
+    }
+
+    if(input->GetKeyDown(GLFW_KEY_DELETE) and
+      mRuntimeState == EDITOR and SelectionWizard::HasSelection()){
+      ecs::Entity selectedEntity = SelectionWizard::Get();
+      mScene->DestroyEntity(selectedEntity);
     }
 
     if (bDebugGBuffer) {

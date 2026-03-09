@@ -15,6 +15,7 @@ public:
 
 private:
   TextureCreator myHeightMap;
+  TextureCreator myDiffuseMap;
   TerrainSystem* myTerrainSystem;
   ecs::Entity m_LastEntity = ecs::NULL_ENTITY;
 };
