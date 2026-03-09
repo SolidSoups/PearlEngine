@@ -105,7 +105,7 @@ float sampleHeightMap(const StbiImage &heightMap, glm::ivec2 coord){
 
 // get the normal of a coordinate using pixel coordinates
 glm::vec3 calculateHeightMapNormal(const StbiImage& heightMap, glm::ivec2 coord, glm::ivec2 cellSize){
-  constexpr float normalStrength = 2.f;
+  float normalStrength = 2.f * cellSize.x / (float)heightMap.width;
   float up = sampleHeightMap(heightMap, coord + glm::ivec2(0, cellSize.y));
   float right = sampleHeightMap(heightMap, coord + glm::ivec2(cellSize.x, 0));
   float down = sampleHeightMap(heightMap, coord + glm::ivec2(0, -cellSize.y));
