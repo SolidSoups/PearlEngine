@@ -154,13 +154,13 @@ void PearlEngine::Initialize() {
       m_ShaderManager->load("shaders/lineVert.glsl", "shaders/lineFrag.glsl");
   LineRenderer::Initialize(lineShader);
 
-  // create the main camera
-  ecs::Entity cameraEntity = mScene->CreateEntity("Main Camera");
-  auto &coordinator = mScene->GetCoordinator();
-  coordinator.AddComponent(cameraEntity, CameraComponent{});
-  coordinator.GetComponent<TransformComponent>(cameraEntity).position =
-      glm::vec3(0.0f, 0.0f, 5.0f);
-  mScene->SetActiveCamera(cameraEntity);
+  // // create the main camera
+  // ecs::Entity cameraEntity = mScene->CreateEntity("Main Camera");
+  // auto &coordinator = mScene->GetCoordinator();
+  // coordinator.AddComponent(cameraEntity, CameraComponent{});
+  // coordinator.GetComponent<TransformComponent>(cameraEntity).position =
+  //     glm::vec3(0.0f, 0.0f, 5.0f);
+  // mScene->SetActiveCamera(cameraEntity);
 
   // Create viewport framebuffer
   m_ViewportFramebuffer =

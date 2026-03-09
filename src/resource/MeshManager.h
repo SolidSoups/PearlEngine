@@ -7,22 +7,37 @@
 #include <glm/glm.hpp>
 
 #include "Mesh.h"
+#include "Logger.h"
 
 class Mesh;
 
 class MeshManager {
 private:
-  std::unordered_map<std::string, std::shared_ptr<Mesh>> m_Cache;
+  std::unordered_map<std::string, std::weak_ptr<Mesh>> m_Cache;
 
 public:
   std::shared_ptr<Mesh> loadOBJ(const char *filePath);
 
-  const size_t getCacheSize() const { return m_Cache.size(); }
+  void Debug(){
+    std::string debug;
+    for(auto& [key, weak] : m_Cache){
+      debug += key + (weak.lock() ? " - Locked" : " - Unlocked") + "\n";
+    }
+    LOG_INFO << debug;
+  }
+  const size_t getCacheSize() const { 
+    int count = 0;
+    for(auto& [key, weak] : m_Cache){
+      if(weak.lock())
+        count++; 
+    }
+    return count;
+  }
   const size_t calcMemorySize() const {
     size_t totalSize = 0;
-    for(const auto& [str, shared_ptr] : m_Cache){
-      if(shared_ptr.get()){
-        totalSize += shared_ptr->getMemorySize();
+    for(const auto& [str, weak_ptr] : m_Cache){
+      if(auto lock = weak_ptr.lock()){
+        totalSize += lock->getMemorySize();
       }
     }
     return totalSize;

@@ -35,7 +35,8 @@ public:
     // copy element at end into deleted elements place to maintain density
     size_t indexOfRemovedEntity = mEntityToIndexMap[entity];
     size_t indexOfLastElement = mSize - 1;
-    mComponentArray[indexOfRemovedEntity] = mComponentArray[indexOfLastElement];
+    mComponentArray[indexOfRemovedEntity] = std::move(mComponentArray[indexOfLastElement]);
+    mComponentArray[indexOfLastElement] = {};
 
     // update map to point to moved spot
     Entity entityOfLastElement = mIndexToEntityMap[indexOfLastElement];

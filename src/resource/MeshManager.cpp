@@ -202,10 +202,14 @@ void MeshManager::reformatObjToOpenGl(
 
 std::shared_ptr<Mesh> MeshManager::loadOBJ(const char *filePath) {
   LOG_INFO << "Loading OBJ from filepath: " << filePath;
+  // this mesh is cached, don't bother creating a new one
   auto it = m_Cache.find(filePath);
   if (it != m_Cache.end()) {
-    // this mesh is cached, don't bother creating a new one
-    return it->second;
+    // if the lock is invalid, the shared pointer for the 
+    // mesh has a reference count of 0
+    if(auto lock = it->second.lock()){
+      return lock;
+    }
   }
 
   // parse obj file
@@ -226,7 +230,7 @@ std::shared_ptr<Mesh> MeshManager::loadOBJ(const char *filePath) {
   reformatObjToOpenGl(objVertices, objUvs, objNormals, objIndices, vertices,
                       indices);
 
-  m_Cache[filePath] = std::make_shared<Mesh>(vertices, indices, filePath);
-
-  return m_Cache[filePath];
+  auto newMesh = std::make_shared<Mesh>(vertices, indices, filePath);
+  m_Cache[filePath] = newMesh;
+  return newMesh;
 }
