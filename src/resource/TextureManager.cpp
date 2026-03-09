@@ -9,8 +9,9 @@ std::shared_ptr<TextureData>
 TextureManager::load(const char *path,
                      const TextureConfig &config) {
   auto it = m_Cache.find(path);
-  if (it != m_Cache.end() && it->second.config == config) 
-      return it->second.texture;
+  if (it != m_Cache.end() && it->second.config == config)
+    if(auto texturePtr = it->second.texture.lock())
+      return texturePtr;
 
   // create texture
   TextureData tex;
@@ -18,17 +19,19 @@ TextureManager::load(const char *path,
   tex.loadFile(path);
 
   // cache texture
-  cache_entry newEntry{std::make_shared<TextureData>(std::move(tex)), config};
+  auto texPtr = std::make_shared<TextureData>(std::move(tex));
+  cache_entry newEntry{texPtr, config};
   m_Cache[path] = newEntry;
 
-  return m_Cache[path].texture;
+  return texPtr;
 }
 
 std::shared_ptr<TextureData> TextureManager::cache(std::shared_ptr<TextureData> tex){
   // check cache for entry
   auto it = m_Cache.find(tex->filePath);
   if(it != m_Cache.end() && it->second.config == tex->config)
-    return it->second.texture; // return existing
+    if(auto texPtr = it->second.texture.lock())
+      return texPtr; // return existing
      
   // make new cache
   m_Cache[tex->filePath] = cache_entry{tex, tex->config};

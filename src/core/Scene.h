@@ -25,8 +25,6 @@ class Scene{
 public:
   Scene(const std::shared_ptr<IEngineCamera>& engineCam, const std::shared_ptr<InputManager>& inputMan);
   ~Scene();
-
-  // Object management
   
   // Create an empty entity, with a name component 
   ecs::Entity CreateEntity(const std::string& name = "Entity");
@@ -121,3 +119,4 @@ public:
   json mCurrentSceneSnapshot;
   std::deque<ecs::Entity> mDestroyQueue;
 };
+

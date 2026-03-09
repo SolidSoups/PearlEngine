@@ -284,6 +284,7 @@ ecs::Entity Scene::CreatePlane(const std::string &name) {
   return entity;
 }
 
+
 ecs::Entity Scene::CreateSphere(const std::string &name) {
   // generate mesh data
   std::vector<float> verts;

@@ -12,7 +12,7 @@
 class TextureManager {
 private:
   struct cache_entry{
-    std::shared_ptr<TextureData> texture;
+    std::weak_ptr<TextureData> texture;
     TextureConfig config;
   };
   std::unordered_map<std::string, cache_entry> m_Cache;
@@ -22,8 +22,8 @@ public:
   size_t calcMemorySize() const {
     size_t totalSize = 0;
     for(auto& [key, entry] : m_Cache){
-      if(entry.texture){
-        totalSize += entry.texture->getMemorySize();
+      if(auto texturePtr = entry.texture.lock()){
+        totalSize += texturePtr->getMemorySize();
       }
     }
     return totalSize;
