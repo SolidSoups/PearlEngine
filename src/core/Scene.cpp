@@ -92,6 +92,14 @@ Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
   m_Coordinator.SetSystemSignature<CameraSystem>(csSignature);
   mCameraSystem->Init(&m_Coordinator, engineCam);
 
+
+  // Terrain system
+  mTerrainSystem = m_Coordinator.RegisterSystem<TerrainSystem>();
+  ecs::Signature requiredComps;
+  requiredComps.set(m_Coordinator.GetComponentType<TransformComponent>());
+  requiredComps.set(m_Coordinator.GetComponentType<TerrainComponent>());
+  m_Coordinator.SetSystemSignature<TerrainSystem>(requiredComps);
+
   // PhysicsSystem
   mPhysicsSystem = m_Coordinator.RegisterSystem<PhysicsSystem>();
   ecs::Signature physicsRequirements;
@@ -105,14 +113,7 @@ Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
   physicsInterest.set(m_Coordinator.GetComponentType<RigidBodyComponent>());
   m_Coordinator.SetSystemInterestSignature<PhysicsSystem>(physicsInterest);
   m_Coordinator.SetSystemSignature<PhysicsSystem>(physicsRequirements);
-  mPhysicsSystem->Init(mScriptSystem.get());
-
-  // Terrain system
-  mTerrainSystem = m_Coordinator.RegisterSystem<TerrainSystem>();
-  ecs::Signature requiredComps;
-  requiredComps.set(m_Coordinator.GetComponentType<TransformComponent>());
-  requiredComps.set(m_Coordinator.GetComponentType<TerrainComponent>());
-  m_Coordinator.SetSystemSignature<TerrainSystem>(requiredComps);
+  mPhysicsSystem->Init(mScriptSystem.get(), mTerrainSystem.get());
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {

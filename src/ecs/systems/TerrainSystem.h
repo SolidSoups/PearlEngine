@@ -19,6 +19,7 @@ public:
   // Generates meshes for any terrains that
   // have a valid height map and transform component
   void generateValidTerrains();
+  float calculateTerrainHeight(const TerrainComponent& aTerrain, float x, float z);
 
 private:
   void configureTerrainMaterial(TerrainComponent& aTerrain);

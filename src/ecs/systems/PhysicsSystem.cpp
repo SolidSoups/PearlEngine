@@ -38,6 +38,16 @@ void PhysicsSystem::UpdatePhysics(float timestep) {
   FlushCollisions();
 }
 
+
+void PhysicsSystem::TestSphereTerrain(
+  TransformComponent & sphereTf, SphereColliderComponent& sphere,
+  RigidBodyComponent *rb, ecs::Entity sphereEntity,
+  TransformComponent & terrainTf, TerrainComponent& terrain,
+  ecs::Entity terrainEntity
+){
+    
+}
+
 void PhysicsSystem::CheckCollision(ecs::Entity e1, ecs::Entity e2) {
   auto *rb1 = TryGet<RigidBodyComponent>(e1);
   auto *rb2 = TryGet<RigidBodyComponent>(e2);
@@ -53,6 +63,9 @@ void PhysicsSystem::CheckCollision(ecs::Entity e1, ecs::Entity e2) {
   auto *b2 = TryGet<BoxColliderComponent>(e2);
   auto *c1 = TryGet<CapsuleColliderComponent>(e1);
   auto *c2 = TryGet<CapsuleColliderComponent>(e2);
+
+  auto *tr1 = TryGet<TerrainComponent>(e1);
+  auto *tr2 = TryGet<TerrainComponent>(e2);
 
   if (s1 and s2)
     TestSphereSphere(t1, *s1, rb1, t2, *s2, rb2, e1, e2);
@@ -77,6 +90,11 @@ void PhysicsSystem::CheckCollision(ecs::Entity e1, ecs::Entity e2) {
 
   if (c1 and c2)
     TestCapsuleCapsule(t1, *c1, rb1, t2, *c2, rb2, e1, e2);
+
+  if(s1 and tr2)
+    TestSphereTerrain(t1, *s1, rb1, e1, t2, *tr2, e2);
+  if(s2 and tr1)
+    TestSphereTerrain(t2, *s2, rb2, e2, t1, *tr1, e1);
 }
 
 // Normal needs to point A->B

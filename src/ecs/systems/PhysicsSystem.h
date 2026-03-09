@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/gtc/quaternion.hpp>
+
 #include "ecs_system.h"
 
 #include "TransformComponent.h"
@@ -8,8 +10,9 @@
 #include "BoxColliderComponent.h"
 #include "RigidBodyComponent.h"
 #include "ScriptSystem.h"
+#include "TerrainComponent.h"
+#include "TerrainSystem.h"
 
-#include <glm/gtc/quaternion.hpp>
 
 struct CollisionEvent {
   ecs::Entity me, other;
@@ -20,12 +23,14 @@ struct CollisionEvent {
 class PhysicsSystem : public ecs::System {
 private:
   ScriptSystem* mScriptSystem;
+  TerrainSystem* mTerrainSystem;
 
   std::unordered_map<uint64_t, CollisionEvent> mPrevCollisions;
   std::unordered_map<uint64_t, CollisionEvent> mCurrentCollisionPairs;
 public:
-  inline void Init(ScriptSystem* scriptSystem){
+  inline void Init(ScriptSystem* scriptSystem, TerrainSystem* terrainSystem){
     mScriptSystem = scriptSystem;
+    mTerrainSystem = terrainSystem;
   }
   void UpdatePhysics(float timestep);
   void DrawGizmos();
@@ -58,6 +63,12 @@ private:
                           CapsuleColliderComponent &sp2,
                           RigidBodyComponent *rb2,
                           ecs::Entity a, ecs::Entity b);
+  void TestSphereTerrain(
+    TransformComponent & sphereTf, SphereColliderComponent& sphere,
+    RigidBodyComponent *rb, ecs::Entity sphereEntity,
+    TransformComponent & terrainTf, TerrainComponent& terrain,
+    ecs::Entity terrainEntity
+  );
   void Resolve(TransformComponent& tf1, RigidBodyComponent* rb1,
                TransformComponent& tf2, RigidBodyComponent* rb2,
                const glm::vec3& normal, float penetration,

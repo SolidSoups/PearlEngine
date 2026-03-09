@@ -5,11 +5,14 @@
 
 #include "Mesh.h"
 #include "Material.h"
+#include "StbiImage.h"
 
 struct TerrainComponent {
+  TerrainComponent() = default;
   std::shared_ptr<Material> material;
   std::shared_ptr<TextureData> heightMap;
   int resolution = 20;
+  std::shared_ptr<StbiImage> pixelCache;
 
 public: 
   // runtime, not serialized

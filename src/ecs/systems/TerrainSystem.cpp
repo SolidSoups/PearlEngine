@@ -86,6 +86,7 @@ void TerrainSystem::generateTerrain(const TransformComponent& aTransform,
     LOG_ERROR << "Failed to load pixels for height map";
     return;
   }
+  aTerrain.pixelCache = std::make_shared<StbiImage>(std::move(*img));
 
   std::vector<float> vertices;
   std::vector<unsigned int> indices;
@@ -96,6 +97,22 @@ void TerrainSystem::generateTerrain(const TransformComponent& aTransform,
 
   LOG_INFO << "Terrain generated";
 }
+
+float calculateTerrainHeight(const TerrainComponent& aTerrain, float x, float z){
+  // no height map, no generation
+  if(!aTerrain.heightMap){
+    LOG_ERROR << "Height map is invalid";
+    return 0.0f;
+  }
+
+  if (!aTerrain.pixelCache) {
+    LOG_ERROR << "No pixel data for this terrain";
+    return 0.0f;
+  }
+
+  return 1.0f; 
+}
+
 
 // sample an stbi image at a pixel coordinate
 float sampleHeightMap(const StbiImage &heightMap, glm::ivec2 coord){
@@ -118,7 +135,6 @@ void TerrainSystem::generateVertices(const StbiImage &heightMap, std::vector<flo
   outVertices.reserve(resolution * resolution * 8); // 9 floats (pos3, uv2, normal3) per cell
 
   // create the vertices. We iterate over a grid
-  glm::vec3 startPos(-0.5f);
   int widthStep = heightMap.width / resolution;
   int heightStep = heightMap.height / resolution;
   for (int y = 0; y < resolution; y++) {
@@ -130,9 +146,9 @@ void TerrainSystem::generateVertices(const StbiImage &heightMap, std::vector<flo
 
       // create vertex attributes
       glm::vec2 vertexUV((float)px / heightMap.width, (float)py / heightMap.height);
-      glm::vec3 vertexPos(vertexUV.x + startPos.x,
+      glm::vec3 vertexPos(vertexUV.x,
                           heightSample,
-                          vertexUV.y + startPos.z);
+                          vertexUV.y);
       glm::vec3 vertexNormal = calculateHeightMapNormal(heightMap, glm::ivec2(px, py), glm::ivec2(widthStep, heightStep));
 
       // add vertex to list
