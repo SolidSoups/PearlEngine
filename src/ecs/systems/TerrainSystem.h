@@ -19,7 +19,7 @@ public:
   // Generates meshes for any terrains that
   // have a valid height map and transform component
   void generateValidTerrains();
-  float calculateTerrainHeight(const TerrainComponent& aTerrain, float x, float z);
+  bool calculateTerrainHeight(const TerrainComponent& aTerrain, const TransformComponent& aTerrainTransform, const glm::vec3& samplePostition, float& outHeight);
 
 private:
   void configureTerrainMaterial(TerrainComponent& aTerrain);

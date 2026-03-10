@@ -108,6 +108,7 @@ Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
   physicsInterest.set(
       m_Coordinator.GetComponentType<SphereColliderComponent>());
   physicsInterest.set(m_Coordinator.GetComponentType<BoxColliderComponent>());
+  physicsInterest.set(m_Coordinator.GetComponentType<TerrainComponent>());
   physicsInterest.set(
       m_Coordinator.GetComponentType<CapsuleColliderComponent>());
   physicsInterest.set(m_Coordinator.GetComponentType<RigidBodyComponent>());
@@ -162,7 +163,7 @@ void Scene::Update() {
   static float accumulator = 0;
   accumulator += Time::deltaTime;
   while (accumulator >= TIME_STEP) {
-    mPhysicsSystem->UpdatePhysics(TIME_STEP);
+    mPhysicsSystem->UpdatePhysics(TIME_STEP );
     accumulator -= TIME_STEP;
   }
 

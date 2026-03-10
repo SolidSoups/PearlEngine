@@ -24,6 +24,7 @@ void PhysicsSystem::UpdatePhysics(float timestep) {
 
     // Update position
     tf.position += rb->velocity * timestep;
+
   }
 
   // broad phase pair checks
@@ -45,7 +46,20 @@ void PhysicsSystem::TestSphereTerrain(
   TransformComponent & terrainTf, TerrainComponent& terrain,
   ecs::Entity terrainEntity
 ){
-    
+
+  float worldTerrainY;
+  if(!mTerrainSystem->calculateTerrainHeight(
+    terrain, terrainTf, sphereTf.position, worldTerrainY
+  )){
+    return;
+  }
+
+  float penetration = worldTerrainY - (sphereTf.position.y - sphere.radius);   
+  if(penetration > 0){
+    glm::vec3 normalSphereToTerrain(0, -1, 0);
+    Resolve(sphereTf, rb, terrainTf, nullptr, normalSphereToTerrain, 
+            penetration, sphereEntity, terrainEntity);
+  }
 }
 
 void PhysicsSystem::CheckCollision(ecs::Entity e1, ecs::Entity e2) {

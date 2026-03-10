@@ -616,12 +616,6 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
       mEngineCamera->Reset();
     }
 
-    if(input->GetKeyDown(GLFW_KEY_DELETE) and
-      mRuntimeState == EDITOR and SelectionWizard::HasSelection()){
-      ecs::Entity selectedEntity = SelectionWizard::Get();
-      mScene->DestroyEntity(selectedEntity);
-    }
-
     if (bDebugGBuffer) {
       if (input->GetKeyDown(GLFW_KEY_G)) {
         if (input->GetKey(GLFW_KEY_LEFT_SHIFT))
