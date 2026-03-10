@@ -92,6 +92,8 @@ PearlEngine::PearlEngine() {
   ServiceLocator::Provide(m_ShaderManager.get());
   Defaults::Init();
 
+  mScene->SetMeshManager(m_MeshManager.get());
+
   isInitialized = true;
 }
 

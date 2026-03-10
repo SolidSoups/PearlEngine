@@ -17,10 +17,10 @@ private:
   std::string mFilePath;
 public:
   // Prevent copying
-  Mesh(const Mesh &) = delete;
-  Mesh &operator=(const Mesh &) = delete;
   Mesh(const std::vector<float> &vertices,
        const std::vector<unsigned int> &indices, const char* filepath = "");
+  Mesh(const Mesh &) = delete;
+  Mesh &operator=(const Mesh &) = delete;
 
   Mesh(Mesh &&) noexcept = default;
   Mesh &operator=(Mesh &&) noexcept = default;

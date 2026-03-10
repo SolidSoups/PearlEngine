@@ -18,6 +18,8 @@
 #include "RuntimeState.h"
 #include "TerrainSystem.h"
 
+class MeshManager;
+
 class PointLightSystem;
 class Camera;
 
@@ -85,9 +87,11 @@ public:
     mCameraSystem->SetPreviewCamera(entity);
     mCameraSystem->SetCameraMode(CameraSystem::CameraMode::PREVIEW);
   }
+  void SetMeshManager(MeshManager* mng) { mMeshManager = mng; }
 private:
   ecs::Coordinator m_Coordinator;
   std::vector<ecs::Entity> m_Entities;
+  MeshManager* mMeshManager;
 
 private:
   ecs::Entity m_ActiveCamera = ecs::NULL_ENTITY;

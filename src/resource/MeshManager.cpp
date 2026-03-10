@@ -234,3 +234,7 @@ std::shared_ptr<Mesh> MeshManager::loadOBJ(const char *filePath) {
   m_Cache[filePath] = newMesh;
   return newMesh;
 }
+
+void MeshManager::track(std::shared_ptr<Mesh> meshPtr){
+  m_Tracks.push_back(meshPtr);
+}

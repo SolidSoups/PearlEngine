@@ -9,6 +9,7 @@
 #include "RenderComponent.h"
 #include "CameraComponent.h"
 #include "TerrainComponent.h"
+#include "MeshManager.h"
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
 #include "CapsuleColliderComponent.h"
@@ -262,6 +263,7 @@ ecs::Entity Scene::CreateCube(const std::string &name) {
                                     Cube::s_Indices + Cube::s_IndexCount);
   renderComp.mesh = std::make_shared<Mesh>(vertices, indices);
   renderComp.meshType = "cube";
+  mMeshManager->track(renderComp.mesh);
   m_Coordinator.AddComponent(entity, renderComp);
   return entity;
 }
@@ -277,6 +279,7 @@ ecs::Entity Scene::CreatePlane(const std::string &name) {
   RenderComponent renderComp;
   renderComp.mesh = std::make_shared<Mesh>(verts, indcs);
   renderComp.meshType = "plane";
+  mMeshManager->track(renderComp.mesh);
 
   // create entity, attach rendercomp
   ecs::Entity entity = CreateEntity(name);
@@ -296,6 +299,7 @@ ecs::Entity Scene::CreateSphere(const std::string &name) {
   RenderComponent renderComp;
   renderComp.mesh = std::make_shared<Mesh>(verts, indices);
   renderComp.meshType = "sphere";
+  mMeshManager->track(renderComp.mesh);
   LOG_INFO << "Mesh object created!";
 
   // create entity, attach rendercomp
@@ -392,18 +396,21 @@ ecs::Entity Scene::CreateEntityFromJSON(const json &j) {
         std::vector<unsigned int> si;
         Sphere::generate_uvsphere(sv, si, 24, 16);
         rc.mesh = std::make_shared<Mesh>(sv, si);
+        mMeshManager->track(rc.mesh);
       } else if (meshType == "cube") {
         std::vector<float> cv(Cube::s_Vertices,
                               Cube::s_Vertices + Cube::s_VertexCount * 8);
         std::vector<unsigned int> ci(Cube::s_Indices,
                                      Cube::s_Indices + Cube::s_IndexCount);
         rc.mesh = std::make_shared<Mesh>(cv, ci);
+        mMeshManager->track(rc.mesh);
       } else if (meshType == "plane") {
         std::vector<float> pv(Plane::vertices,
                               Plane::vertices + PLANE_VERTEX_SIZE);
         std::vector<unsigned int> pi(Plane::indices,
                                      Plane::indices + PLANE_INDEX_SIZE);
         rc.mesh = std::make_shared<Mesh>(pv, pi);
+        mMeshManager->track(rc.mesh);
       }
     }
   }
