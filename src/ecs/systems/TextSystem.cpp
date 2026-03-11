@@ -46,6 +46,8 @@ void TextSystem::render() {
     if (!text.mesh)
       continue;
 
+    myTextMaterial->setVec3("uColor", text.color);
+
     Renderer::Submit(transform, text.mesh, myTextMaterial, myViewportSize);
   }
 }

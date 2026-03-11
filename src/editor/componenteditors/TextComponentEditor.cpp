@@ -15,11 +15,15 @@ void TextComponentEditor::OnDrawComponent(void* target, [[maybe_unused]] ecs::En
     // TODO: sync texture creator
   }
 
+  // render color
+  ImGui::ColorEdit3("Color", &textComp->color.x);
+  
   // render text box
   ImGui::Text("Text");
   if(ImGui::InputTextMultiline("##bigtext", textBuf, sizeof(textBuf), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 10))){
     textComp->text = textBuf;
     textComp->isDirty = true;
   }
+
 }
 

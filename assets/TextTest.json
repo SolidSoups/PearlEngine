@@ -3,13 +3,18 @@
     "Entity0": {
       "name": "Entity",
       "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
         "text": "why is there no text?"
       },
       "transform_component": {
         "position": [
-          0.0,
-          0.0,
-          0.0
+          1.0,
+          1.0,
+          1.0
         ],
         "rotation": [
           0.0,

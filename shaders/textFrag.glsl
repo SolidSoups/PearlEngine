@@ -6,7 +6,8 @@ in vec2 FragPos;
 in vec2 TexCoord;
 
 uniform sampler2D uTextAtlas;
+uniform vec3 uColor;
 
 void main(){
-  FragColor = texture(uTextAtlas, TexCoord); 
+  FragColor = texture(uTextAtlas, TexCoord) * vec4(uColor, 1.0); 
 }

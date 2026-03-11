@@ -10,6 +10,7 @@ class TextMesh;
 struct TextComponent {
   std::shared_ptr<TextMesh> mesh; // runtime only
   std::string text;
+  glm::vec3 color{1.0};
   bool isDirty = true;
 
 public: // serialization

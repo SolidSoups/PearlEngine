@@ -11,7 +11,7 @@ public:
   const char* GetComponentName() const override { return "Text Component"; }
 
 private:
-  ecs::Entity myLastEntity;
+  ecs::Entity myLastEntity = ecs::NULL_ENTITY;
 };
 
 STATIC_REGISTER_COMPONENT_EDITOR(TextComponent, TextComponentEditor)
