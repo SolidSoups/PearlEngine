@@ -16,7 +16,18 @@ void TextComponentEditor::OnDrawComponent(void* target, [[maybe_unused]] ecs::En
   }
 
   // render color
-  ImGui::ColorEdit3("Color", &textComp->color.x);
+  ImGui::AlignTextToFramePadding();
+  ImGui::Text("Color");
+  ImGui::SameLine(labelWidth);
+  ImGui::ColorEdit3("##Color", &textComp->color.x);
+
+  // render size
+  ImGui::AlignTextToFramePadding();
+  ImGui::Text("Size");
+  ImGui::SameLine(labelWidth);
+  if(ImGui::DragInt("##Size", &textComp->size, 1)){
+    textComp->isDirty = true;
+  }
   
   // render text box
   ImGui::Text("Text");

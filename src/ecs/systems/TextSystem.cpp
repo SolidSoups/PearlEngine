@@ -86,8 +86,8 @@ void TextSystem::generateTextMesh(TextComponent &aTextComp) {
   std::vector<float> vertices;
   std::vector<unsigned int> indices;
   unsigned int vertexIndex = 0;
-  const float ACHAR_WIDTH = charSize.x * 4;
-  const float ACHAR_HEIGHT = charSize.y * 4;
+  const float ACHAR_WIDTH = charSize.x * aTextComp.size;
+  const float ACHAR_HEIGHT = charSize.y * aTextComp.size;
   const float ATLAS_X_STEP = 1.f / atlasSize.x;
   const float ATLAS_Y_STEP = 1.f / atlasSize.y;
 

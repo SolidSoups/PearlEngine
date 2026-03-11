@@ -149,9 +149,14 @@ void Renderer::Submit(const TransformComponent &aTransform,
   aMaterial->bind();
 
   glm::mat4 ortho = glm::ortho(0.f, aViewportSize->x, aViewportSize->y, 0.f);
+  glm::mat4 model = glm::mat4(1.0);
+  model = glm::translate(model, glm::vec3(aTransform.position.x, aTransform.position.y, 0.0));
+  model = glm::rotate(model, glm::radians(aTransform.rotation.z), glm::vec3(0, 0, 1));
+  model = glm::scale(model, glm::vec3(aTransform.scale.x, aTransform.scale.y, 1.0f));
 
   // upload object, and camera props
   matShader->setMatrix4("ortho", ortho);
+  matShader->setMatrix4("model", model);
 
   // draw the mesh to the screen
   if(aTextMesh) aTextMesh->Draw();
