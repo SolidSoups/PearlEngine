@@ -73,6 +73,10 @@ void ViewportEditorPanel::OnImGuiRender() {
 
   // display the framebuffer
   ImVec2 viewportMin = ImGui::GetCursorScreenPos();
+  {
+    ImGuiIO& io = ImGui::GetIO();
+    m_ViewportPos = {io.MousePos.x - viewportMin.x, io.MousePos.y - viewportMin.y};
+  }
   ImGui::Image((void *)(intptr_t)m_Framebuffer->GetTextureID(),
                viewportPanelSize, ImVec2(0, 1), ImVec2(1, 0));
 

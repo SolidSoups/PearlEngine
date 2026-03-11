@@ -10,15 +10,20 @@
 #include "Renderer.h"
 #include "TextMesh.h"
 #include "TransformComponent.h"
+#include "ScriptComponent.h"
+#include "ScriptEngine.h"
+#include "InputManager.h"
 #include "Logger.h"
 
 #include "ecs_system_impl.h"
+
+#include <glm/gtc/matrix_transform.hpp>
 
 #define TEXT_VERT_PATH "shaders/textVert.glsl"
 #define TEXT_FRAG_PATH "shaders/textFrag.glsl"
 #define TEXT_ATLAS_PATH "assets/ui/font_atlas.png"
 
-void TextSystem::initializeResources(glm::vec2* viewport)
+void TextSystem::initializeResources(glm::vec2* viewport, glm::vec2* viewportPos, ScriptEngine* scriptEngine)
 {
   myTextShader =
       ServiceLocator::Get<ShaderManager>().load(TEXT_VERT_PATH, TEXT_FRAG_PATH);
@@ -32,6 +37,9 @@ void TextSystem::initializeResources(glm::vec2* viewport)
   myTextMaterial->setTexture("uTextAtlas", myTextAtlas);
 
   myViewportSize = viewport;
+  myViewportPos = viewportPos;
+  myScriptEngine = scriptEngine;
+  myInputManager = &ServiceLocator::Get<InputManager>();
 }
 
 void TextSystem::render() {
@@ -86,8 +94,8 @@ void TextSystem::generateTextMesh(TextComponent &aTextComp) {
   std::vector<float> vertices;
   std::vector<unsigned int> indices;
   unsigned int vertexIndex = 0;
-  const float ACHAR_WIDTH = charSize.x * aTextComp.size;
-  const float ACHAR_HEIGHT = charSize.y * aTextComp.size;
+  const float ACHAR_WIDTH = charSize.x;
+  const float ACHAR_HEIGHT = charSize.y;
   const float ATLAS_X_STEP = 1.f / atlasSize.x;
   const float ATLAS_Y_STEP = 1.f / atlasSize.y;
 
@@ -142,6 +150,37 @@ void TextSystem::generateTextMesh(TextComponent &aTextComp) {
 
   aTextComp.mesh = std::make_shared<TextMesh>(vertices, indices);
   aTextComp.isDirty = false;
+}
+
+void TextSystem::checkButtonClicks() {
+  if (!myInputManager || !myScriptEngine) return;
+  if (!myInputManager->GetMouseKeyDown(GLFW_MOUSE_BUTTON_LEFT)) return;
+
+  if (!myViewportPos) return;
+  glm::vec2 mouse = *myViewportPos;
+
+  for (ecs::Entity e : Entities) {
+    auto& text = Get<TextComponent>(e);
+    if (!text.isButton || !text.mesh) continue;
+
+    auto& transform = Get<TransformComponent>(e);
+
+    glm::mat4 model = glm::mat4(1.f);
+    model = glm::translate(model, glm::vec3(transform.position.x, transform.position.y, 0.f));
+    model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0, 0, 1));
+    model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.f));
+
+    // mouse in local space
+    glm::vec2 local = glm::inverse(model) * glm::vec4(mouse, 0.f, 1.f);
+    float w = text.text.size() * charSize.x;
+    float h = charSize.y;
+
+    if (local.x >= 0 && local.x <= w && local.y >= 0 && local.y <= h) {
+      if (auto* sc = TryGet<ScriptComponent>(e)) {
+        myScriptEngine->RunOnClick(e, *sc);
+      }
+    }
+  }
 }
 
 glm::ivec2 TextSystem::getCharacterCoord(char character) {

@@ -14,6 +14,7 @@ public:
   void OnImGuiRender() override;
 
   glm::vec2 GetSize() const { return m_Size; }
+  glm::vec2 GetViewportPos() const { return m_ViewportPos; }
   bool IsResized() const { return m_WasResized; }
 
   // input state
@@ -42,6 +43,7 @@ private:
 
   bool m_LeftMouseClicked = false;
   glm::vec2 m_MouseClickPos{0.0f};
+  glm::vec2 m_ViewportPos{0.0f};
 
 
   std::shared_ptr<TextureData> mPlayTexture;

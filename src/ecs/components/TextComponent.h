@@ -12,6 +12,7 @@ struct TextComponent {
   std::string text;
   glm::vec3 color{1.0};
   bool isDirty = true;
+  bool isButton = false;
 
 public: // serialization
   friend void to_json(json& j, const TextComponent&t);

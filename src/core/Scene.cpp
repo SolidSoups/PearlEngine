@@ -129,8 +129,8 @@ Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
 }
 
 
-void Scene::PostInitialization(glm::vec2* viewportSize){
-  mTextSystem->initializeResources(viewportSize);
+void Scene::PostInitialization(glm::vec2* viewportSize, glm::vec2* viewportPos){
+  mTextSystem->initializeResources(viewportSize, viewportPos, mScriptEngine.get());
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {
@@ -182,6 +182,8 @@ void Scene::Update() {
     mPhysicsSystem->UpdatePhysics(TIME_STEP );
     accumulator -= TIME_STEP;
   }
+
+  mTextSystem->checkButtonClicks();
 
   mScriptSystem->OnLateUpdate();
 

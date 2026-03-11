@@ -21,13 +21,8 @@ void TextComponentEditor::OnDrawComponent(void* target, [[maybe_unused]] ecs::En
   ImGui::SameLine(labelWidth);
   ImGui::ColorEdit3("##Color", &textComp->color.x);
 
-  // render size
-  ImGui::AlignTextToFramePadding();
-  ImGui::Text("Size");
-  ImGui::SameLine(labelWidth);
-  if(ImGui::DragInt("##Size", &textComp->size, 1)){
-    textComp->isDirty = true;
-  }
+  // render is button
+  ImGui::Checkbox("Is Button", &textComp->isButton);
   
   // render text box
   ImGui::Text("Text");

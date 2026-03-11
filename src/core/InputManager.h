@@ -29,6 +29,7 @@ public:
   bool GetMouseKeyUp(const std::string& key) const;
 
   const glm::vec2& GetMouseDelta() const;
+  const glm::vec2& GetMousePosition() const;
   float GetScrollDelta() const;
 private:
   GLFWwindow *mWindow = nullptr;

@@ -14,6 +14,10 @@ const glm::vec2& InputManager::GetMouseDelta() const{
   return mouseDelta;
 }
 
+const glm::vec2& InputManager::GetMousePosition() const{
+  return lastMousePos;
+}
+
 float InputManager::GetScrollDelta() const{
   return scrollDelta;
 }

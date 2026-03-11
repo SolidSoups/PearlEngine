@@ -93,7 +93,7 @@ PearlEngine::PearlEngine() {
   Defaults::Init();
 
   mScene->SetMeshManager(m_MeshManager.get());
-  mScene->PostInitialization(&m_ViewportSize);
+  mScene->PostInitialization(&m_ViewportSize, &m_ViewportPos);
 
   isInitialized = true;
 }
@@ -259,6 +259,9 @@ void PearlEngine::RunUpdateLoop() {
 }
 
 void PearlEngine::Update() {
+  // track viewport position every frame
+  m_ViewportPos = m_ViewportPanel->GetViewportPos();
+
   // handle viewport resize
   if (m_ViewportPanel->IsResized()) {
     // get new size

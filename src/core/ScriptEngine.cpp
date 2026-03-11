@@ -123,6 +123,19 @@ void ScriptEngine::RunOnCollisionEnter(ecs::Entity entity, ScriptComponent &sc,
   }
 }
 
+void ScriptEngine::RunOnClick(ecs::Entity entity, ScriptComponent& sc) {
+  if (!sc.loaded || !sc.enabled || sc.hasError) return;
+  sol::protected_function fn = sc.scriptEnv["OnClick"];
+  if (!fn.valid()) return;
+  LOG_INFO << "Calling onclick!";
+  auto r = fn();
+  if (!r.valid()) {
+    sol::error e = r;
+    LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnClick: " << e.what();
+    LogError(sc, e);
+  }
+}
+
 void ScriptEngine::UpdateAPIs() {
   // update time global
   sol::table time = m_Lua["Time"];
