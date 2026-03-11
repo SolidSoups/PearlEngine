@@ -19,6 +19,7 @@ struct TextureConfig {
   int antisotropicLevel = 1;
   GLenum wrapS = GL_REPEAT;
   GLenum wrapT = GL_REPEAT;
+  bool flipY = false;
   TextureConfig() = default;
 
   bool operator==(const TextureConfig& other) const {

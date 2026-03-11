@@ -9,6 +9,7 @@
 
 class Camera;
 class Scene;
+class TextMesh;
 
 class Renderer {
 public:
@@ -20,12 +21,18 @@ public:
 
   static void Submit(const RenderComponent &renderComp,
                      const TransformComponent &transformComp);
-  static void Submit(const TransformComponent& aTransform, const std::shared_ptr<Mesh>& mesh, const std::shared_ptr<Material>& material);
+  static void Submit(const TransformComponent &aTransform,
+                     const std::shared_ptr<Mesh> &mesh,
+                     const std::shared_ptr<Material> &material);
+  static void Submit(const TransformComponent &aTransform,
+                     const std::shared_ptr<TextMesh> &mesh,
+                     const std::shared_ptr<Material> &material,
+                     glm::vec2* viewportSize);
   static void SendLightUniforms(std::shared_ptr<ShaderData> shader);
   static void SendAmbientLightUniforms(std::shared_ptr<ShaderData> shader);
 
   // returns false on failure
-  static bool ResolveCamera(glm::mat4& view, glm::mat4& proj);
+  static bool ResolveCamera(glm::mat4 &view, glm::mat4 &proj);
 
 private:
   static Camera *s_ActiveCamera;

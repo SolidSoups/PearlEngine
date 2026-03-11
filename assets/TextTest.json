@@ -1,0 +1,27 @@
+{
+  "entities": {
+    "Entity0": {
+      "name": "Entity",
+      "text_component": {
+        "text": "why is there no text?"
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    }
+  }
+}

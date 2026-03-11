@@ -6,6 +6,7 @@
 
 #include "PointLightComponent.h"
 #include "RigidBodyComponent.h"
+#include "TextComponent.h"
 #include "RenderComponent.h"
 #include "CameraComponent.h"
 #include "TerrainComponent.h"
@@ -17,6 +18,7 @@
 #include "Camera.h"
 #include "Renderer.h"
 
+#include "TextSystem.h"
 #include "RenderSystem.h"
 #include "PointLightSystem.h"
 #include "SphereColliderComponent.h"
@@ -58,6 +60,7 @@ Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
   m_Coordinator.RegisterComponent<CapsuleColliderComponent>();
   m_Coordinator.RegisterComponent<RigidBodyComponent>();
   m_Coordinator.RegisterComponent<TerrainComponent>();
+  m_Coordinator.RegisterComponent<TextComponent>();
 
   // Register render system
   mRenderSystem = m_Coordinator.RegisterSystem<RenderSystem>();
@@ -101,6 +104,13 @@ Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
   requiredComps.set(m_Coordinator.GetComponentType<TerrainComponent>());
   m_Coordinator.SetSystemSignature<TerrainSystem>(requiredComps);
 
+  // Text system
+  mTextSystem = m_Coordinator.RegisterSystem<TextSystem>();
+  ecs::Signature textComps;
+  textComps.set(m_Coordinator.GetComponentType<TextComponent>());
+  textComps.set(m_Coordinator.GetComponentType<TransformComponent>());
+  m_Coordinator.SetSystemSignature<TextSystem>(textComps);
+
   // PhysicsSystem
   mPhysicsSystem = m_Coordinator.RegisterSystem<PhysicsSystem>();
   ecs::Signature physicsRequirements;
@@ -116,6 +126,11 @@ Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
   m_Coordinator.SetSystemInterestSignature<PhysicsSystem>(physicsInterest);
   m_Coordinator.SetSystemSignature<PhysicsSystem>(physicsRequirements);
   mPhysicsSystem->Init(mScriptSystem.get(), mTerrainSystem.get());
+}
+
+
+void Scene::PostInitialization(glm::vec2* viewportSize){
+  mTextSystem->initializeResources(viewportSize);
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {
@@ -195,6 +210,11 @@ void Scene::Render(CameraSystem::CameraMode mode) {
 
   // render gizmos
   mPhysicsSystem->DrawGizmos();
+}
+
+void Scene::RenderUI(){
+  mTextSystem->generateValidTexts();
+  mTextSystem->render();
 }
 
 std::string Scene::GetEntityName(ecs::Entity entity) {
@@ -435,6 +455,8 @@ ecs::Entity Scene::CreateEntityFromJSON(const json &j) {
                                                    j["rigid_body_component"]);
   if(j.contains("terrain_component"))
     m_Coordinator.AddComponent<TerrainComponent>(entity, j["terrain_component"]);
+  if(j.contains("text_component"))
+    m_Coordinator.AddComponent<TextComponent>(entity, j["text_component"]);
 
   m_Entities.push_back(entity);
   return entity;
@@ -475,6 +497,8 @@ const json Scene::CreateJSONFromEntity(ecs::Entity entity) {
         m_Coordinator.GetComponent<RigidBodyComponent>(entity);
   if(m_Coordinator.HasComponent<TerrainComponent>(entity))
     entity_object["terrain_component"] = m_Coordinator.GetComponent<TerrainComponent>(entity);
+  if(m_Coordinator.HasComponent<TextComponent>(entity))
+    entity_object["text_component"] = m_Coordinator.GetComponent<TextComponent>(entity);
   return entity_object;
 }
 

@@ -22,11 +22,13 @@ class MeshManager;
 
 class PointLightSystem;
 class Camera;
+class TextSystem;
 
 class Scene{
 public:
   Scene(const std::shared_ptr<IEngineCamera>& engineCam, const std::shared_ptr<InputManager>& inputMan);
   ~Scene();
+  void PostInitialization(glm::vec2* viewportSize);
   
   // Create an empty entity, with a name component 
   ecs::Entity CreateEntity(const std::string& name = "Entity");
@@ -53,6 +55,7 @@ public:
   /// Update the scene world. SHOULD ONLY BE RUN IN EDITOR MODE AS CAN DESTROY ENTITIES
   void Update();
   void Render(CameraSystem::CameraMode mode);
+  void RenderUI();
 
   // Query
   inline size_t GetEntityCount() const { return m_Entities.size(); }
@@ -102,6 +105,7 @@ private:
   std::shared_ptr<ScriptSystem> mScriptSystem;
   std::shared_ptr<CameraSystem> mCameraSystem;
   std::shared_ptr<PhysicsSystem> mPhysicsSystem;
+  std::shared_ptr<TextSystem> mTextSystem;
 
   ecs::Entity mPreviewCameraEntity = ecs::NULL_ENTITY;
   std::string m_PendingSceneLoad;

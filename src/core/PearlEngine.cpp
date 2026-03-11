@@ -93,6 +93,7 @@ PearlEngine::PearlEngine() {
   Defaults::Init();
 
   mScene->SetMeshManager(m_MeshManager.get());
+  mScene->PostInitialization(&m_ViewportSize);
 
   isInitialized = true;
 }
@@ -379,6 +380,16 @@ void PearlEngine::Render() {
     } else
       SelectionWizard::Clear();
   }
+
+  // Draw UI on top of everything
+  m_ViewportFramebuffer->Bind();
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  mScene->RenderUI();
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+  m_ViewportFramebuffer->Unbind();
 }
 
 void PearlEngine::PickingRenderPass() {

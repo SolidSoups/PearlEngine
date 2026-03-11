@@ -5,7 +5,11 @@
 #include "Material.h"
 #include "ShaderData.h"
 #include "Mesh.h"
+#include "TextMesh.h"
 #include "Scene.h"
+
+#include <glm/ext/matrix_clip_space.hpp>
+
 #include <vector>
 
 Camera *Renderer::s_ActiveCamera = nullptr;
@@ -127,6 +131,30 @@ void Renderer::Submit(const TransformComponent& aTransform, const std::shared_pt
 
   // draw the mesh to the screen
   if(aMesh) aMesh->Draw();
+}
+
+void Renderer::Submit(const TransformComponent &aTransform,
+                     const std::shared_ptr<TextMesh> &aTextMesh,
+                     const std::shared_ptr<Material> &aMaterial,
+                     glm::vec2* aViewportSize){
+  // Set matrices
+  std::shared_ptr<ShaderData> matShader = aMaterial->getShader();
+  if (!matShader){
+    LOG_ERROR << "NO MAT SHADER";
+    return;
+  }
+
+  // bind material and shader
+  matShader->use();
+  aMaterial->bind();
+
+  glm::mat4 ortho = glm::ortho(0.f, aViewportSize->x, aViewportSize->y, 0.f);
+
+  // upload object, and camera props
+  matShader->setMatrix4("ortho", ortho);
+
+  // draw the mesh to the screen
+  if(aTextMesh) aTextMesh->Draw();
 }
 
 

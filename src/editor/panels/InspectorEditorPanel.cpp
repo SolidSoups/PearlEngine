@@ -4,6 +4,7 @@
 #include "MenuRegistry.h"
 
 #include "ImGuiHelpers.h"
+#include "TextComponent.h"
 #include "Material.h"
 #include "ComponentEditorRegistry.h"
 #include "RigidBodyComponent.h"
@@ -118,6 +119,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
   DrawComponentIfPresent<BoxColliderComponent>(entity);
   DrawComponentIfPresent<CapsuleColliderComponent>(entity);
   DrawComponentIfPresent<TerrainComponent>(entity);
+  DrawComponentIfPresent<TextComponent>(entity);
 
   // draw add component
   ImGui::Separator();
@@ -128,7 +130,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
   std::vector<std::string> compChoices = {
       "Render Component", "Transform",       "Point Light", "Camera",
       "Script",           "Sphere Collider", "Box Collider", "Capsule Collider", "RigidBody",
-  "Terrain"};
+  "Terrain", "Text"};
   std::string selected = "";
   if (SearchablePopup<std::string>(
           "Add_Component", "Add Component", compChoices,
@@ -154,5 +156,7 @@ void InspectorEditorPanel::DrawComponents(ecs::Entity entity) {
       coordinator.TryAddComponent(entity, RigidBodyComponent{});
     else if(selected == "Terrain")
       coordinator.TryAddComponent(entity, TerrainComponent{});
+    else if(selected == "Text")
+      coordinator.TryAddComponent(entity, TextComponent{});
   }
 }

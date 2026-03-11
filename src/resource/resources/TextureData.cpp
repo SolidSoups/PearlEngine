@@ -44,7 +44,7 @@ void TextureData::setConfig(const TextureConfig &aConfig) { config = aConfig; }
 
 bool TextureData::loadFile(const char *path) {
   // set flip flag (global, uses OpenGL coordinates)
-  stbi_set_flip_vertically_on_load(true);
+  stbi_set_flip_vertically_on_load(!config.flipY);
 
   // load image using stbi
   int width = -1;
