@@ -71,7 +71,6 @@ public:
   // framebuffer
   std::unique_ptr<Framebuffer> m_ViewportFramebuffer;
   glm::vec2 m_ViewportSize{1280, 70};
-  glm::vec2 m_ViewportPos{0, 0};
   ViewportEditorPanel *m_ViewportPanel = nullptr; // needed here
   std::unique_ptr<PickingFramebuffer> mPickFramebuf;
 

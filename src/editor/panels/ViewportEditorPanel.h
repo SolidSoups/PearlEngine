@@ -15,6 +15,7 @@ public:
 
   glm::vec2 GetSize() const { return m_Size; }
   glm::vec2 GetViewportPos() const { return m_ViewportPos; }
+  inline glm::vec2 GetViewportMin() const { return m_ViewportMin;}
   bool IsResized() const { return m_WasResized; }
 
   // input state
@@ -44,6 +45,7 @@ private:
   bool m_LeftMouseClicked = false;
   glm::vec2 m_MouseClickPos{0.0f};
   glm::vec2 m_ViewportPos{0.0f};
+  glm::vec2 m_ViewportMin{0.0f};
 
 
   std::shared_ptr<TextureData> mPlayTexture;

@@ -30,6 +30,7 @@ ViewportEditorPanel::ViewportEditorPanel(Framebuffer *framebuffer)
   MenuRegistry::Get().Register("Windows/Viewport", &m_IsOpen);
 }
 
+
 void ViewportEditorPanel::OnImGuiRender() {
   if (!m_IsOpen)
     return;
@@ -73,7 +74,9 @@ void ViewportEditorPanel::OnImGuiRender() {
 
   // display the framebuffer
   ImVec2 viewportMin = ImGui::GetCursorScreenPos();
+  m_ViewportMin = glm::vec2(viewportMin.x, viewportMin.y);
   {
+    // update viewport position
     ImGuiIO& io = ImGui::GetIO();
     m_ViewportPos = {io.MousePos.x - viewportMin.x, io.MousePos.y - viewportMin.y};
   }

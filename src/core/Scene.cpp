@@ -129,8 +129,8 @@ Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
 }
 
 
-void Scene::PostInitialization(glm::vec2* viewportSize, glm::vec2* viewportPos){
-  mTextSystem->initializeResources(viewportSize, viewportPos, mScriptEngine.get());
+void Scene::PostInitialization(){
+  mTextSystem->initializeResources(mScriptEngine.get());
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {

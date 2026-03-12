@@ -20,6 +20,7 @@ std::vector<ecs::Entity> Renderer::m_PointLightEntities;
 Scene* Renderer::m_Scene = nullptr;
 bool Renderer::m_bGeometryPassEnabled = false;
 std::shared_ptr<ShaderData> Renderer::m_NextShader = nullptr;
+glm::vec2 Renderer::m_ViewportSize{0.0f};
 
 void Renderer::SetGeometryPassEnabled(bool value) {
   m_bGeometryPassEnabled = value;
@@ -47,6 +48,11 @@ void Renderer::SubmitLights(Scene& scene) {
 void Renderer::EndScene() {
   s_ActiveCamera = nullptr;
   m_Scene = nullptr;
+}
+
+
+void Renderer::SetViewportSize(glm::vec2 viewportSize){
+  m_ViewportSize = viewportSize;
 }
 
 void Renderer::Submit(const RenderComponent &renderComp,
@@ -135,8 +141,7 @@ void Renderer::Submit(const TransformComponent& aTransform, const std::shared_pt
 
 void Renderer::Submit(const TransformComponent &aTransform,
                      const std::shared_ptr<TextMesh> &aTextMesh,
-                     const std::shared_ptr<Material> &aMaterial,
-                     glm::vec2* aViewportSize){
+                     const std::shared_ptr<Material> &aMaterial){
   // Set matrices
   std::shared_ptr<ShaderData> matShader = aMaterial->getShader();
   if (!matShader){
@@ -148,7 +153,7 @@ void Renderer::Submit(const TransformComponent &aTransform,
   matShader->use();
   aMaterial->bind();
 
-  glm::mat4 ortho = glm::ortho(0.f, aViewportSize->x, aViewportSize->y, 0.f);
+  glm::mat4 ortho = glm::ortho(0.f, m_ViewportSize.x, m_ViewportSize.y, 0.f);
   glm::mat4 model = glm::mat4(1.0);
   model = glm::translate(model, glm::vec3(aTransform.position.x, aTransform.position.y, 0.0));
   model = glm::rotate(model, glm::radians(aTransform.rotation.z), glm::vec3(0, 0, 1));

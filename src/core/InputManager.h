@@ -30,7 +30,14 @@ public:
 
   const glm::vec2& GetMouseDelta() const;
   const glm::vec2& GetMousePosition() const;
+  // returns false if mouse was outside of viewport
+  bool GetViewportMousePosition(glm::vec2& mousePos) const;
   float GetScrollDelta() const;
+
+  inline void InjectViewport(const glm::vec2& _viewportMinPos, const glm::vec2& _viewportSize){
+    viewportMinPos = _viewportMinPos;
+    viewportSize = _viewportSize;
+  }
 private:
   GLFWwindow *mWindow = nullptr;
 
@@ -41,6 +48,11 @@ private:
 
   glm::vec2 mouseDelta{0.0f};
   glm::vec2 lastMousePos{0.0f};
+
+  // injected from PearlEngine.cpp
+  glm::vec2 viewportMinPos{0.0f};
+  glm::vec2 viewportSize{0.0f};
+  glm::vec2 viewportMousePos{0.0f};
   
   float scrollDelta{0.0f};
   float prevScrollDelta{0.0f};

@@ -38,7 +38,7 @@
           0.030973434448242188,
           0.030973434448242188
         ],
-        "isButton": true,
+        "isButton": false,
         "isVisible": true,
         "text": "WELCOME, TO PEARLENGINE!"
       },
@@ -218,7 +218,7 @@
       },
       "transform_component": {
         "position": [
-          593.5,
+          390.29998779296875,
           657.9000244140625,
           1.0
         ],

@@ -93,7 +93,7 @@ PearlEngine::PearlEngine() {
   Defaults::Init();
 
   mScene->SetMeshManager(m_MeshManager.get());
-  mScene->PostInitialization(&m_ViewportSize, &m_ViewportPos);
+  mScene->PostInitialization();
 
   isInitialized = true;
 }
@@ -259,7 +259,7 @@ void PearlEngine::RunUpdateLoop() {
 }
 
 void PearlEngine::Update() {
-  m_ViewportPos = m_ViewportPanel->GetViewportPos();
+  m_InputManager->InjectViewport(m_ViewportPanel->GetViewportMin(), m_ViewportPanel->GetSize());
 
   // handle viewport resize
   if (m_ViewportPanel->IsResized()) {
@@ -317,6 +317,8 @@ void PearlEngine::Update() {
 }
 
 void PearlEngine::Render() {
+  Renderer::SetViewportSize(m_ViewportPanel->GetSize());
+
   if (bDrawWireFrameMode)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   else

@@ -26,13 +26,14 @@ public:
                      const std::shared_ptr<Material> &material);
   static void Submit(const TransformComponent &aTransform,
                      const std::shared_ptr<TextMesh> &mesh,
-                     const std::shared_ptr<Material> &material,
-                     glm::vec2* viewportSize);
+                     const std::shared_ptr<Material> &material);
   static void SendLightUniforms(std::shared_ptr<ShaderData> shader);
   static void SendAmbientLightUniforms(std::shared_ptr<ShaderData> shader);
 
   // returns false on failure
   static bool ResolveCamera(glm::mat4 &view, glm::mat4 &proj);
+
+  static void SetViewportSize(glm::vec2 viewportSize);
 
 private:
   static Camera *s_ActiveCamera;
@@ -43,6 +44,7 @@ private:
   static Scene *m_Scene;
   static bool m_bGeometryPassEnabled;
   static std::shared_ptr<ShaderData> m_NextShader;
+  static glm::vec2 m_ViewportSize;
 
 public:
   static void SetGeometryPassEnabled(bool value);

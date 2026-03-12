@@ -23,8 +23,7 @@
 #define TEXT_FRAG_PATH "shaders/textFrag.glsl"
 #define TEXT_ATLAS_PATH "assets/ui/font_atlas.png"
 
-void TextSystem::initializeResources(glm::vec2* viewport, glm::vec2* viewportPos, ScriptEngine* scriptEngine)
-{
+void TextSystem::initializeResources(ScriptEngine *scriptEngine) {
   myTextShader =
       ServiceLocator::Get<ShaderManager>().load(TEXT_VERT_PATH, TEXT_FRAG_PATH);
 
@@ -32,32 +31,27 @@ void TextSystem::initializeResources(glm::vec2* viewport, glm::vec2* viewportPos
   cfg.minFilter = GL_NEAREST;
   cfg.magFilter = GL_NEAREST;
   cfg.flipY = true;
-  myTextAtlas = ServiceLocator::Get<TextureManager>().load(TEXT_ATLAS_PATH, cfg);
+  myTextAtlas =
+      ServiceLocator::Get<TextureManager>().load(TEXT_ATLAS_PATH, cfg);
   myTextMaterial = std::make_shared<Material>(myTextShader);
   myTextMaterial->setTexture("uTextAtlas", myTextAtlas);
 
-  myViewportSize = viewport;
-  myViewportPos = viewportPos;
   myScriptEngine = scriptEngine;
   myInputManager = &ServiceLocator::Get<InputManager>();
 }
 
 void TextSystem::render() {
-  if(!myViewportSize){
-    LOG_ERROR << "Viewport size pointer is null";
-    return;
-  }
-
   for (ecs::Entity e : Entities) {
     auto &transform = Get<TransformComponent>(e);
     auto &text = Get<TextComponent>(e);
-    if(!text.isVisible) continue;
+    if (!text.isVisible)
+      continue;
     if (!text.mesh)
       continue;
 
     myTextMaterial->setVec3("uColor", text.color);
 
-    Renderer::Submit(transform, text.mesh, myTextMaterial, myViewportSize);
+    Renderer::Submit(transform, text.mesh, myTextMaterial);
   }
 }
 
@@ -109,35 +103,35 @@ void TextSystem::generateTextMesh(TextComponent &aTextComp) {
 
     float topLeftPositionX = i * ACHAR_WIDTH;
     float topLeftPositionY = 0;
-    float topLeftUVX = (float)atlasLocation.x / atlasSize.x; 
-    float topLeftUVY = (float)atlasLocation.y / atlasSize.y; 
+    float topLeftUVX = (float)atlasLocation.x / atlasSize.x;
+    float topLeftUVY = (float)atlasLocation.y / atlasSize.y;
 
     // top-left point
-    vertices.push_back(topLeftPositionX);    
-    vertices.push_back(topLeftPositionY);  
-    vertices.push_back(topLeftUVX);   
-    vertices.push_back(topLeftUVY); 
-    
+    vertices.push_back(topLeftPositionX);
+    vertices.push_back(topLeftPositionY);
+    vertices.push_back(topLeftUVX);
+    vertices.push_back(topLeftUVY);
+
     // bottom-left point
     vertices.push_back(topLeftPositionX);
-    vertices.push_back(topLeftPositionY + ACHAR_HEIGHT);    
-    vertices.push_back(topLeftUVX);   
-    vertices.push_back(topLeftUVY + ATLAS_Y_STEP);   
+    vertices.push_back(topLeftPositionY + ACHAR_HEIGHT);
+    vertices.push_back(topLeftUVX);
+    vertices.push_back(topLeftUVY + ATLAS_Y_STEP);
 
     // top-right point
     vertices.push_back(topLeftPositionX + ACHAR_WIDTH);
-    vertices.push_back(topLeftPositionY);    
-    vertices.push_back(topLeftUVX + ATLAS_X_STEP);   
-    vertices.push_back(topLeftUVY);   
+    vertices.push_back(topLeftPositionY);
+    vertices.push_back(topLeftUVX + ATLAS_X_STEP);
+    vertices.push_back(topLeftUVY);
 
     // bottom-right point
     vertices.push_back(topLeftPositionX + ACHAR_WIDTH);
-    vertices.push_back(topLeftPositionY + ACHAR_HEIGHT);    
-    vertices.push_back(topLeftUVX + ATLAS_X_STEP);   
-    vertices.push_back(topLeftUVY + ATLAS_Y_STEP);   
+    vertices.push_back(topLeftPositionY + ACHAR_HEIGHT);
+    vertices.push_back(topLeftUVX + ATLAS_X_STEP);
+    vertices.push_back(topLeftUVY + ATLAS_Y_STEP);
 
-    //Stitch together points into triangels
-    // TOP TRIANGLE
+    // Stitch together points into triangels
+    //  TOP TRIANGLE
     indices.push_back(vertexIndex);
     indices.push_back(vertexIndex + 1);
     indices.push_back(vertexIndex + 2);
@@ -154,17 +148,38 @@ void TextSystem::generateTextMesh(TextComponent &aTextComp) {
 }
 
 void TextSystem::checkButtonClicks() {
-  if (!myInputManager) return;
-  if (!myInputManager->GetMouseKeyDown(GLFW_MOUSE_BUTTON_LEFT)) return;
+  if (!myInputManager)
+    return;
+  if (!myInputManager->GetMouseKeyDown(GLFW_MOUSE_BUTTON_LEFT)) {
+    return;
+  }
 
-  if (!myViewportPos) return;
-  glm::vec2 mouse = *myViewportPos;
+  glm::vec2 mouse;
+  if (!myInputManager->GetViewportMousePosition(mouse)) {
+    return;
+  }
 
-  for (ecs::Entity e : Entities) {
-    auto& text = Get<TextComponent>(e);
-    if (!text.isButton || !text.isVisible || !text.mesh) continue;
+  // We want to only iterate on valid buttons,
+  // so we cache that first so that if a button updates the
+  // state of another button, we don't get a state issue
+  std::vector<ecs::Entity> validTextComps;
+  for(ecs::Entity e : Entities){
+    auto &text = Get<TextComponent>(e);
+    if (!text.isButton || !text.isVisible || !text.mesh) {
+      continue;
+    }
+    validTextComps.push_back(e);
+  }
 
-    auto& transform = Get<TransformComponent>(e);
+  // iterate over valid components
+  for (ecs::Entity e : validTextComps) {
+    auto &text = Get<TextComponent>(e);
+    // Still check if the button is invalid
+    if (!text.isButton || !text.isVisible || !text.mesh) {
+      continue;
+    }
+
+    auto &transform = Get<TransformComponent>(e);
 
     glm::mat4 model = glm::mat4(1.f);
     model = glm::translate(model, glm::vec3(transform.position.x, transform.position.y, 0.f));
@@ -181,7 +196,7 @@ void TextSystem::checkButtonClicks() {
         text.onClick();
       }
       if (myScriptEngine) {
-        if (auto* sc = TryGet<ScriptComponent>(e)) {
+        if (auto *sc = TryGet<ScriptComponent>(e)) {
           myScriptEngine->RunOnClick(e, *sc);
         }
       }
@@ -191,110 +206,39 @@ void TextSystem::checkButtonClicks() {
 
 glm::ivec2 TextSystem::getCharacterCoord(char character) {
   const std::unordered_map<char, glm::ivec2> charToUV = {
-    {' ', {0, 0}},
-    {'!', {1, 0}},
-    {'"', {2, 0}},
-    {'#', {3, 0}},
-    {'%', {5, 0}},
-    {'\'', {7, 0}},
-    {'(', {8, 0}},
-    {')', {9, 0}},
-    {'*', {10, 0}},
-    {'+', {11, 0}},
-    {',', {12, 0}},
-    {'-', {13, 0}},
-    {'.', {14, 0}},
-    {'/', {15, 0}},
+      {' ', {0, 0}},   {'!', {1, 0}},  {'"', {2, 0}},  {'#', {3, 0}},
+      {'%', {5, 0}},   {'\'', {7, 0}}, {'(', {8, 0}},  {')', {9, 0}},
+      {'*', {10, 0}},  {'+', {11, 0}}, {',', {12, 0}}, {'-', {13, 0}},
+      {'.', {14, 0}},  {'/', {15, 0}},
 
+      {'0', {0, 1}},   {'1', {1, 1}},  {'2', {2, 1}},  {'3', {3, 1}},
+      {'4', {4, 1}},   {'5', {5, 1}},  {'6', {6, 1}},  {'7', {7, 1}},
+      {'8', {8, 1}},   {'9', {9, 1}},  {':', {10, 1}}, {';', {11, 1}},
+      {'<', {12, 1}},  {'=', {13, 1}}, {'>', {14, 1}}, {'?', {15, 1}},
 
-    {'0', {0,  1}},
-    {'1', {1,  1}},
-    {'2', {2,  1}},
-    {'3', {3,  1}},
-    {'4', {4,  1}},
-    {'5', {5,  1}},
-    {'6', {6,  1}},
-    {'7', {7,  1}},
-    {'8', {8,  1}},
-    {'9', {9,  1}},
-    {':', {10, 1}},
-    {';', {11, 1}},
-    {'<', {12, 1}},
-    {'=', {13, 1}},
-    {'>', {14, 1}},
-    {'?', {15, 1}},
+      {'@', {0, 2}},   {'A', {1, 2}},  {'B', {2, 2}},  {'C', {3, 2}},
+      {'D', {4, 2}},   {'E', {5, 2}},  {'F', {6, 2}},  {'G', {7, 2}},
+      {'H', {8, 2}},   {'I', {9, 2}},  {'J', {10, 2}}, {'K', {11, 2}},
+      {'L', {12, 2}},  {'M', {13, 2}}, {'N', {14, 2}}, {'O', {15, 2}},
 
-    {'@', {0,  2}},
-    {'A', {1,  2}},
-    {'B', {2,  2}},
-    {'C', {3,  2}},
-    {'D', {4,  2}},
-    {'E', {5,  2}},
-    {'F', {6,  2}},
-    {'G', {7,  2}},
-    {'H', {8,  2}},
-    {'I', {9,  2}},
-    {'J', {10, 2}},
-    {'K', {11, 2}},
-    {'L', {12, 2}},
-    {'M', {13, 2}},
-    {'N', {14, 2}},
-    {'O', {15, 2}},
+      {'P', {0, 3}},   {'Q', {1, 3}},  {'R', {2, 3}},  {'S', {3, 3}},
+      {'T', {4, 3}},   {'U', {5, 3}},  {'V', {6, 3}},  {'W', {7, 3}},
+      {'X', {8, 3}},   {'Y', {9, 3}},  {'Z', {10, 3}}, {'[', {11, 3}},
+      {'\\', {12, 3}}, {']', {13, 3}}, {'^', {14, 3}}, {'_', {15, 3}},
 
-    {'P',  {0,  3}},
-    {'Q',  {1,  3}},
-    {'R',  {2,  3}},
-    {'S',  {3,  3}},
-    {'T',  {4,  3}},
-    {'U',  {5,  3}},
-    {'V',  {6,  3}},
-    {'W',  {7,  3}},
-    {'X',  {8,  3}},
-    {'Y',  {9,  3}},
-    {'Z',  {10, 3}},
-    {'[',  {11, 3}},
-    {'\\', {12, 3}},
-    {']',  {13, 3}},
-    {'^',  {14, 3}},
-    {'_',  {15, 3}},
+      {'`', {0, 4}},   {'a', {1, 4}},  {'b', {2, 4}},  {'c', {3, 4}},
+      {'d', {4, 4}},   {'e', {5, 4}},  {'f', {6, 4}},  {'g', {7, 4}},
+      {'h', {8, 4}},   {'i', {9, 4}},  {'j', {10, 4}}, {'k', {11, 4}},
+      {'l', {12, 4}},  {'m', {13, 4}}, {'n', {14, 4}}, {'o', {15, 4}},
 
-    {'`',  {0,  4}},
-    {'a',  {1,  4}},
-    {'b',  {2,  4}},
-    {'c',  {3,  4}},
-    {'d',  {4,  4}},
-    {'e',  {5,  4}},
-    {'f',  {6,  4}},
-    {'g',  {7,  4}},
-    {'h',  {8,  4}},
-    {'i',  {9,  4}},
-    {'j',  {10, 4}},
-    {'k',  {11, 4}},
-    {'l',  {12, 4}},
-    {'m',  {13, 4}},
-    {'n',  {14, 4}},
-    {'o',  {15, 4}},
+      {'p', {0, 5}},   {'q', {1, 5}},  {'r', {2, 5}},  {'s', {3, 5}},
+      {'t', {4, 5}},   {'u', {5, 5}},  {'v', {6, 5}},  {'w', {7, 5}},
+      {'x', {8, 5}},   {'y', {9, 5}},  {'z', {10, 5}}, {'{', {11, 5}},
+      {'|', {12, 5}},  {'}', {13, 5}}, {'~', {14, 5}}};
 
-    {'p',  {0,  5}},
-    {'q',  {1,  5}},
-    {'r',  {2,  5}},
-    {'s',  {3,  5}},
-    {'t',  {4,  5}},
-    {'u',  {5,  5}},
-    {'v',  {6,  5}},
-    {'w',  {7,  5}},
-    {'x',  {8,  5}},
-    {'y',  {9,  5}},
-    {'z',  {10, 5}},
-    {'{',  {11, 5}},
-    {'|',  {12, 5}},
-    {'}',  {13, 5}},
-    {'~',  {14, 5}}
-  };
-  
-  // find character uv 
+  // find character uv
   auto it = charToUV.find(character);
-  if(it != charToUV.end()){
+  if (it != charToUV.end()) {
     return it->second;
   }
 

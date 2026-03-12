@@ -12,7 +12,7 @@ class InputManager;
 
 class TextSystem : public ecs::System {
 public:
-  void initializeResources(glm::vec2* viewport, glm::vec2* viewportPos, ScriptEngine* scriptEngine);
+  void initializeResources(ScriptEngine* scriptEngine);
   void render();
   void generateValidTexts();
   void generateTextMesh(TextComponent& aTextComp);
@@ -29,8 +29,6 @@ private:
   glm::ivec2 charSize{8, 12}; // pixels
   glm::ivec2 atlasSize{16, 6}; // characters
 
-  glm::vec2* myViewportSize = nullptr;
-  glm::vec2* myViewportPos = nullptr;
   ScriptEngine* myScriptEngine = nullptr;
   InputManager* myInputManager = nullptr;
 };
