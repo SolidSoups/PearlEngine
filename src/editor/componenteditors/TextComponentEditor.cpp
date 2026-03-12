@@ -23,6 +23,8 @@ void TextComponentEditor::OnDrawComponent(void* target, [[maybe_unused]] ecs::En
 
   // render is button
   ImGui::Checkbox("Is Button", &textComp->isButton);
+  // render is visible
+  ImGui::Checkbox("Is Visible", &textComp->isVisible);
   
   // render text box
   ImGui::Text("Text");

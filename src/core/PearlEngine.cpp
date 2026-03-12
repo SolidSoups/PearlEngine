@@ -259,7 +259,6 @@ void PearlEngine::RunUpdateLoop() {
 }
 
 void PearlEngine::Update() {
-  // track viewport position every frame
   m_ViewportPos = m_ViewportPanel->GetViewportPos();
 
   // handle viewport resize

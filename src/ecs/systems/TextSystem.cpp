@@ -51,6 +51,7 @@ void TextSystem::render() {
   for (ecs::Entity e : Entities) {
     auto &transform = Get<TransformComponent>(e);
     auto &text = Get<TextComponent>(e);
+    if(!text.isVisible) continue;
     if (!text.mesh)
       continue;
 
@@ -153,7 +154,7 @@ void TextSystem::generateTextMesh(TextComponent &aTextComp) {
 }
 
 void TextSystem::checkButtonClicks() {
-  if (!myInputManager || !myScriptEngine) return;
+  if (!myInputManager) return;
   if (!myInputManager->GetMouseKeyDown(GLFW_MOUSE_BUTTON_LEFT)) return;
 
   if (!myViewportPos) return;
@@ -161,7 +162,7 @@ void TextSystem::checkButtonClicks() {
 
   for (ecs::Entity e : Entities) {
     auto& text = Get<TextComponent>(e);
-    if (!text.isButton || !text.mesh) continue;
+    if (!text.isButton || !text.isVisible || !text.mesh) continue;
 
     auto& transform = Get<TransformComponent>(e);
 
@@ -176,8 +177,13 @@ void TextSystem::checkButtonClicks() {
     float h = charSize.y;
 
     if (local.x >= 0 && local.x <= w && local.y >= 0 && local.y <= h) {
-      if (auto* sc = TryGet<ScriptComponent>(e)) {
-        myScriptEngine->RunOnClick(e, *sc);
+      if (text.onClick) {
+        text.onClick();
+      }
+      if (myScriptEngine) {
+        if (auto* sc = TryGet<ScriptComponent>(e)) {
+          myScriptEngine->RunOnClick(e, *sc);
+        }
       }
     }
   }

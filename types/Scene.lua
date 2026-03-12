@@ -13,6 +13,10 @@ function Scene.FindEntityByName(name) end
 function Scene.GetNameComp(entity) end
 
 ---@param entity integer
+---@return TextComponent|nil
+function Scene.GetText(entity) end
+
+---@param entity integer
 ---@return Transform|nil
 function Scene.GetTransform(entity) end
 

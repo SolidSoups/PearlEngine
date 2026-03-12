@@ -1,0 +1,356 @@
+{
+  "entities": {
+    "BACK TEXT0": {
+      "name": "BACK TEXT",
+      "text_component": {
+        "color": [
+          0.8314973711967468,
+          0.8672566413879395,
+          0.5564257502555847
+        ],
+        "isButton": true,
+        "isVisible": true,
+        "text": "[go back]"
+      },
+      "transform_component": {
+        "position": [
+          105.0,
+          657.9000244140625,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          6.599999904632568,
+          12.800000190734863,
+          1.0
+        ]
+      }
+    },
+    "HEADER TEXT1": {
+      "name": "HEADER TEXT",
+      "text_component": {
+        "color": [
+          1.0,
+          0.030973434448242188,
+          0.030973434448242188
+        ],
+        "isButton": true,
+        "isVisible": true,
+        "text": "WELCOME, TO PEARLENGINE!"
+      },
+      "transform_component": {
+        "position": [
+          100.0,
+          68.0999984741211,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          6.599999904632568,
+          12.800000190734863,
+          1.0
+        ]
+      }
+    },
+    "LEVEL 12": {
+      "name": "LEVEL 1",
+      "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "isButton": true,
+        "isVisible": true,
+        "text": "Level 1 - Best time 2:30"
+      },
+      "transform_component": {
+        "position": [
+          105.0,
+          362.5,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          4.0,
+          4.0,
+          1.0
+        ]
+      }
+    },
+    "LEVEL 23": {
+      "name": "LEVEL 2",
+      "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "isButton": true,
+        "isVisible": true,
+        "text": "Level 2 - Best time 2:30"
+      },
+      "transform_component": {
+        "position": [
+          105.0,
+          428.29998779296875,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          4.0,
+          4.0,
+          1.0
+        ]
+      }
+    },
+    "LEVEL 34": {
+      "name": "LEVEL 3",
+      "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "isButton": true,
+        "isVisible": true,
+        "text": "Level 3 - Best time 2:30"
+      },
+      "transform_component": {
+        "position": [
+          105.0,
+          493.5,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          4.0,
+          4.0,
+          1.0
+        ]
+      }
+    },
+    "Main Camera5": {
+      "camera_component": {
+        "aspectRatio": 1.0,
+        "far_plane": 2000.0,
+        "fov": 60.0,
+        "near_plane": 0.10000000149011612
+      },
+      "name": "Main Camera",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/SetMainCameraOnCreate.lua"
+      },
+      "transform_component": {
+        "position": [
+          37.099998474121094,
+          195.1999969482422,
+          32.900001525878906
+        ],
+        "rotation": [
+          -20.0,
+          -135.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "MenuController6": {
+      "name": "MenuController",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/MainMenuController.lua"
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "PLAY TEXT7": {
+      "name": "PLAY TEXT",
+      "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "isButton": true,
+        "isVisible": true,
+        "text": "[pick level]"
+      },
+      "transform_component": {
+        "position": [
+          593.5,
+          657.9000244140625,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          6.599999904632568,
+          12.800000190734863,
+          1.0
+        ]
+      }
+    },
+    "PointLight8": {
+      "name": "PointLight",
+      "pointLight_component": {
+        "color": [
+          1.0,
+          0.949999988079071,
+          0.8999999761581421,
+          1.0
+        ],
+        "intensity": 39.79999923706055,
+        "linear": 0.10000000149011612,
+        "quadratic": 0.0010000000474974513,
+        "radius": 1479.0
+      },
+      "transform_component": {
+        "position": [
+          271.4828186035156,
+          188.6925048828125,
+          383.0387878417969
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Terrain9": {
+      "name": "Terrain",
+      "terrain_component": {
+        "heightMap": {
+          "config": {
+            "antisotropicLevel": 1,
+            "generateMipMaps": false,
+            "lodBias": 0.0,
+            "magFilter": 9729,
+            "maxLod": 1000.0,
+            "maxMipMapLevel": 1,
+            "minFilter": 9729,
+            "minLod": 0.0,
+            "wrapS": 10497,
+            "wrapT": 10497
+          },
+          "filePath": "assets/terrain/Height Map.png"
+        },
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "uDiffuseMap": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/terrain/Diffuse Map.png"
+            },
+            "uHeightMap": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/terrain/Height Map.png"
+            }
+          },
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "resolution": 2048
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          10.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1000.0,
+          100.0,
+          1000.0
+        ]
+      }
+    }
+  }
+}

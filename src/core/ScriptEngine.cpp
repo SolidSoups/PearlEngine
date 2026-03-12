@@ -7,6 +7,7 @@
 #include "ScriptComponent.h"
 #include "Scene.h"
 #include "TransformComponent.h"
+#include "TextComponent.h"
 #include "RigidBodyComponent.h"
 #include "NameComponent.h"
 #include "Time.h"
@@ -127,7 +128,6 @@ void ScriptEngine::RunOnClick(ecs::Entity entity, ScriptComponent& sc) {
   if (!sc.loaded || !sc.enabled || sc.hasError) return;
   sol::protected_function fn = sc.scriptEnv["OnClick"];
   if (!fn.valid()) return;
-  LOG_INFO << "Calling onclick!";
   auto r = fn();
   if (!r.valid()) {
     sol::error e = r;
@@ -237,6 +237,17 @@ void ScriptEngine::BindAPIs() {
       &RigidBodyComponent::AddImpulse, "ClearForces",
       &RigidBodyComponent::ClearForces);
 
+  // Text Component
+  m_Lua.new_usertype<TextComponent>(
+    "Text",
+    "text", &TextComponent::text,
+    "color", &TextComponent::color,
+    "isVisible", &TextComponent::isVisible,
+    "isButton", &TextComponent::isButton,
+    "onClick", &TextComponent::onClick,
+    "Remesh", [](TextComponent& self) { self.isDirty = true; }
+  );
+
   // scene table
   auto &coord = mScene->GetCoordinator();
   sol::table scene = m_Lua.create_named_table("Scene");
@@ -273,6 +284,12 @@ void ScriptEngine::BindAPIs() {
   scene.set_function("GetNameComp", [this, &coord](ecs::Entity e) -> NameComponent* {
     if(coord.HasComponent<NameComponent>(e)){
       return &coord.GetComponent<NameComponent>(e);
+    }
+    return nullptr;
+  });
+  scene.set_function("GetText", [this, &coord](ecs::Entity e) -> TextComponent* {
+    if(coord.HasComponent<TextComponent>(e)){
+      return &coord.GetComponent<TextComponent>(e);
     }
     return nullptr;
   });
