@@ -31,8 +31,17 @@ function OnCreate()
 	refs.playText = Scene.GetText(playEntity)
 	refs.backText = Scene.GetText(backEntity)
 	refs.level1Text = Scene.GetText(level1Ent)
+	refs.level1Text.onClick = function()
+		Scene.LoadScene("assets/Level1.json")
+	end
 	refs.level2Text = Scene.GetText(level2Ent)
+	refs.level2Text.onClick = function()
+		Scene.LoadScene("assets/Level2.json")
+	end
 	refs.level3Text = Scene.GetText(level3Ent)
+	refs.level3Text.onClick = function()
+		Scene.LoadScene("assets/Level3.json")
+	end
 	SetLevelTexts(false)
 	SetBack(false)
 	SetPlay(true)

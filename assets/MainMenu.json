@@ -2,11 +2,15 @@
   "entities": {
     "BACK TEXT0": {
       "name": "BACK TEXT",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/ButtonHover.lua"
+      },
       "text_component": {
         "color": [
-          0.8314973711967468,
-          0.8672566413879395,
-          0.5564257502555847
+          1.0,
+          1.0,
+          1.0
         ],
         "isButton": true,
         "isVisible": true,
@@ -32,6 +36,10 @@
     },
     "HEADER TEXT1": {
       "name": "HEADER TEXT",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/RainbowColorHover.lua"
+      },
       "text_component": {
         "color": [
           1.0,
@@ -62,6 +70,10 @@
     },
     "LEVEL 12": {
       "name": "LEVEL 1",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/ButtonHover.lua"
+      },
       "text_component": {
         "color": [
           1.0,
@@ -92,6 +104,10 @@
     },
     "LEVEL 23": {
       "name": "LEVEL 2",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/ButtonHover.lua"
+      },
       "text_component": {
         "color": [
           1.0,
@@ -122,6 +138,10 @@
     },
     "LEVEL 34": {
       "name": "LEVEL 3",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/ButtonHover.lua"
+      },
       "text_component": {
         "color": [
           1.0,
@@ -206,6 +226,10 @@
     },
     "PLAY TEXT7": {
       "name": "PLAY TEXT",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/ButtonHover.lua"
+      },
       "text_component": {
         "color": [
           1.0,

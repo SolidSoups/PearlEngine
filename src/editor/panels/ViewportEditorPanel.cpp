@@ -35,6 +35,7 @@ void ViewportEditorPanel::OnImGuiRender() {
   if (!m_IsOpen)
     return;
 
+  float windowPadding = ImGui::GetStyle().WindowPadding.y;
   ImGui::Begin(m_Name.c_str(), &m_IsOpen, ImGuiWindowFlags_MenuBar);
 
   // draw menu bar
@@ -74,11 +75,11 @@ void ViewportEditorPanel::OnImGuiRender() {
 
   // display the framebuffer
   ImVec2 viewportMin = ImGui::GetCursorScreenPos();
-  m_ViewportMin = glm::vec2(viewportMin.x, viewportMin.y);
+  m_ViewportMin = glm::vec2(viewportMin.x, viewportMin.y - 20.0f - windowPadding);
   {
     // update viewport position
     ImGuiIO& io = ImGui::GetIO();
-    m_ViewportPos = {io.MousePos.x - viewportMin.x, io.MousePos.y - viewportMin.y};
+    m_ViewportPos = {io.MousePos.x - viewportMin.x, io.MousePos.y};
   }
   ImGui::Image((void *)(intptr_t)m_Framebuffer->GetTextureID(),
                viewportPanelSize, ImVec2(0, 1), ImVec2(1, 0));

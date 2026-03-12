@@ -1,5 +1,4 @@
-MovementSpeed = 10
-MovementForce = 10
+MovementForce = 20
 JumpForce = 7
 
 function OnCreate()

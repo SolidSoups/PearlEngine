@@ -1,5 +1,6 @@
 #pragma once
 
+#include <unordered_set>
 #include <glm/glm.hpp>
 #include "ecs_system.h"
 
@@ -9,6 +10,7 @@ struct TextureData;
 class Material;
 class ScriptEngine;
 class InputManager;
+class ScriptComponent;
 
 class TextSystem : public ecs::System {
 public:
@@ -19,6 +21,7 @@ public:
   void checkButtonClicks();
 
 private:
+  void onMouseInButtonBounds(ecs::Entity aEntity, const TextComponent& aTextComp, ScriptComponent* aScriptComp);
   // Returns the location of the character on the atlas
   // Returns {-1, -1} on failure
   glm::ivec2 getCharacterCoord(char character);
@@ -31,4 +34,7 @@ private:
 
   ScriptEngine* myScriptEngine = nullptr;
   InputManager* myInputManager = nullptr;
+
+  std::unordered_set<ecs::Entity> mHoverPrevFrame;
+  std::unordered_set<ecs::Entity> mHoverThisFrame;
 };

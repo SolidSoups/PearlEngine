@@ -125,13 +125,17 @@ void ScriptEngine::RunOnCollisionEnter(ecs::Entity entity, ScriptComponent &sc,
 }
 
 void ScriptEngine::RunOnClick(ecs::Entity entity, ScriptComponent& sc) {
+  RunScriptFunc(entity,sc, "OnClick");
+}
+
+void ScriptEngine::RunScriptFunc(ecs::Entity entity, ScriptComponent& sc, const std::string& funcName){
   if (!sc.loaded || !sc.enabled || sc.hasError) return;
-  sol::protected_function fn = sc.scriptEnv["OnClick"];
+  sol::protected_function fn = sc.scriptEnv[funcName];
   if (!fn.valid()) return;
   auto r = fn();
   if (!r.valid()) {
     sol::error e = r;
-    LOG_ERROR << "[Lua] " << sc.scriptPath << "::OnClick: " << e.what();
+    LOG_ERROR << "[Lua] " << sc.scriptPath << "::" << funcName << ": " << e.what();
     LogError(sc, e);
   }
 }

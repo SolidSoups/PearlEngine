@@ -19,6 +19,7 @@ public:
   void ReloadScript(ecs::Entity entity, ScriptComponent& sc);
   void RunOnCollisionEnter(ecs::Entity entity, ScriptComponent& sc, ecs::Entity other, glm::vec3 normal, float penetration);
   void RunOnClick(ecs::Entity entity, ScriptComponent& sc);
+  void RunScriptFunc(ecs::Entity entity, ScriptComponent& sc, const std::string& funcName);
 
   inline bool HasError(const std::string& luaFile) const{
     return mScriptToFailureReason.find(luaFile) != mScriptToFailureReason.end();

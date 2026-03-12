@@ -148,14 +148,16 @@ void TextSystem::generateTextMesh(TextComponent &aTextComp) {
 }
 
 void TextSystem::checkButtonClicks() {
+  // move hover state from current to prev frame
+  mHoverPrevFrame = std::move(mHoverThisFrame);
+  mHoverThisFrame.clear();
+
   if (!myInputManager)
     return;
-  if (!myInputManager->GetMouseKeyDown(GLFW_MOUSE_BUTTON_LEFT)) {
-    return;
-  }
 
-  glm::vec2 mouse;
-  if (!myInputManager->GetViewportMousePosition(mouse)) {
+  // get mouse state
+  glm::vec2 mousePos;
+  if (!myInputManager->GetViewportMousePosition(mousePos)) {
     return;
   }
 
@@ -163,45 +165,81 @@ void TextSystem::checkButtonClicks() {
   // so we cache that first so that if a button updates the
   // state of another button, we don't get a state issue
   std::vector<ecs::Entity> validTextComps;
-  for(ecs::Entity e : Entities){
+  for (ecs::Entity e : Entities) {
     auto &text = Get<TextComponent>(e);
     if (!text.isButton || !text.isVisible || !text.mesh) {
       continue;
     }
+    // Cache only valid buttons for later
     validTextComps.push_back(e);
   }
 
-  // iterate over valid components
+  // iterate over all valid components
   for (ecs::Entity e : validTextComps) {
     auto &text = Get<TextComponent>(e);
-    // Still check if the button is invalid
+
+    // Double guard, but good to be safe
     if (!text.isButton || !text.isVisible || !text.mesh) {
       continue;
     }
 
+    auto* scriptComp = TryGet<ScriptComponent>(e);
+
     auto &transform = Get<TransformComponent>(e);
-
     glm::mat4 model = glm::mat4(1.f);
-    model = glm::translate(model, glm::vec3(transform.position.x, transform.position.y, 0.f));
-    model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0, 0, 1));
-    model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.f));
+    model = glm::translate(
+        model, glm::vec3(transform.position.x, transform.position.y, 0.f));
+    model = glm::rotate(model, glm::radians(transform.rotation.z),
+                        glm::vec3(0, 0, 1));
+    model =
+        glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, 1.f));
 
-    // mouse in local space
-    glm::vec2 local = glm::inverse(model) * glm::vec4(mouse, 0.f, 1.f);
-    float w = text.text.size() * charSize.x;
-    float h = charSize.y;
+    // Transform mouse position to the TextComponent buttons local space
+    glm::vec2 localMousePos =
+        glm::inverse(model) * glm::vec4(mousePos, 0.f, 1.f);
+    float buttonWidth = text.text.size() * charSize.x;
+    float buttonHeight = charSize.y;
 
-    if (local.x >= 0 && local.x <= w && local.y >= 0 && local.y <= h) {
-      if (text.onClick) {
-        text.onClick();
-      }
-      if (myScriptEngine) {
-        if (auto *sc = TryGet<ScriptComponent>(e)) {
-          myScriptEngine->RunOnClick(e, *sc);
-        }
+    // check if the mouse position is within the bounds of the button
+    if (localMousePos.x >= 0 && localMousePos.x <= buttonWidth &&
+        localMousePos.y >= 0 && localMousePos.y <= buttonHeight) {
+      onMouseInButtonBounds(e, text, scriptComp);
+    }
+    else{
+      // Check if we hovered this button last frame
+      if(mHoverPrevFrame.count(e)){
+        // Call OnHoverLeave
+        if(scriptComp)
+          myScriptEngine->RunScriptFunc(e, *scriptComp, "OnHoverLeave");
       }
     }
   }
+}
+
+void TextSystem::onMouseInButtonBounds(ecs::Entity aEntity, const TextComponent& aTextComp, ScriptComponent* aScriptComp) {
+  bool isMouseDown = myInputManager->GetMouseKeyDown(GLFW_MOUSE_BUTTON_LEFT);
+  auto* scriptComp = TryGet<ScriptComponent>(aEntity);
+
+  // set state to hovered this frame
+  mHoverThisFrame.insert(aEntity);
+
+  // Hover enter
+  if(!mHoverPrevFrame.count(aEntity)){
+    if(aScriptComp)
+      myScriptEngine->RunScriptFunc(aEntity, *aScriptComp, "OnHoverEnter");
+  }
+
+  // trigger on click events if the mouse is down
+  if (isMouseDown && aTextComp.onClick) {
+    aTextComp.onClick();
+  }
+  if (isMouseDown && myScriptEngine) {
+    if (aScriptComp) {
+      myScriptEngine->RunOnClick(aEntity, *aScriptComp);
+    }
+  }
+
+  // compare state and trigger correct hover events
 }
 
 glm::ivec2 TextSystem::getCharacterCoord(char character) {
