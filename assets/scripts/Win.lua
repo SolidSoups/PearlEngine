@@ -13,11 +13,23 @@ function OnCreate()
 	refs.goBackText.onClick = function()
 		Scene.LoadScene("assets/MainMenu.json")
 	end
+
+	local timeEnt = Scene.FindEntityByName("TimerView")
+	TimerViewText = Scene.GetText(timeEnt)
+	TimerViewText.text = "Time: 00:00"
+	TimerViewText:Remesh()
+	Scene.StartLevelTimer(3)
+end
+
+function OnUpdate()
+	TimerViewText.text = "Time: " .. Scene.GetCurrentTime(3)
+	TimerViewText:Remesh()
 end
 
 function OnCollisionEnter(other, normal, pen)
 	local otherName = Scene.GetNameComp(other).name
 	if otherName == "Player" then
+		Scene.StopLevelTimers()
 		refs.winText.isButton = true
 		refs.winText.isVisible = true
 		refs.goBackText.isButton = true

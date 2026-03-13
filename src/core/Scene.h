@@ -8,6 +8,7 @@
 
 #include "AmbientLightData.h"
 #include "RenderSystem.h"
+#include "TimeScore.h"
 #include "ecs_coordinator.h"
 #include "ecs_common.h"
 #include "ScriptEngine.h"
@@ -29,6 +30,7 @@ public:
   Scene(const std::shared_ptr<IEngineCamera>& engineCam, const std::shared_ptr<InputManager>& inputMan);
   ~Scene();
   void PostInitialization();
+
   
   // Create an empty entity, with a name component 
   ecs::Entity CreateEntity(const std::string& name = "Entity");
@@ -111,6 +113,13 @@ private:
   std::string m_PendingSceneLoad;
 
 public:
+  // get level time, formatted, for level 1-3
+  std::string GetBestTime(int level);
+  std::string GetCurrentTime(int level);
+  void StartLevelTimer(int level);
+  void EndLevelTimers();
+  void LoadLevelTimes();
+  void SaveLevelTimes();
   void SetActiveCamera(ecs::Entity cameraEntity);
   ecs::Entity GetActiveCamera() const { return m_ActiveCamera; }
   void SetAspectRatio(float aspect);
@@ -123,6 +132,8 @@ public:
     return mCameraSystem.get();
   }
 
+  LevelTime mLevelTime;
+  LevelTime mDiskLevelTime;
   json mSceneSnapshot;
   json mCurrentSceneSnapshot;
   std::deque<ecs::Entity> mDestroyQueue;

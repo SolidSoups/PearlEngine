@@ -6,6 +6,11 @@
 
 #include "Logger.h"
 
+
+bool FileSystem::fileExists(const char* filePath){
+  return std::filesystem::exists(filePath);
+}
+
 bool FileSystem::loadFile(const char *filePath, std::vector<char>& outBytes){
   try{
     std::ifstream inFile{filePath, std::ios::binary};

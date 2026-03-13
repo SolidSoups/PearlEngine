@@ -3,6 +3,8 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
+#include <chrono>
+#include <format>
 
 #include "PointLightComponent.h"
 #include "RigidBodyComponent.h"
@@ -126,11 +128,110 @@ Scene::Scene(const std::shared_ptr<IEngineCamera> &engineCam,
   m_Coordinator.SetSystemInterestSignature<PhysicsSystem>(physicsInterest);
   m_Coordinator.SetSystemSignature<PhysicsSystem>(physicsRequirements);
   mPhysicsSystem->Init(mScriptSystem.get(), mTerrainSystem.get());
-}
 
+  LoadLevelTimes();
+}
 
 void Scene::PostInitialization(){
   mTextSystem->initializeResources(mScriptEngine.get());
+}
+
+std::string Scene::GetBestTime(int level) {
+  float seconds;
+  if(level == 1)      seconds = mDiskLevelTime.level1Time;
+  else if(level == 2) seconds = mDiskLevelTime.level2Time;
+  else if(level == 3) seconds = mDiskLevelTime.level3Time;
+  else return "invalid";
+
+  if(seconds >= FLT_MAX) return "--:--";
+
+  int mins = (int)seconds / 60;
+  int secs = (int)seconds % 60;
+  return std::format("{}:{:02d}", mins, secs);
+}
+
+std::string Scene::GetCurrentTime(int level) {
+  float seconds;
+  if(level == 1)      seconds = mLevelTime.level1Time;
+  else if(level == 2) seconds = mLevelTime.level2Time;
+  else if(level == 3) seconds = mLevelTime.level3Time;
+  else return "invalid";
+
+  int mins = (int)seconds / 60;
+  int secs = (int)seconds % 60;
+  return std::format("{}:{:02d}", mins, secs);
+}
+
+void Scene::StartLevelTimer(int level){
+  mLevelTime.level1Active = level == 1;
+  mLevelTime.level2Active = level == 2;
+  mLevelTime.level3Active = level == 3;
+  if(level == 1) mLevelTime.level1Time = 0.0f;
+  else if(level == 2) mLevelTime.level2Time = 0.0f;
+  else if(level == 3) mLevelTime.level3Time = 0.0f;
+  LOG_INFO << "Started level timer for level: " << level;
+}
+void Scene::EndLevelTimers(){
+  // who cares, they all end anyways
+  mLevelTime.level1Active = false;
+  mLevelTime.level2Active = false;
+  mLevelTime.level3Active = false;
+  LOG_INFO << "Stopped level timers";
+
+  SaveLevelTimes();
+}
+
+#define LEVEL_TIMES_PATH "my/levelTimes.json"
+void Scene::LoadLevelTimes(){
+  // load bytes
+  std::vector<char> bytes;
+  if (!FileSystem::loadFile(LEVEL_TIMES_PATH, bytes)) {
+    LOG_WARNING << "No level times found, starting fresh and saving to directory";
+    mLevelTime = LevelTime();
+    SaveLevelTimes();
+    return;
+  }
+
+  // parse json
+  json j;
+  try {
+    j = json::parse(bytes);
+  } catch (json::parse_error &e) {
+    LOG_ERROR << "nlohmann::json::parse_error: \n"
+              << e.byte << ": " << e.what();
+    return;
+  }
+
+  mDiskLevelTime = j["levelTimes"];
+  mLevelTime = LevelTime{}; // initialize at zero
+  LOG_INFO << "Loaded level times from: " << LEVEL_TIMES_PATH;
+}
+void Scene::SaveLevelTimes(){
+  // Get best time
+  if(mDiskLevelTime.level1Time > mLevelTime.level1Time)
+    mDiskLevelTime.level1Time = mLevelTime.level1Time;
+  if(mDiskLevelTime.level2Time > mLevelTime.level2Time)
+    mDiskLevelTime.level2Time = mLevelTime.level2Time;
+  if(mDiskLevelTime.level3Time > mLevelTime.level3Time)
+    mDiskLevelTime.level3Time = mLevelTime.level3Time;
+
+  // ensure these are default
+  mDiskLevelTime.level1Active = false;
+  mDiskLevelTime.level2Active = false;
+  mDiskLevelTime.level3Active = false;
+  // ensure mLevelTime and disk time are synced
+  mLevelTime = mDiskLevelTime;
+
+  json scene;
+  scene["levelTimes"] = mDiskLevelTime;
+  std::string json_str = scene.dump(2);
+  mCurrentSceneSnapshot = scene;
+
+  // copy to vector
+  std::vector<char> bytes(json_str.begin(), json_str.end());
+
+  FileSystem::writeFile(LEVEL_TIMES_PATH, bytes);
+  LOG_INFO << "Saved level times to: " << LEVEL_TIMES_PATH;
 }
 
 void Scene::DestroyEntity(ecs::Entity entity) {
@@ -172,6 +273,14 @@ void Scene::ReloadCurrentScene(){
 
 
 void Scene::Update() {
+  // increment level times
+  if(mLevelTime.level1Active)
+    mLevelTime.level1Time += Time::deltaTime;
+  else if(mLevelTime.level2Active)
+    mLevelTime.level2Time += Time::deltaTime;
+  else if(mLevelTime.level3Active)
+    mLevelTime.level3Time += Time::deltaTime;
+
   mScriptSystem->OnUpdate();
 
   // physics steps

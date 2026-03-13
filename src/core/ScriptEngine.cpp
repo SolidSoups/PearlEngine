@@ -255,6 +255,32 @@ void ScriptEngine::BindAPIs() {
   // scene table
   auto &coord = mScene->GetCoordinator();
   sol::table scene = m_Lua.create_named_table("Scene");
+  scene.set_function("GetBestTime", [this](int level) -> std::string {
+    return mScene->GetBestTime(level);
+  });
+  scene.set_function("GetCurrentTime", [this](int level) -> std::string {
+    return mScene->GetCurrentTime(level);
+  });
+  scene.set_function(
+    "LoadLevelTimes", [this]() {
+      mScene->LoadLevelTimes();
+    }
+  );
+  scene.set_function(
+    "SaveLevelTimes", [this]() {
+      mScene->SaveLevelTimes();
+    }
+  );
+  scene.set_function(
+    "StartLevelTimer", [this](int level) {
+      mScene->StartLevelTimer(level);
+    }
+  );
+  scene.set_function(
+    "StopLevelTimers", [this]() {
+      mScene->EndLevelTimers();
+    }
+  );
   scene.set_function(
       "FindEntityByName", [this](const std::string &name) -> ecs::Entity {
         auto &coord = mScene->GetCoordinator();

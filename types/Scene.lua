@@ -41,3 +41,23 @@ function Scene.ReloadCurrentScene() end
 --- Destroys an entity
 ---@param entity integer Entity ID
 function Scene.DestroyEntity(entity) end
+
+--- Get the best (persisted) time for a level
+---@param level number 1, 2 or 3
+function Scene.GetBestTime(level) end
+
+--- Get the current in-progress time for a level
+---@param level number 1, 2 or 3
+function Scene.GetCurrentTime(level) end
+
+--- Save the level times
+function Scene.SaveLevelTimes() end
+--- Load the level times
+function Scene.LoadLevelTimes() end
+
+--- Start the timer for a level
+---@param level number 1, 2 or 3
+function Scene.StartLevelTimer(level) end
+
+--- Load all the level times
+function Scene.StopLevelTimers() end

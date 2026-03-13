@@ -27,18 +27,26 @@ function OnCreate()
 	local level2Ent = Scene.FindEntityByName("LEVEL 2")
 	local level3Ent = Scene.FindEntityByName("LEVEL 3")
 
+	Scene.LoadLevelTimes()
+
 	-- get texts
 	refs.playText = Scene.GetText(playEntity)
 	refs.backText = Scene.GetText(backEntity)
 	refs.level1Text = Scene.GetText(level1Ent)
+	refs.level1Text.text = "Level 1 - " .. Scene.GetBestTime(1)
+	refs.level1Text:Remesh()
 	refs.level1Text.onClick = function()
 		Scene.LoadScene("assets/Level1.json")
 	end
 	refs.level2Text = Scene.GetText(level2Ent)
+	refs.level2Text.text = "Level 2 - " .. Scene.GetBestTime(2)
+	refs.level2Text:Remesh()
 	refs.level2Text.onClick = function()
 		Scene.LoadScene("assets/Level2.json")
 	end
 	refs.level3Text = Scene.GetText(level3Ent)
+	refs.level3Text.text = "Level 3 - " .. Scene.GetBestTime(3)
+	refs.level3Text:Remesh()
 	refs.level3Text.onClick = function()
 		Scene.LoadScene("assets/Level3.json")
 	end

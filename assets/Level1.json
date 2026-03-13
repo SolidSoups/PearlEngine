@@ -1007,6 +1007,36 @@
           1.0
         ]
       }
+    },
+    "TimerView17": {
+      "name": "TimerView",
+      "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "isButton": false,
+        "isVisible": true,
+        "text": "Time: 00:00"
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          5.0,
+          1.0
+        ]
+      }
     }
   }
 }
