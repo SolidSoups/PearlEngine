@@ -57,9 +57,9 @@
       },
       "transform_component": {
         "position": [
-          -1.2607358694076538,
-          16.803207397460938,
-          83.0880126953125
+          2.223186492919922,
+          16.80320930480957,
+          90.8165054321289
         ],
         "rotation": [
           0.0,
@@ -77,13 +77,13 @@
       "box_collider_component": {
         "center": [
           0.0,
-          9.5,
+          0.0,
           0.0
         ],
         "size": [
-          6.0,
-          1.0,
-          6.0
+          10.0,
+          20.0,
+          10.0
         ]
       },
       "name": "Floor",
@@ -114,8 +114,8 @@
             }
           },
           "tiling": [
-            1.0,
-            1.0
+            1.6699999570846558,
+            1.6699999570846558
           ],
           "vec2s": {},
           "vec3s": {},
@@ -128,7 +128,7 @@
         "position": [
           -0.9436187744140625,
           4.523393630981445,
-          83.1369857788086
+          90.93264770507813
         ],
         "rotation": [
           0.0,
@@ -136,9 +136,9 @@
           0.0
         ],
         "scale": [
-          6.0,
+          10.0,
           20.0,
-          6.0
+          10.0
         ]
       }
     },
@@ -146,12 +146,12 @@
       "box_collider_component": {
         "center": [
           0.0,
-          9.5,
+          0.0,
           0.0
         ],
         "size": [
           6.0,
-          1.0,
+          20.0,
           6.0
         ]
       },
@@ -195,9 +195,9 @@
       },
       "transform_component": {
         "position": [
-          -0.9436187744140625,
-          4.523393630981445,
-          77.13692474365234
+          -0.8797955513000488,
+          2.1008214950561523,
+          75.3461685180664
         ],
         "rotation": [
           0.0,
@@ -215,81 +215,12 @@
       "box_collider_component": {
         "center": [
           0.0,
-          9.5,
-          0.0
-        ],
-        "size": [
-          6.0,
-          1.0,
-          6.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": {
-              "config": {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              },
-              "filePath": "assets/textures/stone.jpg"
-            }
-          },
-          "tiling": [
-            1.0,
-            1.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          3.2794065475463867,
-          2.1008222103118896,
-          66.54987335205078
-        ],
-        "rotation": [
           0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          6.0,
-          20.0,
-          6.0
-        ]
-      }
-    },
-    "Floor4": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          9.5,
           0.0
         ],
         "size": [
           20.0,
-          1.0,
+          20.0,
           20.0
         ]
       },
@@ -349,16 +280,16 @@
         ]
       }
     },
-    "Floor5": {
+    "Floor4": {
       "box_collider_component": {
         "center": [
           0.0,
-          9.5,
+          0.0,
           0.0
         ],
         "size": [
           20.0,
-          1.0,
+          20.0,
           20.0
         ]
       },
@@ -418,16 +349,89 @@
         ]
       }
     },
+    "Floor5": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
+          6.0,
+          20.0,
+          6.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/Pillar1.lua"
+      },
+      "transform_component": {
+        "position": [
+          -0.6093759536743164,
+          6.5,
+          49.009578704833984
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          6.0,
+          20.0,
+          6.0
+        ]
+      }
+    },
     "Floor6": {
       "box_collider_component": {
         "center": [
           0.0,
-          9.5,
+          0.0,
           0.0
         ],
         "size": [
           6.0,
-          1.0,
+          20.0,
           6.0
         ]
       },
@@ -469,11 +473,15 @@
         "mesh_filepath": "",
         "mesh_type": "cube"
       },
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/Pillar2.lua"
+      },
       "transform_component": {
         "position": [
-          -1.3003045320510864,
-          0.24527323246002197,
-          49.076290130615234
+          -1.146425724029541,
+          1.5,
+          61.78413391113281
         ],
         "rotation": [
           0.0,
@@ -487,76 +495,7 @@
         ]
       }
     },
-    "Floor7": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          9.5,
-          0.0
-        ],
-        "size": [
-          6.0,
-          1.0,
-          6.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": {
-              "config": {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              },
-              "filePath": "assets/textures/stone.jpg"
-            }
-          },
-          "tiling": [
-            1.0,
-            1.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          7.82732629776001,
-          0.245278999209404,
-          57.699913024902344
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          6.0,
-          20.0,
-          6.0
-        ]
-      }
-    },
-    "Lava8": {
+    "Lava7": {
       "box_collider_component": {
         "center": [
           0.0,
@@ -625,7 +564,7 @@
         ]
       }
     },
-    "Main Camera9": {
+    "Main Camera8": {
       "camera_component": {
         "aspectRatio": 1.0,
         "far_plane": 1000.0,
@@ -655,7 +594,7 @@
         ]
       }
     },
-    "MenuButton10": {
+    "MenuButton9": {
       "name": "MenuButton",
       "script_component": {
         "enabled": true,
@@ -689,7 +628,7 @@
         ]
       }
     },
-    "PauseMenuController11": {
+    "PauseMenuController10": {
       "name": "PauseMenuController",
       "script_component": {
         "enabled": true,
@@ -713,7 +652,7 @@
         ]
       }
     },
-    "PausedHeader12": {
+    "PausedHeader11": {
       "name": "PausedHeader",
       "text_component": {
         "color": [
@@ -743,7 +682,7 @@
         ]
       }
     },
-    "Plane13": {
+    "Plane12": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -800,7 +739,7 @@
         ]
       }
     },
-    "Plane14": {
+    "Plane13": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -857,7 +796,7 @@
         ]
       }
     },
-    "Plane15": {
+    "Plane14": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -914,7 +853,7 @@
         ]
       }
     },
-    "Plane16": {
+    "Plane15": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -971,7 +910,7 @@
         ]
       }
     },
-    "Player17": {
+    "Player16": {
       "name": "Player",
       "render_component": {
         "material_asset": {
@@ -1044,7 +983,7 @@
         ]
       }
     },
-    "PointLight18": {
+    "PointLight17": {
       "name": "PointLight",
       "pointLight_component": {
         "color": [
@@ -1076,7 +1015,7 @@
         ]
       }
     },
-    "ResumeButton19": {
+    "ResumeButton18": {
       "name": "ResumeButton",
       "script_component": {
         "enabled": true,
@@ -1110,7 +1049,7 @@
         ]
       }
     },
-    "SpawnPoint20": {
+    "SpawnPoint19": {
       "name": "SpawnPoint",
       "transform_component": {
         "position": [
@@ -1130,7 +1069,7 @@
         ]
       }
     },
-    "TimerView21": {
+    "TimerView20": {
       "name": "TimerView",
       "text_component": {
         "color": [

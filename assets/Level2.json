@@ -1,128 +1,75 @@
 {
   "entities": {
-    "PauseMenuController11": {
-      "name": "PauseMenuController",
+    "Button0": {
+      "name": "Button",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/button/Texture/WoodFine0023_L.jpg"
+            }
+          },
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "assets/button/Models/button.obj",
+        "mesh_type": ""
+      },
       "script_component": {
         "enabled": true,
-        "script_path": "assets/scripts/PauseMenuController.lua"
+        "script_path": "assets/scripts/PlankButton.lua"
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.5,
+          0.0
+        ],
+        "radius": 2.0
       },
       "transform_component": {
         "position": [
-          0.0,
-          0.0,
-          0.0
+          -13.008230209350586,
+          7.292055130004883,
+          57.57016372680664
         ],
         "rotation": [
-          0.0,
-          0.0,
-          0.0
+          -0.0,
+          -40.644256591796875,
+          -0.0
         ],
         "scale": [
-          1.0,
-          1.0,
-          1.0
+          2.0,
+          2.0,
+          2.0
         ]
       }
     },
-    "MenuButton10": {
-      "name": "MenuButton",
-      "script_component": {
-        "enabled": true,
-        "script_path": "assets/scripts/ButtonHover.lua"
-      },
-      "text_component": {
-        "color": [
-          1.0,
-          1.0,
-          1.0
-        ],
-        "isButton": false,
-        "isVisible": false,
-        "text": "[Menu]"
-      },
-      "transform_component": {
-        "position": [
-          642.4000244140625,
-          604.0,
-          0.0
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          5.0,
-          5.0,
-          1.0
-        ]
-      }
-    },
-    "PausedHeader12": {
-      "name": "PausedHeader",
-      "text_component": {
-        "color": [
-          0.816469669342041,
-          0.517699122428894,
-          1.0
-        ],
-        "isButton": false,
-        "isVisible": false,
-        "text": "PAUSED"
-      },
-      "transform_component": {
-        "position": [
-          285.5,
-          187.8000030517578,
-          0.0
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          20.0,
-          20.0,
-          1.0
-        ]
-      }
-    },
-    "ResumeButton19": {
-      "name": "ResumeButton",
-      "script_component": {
-        "enabled": true,
-        "script_path": "assets/scripts/ButtonHover.lua"
-      },
-      "text_component": {
-        "color": [
-          1.0,
-          1.0,
-          1.0
-        ],
-        "isButton": false,
-        "isVisible": false,
-        "text": "[Resume]"
-      },
-      "transform_component": {
-        "position": [
-          604.2000122070313,
-          502.6000061035156,
-          0.0
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          5.0,
-          5.0,
-          1.0
-        ]
-      }
-    },
-    "Enemy0": {
+    "Enemy1": {
       "box_collider_component": {
         "center": [
           0.0,
@@ -199,7 +146,7 @@
         ]
       }
     },
-    "Enemy1": {
+    "Enemy2": {
       "box_collider_component": {
         "center": [
           0.0,
@@ -262,7 +209,7 @@
         "position": [
           0.0,
           8.5,
-          46.412044525146484
+          30.76875877380371
         ],
         "rotation": [
           0.0,
@@ -276,7 +223,7 @@
         ]
       }
     },
-    "Enemy2": {
+    "Enemy3": {
       "box_collider_component": {
         "center": [
           0.0,
@@ -353,7 +300,7 @@
         ]
       }
     },
-    "Enemy3": {
+    "Enemy4": {
       "box_collider_component": {
         "center": [
           0.0,
@@ -438,6 +385,351 @@
           0.0
         ],
         "size": [
+          10.0,
+          20.0,
+          2.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            1.0,
+            2.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          25.077537536621094,
+          17.706619262695313,
+          28.951601028442383
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          20.0,
+          2.0
+        ]
+      }
+    },
+    "Floor11": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
+          20.0,
+          20.0,
+          20.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            2.0,
+            2.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          29.157991409301758,
+          -2.4884657859802246,
+          122.30301666259766
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          20.0,
+          20.0,
+          20.0
+        ]
+      }
+    },
+    "Floor5": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
+          20.0,
+          20.0,
+          20.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            2.0,
+            2.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          -2.4884657859802246,
+          -13.582425117492676
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          20.0,
+          20.0,
+          20.0
+        ]
+      }
+    },
+    "Floor6": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
+          60.0,
+          20.0,
+          60.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            6.0,
+            6.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          -2.4884657859802246,
+          32.12896728515625
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          60.0,
+          20.0,
+          60.0
+        ]
+      }
+    },
+    "Floor7": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
+          10.0,
+          20.0,
+          2.0
+        ]
+      },
+      "name": "Floor",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/textures/stone.jpg"
+            }
+          },
+          "tiling": [
+            1.0,
+            2.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          -25.027633666992188,
+          17.706619262695313,
+          30.159870147705078
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          20.0,
+          2.0
+        ]
+      }
+    },
+    "Floor8": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
           20.0,
           20.0,
           2.0
@@ -499,16 +791,16 @@
         ]
       }
     },
-    "Floor11": {
+    "Floor9": {
       "box_collider_component": {
         "center": [
           0.0,
-          9.5,
+          0.0,
           0.0
         ],
         "size": [
           60.0,
-          1.0,
+          20.0,
           20.0
         ]
       },
@@ -565,420 +857,6 @@
           60.0,
           20.0,
           20.0
-        ]
-      }
-    },
-    "Floor4": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "size": [
-          10.0,
-          20.0,
-          2.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": {
-              "config": {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              },
-              "filePath": "assets/textures/stone.jpg"
-            }
-          },
-          "tiling": [
-            1.0,
-            2.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          25.077537536621094,
-          17.706619262695313,
-          46.12755584716797
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          10.0,
-          20.0,
-          2.0
-        ]
-      }
-    },
-    "Floor5": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          9.5,
-          0.0
-        ],
-        "size": [
-          20.0,
-          1.0,
-          20.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": {
-              "config": {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              },
-              "filePath": "assets/textures/stone.jpg"
-            }
-          },
-          "tiling": [
-            2.0,
-            2.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          29.157991409301758,
-          -2.4884657859802246,
-          117.4878921508789
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          20.0,
-          20.0,
-          20.0
-        ]
-      }
-    },
-    "Floor6": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          9.5,
-          0.0
-        ],
-        "size": [
-          20.0,
-          1.0,
-          20.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": {
-              "config": {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              },
-              "filePath": "assets/textures/stone.jpg"
-            }
-          },
-          "tiling": [
-            2.0,
-            2.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          0.0,
-          -2.4884657859802246,
-          0.0
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          20.0,
-          20.0,
-          20.0
-        ]
-      }
-    },
-    "Floor7": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "size": [
-          5.859000205993652,
-          0.30000001192092896,
-          7.695000171661377
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": {
-              "config": {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              },
-              "filePath": "assets/textures/wood.png"
-            }
-          },
-          "tiling": [
-            6.0,
-            2.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          -3.0693609714508057,
-          7.557911396026611,
-          79.40642547607422
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          5.858874320983887,
-          0.30000001192092896,
-          7.695321083068848
-        ]
-      }
-    },
-    "Floor8": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          9.5,
-          0.0
-        ],
-        "size": [
-          60.0,
-          1.0,
-          60.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": {
-              "config": {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              },
-              "filePath": "assets/textures/stone.jpg"
-            }
-          },
-          "tiling": [
-            6.0,
-            6.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          0.0,
-          -2.4884657859802246,
-          46.12755584716797
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          60.0,
-          20.0,
-          60.0
-        ]
-      }
-    },
-    "Floor9": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "size": [
-          10.0,
-          20.0,
-          2.0
-        ]
-      },
-      "name": "Floor",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": {
-              "config": {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              },
-              "filePath": "assets/textures/stone.jpg"
-            }
-          },
-          "tiling": [
-            1.0,
-            2.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
-      "transform_component": {
-        "position": [
-          -25.027633666992188,
-          17.706619262695313,
-          46.12755584716797
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          10.0,
-          20.0,
-          2.0
         ]
       }
     },
@@ -1081,7 +959,41 @@
         ]
       }
     },
-    "NextLevel14": {
+    "MenuButton14": {
+      "name": "MenuButton",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/ButtonHover.lua"
+      },
+      "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "isButton": false,
+        "isVisible": false,
+        "text": "[Menu]"
+      },
+      "transform_component": {
+        "position": [
+          642.4000244140625,
+          604.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          5.0,
+          1.0
+        ]
+      }
+    },
+    "NextLevel15": {
       "box_collider_component": {
         "center": [
           0.0,
@@ -1158,7 +1070,61 @@
         ]
       }
     },
-    "Plane15": {
+    "PauseMenuController16": {
+      "name": "PauseMenuController",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/PauseMenuController.lua"
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "PausedHeader17": {
+      "name": "PausedHeader",
+      "text_component": {
+        "color": [
+          0.816469669342041,
+          0.517699122428894,
+          1.0
+        ],
+        "isButton": false,
+        "isVisible": false,
+        "text": "PAUSED"
+      },
+      "transform_component": {
+        "position": [
+          285.5,
+          187.8000030517578,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          20.0,
+          20.0,
+          1.0
+        ]
+      }
+    },
+    "Plane18": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -1215,7 +1181,7 @@
         ]
       }
     },
-    "Plane16": {
+    "Plane19": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -1272,7 +1238,7 @@
         ]
       }
     },
-    "Plane17": {
+    "Plane20": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -1329,7 +1295,7 @@
         ]
       }
     },
-    "Plane18": {
+    "Plane21": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -1386,7 +1352,76 @@
         ]
       }
     },
-    "Player19": {
+    "Plank22": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
+          6.0,
+          0.30000001192092896,
+          25.0
+        ]
+      },
+      "name": "Plank",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/textures/wood.png"
+            }
+          },
+          "tiling": [
+            6.0,
+            25.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "transform_component": {
+        "position": [
+          -3.0693609714508057,
+          37.0891227722168,
+          71.83470916748047
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          6.0,
+          0.30000001192092896,
+          25.0
+        ]
+      }
+    },
+    "Player23": {
       "name": "Player",
       "render_component": {
         "material_asset": {
@@ -1475,7 +1510,7 @@
         "position": [
           -1.4103102684020996,
           11.10200023651123,
-          -1.2390756607055664
+          -14.925243377685547
         ],
         "rotation": [
           0.0,
@@ -1489,7 +1524,7 @@
         ]
       }
     },
-    "PointLight20": {
+    "PointLight24": {
       "name": "PointLight",
       "pointLight_component": {
         "color": [
@@ -1521,13 +1556,47 @@
         ]
       }
     },
-    "SpawnPoint21": {
+    "ResumeButton25": {
+      "name": "ResumeButton",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/ButtonHover.lua"
+      },
+      "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "isButton": false,
+        "isVisible": false,
+        "text": "[Resume]"
+      },
+      "transform_component": {
+        "position": [
+          604.2000122070313,
+          502.6000061035156,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          5.0,
+          1.0
+        ]
+      }
+    },
+    "SpawnPoint26": {
       "name": "SpawnPoint",
       "transform_component": {
         "position": [
           0.0,
           10.548006057739258,
-          0.0
+          -14.41020393371582
         ],
         "rotation": [
           0.0,
@@ -1541,7 +1610,7 @@
         ]
       }
     },
-    "TimerView22": {
+    "TimerView27": {
       "name": "TimerView",
       "text_component": {
         "color": [
