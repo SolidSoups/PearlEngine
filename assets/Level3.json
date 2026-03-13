@@ -1,65 +1,26 @@
 {
   "entities": {
-    "Cube0": {
-      "box_collider_component": {
-        "center": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "size": [
-          50.0,
-          50.0,
-          50.0
-        ]
-      },
-      "name": "Cube",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "textures": {
-            "texture_diffuse1": {
-              "config": {
-                "antisotropicLevel": 1,
-                "generateMipMaps": false,
-                "lodBias": 0.0,
-                "magFilter": 9729,
-                "maxLod": 1000.0,
-                "maxMipMapLevel": 1,
-                "minFilter": 9729,
-                "minLod": 0.0,
-                "wrapS": 10497,
-                "wrapT": 10497
-              },
-              "filePath": "assets/checker.png"
-            }
-          },
-          "tiling": [
-            1.0,
-            1.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "cube"
-      },
+    "BACK TO MENU0": {
+      "name": "BACK TO MENU",
       "script_component": {
         "enabled": true,
-        "script_path": "assets/scripts/Win.lua"
+        "script_path": "assets/scripts/ButtonHover.lua"
+      },
+      "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "isButton": true,
+        "isVisible": true,
+        "text": "[BACK TO MENU]"
       },
       "transform_component": {
         "position": [
-          -14.838235855102539,
-          23.028514862060547,
-          239.608642578125
+          469.5,
+          718.5999755859375,
+          0.0
         ],
         "rotation": [
           0.0,
@@ -67,9 +28,9 @@
           0.0
         ],
         "scale": [
-          50.0,
-          50.0,
-          50.0
+          5.0,
+          5.0,
+          1.0
         ]
       }
     },
@@ -228,7 +189,579 @@
         ]
       }
     },
-    "Terrain5": {
+    "Sphere10": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -9.746344566345215,
+          28.645328521728516,
+          116.38594055175781
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Sphere11": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -9.674121856689453,
+          28.645328521728516,
+          122.44874572753906
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Sphere12": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -11.361987113952637,
+          28.645328521728516,
+          124.64305114746094
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Sphere13": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -12.541550636291504,
+          28.645328521728516,
+          128.65145874023438
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Sphere14": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -14.415702819824219,
+          28.645328521728516,
+          124.62854766845703
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Sphere15": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -19.092144012451172,
+          28.645328521728516,
+          129.89938354492188
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Sphere5": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -15.905466079711914,
+          28.645328521728516,
+          133.36886596679688
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Sphere6": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -15.905466079711914,
+          28.645328521728516,
+          129.2879638671875
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Sphere7": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -15.905466079711914,
+          28.645328521728516,
+          119.69534301757813
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Sphere8": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -15.905466079711914,
+          28.645328521728516,
+          116.38594055175781
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Sphere9": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -9.746344566345215,
+          28.645328521728516,
+          116.38594055175781
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Terrain16": {
       "name": "Terrain",
       "terrain_component": {
         "heightMap": {
@@ -294,13 +827,13 @@
           "vec3s": {},
           "vec4s": {}
         },
-        "resolution": 1024
+        "resolution": 256
       },
       "transform_component": {
         "position": [
-          -468.2390441894531,
-          -7.199999809265137,
-          -391.4169616699219
+          -334.0888671875,
+          0.0,
+          -98.52272033691406
         ],
         "rotation": [
           0.0,
@@ -308,9 +841,116 @@
           0.0
         ],
         "scale": [
-          1000.0,
+          500.0,
           219.39999389648438,
-          1000.0
+          500.0
+        ]
+      }
+    },
+    "WinCube17": {
+      "box_collider_component": {
+        "center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": [
+          50.0,
+          50.0,
+          50.0
+        ]
+      },
+      "name": "WinCube",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "textures": {
+            "texture_diffuse1": {
+              "config": {
+                "antisotropicLevel": 1,
+                "generateMipMaps": false,
+                "lodBias": 0.0,
+                "magFilter": 9729,
+                "maxLod": 1000.0,
+                "maxMipMapLevel": 1,
+                "minFilter": 9729,
+                "minLod": 0.0,
+                "wrapS": 10497,
+                "wrapT": 10497
+              },
+              "filePath": "assets/checker.png"
+            }
+          },
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "cube"
+      },
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/Win.lua"
+      },
+      "transform_component": {
+        "position": [
+          -14.838235855102539,
+          23.028514862060547,
+          239.608642578125
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          50.0,
+          50.0,
+          50.0
+        ]
+      }
+    },
+    "YOU WIN18": {
+      "name": "YOU WIN",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/RainbowColorHover.lua"
+      },
+      "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "isButton": true,
+        "isVisible": true,
+        "text": "YOU WIN"
+      },
+      "transform_component": {
+        "position": [
+          190.6999969482422,
+          93.0999984741211,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          20.0,
+          20.0,
+          1.0
         ]
       }
     }

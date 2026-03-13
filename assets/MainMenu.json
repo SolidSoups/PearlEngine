@@ -46,7 +46,7 @@
           0.030973434448242188,
           0.030973434448242188
         ],
-        "isButton": false,
+        "isButton": true,
         "isVisible": true,
         "text": "WELCOME, TO PEARLENGINE!"
       },
@@ -356,7 +356,7 @@
           "vec3s": {},
           "vec4s": {}
         },
-        "resolution": 2048
+        "resolution": 256
       },
       "transform_component": {
         "position": [
