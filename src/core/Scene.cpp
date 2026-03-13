@@ -145,9 +145,9 @@ std::string Scene::GetBestTime(int level) {
 
   if(seconds >= FLT_MAX) return "--:--";
 
-  int mins = (int)seconds / 60;
   int secs = (int)seconds % 60;
-  return std::format("{}:{:02d}", mins, secs);
+  int mili = (int)(seconds * 100) % 100;
+  return std::format("{:02d}.{:02d}", secs, mili);
 }
 
 std::string Scene::GetCurrentTime(int level) {
@@ -157,9 +157,9 @@ std::string Scene::GetCurrentTime(int level) {
   else if(level == 3) seconds = mLevelTime.level3Time;
   else return "invalid";
 
-  int mins = (int)seconds / 60;
   int secs = (int)seconds % 60;
-  return std::format("{}:{:02d}", mins, secs);
+  int mili = (int)(seconds * 100) % 100;
+  return std::format("{:02d}.{:02d}", secs, mili);
 }
 
 void Scene::StartLevelTimer(int level){
