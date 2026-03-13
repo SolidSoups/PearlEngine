@@ -61,3 +61,11 @@ function Scene.StartLevelTimer(level) end
 
 --- Load all the level times
 function Scene.StopLevelTimers() end
+
+--- Check if the game is paused
+---@return boolean isPaused
+function Scene.IsGamePaused() end
+
+--- Set the paused state of the game
+---@param isPaused boolean
+function Scene.SetGamePaused(isPaused) end

@@ -655,7 +655,95 @@
         ]
       }
     },
-    "Plane10": {
+    "MenuButton10": {
+      "name": "MenuButton",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/ButtonHover.lua"
+      },
+      "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "isButton": false,
+        "isVisible": false,
+        "text": "[Menu]"
+      },
+      "transform_component": {
+        "position": [
+          642.4000244140625,
+          604.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          5.0,
+          1.0
+        ]
+      }
+    },
+    "PauseMenuController11": {
+      "name": "PauseMenuController",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/PauseMenuController.lua"
+      },
+      "transform_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "PausedHeader12": {
+      "name": "PausedHeader",
+      "text_component": {
+        "color": [
+          0.816469669342041,
+          0.517699122428894,
+          1.0
+        ],
+        "isButton": false,
+        "isVisible": false,
+        "text": "PAUSED"
+      },
+      "transform_component": {
+        "position": [
+          285.5,
+          187.8000030517578,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          20.0,
+          20.0,
+          1.0
+        ]
+      }
+    },
+    "Plane13": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -712,7 +800,7 @@
         ]
       }
     },
-    "Plane11": {
+    "Plane14": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -769,7 +857,7 @@
         ]
       }
     },
-    "Plane12": {
+    "Plane15": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -826,7 +914,7 @@
         ]
       }
     },
-    "Plane13": {
+    "Plane16": {
       "name": "Plane",
       "render_component": {
         "material_asset": {
@@ -883,7 +971,7 @@
         ]
       }
     },
-    "Player14": {
+    "Player17": {
       "name": "Player",
       "render_component": {
         "material_asset": {
@@ -956,7 +1044,7 @@
         ]
       }
     },
-    "PointLight15": {
+    "PointLight18": {
       "name": "PointLight",
       "pointLight_component": {
         "color": [
@@ -988,7 +1076,41 @@
         ]
       }
     },
-    "SpawnPoint16": {
+    "ResumeButton19": {
+      "name": "ResumeButton",
+      "script_component": {
+        "enabled": true,
+        "script_path": "assets/scripts/ButtonHover.lua"
+      },
+      "text_component": {
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "isButton": false,
+        "isVisible": false,
+        "text": "[Resume]"
+      },
+      "transform_component": {
+        "position": [
+          604.2000122070313,
+          502.6000061035156,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          5.0,
+          1.0
+        ]
+      }
+    },
+    "SpawnPoint20": {
       "name": "SpawnPoint",
       "transform_component": {
         "position": [
@@ -1008,7 +1130,7 @@
         ]
       }
     },
-    "TimerView17": {
+    "TimerView21": {
       "name": "TimerView",
       "text_component": {
         "color": [

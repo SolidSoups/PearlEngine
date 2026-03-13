@@ -124,18 +124,22 @@ void ScriptEngine::RunOnCollisionEnter(ecs::Entity entity, ScriptComponent &sc,
   }
 }
 
-void ScriptEngine::RunOnClick(ecs::Entity entity, ScriptComponent& sc) {
-  RunScriptFunc(entity,sc, "OnClick");
+void ScriptEngine::RunOnClick(ecs::Entity entity, ScriptComponent &sc) {
+  RunScriptFunc(entity, sc, "OnClick");
 }
 
-void ScriptEngine::RunScriptFunc(ecs::Entity entity, ScriptComponent& sc, const std::string& funcName){
-  if (!sc.loaded || !sc.enabled || sc.hasError) return;
+void ScriptEngine::RunScriptFunc(ecs::Entity entity, ScriptComponent &sc,
+                                 const std::string &funcName) {
+  if (!sc.loaded || !sc.enabled || sc.hasError)
+    return;
   sol::protected_function fn = sc.scriptEnv[funcName];
-  if (!fn.valid()) return;
+  if (!fn.valid())
+    return;
   auto r = fn();
   if (!r.valid()) {
     sol::error e = r;
-    LOG_ERROR << "[Lua] " << sc.scriptPath << "::" << funcName << ": " << e.what();
+    LOG_ERROR << "[Lua] " << sc.scriptPath << "::" << funcName << ": "
+              << e.what();
     LogError(sc, e);
   }
 }
@@ -211,10 +215,8 @@ void ScriptEngine::BindAPIs() {
   // bind collision event
 
   // transform comp
-  m_Lua.new_usertype<NameComponent>(
-    "NameComponent", 
-    "name", &NameComponent::name
-  );
+  m_Lua.new_usertype<NameComponent>("NameComponent", "name",
+                                    &NameComponent::name);
   m_Lua.new_usertype<TransformComponent>(
       "Transform", "position", &TransformComponent::position, "rotation",
       &TransformComponent::rotation, "scale", &TransformComponent::scale,
@@ -243,44 +245,31 @@ void ScriptEngine::BindAPIs() {
 
   // Text Component
   m_Lua.new_usertype<TextComponent>(
-    "Text",
-    "text", &TextComponent::text,
-    "color", &TextComponent::color,
-    "isVisible", &TextComponent::isVisible,
-    "isButton", &TextComponent::isButton,
-    "onClick", &TextComponent::onClick,
-    "Remesh", [](TextComponent& self) { self.isDirty = true; }
-  );
+      "Text", "text", &TextComponent::text, "color", &TextComponent::color,
+      "isVisible", &TextComponent::isVisible, "isButton",
+      &TextComponent::isButton, "onClick", &TextComponent::onClick, "Remesh",
+      [](TextComponent &self) { self.isDirty = true; });
 
   // scene table
   auto &coord = mScene->GetCoordinator();
   sol::table scene = m_Lua.create_named_table("Scene");
+  scene.set_function("SetGamePaused", [this](bool isPaused) {
+    mScene->SetGamePaused(isPaused);
+  });
+  scene.set_function("IsGamePaused", [this]() -> bool {
+    return mScene->IsGamePaused();
+  });
   scene.set_function("GetBestTime", [this](int level) -> std::string {
     return mScene->GetBestTime(level);
   });
   scene.set_function("GetCurrentTime", [this](int level) -> std::string {
     return mScene->GetCurrentTime(level);
   });
-  scene.set_function(
-    "LoadLevelTimes", [this]() {
-      mScene->LoadLevelTimes();
-    }
-  );
-  scene.set_function(
-    "SaveLevelTimes", [this]() {
-      mScene->SaveLevelTimes();
-    }
-  );
-  scene.set_function(
-    "StartLevelTimer", [this](int level) {
-      mScene->StartLevelTimer(level);
-    }
-  );
-  scene.set_function(
-    "StopLevelTimers", [this]() {
-      mScene->EndLevelTimers();
-    }
-  );
+  scene.set_function("LoadLevelTimes", [this]() { mScene->LoadLevelTimes(); });
+  scene.set_function("SaveLevelTimes", [this]() { mScene->SaveLevelTimes(); });
+  scene.set_function("StartLevelTimer",
+                     [this](int level) { mScene->StartLevelTimer(level); });
+  scene.set_function("StopLevelTimers", [this]() { mScene->EndLevelTimers(); });
   scene.set_function(
       "FindEntityByName", [this](const std::string &name) -> ecs::Entity {
         auto &coord = mScene->GetCoordinator();
@@ -306,27 +295,29 @@ void ScriptEngine::BindAPIs() {
                          return &coord.GetComponent<RigidBodyComponent>(e);
                        return nullptr;
                      });
-  scene.set_function("GetCamera", [this, &coord](ecs::Entity e) -> CameraComponent * {
-    if (coord.HasComponent<CameraComponent>(e))
-      return &coord.GetComponent<CameraComponent>(e);
-    return nullptr;
-  });
-  scene.set_function("GetNameComp", [this, &coord](ecs::Entity e) -> NameComponent* {
-    if(coord.HasComponent<NameComponent>(e)){
-      return &coord.GetComponent<NameComponent>(e);
-    }
-    return nullptr;
-  });
-  scene.set_function("GetText", [this, &coord](ecs::Entity e) -> TextComponent* {
-    if(coord.HasComponent<TextComponent>(e)){
-      return &coord.GetComponent<TextComponent>(e);
-    }
-    return nullptr;
-  });
-  scene.set_function("ReloadCurrentScene", [this](){
-    mScene->ReloadCurrentScene();
-  });
-  scene.set_function("DestroyEntity", [this](ecs::Entity entity){
+  scene.set_function("GetCamera",
+                     [this, &coord](ecs::Entity e) -> CameraComponent * {
+                       if (coord.HasComponent<CameraComponent>(e))
+                         return &coord.GetComponent<CameraComponent>(e);
+                       return nullptr;
+                     });
+  scene.set_function("GetNameComp",
+                     [this, &coord](ecs::Entity e) -> NameComponent * {
+                       if (coord.HasComponent<NameComponent>(e)) {
+                         return &coord.GetComponent<NameComponent>(e);
+                       }
+                       return nullptr;
+                     });
+  scene.set_function("GetText",
+                     [this, &coord](ecs::Entity e) -> TextComponent * {
+                       if (coord.HasComponent<TextComponent>(e)) {
+                         return &coord.GetComponent<TextComponent>(e);
+                       }
+                       return nullptr;
+                     });
+  scene.set_function("ReloadCurrentScene",
+                     [this]() { mScene->ReloadCurrentScene(); });
+  scene.set_function("DestroyEntity", [this](ecs::Entity entity) {
     mScene->DestroyEntityDelayed(entity);
   });
 
@@ -374,7 +365,8 @@ void ScriptEngine::BindAPIs() {
     Logger::Get().LogMessage(text, LogSeverity::INFO, "Lua", 0, "Debug.Log");
   });
   debug.set_function("Warn", [this](const std::string &text) -> void {
-    Logger::Get().LogMessage(text, LogSeverity::WARNING, "Lua", 0, "Debug.Warn");
+    Logger::Get().LogMessage(text, LogSeverity::WARNING, "Lua", 0,
+                             "Debug.Warn");
   });
   debug.set_function("Error", [this](const std::string &text) -> void {
     Logger::Get().LogMessage(text, LogSeverity::ERROR, "Lua", 0, "Debug.Error");

@@ -178,7 +178,7 @@ void Scene::EndLevelTimers(){
   mLevelTime.level3Active = false;
   LOG_INFO << "Stopped level timers";
 
-  SaveLevelTimes();
+  // SaveLevelTimes();
 }
 
 #define LEVEL_TIMES_PATH "my/levelTimes.json"
@@ -272,35 +272,33 @@ void Scene::ReloadCurrentScene(){
 }
 
 
+// Only run when engine is in runtime state
 void Scene::Update() {
-  // increment level times
-  if(mLevelTime.level1Active)
-    mLevelTime.level1Time += Time::deltaTime;
-  else if(mLevelTime.level2Active)
-    mLevelTime.level2Time += Time::deltaTime;
-  else if(mLevelTime.level3Active)
-    mLevelTime.level3Time += Time::deltaTime;
+  if(!bIsGamePaused){
+    // increment level times
+    if(mLevelTime.level1Active)
+      mLevelTime.level1Time += Time::deltaTime;
+    else if(mLevelTime.level2Active)
+      mLevelTime.level2Time += Time::deltaTime;
+    else if(mLevelTime.level3Active)
+      mLevelTime.level3Time += Time::deltaTime;
+  }
 
   mScriptSystem->OnUpdate();
 
-  // physics steps
-  constexpr float TIME_STEP = 1 / 60.f;
-  static float accumulator = 0;
-  accumulator += Time::deltaTime;
-  while (accumulator >= TIME_STEP) {
-    mPhysicsSystem->UpdatePhysics(TIME_STEP );
-    accumulator -= TIME_STEP;
+  if(!bIsGamePaused){
+    // physics steps
+    constexpr float TIME_STEP = 1 / 60.f;
+    static float accumulator = 0;
+    accumulator += Time::deltaTime;
+    while (accumulator >= TIME_STEP) {
+      mPhysicsSystem->UpdatePhysics(TIME_STEP );
+      accumulator -= TIME_STEP;
+    }
+
   }
-
   mTextSystem->checkButtonClicks();
-
   mScriptSystem->OnLateUpdate();
-
-  // destroy entities at end of frame
-  // DOESNT WORK!
-  // for(auto& entity : mDestroyQueue){
-  //   DestroyEntity(entity);
-  // }
 }
 
 void Scene::Render(CameraSystem::CameraMode mode) {

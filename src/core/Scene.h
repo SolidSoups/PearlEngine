@@ -111,8 +111,12 @@ private:
 
   ecs::Entity mPreviewCameraEntity = ecs::NULL_ENTITY;
   std::string m_PendingSceneLoad;
+  bool bIsGamePaused = false;
 
 public:
+  inline bool IsGamePaused() const { return bIsGamePaused; }
+  inline void SetGamePaused(bool aState ) { bIsGamePaused = aState; }
+
   // get level time, formatted, for level 1-3
   std::string GetBestTime(int level);
   std::string GetCurrentTime(int level);
@@ -137,5 +141,6 @@ public:
   json mSceneSnapshot;
   json mCurrentSceneSnapshot;
   std::deque<ecs::Entity> mDestroyQueue;
+
 };
 

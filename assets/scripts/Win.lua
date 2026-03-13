@@ -30,6 +30,7 @@ function OnCollisionEnter(other, normal, pen)
 	local otherName = Scene.GetNameComp(other).name
 	if otherName == "Player" then
 		Scene.StopLevelTimers()
+		Scene.SaveLevelTimes()
 		refs.winText.isButton = true
 		refs.winText.isVisible = true
 		refs.goBackText.isButton = true
