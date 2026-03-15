@@ -349,7 +349,7 @@
         "position": [
           -15.905466079711914,
           28.645328521728516,
-          129.2879638671875
+          119.69534301757813
         ],
         "rotation": [
           0.0,
@@ -401,7 +401,7 @@
         "position": [
           -15.905466079711914,
           28.645328521728516,
-          119.69534301757813
+          116.38594055175781
         ],
         "rotation": [
           0.0,
@@ -451,7 +451,7 @@
       },
       "transform_component": {
         "position": [
-          -15.905466079711914,
+          -9.746344566345215,
           28.645328521728516,
           116.38594055175781
         ],
@@ -555,58 +555,6 @@
       },
       "transform_component": {
         "position": [
-          -9.746344566345215,
-          28.645328521728516,
-          116.38594055175781
-        ],
-        "rotation": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          1.0,
-          1.0,
-          1.0
-        ]
-      }
-    },
-    "Sphere15": {
-      "name": "Sphere",
-      "render_component": {
-        "material_asset": {
-          "floats": {},
-          "ints": {},
-          "mat4s": {},
-          "offset": [
-            0.0,
-            0.0
-          ],
-          "tiling": [
-            1.0,
-            1.0
-          ],
-          "vec2s": {},
-          "vec3s": {},
-          "vec4s": {}
-        },
-        "mesh_filepath": "",
-        "mesh_type": "sphere"
-      },
-      "rigid_body_component": {
-        "gravity": 9.869999885559082,
-        "mass": 1.0
-      },
-      "sphere_collider_component": {
-        "position": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "radius": 1.0
-      },
-      "transform_component": {
-        "position": [
           -9.674121856689453,
           28.645328521728516,
           122.44874572753906
@@ -623,7 +571,7 @@
         ]
       }
     },
-    "Sphere16": {
+    "Sphere15": {
       "name": "Sphere",
       "render_component": {
         "material_asset": {
@@ -675,7 +623,7 @@
         ]
       }
     },
-    "Sphere17": {
+    "Sphere16": {
       "name": "Sphere",
       "render_component": {
         "material_asset": {
@@ -727,7 +675,7 @@
         ]
       }
     },
-    "Sphere18": {
+    "Sphere17": {
       "name": "Sphere",
       "render_component": {
         "material_asset": {
@@ -779,7 +727,7 @@
         ]
       }
     },
-    "Sphere19": {
+    "Sphere18": {
       "name": "Sphere",
       "render_component": {
         "material_asset": {
@@ -831,7 +779,7 @@
         ]
       }
     },
-    "Sphere9": {
+    "Sphere19": {
       "name": "Sphere",
       "render_component": {
         "material_asset": {
@@ -870,6 +818,58 @@
           -15.905466079711914,
           28.645328521728516,
           133.36886596679688
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "Sphere9": {
+      "name": "Sphere",
+      "render_component": {
+        "material_asset": {
+          "floats": {},
+          "ints": {},
+          "mat4s": {},
+          "offset": [
+            0.0,
+            0.0
+          ],
+          "tiling": [
+            1.0,
+            1.0
+          ],
+          "vec2s": {},
+          "vec3s": {},
+          "vec4s": {}
+        },
+        "mesh_filepath": "",
+        "mesh_type": "sphere"
+      },
+      "rigid_body_component": {
+        "gravity": 9.869999885559082,
+        "mass": 1.0
+      },
+      "sphere_collider_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius": 1.0
+      },
+      "transform_component": {
+        "position": [
+          -15.905466079711914,
+          28.645328521728516,
+          129.2879638671875
         ],
         "rotation": [
           0.0,

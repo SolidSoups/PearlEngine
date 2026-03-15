@@ -50,6 +50,11 @@ public:
     return it != textures.end() ? it->second : nullptr;
   }
 
+  void uploadTex(const std::string &uniformName, int textureSlot, const std::shared_ptr<ShaderData>& activeShader);
+  void uploadTexWithDefault(const std::string &uniformName, int textureSlot,
+                            const std::shared_ptr<ShaderData>& activeShader,
+                            std::shared_ptr<TextureData> defaultTex);
+
   friend void to_json(json &j, const Material &m);
   friend void from_json(const json &j, Material &m);
 

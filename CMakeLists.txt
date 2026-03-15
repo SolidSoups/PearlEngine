@@ -3,6 +3,8 @@ project(PearlEngine)
 
 set(CMAKE_CXX_STANDARD 20)
 
+option(PEARL_EDITOR "Build with the editor included" ON)
+
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-mavx2" COMPILER_SUPPORTS_AVX2)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -141,6 +143,7 @@ target_compile_definitions(game_engine PRIVATE
   LOG_TO_CONSOLE=1
   SOL_NO_LUA_HPP=1   # Prevent sol2 from using /usr/local/include/lua.hpp (Lua 5.1)
   $<$<BOOL:${COMPILER_SUPPORTS_AVX2}>:PEARL_HAS_AVX2>
+  $<$<BOOL:${PEARL_EDITOR}>:PEARL_EDITOR>
 )
 target_precompile_headers(game_engine PRIVATE
   # Glad MUST preced GLFW - pch preservse this order!!:W

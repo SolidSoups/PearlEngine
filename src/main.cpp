@@ -4,6 +4,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "Logger.h"
 
 int main() {
 #ifdef PEARL_HAS_AVX2
@@ -13,6 +14,7 @@ int main() {
 
   PearlEngine* engine = new PearlEngine;
   if (!engine->IsInitialized()) {
+    LOG_ERROR << "PearlEngine is unitialized";
     return -1;
   }
 

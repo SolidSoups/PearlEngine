@@ -136,6 +136,10 @@ bool TextureData::loadData(unsigned char *data, uint32_t width, uint32_t height,
     glTexParameterf(GL_TEXTURE_2D, GL_MAX_TEXTURE_MAX_ANISOTROPY, aniso);
   }
 
+  // stbi provides tightly packed pixel data (no row padding),
+  // so set alignment to 1 to match (default 4 breaks non-multiple-of-4 RGB rows)
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
   // upload pixel data
   glTexImage2D(GL_TEXTURE_2D,    // Target
                0,                // Mipmap level (0=base)

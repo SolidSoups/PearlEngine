@@ -32,11 +32,8 @@ void TerrainSystem::render() {
     if (!terrain.mesh or !terrain.heightMap or !terrain.material)
       continue;
 
-    if (!terrain.material->getShader()) {
-      terrain.material->setShader(myTerrainShader);
-    }
+    terrain.material->setShader(myTerrainShader);
 
-    // do we need this?
     Renderer::Submit(transform, terrain.mesh, terrain.material);
   }
 }
@@ -71,6 +68,10 @@ void TerrainSystem::configureTerrainMaterial(TerrainComponent &aTerrain) {
 
   // link terrain heightMap texture to material uniform
   aTerrain.material->setTexture("uHeightMap", aTerrain.heightMap);
+
+  auto diffuse = aTerrain.material->getTexture("uDiffuseMap");
+  if (diffuse)
+    aTerrain.material->setTexture("texture_diffuse1", diffuse);
 }
 
 void TerrainSystem::generateTerrain(const TransformComponent &aTransform,

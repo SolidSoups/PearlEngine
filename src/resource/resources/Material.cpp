@@ -5,7 +5,6 @@
 #include "ServiceLocator.h"
 #include "TextureManager.h"
 
-
 Material::Material(std::shared_ptr<ShaderData> _shader) : shader(_shader) {}
 
 std::shared_ptr<Material> Material::createDefault() {
@@ -35,10 +34,9 @@ void Material::bind(std::shared_ptr<ShaderData> overrideShader) {
   // set tiling uniform if it doesnt exist
   activeShader->setVec2("tiling", tiling);
   activeShader->setVec2("offset", offset);
-  for(const auto &[name, value] : vec2s) {
+  for (const auto &[name, value] : vec2s) {
     activeShader->setVec2(name.c_str(), value);
   }
-
 
   // Upload all vec3s
   for (const auto &[name, value] : vec3s) {
@@ -52,36 +50,19 @@ void Material::bind(std::shared_ptr<ShaderData> overrideShader) {
 
   int textureSlot = 0;
 
-  // upload diffuse
-  auto albedo = textures.find("texture_diffuse1");
-  std::shared_ptr<TextureData> albedoTex =
-      (albedo != textures.end() && albedo->second)
-          ? albedo->second
-          : Defaults::getWhiteTexture();
-  albedoTex->bind(textureSlot);
-  activeShader->setInt("texture_diffuse1", textureSlot++);
-
-  // upload specular
-  auto spec = textures.find("texture_specular1");
-  std::shared_ptr<TextureData> specTex =
-      (spec != textures.end() && spec->second) ? spec->second
-                                               : Defaults::getBlackTexture();
-  specTex->bind(textureSlot);
-  activeShader->setInt("texture_specular1", textureSlot++);
-
-  // upload normals
-  auto normal = textures.find("texture_normal1");
-  std::shared_ptr<TextureData> normalTex =
-    (normal != textures.end() && normal->second) ? normal->second
-                                                 : Defaults::getNormalTexture();
-  normalTex->bind(textureSlot);
-  activeShader->setInt("texture_normal1", textureSlot++);
+  // upload standard textures with correct defaults
+  uploadTexWithDefault("texture_diffuse1", textureSlot++, activeShader, Defaults::getWhiteTexture());
+  uploadTexWithDefault("texture_specular1", textureSlot++, activeShader, Defaults::getBlackTexture());
+  uploadTexWithDefault("texture_normal1", textureSlot++, activeShader, Defaults::getNormalTexture());
+  uploadTex("uHeightMap", textureSlot++, activeShader);
+  uploadTex("uDiffuseMap", textureSlot++, activeShader);
 
   // upload all other textures
-  for(auto& [key, tex] : textures){
-    if(key == "texture_diffuse1" or key == "texture_specular1" or key == "texture_normal1")
+  for (auto &[key, tex] : textures) {
+    if (key == "texture_diffuse1" or key == "texture_specular1" or
+        key == "texture_normal1" or key == "uDiffuseMap" or key == "uHeightMap")
       continue;
-    tex->bind(textureSlot);    
+    tex->bind(textureSlot);
     activeShader->setInt(key.c_str(), textureSlot++);
   }
 
@@ -89,6 +70,21 @@ void Material::bind(std::shared_ptr<ShaderData> overrideShader) {
   for (const auto &[name, matrix4] : mat4s) {
     activeShader->setMatrix4(name.c_str(), matrix4);
   }
+}
+
+void Material::uploadTex(const std::string &aUniformName, int aTextureSlot, const std::shared_ptr<ShaderData>& aShader) {
+  uploadTexWithDefault(aUniformName, aTextureSlot, aShader, Defaults::getBlackTexture());
+}
+
+void Material::uploadTexWithDefault(const std::string &aUniformName, int aTextureSlot,
+                                     const std::shared_ptr<ShaderData>& aShader,
+                                     std::shared_ptr<TextureData> aDefault) {
+  auto it = textures.find(aUniformName);
+  std::shared_ptr<TextureData> tex = (it != textures.end() && it->second)
+                                         ? it->second
+                                         : aDefault;
+  tex->bind(aTextureSlot);
+  aShader->setInt(aUniformName.c_str(), aTextureSlot);
 }
 
 void Material::setFloat(const std::string &name, float value) {
@@ -99,7 +95,7 @@ void Material::setInt(const std::string &name, int value) {
   ints[name] = value;
 }
 
-void Material::setVec2(const std::string &name, const glm::vec2 &value){
+void Material::setVec2(const std::string &name, const glm::vec2 &value) {
   vec2s[name] = value;
 }
 
@@ -127,7 +123,7 @@ bool Material::textureExists(const std::string &name) {
 
 // serialization
 
-void to_json(json& j, const Material& m){
+void to_json(json &j, const Material &m) {
   // serialize uniforms
   j["floats"] = m.floats;
   j["ints"] = m.ints;
@@ -141,11 +137,11 @@ void to_json(json& j, const Material& m){
   j["offset"] = m.offset;
 
   // serialize textures
-  for(const auto& [name, tex] : m.textures){
+  for (const auto &[name, tex] : m.textures) {
     j["textures"][name] = *tex;
   }
 }
-void from_json(const json& j, Material& m){
+void from_json(const json &j, Material &m) {
   // deserialize uniforms
   m.floats = j["floats"];
   m.ints = j["ints"];
@@ -160,20 +156,10 @@ void from_json(const json& j, Material& m){
 
   // deserialize textures
   if (j.contains("textures")) {
-    auto& texManager = ServiceLocator::Get<TextureManager>();
-    for(const auto& [key, value] : j["textures"].items()) {
+    auto &texManager = ServiceLocator::Get<TextureManager>();
+    for (const auto &[key, value] : j["textures"].items()) {
       std::string path = value["filePath"];
       TextureConfig config = value["config"];
-      // if (value.is_array()) {
-      //   path = value[0];
-      //   config = value[1];
-      // } else if (value.contains("path")) {
-      //   path = value["path"];
-      //   config = value["config"];
-      // } else {
-      //   path = value["filePath"];
-      //   config = value["config"];
-      // }
       m.textures[key] = texManager.load(path.c_str(), config);
     }
   }

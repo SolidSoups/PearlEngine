@@ -10,24 +10,27 @@
 #include <glm/common.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/mat4x4.hpp>
+#ifdef PEARL_EDITOR
 #include <imgui.h>
+#endif
 
 // src
 #include "CreateMeshMessageHandler.h"
+#ifdef PEARL_EDITOR
 #include "LineRenderer.h"
+#include "UserGUI.h"
+#include "SelectionWizard.h"
+#endif
 #include "SphereColliderComponent.h"
 #include "RigidBodyComponent.h"
 #include "PearlEngine.h"
 #include "InputManager.h"
-#include "AmbientLightEditorPanel.h"
 #include "PointLightSystem.h"
 #include "Project.h"
-#include "UserGUI.h"
 #include "Renderer.h"
 #include "TerrainComponent.h"
 #include "Time.h"
 #include "ServiceLocator.h"
-#include "SelectionWizard.h"
 #include "Defaults.h"
 #include "MessageBus.h"
 #include "MessageQueue.h"
@@ -38,6 +41,7 @@
 #include "ecs_common.h"
 #include "ScriptComponent.h"
 #include "Renderer.h"
+#include "FrameBuffer.h"
 
 #include "MeshManager.h"
 #include "TextureManager.h"
@@ -45,6 +49,8 @@
 #include "MaterialLoader.h"
 
 // editor
+#ifdef PEARL_EDITOR
+#include "AmbientLightEditorPanel.h"
 #include "MenuRegistry.h"
 #include "MemoryEditorPanel.h"
 #include "InspectorEditorPanel.h"
@@ -53,6 +59,7 @@
 #include "TransformComponentEditor.h"
 #include "ViewportEditorPanel.h"
 #include "FileSystemEditorPanel.h"
+#endif
 
 #include "Logger.h"
 #include "Material.h"
@@ -62,12 +69,15 @@
 
 PearlEngine::PearlEngine() {
   if (!pwin.IsInitialized()) {
+    LOG_ERROR << "Window is unitialized!";
     isInitialized = false;
     return;
   }
 
-  // Create owned services
+// Create owned services
+#ifdef PEARL_EDITOR
   SelectionWizard::Init();
+#endif
   m_MessageBus = std::make_unique<MessageBus>();
   m_MessageQueue = std::make_unique<MessageQueue>();
   m_InputManager = std::make_unique<InputManager>(pwin.GetWindow());
@@ -96,12 +106,17 @@ PearlEngine::PearlEngine() {
   mScene->PostInitialization();
 
   isInitialized = true;
+  LOG_INFO << "Pearlengine constructor finished";
 }
 
 PearlEngine::~PearlEngine() {
+#ifdef PEARL_EDITOR
   LineRenderer::Destroy();
+#endif
   ServiceLocator::Destroy();
+#ifdef PEARL_EDITOR
   UserGUI::Destroy();
+#endif
 
   // causes issues
   m_FullscreenQuad.reset();
@@ -120,6 +135,7 @@ void PearlEngine::Initialize() {
     LOG_ERROR << "TextureManager is not ready!";
   }
 
+#ifdef PEARL_EDITOR
   auto playTexture = m_TextureManager->load("assets/ui/play_button.png");
   auto pauseTexture = m_TextureManager->load("assets/ui/pause_button.png");
   auto reloadTexture = m_TextureManager->load("assets/ui/reload_button.png");
@@ -136,27 +152,32 @@ void PearlEngine::Initialize() {
       },
       [this]() { mScene->OnSceneReload(); }, playTexture, pauseTexture,
       stopTexture, reloadTexture);
+#endif
 
   // Create shaders using new loaders
   auto shader = Defaults::getDefaultShader();
 
   // create shaders
+#ifdef PEARL_EDITOR
   mPickShader =
       m_ShaderManager->load("shaders/pickVert.glsl", "shaders/pickFrag.glsl");
+  m_GridShader =
+      m_ShaderManager->load("shaders/gridVert.glsl", "shaders/gridFrag.glsl");
+  m_FlatShader =
+      m_ShaderManager->load("shaders/flatVert.glsl", "shaders/flatFrag.glsl");
+#endif
   m_GeometryShader = m_ShaderManager->load("shaders/geometryVert.glsl",
                                            "shaders/geometryFrag.glsl");
   m_DisplayShader = m_ShaderManager->load("shaders/displayVert.glsl",
                                           "shaders/displayFrag.glsl");
   m_LightShader =
       m_ShaderManager->load("shaders/lightVert.glsl", "shaders/lightFrag.glsl");
-  m_FlatShader =
-      m_ShaderManager->load("shaders/flatVert.glsl", "shaders/flatFrag.glsl");
-  m_GridShader =
-      m_ShaderManager->load("shaders/gridVert.glsl", "shaders/gridFrag.glsl");
 
+#ifdef PEARL_EDITOR
   auto lineShader =
       m_ShaderManager->load("shaders/lineVert.glsl", "shaders/lineFrag.glsl");
   LineRenderer::Initialize(lineShader);
+#endif
 
   // // create the main camera
   // ecs::Entity cameraEntity = mScene->CreateEntity("Main Camera");
@@ -170,9 +191,11 @@ void PearlEngine::Initialize() {
   m_ViewportFramebuffer =
       std::make_unique<Framebuffer>(m_ViewportSize.x, m_ViewportSize.y);
 
+#ifdef PEARL_EDITOR
   // create the picking framebuffer
   mPickFramebuf =
       std::make_unique<PickingFramebuffer>(m_ViewportSize.x, m_ViewportSize.y);
+#endif
 
   // initialize g buffer
   m_GBuffer = std::make_unique<GBuffer>(m_ViewportSize.x, m_ViewportSize.y);
@@ -201,6 +224,7 @@ void PearlEngine::Initialize() {
   std::vector<unsigned int> planeQuadIndices = {0, 1, 2, 2, 1, 3};
   m_WorldPlaneQuad = std::make_unique<Mesh>(planeQuadVerts, planeQuadIndices);
 
+#ifdef PEARL_EDITOR
   // Create the viewport editor panel
   m_ViewportPanel =
       m_GUIContext.AddPanel<ViewportEditorPanel>(m_ViewportFramebuffer.get());
@@ -211,6 +235,7 @@ void PearlEngine::Initialize() {
   m_GUIContext.AddPanel<MemoryEditorPanel>();
   m_GUIContext.AddPanel<AmbientLightEditorPanel>();
   AddMenuBarItems();
+#endif
 
   // Setup camera aspect ratio
   int framebufferWidth, frameBufferHeight;
@@ -225,10 +250,15 @@ void PearlEngine::Initialize() {
   glEnable(GL_DEPTH_TEST);
 
   // enable mesh loading through message bus
-  IMessageHandler* meshHandler = new CreateMeshMessageHandler(); 
+  IMessageHandler *meshHandler = new CreateMeshMessageHandler();
   m_MessageBus->Subscribe<CreateMeshMessage>(meshHandler);
 
   LOG_INFO << "Finished initialization";
+
+#ifndef PEARL_EDITOR
+  mScene->LoadScene("assets/MainMenu.json");
+  mScene->OnRuntimeStart();
+#endif
 }
 
 // b@UPDATE
@@ -252,14 +282,18 @@ void PearlEngine::RunUpdateLoop() {
     }
 
     Render();
+#ifdef PEARL_EDITOR
     RenderEditor();
+#endif
 
     glfwSwapBuffers(window);
   }
 }
 
 void PearlEngine::Update() {
-  m_InputManager->InjectViewport(m_ViewportPanel->GetViewportMin(), m_ViewportPanel->GetSize());
+#ifdef PEARL_EDITOR
+  m_InputManager->InjectViewport(m_ViewportPanel->GetViewportMin(),
+                                 m_ViewportPanel->GetSize());
 
   // handle viewport resize
   if (m_ViewportPanel->IsResized()) {
@@ -269,6 +303,7 @@ void PearlEngine::Update() {
 
     // resize core systems
     m_ViewportFramebuffer->Resize(newSize.x, newSize.y);
+
     mPickFramebuf->Resize(newSize.x, newSize.y);
     m_GBuffer->resize(newSize.x, newSize.y);
     mScene->SetAspectRatio(aspect);
@@ -277,7 +312,20 @@ void PearlEngine::Update() {
     m_ViewportSize.x = newSize.x;
     m_ViewportSize.y = newSize.y;
   }
+#else
+  int w, h;
+  glfwGetFramebufferSize(pwin.GetWindow(), &w, &h);
+  glm::vec2 newSize{(float)w, (float)h};
+  if (newSize != m_ViewportSize) {
+    m_ViewportFramebuffer->Resize(w, h);
+    m_GBuffer->resize(w, h);
+    mScene->SetAspectRatio((float)w / h);
+    m_ViewportSize = newSize;
+  }
+  m_InputManager->InjectViewport({0.0f, 0.0f}, m_ViewportSize);
+#endif
 
+#ifdef PEARL_EDITOR
   // Handle camera controls
   if (m_ViewportPanel->IsHovered()) {
     bool hasMoved = mEngineCamera->MoveCamera();
@@ -300,34 +348,48 @@ void PearlEngine::Update() {
       }
     }
   }
+#endif
 
   // run scene if the game is running
+#ifdef PEARL_EDITOR
   if (mRuntimeState == RUNTIME)
     mScene->Update();
+#else
+  mScene->Update();
+#endif
 
   if (mScene->HasPendingLoad()) {
     LOG_INFO << "Scene has pending load";
     std::string path = mScene->ConsumePendingLoad();
     mScene->LoadScene(path.c_str());
+#ifdef PEARL_EDITOR
     if (mRuntimeState == EDITOR) {
       m_CurrentScenePath = path;
       pwin.SetSceneTitle(path);
     }
+#endif
   }
 }
 
 void PearlEngine::Render() {
+#ifdef PEARL_EDITOR
   Renderer::SetViewportSize(m_ViewportPanel->GetSize());
+#else
+  Renderer::SetViewportSize(m_ViewportSize);
+#endif
 
+#ifdef PEARL_EDITOR
   if (bDrawWireFrameMode)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   else
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+#endif
 
   GeometryRenderPass();
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+#ifdef PEARL_EDITOR
   if (bDebugGBuffer) {
     QuadDebugRenderPass();
     return;
@@ -338,11 +400,15 @@ void PearlEngine::Render() {
   } else {
     LightingPass();
   }
+#else
+  LightingPass();
+#endif
 
   auto *camSystem = mScene->GetCameraSystem();
   glm::mat4 view, projection;
   camSystem->GetMatrices(view, projection);
 
+#ifdef PEARL_EDITOR
   // Draw grid
   if (bDrawGrid) {
     m_ViewportFramebuffer->Bind();
@@ -384,6 +450,7 @@ void PearlEngine::Render() {
     } else
       SelectionWizard::Clear();
   }
+#endif
 
   // Draw UI on top of everything
   m_ViewportFramebuffer->Bind();
@@ -394,8 +461,19 @@ void PearlEngine::Render() {
   glDisable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
   m_ViewportFramebuffer->Unbind();
+
+#ifndef PEARL_EDITOR
+  // Blit rendered framebuffer to the screen
+  glBindFramebuffer(GL_READ_FRAMEBUFFER, m_ViewportFramebuffer->GetFBOId());
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+  glBlitFramebuffer(0, 0, (int)m_ViewportSize.x, (int)m_ViewportSize.y, 0, 0,
+                    (int)m_ViewportSize.x, (int)m_ViewportSize.y,
+                    GL_COLOR_BUFFER_BIT, GL_NEAREST);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif
 }
 
+#ifdef PEARL_EDITOR
 void PearlEngine::PickingRenderPass() {
   mPickFramebuf->Bind();
   GLuint clearVal = 0xFFFFFFFF; // ecs::Entity = -1, which wraps to max val
@@ -435,6 +513,7 @@ uint32_t PearlEngine::ReadPickedVal(unsigned int x, unsigned int y) {
 
   return id;
 }
+#endif
 
 void PearlEngine::GeometryRenderPass() {
   m_GBuffer->bind();
@@ -451,6 +530,7 @@ void PearlEngine::GeometryRenderPass() {
   m_GBuffer->unbind();
 }
 
+#ifdef PEARL_EDITOR
 void PearlEngine::FlatShadePass() {
   m_ViewportFramebuffer->Bind();
   glClearColor(0.1f, 0.1f, 0.1f, 2.0f);
@@ -464,6 +544,7 @@ void PearlEngine::FlatShadePass() {
   m_FullscreenQuad->Draw();
   m_ViewportFramebuffer->Unbind();
 }
+#endif
 
 void PearlEngine::LightingPass() {
   auto camSystem = mScene->GetCameraSystem();
@@ -511,6 +592,7 @@ void PearlEngine::LightingPass() {
   glViewport(0, 0, m_ViewportSize.x, m_ViewportSize.y);
 }
 
+#ifdef PEARL_EDITOR
 void PearlEngine::QuadDebugRenderPass() {
   m_ViewportFramebuffer->Bind();
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -583,7 +665,9 @@ void PearlEngine::QuadDebugRenderPass() {
 
   m_ViewportFramebuffer->Unbind();
 }
+#endif
 
+#ifdef PEARL_EDITOR
 void PearlEngine::RenderEditor() {
   m_GUIContext.BeginFrame(mRuntimeState);
   m_GUIContext.RenderEditorPanels();
@@ -597,11 +681,9 @@ void PearlEngine::RenderEditor() {
 
   m_GUIContext.Render();
 }
+#endif
 
 void PearlEngine::ProcessInput(GLFWwindow *window) {
-  // block all engine keybinds when imgui focuses
-  ImGuiIO io = ImGui::GetIO();
-
   auto &input = m_InputManager;
   input->Update();
 
@@ -612,6 +694,8 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
   if (input->GetKeyDown(GLFW_KEY_F5))
     m_ShaderManager->recompileAll();
 
+#ifdef PEARL_EDITOR
+  ImGuiIO io = ImGui::GetIO();
   // blocked when imgui has a text field focused
   if (!io.WantCaptureKeyboard) {
     if (SelectionWizard::HasSelection() && input->GetKeyDown(GLFW_KEY_D) &&
@@ -623,8 +707,8 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
     }
 
     // destroy entity with delete key
-    if(SelectionWizard::HasSelection() && input->GetKeyDown(GLFW_KEY_DELETE) 
-    && mRuntimeState == EDITOR){
+    if (SelectionWizard::HasSelection() && input->GetKeyDown(GLFW_KEY_DELETE) &&
+        mRuntimeState == EDITOR) {
       ecs::Entity selectedEntity = SelectionWizard::Get();
       mScene->DestroyEntity(selectedEntity);
     }
@@ -659,7 +743,7 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
       bDrawWireFrameMode = !bDrawWireFrameMode;
     }
 
-    if(input->GetKeyDown(GLFW_KEY_G)){
+    if (input->GetKeyDown(GLFW_KEY_G)) {
       bDrawGrid = !bDrawGrid;
     }
 
@@ -682,8 +766,10 @@ void PearlEngine::ProcessInput(GLFWwindow *window) {
       }
     }
   }
+#endif
 }
 
+#ifdef PEARL_EDITOR
 void PearlEngine::AddMenuBarItems() {
   MenuRegistry::Get().Register("File/Exit", [this]() {
     glfwSetWindowShouldClose(pwin.GetWindow(), true);
@@ -716,3 +802,4 @@ void PearlEngine::AddMenuBarItems() {
   MenuRegistry::Get().Register("Tools/Debug G-Buffer", &bDebugGBuffer);
   MenuRegistry::Get().Register("Tools/Flat Shade", &bFlatShade);
 }
+#endif

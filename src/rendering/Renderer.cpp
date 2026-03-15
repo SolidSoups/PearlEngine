@@ -114,26 +114,24 @@ bool Renderer::ResolveCamera(glm::mat4& view, glm::mat4& proj){
   }
   return true;
 }
+
 void Renderer::Submit(const TransformComponent& aTransform, const std::shared_ptr<Mesh>& aMesh, const std::shared_ptr<Material>& aMaterial){
   glm::mat4 view, proj;
   if(!ResolveCamera(view, proj))
     return;
-  
-  // Set matrices
-  std::shared_ptr<ShaderData> matShader = aMaterial->getShader();
-  if (!matShader){
-    LOG_ERROR << "NO MAT SHADER";
+
+  std::shared_ptr<ShaderData> shader = aMaterial->getShader();
+  if (!shader){
+    LOG_ERROR << "No material shader for terrain render submition";
     return;
   }
-
-  // bind material and shader
-  matShader->use();
+  shader->use();
   aMaterial->bind();
 
   // upload object, and camera props
-  matShader->setMatrix4("transform", aTransform.GetModelMatrix());
-  matShader->setMatrix4("view", view);
-  matShader->setMatrix4("projection", proj);
+  shader->setMatrix4("transform", aTransform.GetModelMatrix());
+  shader->setMatrix4("view", view);
+  shader->setMatrix4("projection", proj);
 
   // draw the mesh to the screen
   if(aMesh) aMesh->Draw();
