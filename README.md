@@ -58,4 +58,39 @@ ninja -C editor_build
 - View best times from the menu, saved to *my/LevelTimes.json*
 - Able to pause game with ESC
 
+## Editor features
 
+UI Module:
+- Entity Component System 
+- Memory checking functionality
+- UI Framework
+- UI to manipulate entity name, model, texture, position and rotation
+- Render all entities
+- OBJ loader
+- MeshManager, caching enabled
+- Message queue (deferred, used for mesh loading)
+- Message sub classes, ex. CreateMeshMessage.h
+- Camera class and UI to configure
+- Implement stb_image texture loader
+- Triangulization of quads
+- Iterative Resource Loading
+- Camera manager and switching, differing controls
+- Scene serialization via nlohmann::json
+
+Graphics Module:
+- MipMap settings per texture
+- Deferred Rendering
+- Phong shading pass, support for point light
+- UI to configure light properties
+- OBJ loads and buffers UV's and Normals
+- UI to set diffuse and specular maps
+- Normal mapping
+- Reload shaders using F5 or menu bar
+- Toggle to flat shader
+
+NTH:
+- Entity viewport selection by sampling a framebuffer containing entity IDs
+- Lua scripting API, see *./types/* for API
+- Play/Pause/Stop/Reload functionality
+- Custom logger 
+- Debug GBuffer, able to switch attachments with g/G
