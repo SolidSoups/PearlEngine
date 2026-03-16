@@ -1,27 +1,27 @@
 [submodule "external/imgui"]
 	path = external/imgui
-	url = git@github.com:ocornut/imgui.git
+	url = https://github.com/ocornut/imgui.git
 	branch = docking
 
 [submodule "external/glfw"]
 	path = external/glfw
-	url = git@github.com:glfw/glfw.git
+	url = https://github.com/glfw/glfw.git
 	branch = master
 
 [submodule "external/glm"]
 	path = external/glm
-	url = git@github.com:g-truc/glm.git
+	url = https://github.com/g-truc/glm.git
 	branch = master
 
 [submodule "external/rapidjson"]
 	path = external/rapidjson
-	url = git@github.com:Tencent/rapidjson.git
+	url = https://github.com/Tencent/rapidjson.git
 [submodule "external/json"]
 	path = external/json
-	url = git@github.com:nlohmann/json.git
+	url = https://github.com/nlohmann/json.git
 [submodule "external/imguizmo"]
 	path = external/imguizmo
-	url = git@github.com:CedricGuillemet/ImGuizmo.git
+	url = https://github.com/CedricGuillemet/ImGuizmo.git
 [submodule "external/sol2"]
 	path = external/sol2
-	url = git@github.com:ThePhD/sol2.git
+	url = https://github.com/ThePhD/sol2.git
