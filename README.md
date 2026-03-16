@@ -35,7 +35,7 @@ git submodule sync
 git submodule update --init --recursive
 ```
 
-Then, open the visual studio developer environment **x64 Native Tools Command Prompt for VS 2022** or **x64 Native Tools Command Prompt for VS Insiders** and navigate to the repository.
+Then, open the visual studio developer environment **x64 Native Tools Command Prompt for VS 2022** and navigate to the repository.
 This will provide you with all the tools needed to compile and build the program.
 
 To compile the standalone game:
