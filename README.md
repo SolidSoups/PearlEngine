@@ -26,10 +26,6 @@ The dependencies are pulled via git submodules.
     - Windows 11 SDK
     - MSVC v143 - VS 2022 C++ x64/x86 build tools  
 
-Ensure the following packages are installed in Visual Studio Installer:
-- Desktop development with C++
-    - C++ CMake tools for Windows enabled
-
 **Install and Setup**:
 1. Clone the repo with either git/github desktop
 2. Navigate to the root of the repository
