@@ -21,10 +21,7 @@ The dependencies are pulled via git submodules.
 - CMake 3.16 (can be installed from [here](https://cmake.org/download/))
 - Ninja generator (install on windows 11 with ```winget install Ninja-build.Ninja```) 
 - C++20
-- Visual Studio Build Tools 2026 (or your preferred version), make sure to enable *Desktop development with C++* and the following packages:
-    - C++ Clang tools for Windows
-    - Windows 11 SDK
-    - MSVC v143 - VS 2022 C++ x64/x86 build tools  
+- LLVM Compiler, install with ```winget install LLVM.LLVM```
 
 **Install and Setup**:
 1. Clone the repo with either git/github desktop
@@ -34,9 +31,6 @@ The dependencies are pulled via git submodules.
 git submodule sync
 git submodule update --init --recursive
 ```
-
-Then, open the visual studio developer environment **x64 Native Tools Command Prompt for VS 2022** and navigate to the repository.
-This will provide you with all the tools needed to compile and build the program.
 
 To compile the standalone game:
 ```
