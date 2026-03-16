@@ -143,37 +143,35 @@ target_include_directories(game_engine PRIVATE
 target_compile_definitions(game_engine PRIVATE
   DEBUG_ENABLED=1
   LOG_TO_CONSOLE=1
-  SOL_NO_LUA_HPP=1   # Prevent sol2 from using /usr/local/include/lua.hpp (Lua 5.1)
+  SOL_NO_LUA_HPP=1   
   $<$<BOOL:${COMPILER_SUPPORTS_AVX2}>:PEARL_HAS_AVX2>
   $<$<BOOL:${PEARL_EDITOR}>:PEARL_EDITOR>
   $<$<CXX_COMPILER_ID:MSVC>:WIN32_LEAN_AND_MEAN>
   $<$<CXX_COMPILER_ID:MSVC>:NOMINMAX>
 )
-target_precompile_headers(game_engine PRIVATE
-  # Glad MUST preced GLFW - pch preservse this order!!:W
-  <glad/glad.h>
-  <GLFW/glfw3.h>
-  # imgui
-  <imgui.h>
-  # Math
-  <glm/glm.hpp>
-  <glm/gtc/matrix_transform.hpp>
-  <glm/gtc/type_ptr.hpp>
-  # libarries
-  <stb_image.h>
-  # standard libary
-  <string>
-  <vector>
-  <memory>
-  <unordered_map>
-  <functional>
-  <iostream>
-  # my library
-  src/utils/Logger.h
-)
-# Fix MSVC 2025 Preview <ctime> bug: force-include time.h before all headers
-if(MSVC)
-  target_compile_options(game_engine PRIVATE /FItime.h)
+if(NOT MSVC)
+  target_precompile_headers(game_engine PRIVATE
+    # Glad MUST be before glfw
+    <glad/glad.h>
+    <GLFW/glfw3.h>
+    # imgui
+    <imgui.h>
+    # Math
+    <glm/glm.hpp>
+    <glm/gtc/matrix_transform.hpp>
+    <glm/gtc/type_ptr.hpp>
+    # libarries
+    <stb_image.h>
+    # standard libary
+    <string>
+    <vector>
+    <memory>
+    <unordered_map>
+    <functional>
+    <iostream>
+    # my library
+    src/utils/Logger.h
+  )
 endif()
 if(COMPILER_SUPPORTS_AVX2)
   if(MSVC)
