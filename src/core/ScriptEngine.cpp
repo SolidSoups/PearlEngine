@@ -10,7 +10,7 @@
 #include "TextComponent.h"
 #include "RigidBodyComponent.h"
 #include "NameComponent.h"
-#include "Time.h"
+#include "PearlTime.h"
 #include "LineRenderer.h"
 #include "Logger.h"
 

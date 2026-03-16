@@ -146,33 +146,29 @@ target_compile_definitions(game_engine PRIVATE
   SOL_NO_LUA_HPP=1   
   $<$<BOOL:${COMPILER_SUPPORTS_AVX2}>:PEARL_HAS_AVX2>
   $<$<BOOL:${PEARL_EDITOR}>:PEARL_EDITOR>
-  $<$<CXX_COMPILER_ID:MSVC>:WIN32_LEAN_AND_MEAN>
-  $<$<CXX_COMPILER_ID:MSVC>:NOMINMAX>
 )
-if(NOT MSVC)
-  target_precompile_headers(game_engine PRIVATE
-    # Glad MUST be before glfw
-    <glad/glad.h>
-    <GLFW/glfw3.h>
-    # imgui
-    <imgui.h>
-    # Math
-    <glm/glm.hpp>
-    <glm/gtc/matrix_transform.hpp>
-    <glm/gtc/type_ptr.hpp>
-    # libarries
-    <stb_image.h>
-    # standard libary
-    <string>
-    <vector>
-    <memory>
-    <unordered_map>
-    <functional>
-    <iostream>
-    # my library
-    src/utils/Logger.h
-  )
-endif()
+target_precompile_headers(game_engine PRIVATE
+  # Glad MUST preced GLFW - pch preserves this order
+  <glad/glad.h>
+  <GLFW/glfw3.h>
+  # imgui
+  <imgui.h>
+  # Math
+  <glm/glm.hpp>
+  <glm/gtc/matrix_transform.hpp>
+  <glm/gtc/type_ptr.hpp>
+  # libraries
+  <stb_image.h>
+  # standard library
+  <string>
+  <vector>
+  <memory>
+  <unordered_map>
+  <functional>
+  <iostream>
+  # my library
+  src/utils/Logger.h
+)
 if(COMPILER_SUPPORTS_AVX2)
   if(MSVC)
     target_compile_options(game_engine PRIVATE /arch:AVX2)

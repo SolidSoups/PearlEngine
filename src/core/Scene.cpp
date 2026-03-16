@@ -16,7 +16,7 @@
 #include "ScriptComponent.h"
 #include "CameraComponent.h"
 #include "CapsuleColliderComponent.h"
-#include "Time.h"
+#include "PearlTime.h"
 #include "Camera.h"
 #include "Renderer.h"
 
