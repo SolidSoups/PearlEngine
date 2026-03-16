@@ -2,7 +2,7 @@
 
 #include <cstdio>
 #include <memory>
-#include <strings.h>
+#include <string>
 #include <vector>
 #include <deque>
 

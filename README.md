@@ -19,11 +19,11 @@ The dependencies are pulled via git submodules.
 
 **Requirements**:
 - CMake 3.16 (can be installed from [here](https://cmake.org/download/))
-- Ninja generator (install on windows 11 with ```winget install Ninja-build.Ninja```) 
+- Ninja generator (install on windows 11 with ```winget install Ninja-build.Ninja```)
 - C++20
-- LLVM Compiler
-    - install with ```winget install LLVM.LLVM```
-    - quickly add to path, PowerShell: ```$env:PATH = "C:\Program Files\LLVM\bin;$env:PATH"```, CMD: ```set PATH=C:\Program Files\LLVM\bin;%PATH%```. Keep session active and use it for the compililation and build steps.
+- Visual Studio 2022 Build Tools with *Desktop development with C++* workload enabled
+- LLVM Compiler (install with ```winget install LLVM.LLVM```)
+    - add to path, PowerShell: ```$env:PATH = "C:\Program Files\LLVM\bin;$env:PATH"```, CMD: ```set PATH=C:\Program Files\LLVM\bin;%PATH%```
 
 **Install and Setup**:
 1. Clone the repo with either git/github desktop
