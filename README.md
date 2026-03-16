@@ -29,7 +29,11 @@ Ensure the following packages are installed in Visual Studio Installer:
 **Install and Setup**:
 1. Clone the repo with either git/github desktop
 2. Navigate to the root of the repository
-3. Pull all git submodules to get the dependencies. Use ```git submodule update --init --recursive```.
+3. Pull all git submodules to get the dependencies. Use: 
+```
+git submodule sync
+git submodule update --init --recursive
+```
 
 Then, open the visual studio developer environment **x64 Native Tools Command Prompt for VS 2022** or **x64 Native Tools Command Prompt for VS Insiders** and navigate to the repository.
 This will provide you with all the tools needed to compile and build the program.
