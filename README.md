@@ -21,6 +21,10 @@ The dependencies are pulled via git submodules.
 - CMake 3.16 (can be installed from [here](https://cmake.org/download/))
 - Ninja generator (install on windows 11 with ```winget install Ninja-build.Ninja```) 
 - C++20
+- Visual Studio Build Tools 2026 (or your preferred version), make sure to enable *Desktop development with C++* and the following packages:
+    - C++ Clang tools for Windows
+    - Windows 11 SDK
+    - MSVC v143 - VS 2022 C++ x64/x86 build tools  
 
 Ensure the following packages are installed in Visual Studio Installer:
 - Desktop development with C++
