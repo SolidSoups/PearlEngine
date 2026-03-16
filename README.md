@@ -18,19 +18,44 @@ This is the repository for the pearl engine. Currently unable to build the game 
 The dependencies are pulled via git submodules.
 
 **Requirements**:
-- CMake 3.16
-- C++17
-- pkg-config (LINUX ONLY)
-- GTK4 (LINUX ONLY)
-- X11 (LINUX ONLY)
-
-As you can see, there are 3 packages which are Linux only. These will be removed so that the project can be compiled cross platform.
+- CMake 3.16, with Ninja generator
+- C++20
 
 **Install and Setup**:
 1. Clone the repo with either git/github desktop
 2. Navigate to the root of the repository
 3. Pull all git submodules to get the dependencies. Use ```git submodule update --init --recursive```.
-4. Compile with ```cmake -B build -S . -G Ninja```
-5. Build with ```cmake --build build```
-6. The executable can be run from *./build/game_engine*
+
+To compile the standalone game:
+```
+cd PearlEngine
+mkdir build
+cmake -B build -S . -G Ninja -DPEARL_EDITOR=OFF
+ninja -C build
+```
+
+To compile with the editor attached:
+```
+cd PearlEngine
+mkdir editor_build
+cmake -B editor_build -S . -G Ninja -DPEARL_EDITOR=ON
+ninja -C editor_build
+```
+
+## Content
+
+- A controllable player character. Use WASD to move around, and space to jump (up to two times)
+- A thirdperson camera, which automatically follows the player
+- Three levels, with start, goal and end. Platforms.
+- Interactable switch object (Level2)
+- Record times system
+- Custom menu for selecting levels and viewing times
+- A couple enemies (Level2)
+- Terrain mesh with physics interaction (Level3)
+- Basic moving objects the player can interact with (Level1)
+- Basic physical objects that are not the player (Level3)
+- Custom text rendering
+- View best times from the menu, saved to *my/LevelTimes.json*
+- Able to pause game with ESC
+
 
