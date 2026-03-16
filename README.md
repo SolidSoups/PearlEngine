@@ -21,7 +21,9 @@ The dependencies are pulled via git submodules.
 - CMake 3.16 (can be installed from [here](https://cmake.org/download/))
 - Ninja generator (install on windows 11 with ```winget install Ninja-build.Ninja```) 
 - C++20
-- LLVM Compiler, install with ```winget install LLVM.LLVM```
+- LLVM Compiler
+    - install with ```winget install LLVM.LLVM```
+    - quickly add to path, PowerShell: ```$env:PATH = "C:\Program Files\LLVM\bin;$env:PATH"```, CMD: ```set PATH=C:\Program Files\LLVM\bin;%PATH%```. Keep session active and use it for the compililation and build steps.
 
 **Install and Setup**:
 1. Clone the repo with either git/github desktop
@@ -36,7 +38,7 @@ To compile the standalone game:
 ```
 cd PearlEngine
 mkdir build
-cmake -B build -S . -G Ninja -DPEARL_EDITOR=OFF
+cmake -B build -S . -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DPEARL_EDITOR=OFF
 ninja -C build
 ```
 
@@ -44,7 +46,7 @@ To compile with the editor attached:
 ```
 cd PearlEngine
 mkdir editor_build
-cmake -B editor_build -S . -G Ninja -DPEARL_EDITOR=ON
+cmake -B build -S . -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DPEARL_EDITOR=OFF
 ninja -C editor_build
 ```
 
