@@ -146,6 +146,8 @@ target_compile_definitions(game_engine PRIVATE
   SOL_NO_LUA_HPP=1   # Prevent sol2 from using /usr/local/include/lua.hpp (Lua 5.1)
   $<$<BOOL:${COMPILER_SUPPORTS_AVX2}>:PEARL_HAS_AVX2>
   $<$<BOOL:${PEARL_EDITOR}>:PEARL_EDITOR>
+  $<$<CXX_COMPILER_ID:MSVC>:WIN32_LEAN_AND_MEAN>
+  $<$<CXX_COMPILER_ID:MSVC>:NOMINMAX>
 )
 target_precompile_headers(game_engine PRIVATE
   # Glad MUST preced GLFW - pch preservse this order!!:W
