@@ -42,8 +42,8 @@ To compile the standalone game:
 ```
 cd PearlEngine
 mkdir build
-cmake -B build -S . -G Ninja -DPEARL_EDITOR=OFF
-ninja -C build
+cmake -B build -S . -DPEARL_EDITOR=OFF
+cmake -C build
 ```
 
 To compile with the editor attached:
