@@ -18,7 +18,8 @@ This is the repository for the pearl engine. Currently unable to build the game 
 The dependencies are pulled via git submodules.
 
 **Requirements**:
-- CMake 3.16, with Ninja generator (can be installed from [here](https://cmake.org/download/))
+- CMake 3.16 (can be installed from [here](https://cmake.org/download/))
+- Ninja generator (install on windows 11 with ```winget install Ninja-build.Ninja```) 
 - C++20
 
 **Install and Setup**:
