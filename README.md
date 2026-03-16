@@ -34,7 +34,7 @@ git submodule sync
 git submodule update --init --recursive
 ```
 
-To compile and build, use the **x64 Native Tools Command Prompt for VS 2022** environment.
+To compile and build, use the **x64 Native Tools Command Prompt for VS 2022** environment. Remember to set the LLVM environment variable shown above.
 
 To compile the standalone game:
 ```
