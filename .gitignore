@@ -1,7 +1,7 @@
 .cache/
 build/
 editor_build/
-.claude/
+my/LevelTimes.json
 
 README-tasks.md
 

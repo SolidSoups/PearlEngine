@@ -41,7 +41,9 @@ add_subdirectory(external/glfw)
 add_library(glad external/glad/src/glad.c)
 target_include_directories(glad PUBLIC external/glad/include)
 
-find_package(X11 REQUIRED)
+if(UNIX AND NOT APPLE)
+  find_package(X11 REQUIRED)
+endif()
 
 # Lua
 file(GLOB LUA_SOURCES "external/lua/*.c")
@@ -79,7 +81,7 @@ target_link_libraries(imgui
     glfw
     glad
     nlohmann_json::nlohmann_json
-    ${X11_LIBRARIES}
+    $<$<PLATFORM_ID:Linux>:${X11_LIBRARIES}>
 )
 
 # Sol2 (header-only)
@@ -168,5 +170,9 @@ target_precompile_headers(game_engine PRIVATE
   src/utils/Logger.h
 )
 if(COMPILER_SUPPORTS_AVX2)
-  target_compile_options(game_engine PRIVATE -mavx2)
+  if(MSVC)
+    target_compile_options(game_engine PRIVATE /arch:AVX2)
+  else()
+    target_compile_options(game_engine PRIVATE -mavx2)
+  endif()
 endif()
