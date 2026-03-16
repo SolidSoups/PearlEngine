@@ -34,6 +34,8 @@ git submodule sync
 git submodule update --init --recursive
 ```
 
+To compile and build, use the **x64 Native Tools Command Prompt for VS 2022** environment.
+
 To compile the standalone game:
 ```
 cd PearlEngine
