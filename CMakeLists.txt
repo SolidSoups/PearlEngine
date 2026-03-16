@@ -148,6 +148,8 @@ target_compile_definitions(game_engine PRIVATE
   $<$<BOOL:${PEARL_EDITOR}>:PEARL_EDITOR>
 )
 target_precompile_headers(game_engine PRIVATE
+  # Fix MSVC Insiders <ctime> bug: ensure <time.h> is in global namespace first
+  $<$<CXX_COMPILER_ID:MSVC>:<time.h>>
   # Glad MUST preced GLFW - pch preservse this order!!:W
   <glad/glad.h>
   <GLFW/glfw3.h>

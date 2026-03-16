@@ -11,8 +11,8 @@ This is the repository for the pearl engine. Can be built on Windows and Linux (
 - [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo) - gizmos
 - [nlohmann/json](https://github.com/nlohmann/json) - JSON serialization
 - [sol2](https://github.com/ThePhD/sol2) - Lua bindings
-- glad - OpenGL loader 
-- Lua 5.4.7 - scripting 
+- glad - OpenGL loader
+- Lua 5.4.7 - scripting
 - stb_image - texture loading 
 
 The dependencies are pulled via git submodules.
