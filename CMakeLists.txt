@@ -146,6 +146,7 @@ target_compile_definitions(game_engine PRIVATE
   SOL_NO_LUA_HPP=1   
   $<$<BOOL:${COMPILER_SUPPORTS_AVX2}>:PEARL_HAS_AVX2>
   $<$<BOOL:${PEARL_EDITOR}>:PEARL_EDITOR>
+  _USE_MATH_DEFINES
 )
 target_precompile_headers(game_engine PRIVATE
   # Glad MUST preced GLFW - pch preserves this order

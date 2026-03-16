@@ -22,11 +22,11 @@ void pe::Project::ScanFilesystem(){
 
     for(const auto& dirEntry : iterator){
         const auto& path = dirEntry.path();
-        std::string extension{path.extension()};
+        std::string extension = path.extension().string();
         if(allowedExtensions.count(extension) == 0){
             continue;
         }
-        m_Files.emplace_back(path.stem(), extension, path);
+        m_Files.emplace_back(path.stem().string(), extension, path);
     }
 }
 

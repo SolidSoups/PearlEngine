@@ -1,5 +1,6 @@
 #include "MeshManager.h"
 
+#include <array>
 #include <filesystem>
 #include <cstring>
 #include <optional>
