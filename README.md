@@ -1,6 +1,6 @@
 # PEARL ENGINE
 
-This is the repository for the pearl engine. Can be built on Windows and Linux.
+This is the repository for the pearl engine. Can be built on Windows and Linux (tested).
 
 ## Installation
 
