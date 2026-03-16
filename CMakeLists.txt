@@ -171,7 +171,7 @@ target_precompile_headers(game_engine PRIVATE
 )
 # Fix MSVC 2025 Preview <ctime> bug: force-include time.h before all headers
 if(MSVC)
-  target_compile_options(game_engine PRIVATE /FI"time.h")
+  target_compile_options(game_engine PRIVATE /FItime.h)
 endif()
 if(COMPILER_SUPPORTS_AVX2)
   if(MSVC)
