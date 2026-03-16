@@ -22,10 +22,17 @@ The dependencies are pulled via git submodules.
 - Ninja generator (install on windows 11 with ```winget install Ninja-build.Ninja```) 
 - C++20
 
+Ensure the following packages are installed in Visual Studio Installer:
+- Desktop development with C++
+    - C++ CMake tools for Windows enabled
+
 **Install and Setup**:
 1. Clone the repo with either git/github desktop
 2. Navigate to the root of the repository
 3. Pull all git submodules to get the dependencies. Use ```git submodule update --init --recursive```.
+
+Then, open the visual studio developer environment **x64 Native Tools Command Prompt for VS 2022** and navigate to the repository.
+This will provide you with all the tools needed to compile and build the program.
 
 To compile the standalone game:
 ```
