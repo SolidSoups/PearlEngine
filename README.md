@@ -1,6 +1,6 @@
 # PEARL ENGINE
 
-This is the repository for the pearl engine. Currently unable to build the game seperately, but a fix is coming for it.
+This is the repository for the pearl engine. Can be built on Windows and Linux.
 
 ## Installation
 
